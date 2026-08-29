@@ -192,10 +192,6 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
         '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
         '@the-new-fuse/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
-        '@the-new-fuse/feature-suggestions': path.resolve(
-          __dirname,
-          '../../packages/feature-suggestions/src'
-        ),
         '@the-new-fuse/ui-consolidated': path.resolve(
           __dirname,
           '../../packages/ui-consolidated/dist'

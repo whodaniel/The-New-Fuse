@@ -73,7 +73,7 @@ describe('JulesAgentAdapter', () => {
 
       const agent = await adapter.registerJulesAgent(tenantId);
 
-      expect(mockAgentRepo.findById).toHaveBeenCalledWith(agentId);
+      expect(mockAgentRepo.findById).toHaveBeenCalledWith(agentId, tenantId);
       expect(mockAgentRepo.create).toHaveBeenCalledWith(
         expect.objectContaining({ id: agentId, name: 'Jules Assistant' })
       );
@@ -92,7 +92,7 @@ describe('JulesAgentAdapter', () => {
 
       await adapter.registerJulesAgent(tenantId);
 
-      expect(mockAgentRepo.findById).toHaveBeenCalledWith(agentId);
+      expect(mockAgentRepo.findById).toHaveBeenCalledWith(agentId, tenantId);
       expect(mockAgentRepo.create).not.toHaveBeenCalled();
       expect(mockAgentRegistry.register).toHaveBeenCalledWith(
         expect.objectContaining({ id: agentId })
@@ -141,7 +141,7 @@ describe('JulesAgentAdapter', () => {
       );
       expect(mockTaskRepo.updateTask).toHaveBeenCalledWith('task-123', {
         metadata: { julesSessionId: 'jules-session-abc' },
-        status: TaskStatus.RUNNING,
+        status: TaskStatus.IN_PROGRESS,
       });
       expect(mockAgentRepo.updateStatus).toHaveBeenCalledWith(
         `jules-agent-${params.tenantId}`,
@@ -179,6 +179,7 @@ describe('JulesAgentAdapter', () => {
       await adapter.updateAgentStatus(tenantId, AgentStatus.IDLE);
 
       expect(mockAgentRepo.updateStatus).toHaveBeenCalledWith(agentId, AgentStatus.IDLE);
+      expect(mockAgentRepo.findById).toHaveBeenCalledWith(agentId, tenantId);
       expect(mockAgentRegistry.register).toHaveBeenCalledWith(
         expect.objectContaining({
           id: agentId,

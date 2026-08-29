@@ -124,10 +124,6 @@ export default defineConfig(({ mode }) => {
           __dirname,
           '../../packages/shared/src/federation/protocol.ts'
         ),
-        '@the-new-fuse/feature-suggestions': path.resolve(
-          __dirname,
-          '../../packages/feature-suggestions/src'
-        ),
         '@the-new-fuse/ui-consolidated': path.resolve(
           __dirname,
           '../../packages/ui-consolidated/dist'

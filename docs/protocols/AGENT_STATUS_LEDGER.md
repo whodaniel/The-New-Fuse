@@ -71,7 +71,7 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-29T04:47:37.724Z** — handoff
+Updated: **2026-08-29T22:06:08.623Z** — handoff `14e23d83-c540-4152-bdf9-1bd554112c4e` (`5e7e2c894feb`).
 `4283b14d-8b02-4347-adc8-d5f26a4b01fd` (`26be2886c104`).
 `e85d971f-770d-4cfe-98f6-4cd46280f557` (`f328e16919f8`).
 `883a32da-4f06-48ed-8efc-9013f70c7bfe` (`e169723bd328`).
@@ -265,12 +265,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                              |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Do not merge PR 264 until operator signoff after a green official root turbo build on a machine with >=8Gi free.                                    |
-| **P0**   | Keep PR 253 separate on recon/S1. Do not retarget or conflate.                                                                                      |
-| **P0**   | Re-run official pnpm run build (cold .turbo) then root type-check/test if required by launch-train, once disk headroom exists.                      |
-| **P0**   | Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json. |
+| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| **P0**   | Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers |
+| **P0**   | Phase 3: generalize jules-skill MCP tool surface to remote-coding-agent delegation |
+| **P0**   | Phase 4: move feature-tracker/feature-suggestions UI assets to TNF-Extensions (backend keeps native feedback module) |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1491,3 +1490,5 @@ clean | ✅ COMPLETE |
 
 | 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (4283b14d-8b02-4347-adc8-d5f26a4b01fd) | ✅ HANDOFF_READY |
+
+| 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST (14e23d83-c540-4152-bdf9-1bd554112c4e) | ✅ HANDOFF_READY |

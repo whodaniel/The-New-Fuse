@@ -33,7 +33,7 @@
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
-    "@the-new-fuse/jules-integration": "workspace:*",
+    "@the-new-fuse/protocol-contracts": "workspace:*",
     "@the-new-fuse/relay-core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@types/jest": "^30.0.0",

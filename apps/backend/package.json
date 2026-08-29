@@ -42,7 +42,6 @@
     "@the-new-fuse/core-monitoring": "workspace:*",
     "@the-new-fuse/core-vector-db": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
-    "@the-new-fuse/feature-tracker": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
     "@the-new-fuse/mcp-core": "workspace:*",
     "@the-new-fuse/proto-definitions": "workspace:*",

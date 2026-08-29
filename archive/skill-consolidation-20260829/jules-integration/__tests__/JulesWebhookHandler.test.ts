@@ -11,12 +11,20 @@ class JulesUsageTracker {
 
 describe('JulesWebhookHandler', () => {
   let handler: JulesWebhookHandler;
-  let db: DeepMockProxy<DrizzleClient>;
+  let db: any;
   let redis: DeepMockProxy<RedisClientType>;
   let usageTracker: JulesUsageTracker;
 
   beforeEach(() => {
-    db = mockDeep<DrizzleClient>();
+    db = {
+      jules: {
+        findSessionByJulesSessionId: jest.fn(),
+        updateSessionByJulesSessionId: jest.fn(),
+      },
+      tasks: {
+        findTaskById: jest.fn(),
+      },
+    };
     redis = mockDeep<RedisClientType>();
     usageTracker = new JulesUsageTracker();
     handler = new JulesWebhookHandler(db as any, redis as any, usageTracker);
@@ -64,14 +72,13 @@ describe('JulesWebhookHandler', () => {
         timestamp: new Date().toISOString(),
       };
 
-      db.julesSession.findUnique.mockResolvedValue(mockJulesSession);
-      db.task.findUnique.mockResolvedValue(mockTask);
+      (db.jules.findSessionByJulesSessionId as jest.Mock).mockResolvedValue(mockJulesSession);
+      (db.tasks.findTaskById as jest.Mock).mockResolvedValue(mockTask);
 
       await handler.handleWebhook(payload, encodedContext);
 
-      expect(db.julesSession.update).toHaveBeenCalledWith({
-        where: { julesSessionId: 'test-session' },
-        data: { status: 'BLOCKED' },
+      expect(db.jules.updateSessionByJulesSessionId).toHaveBeenCalledWith('test-session', {
+        status: 'NEEDS_APPROVAL',
       });
       expect(redis.publish).toHaveBeenCalled();
       expect(usageTracker.logUsageStart).toHaveBeenCalled();
@@ -85,14 +92,13 @@ describe('JulesWebhookHandler', () => {
         timestamp: new Date().toISOString(),
       };
 
-      db.julesSession.findUnique.mockResolvedValue(mockJulesSession);
-      db.task.findUnique.mockResolvedValue(mockTask);
+      (db.jules.findSessionByJulesSessionId as jest.Mock).mockResolvedValue(mockJulesSession);
+      (db.tasks.findTaskById as jest.Mock).mockResolvedValue(mockTask);
 
       await handler.handleWebhook(payload, encodedContext);
 
-      expect(db.julesSession.update).toHaveBeenCalledWith({
-        where: { julesSessionId: 'test-session' },
-        data: { status: 'COMPLETED' },
+      expect(db.jules.updateSessionByJulesSessionId).toHaveBeenCalledWith('test-session', {
+        status: 'COMPLETED',
       });
       expect(redis.publish).toHaveBeenCalled();
       expect(usageTracker.logUsageEnd).toHaveBeenCalled();
@@ -107,14 +113,13 @@ describe('JulesWebhookHandler', () => {
         timestamp: new Date().toISOString(),
       };
 
-      db.julesSession.findUnique.mockResolvedValue(mockJulesSession);
-      db.task.findUnique.mockResolvedValue(mockTask);
+      (db.jules.findSessionByJulesSessionId as jest.Mock).mockResolvedValue(mockJulesSession);
+      (db.tasks.findTaskById as jest.Mock).mockResolvedValue(mockTask);
 
       await handler.handleWebhook(payload, encodedContext);
 
-      expect(db.julesSession.update).toHaveBeenCalledWith({
-        where: { julesSessionId: 'test-session' },
-        data: { status: 'FAILED' },
+      expect(db.jules.updateSessionByJulesSessionId).toHaveBeenCalledWith('test-session', {
+        status: 'FAILED',
       });
       expect(redis.publish).toHaveBeenCalled();
       expect(usageTracker.logUsageEnd).toHaveBeenCalled();

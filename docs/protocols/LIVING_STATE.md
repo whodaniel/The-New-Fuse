@@ -3,10 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-
-**Current Directive:** Do not merge PR 264 until operator signoff after a green
-official root turbo build on a machine with >=8Gi free.
-
+**Current Directive:** Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-26 Antigravity CLI (AGY) Onboarding, Protocol Authority
@@ -1111,6 +1108,8 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-29T22:08:28.315Z handoff `14e23d83-c540-4152-bdf9-1bd554112c4e` head `5e7e2c894feb` project `TNF-SESSION` — Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers
 
 - 2026-08-29T04:47:45.751Z handoff `4283b14d-8b02-4347-adc8-d5f26a4b01fd` head
   `26be2886c104` project `TNF-SESSION` — Do not merge PR 264 until operator

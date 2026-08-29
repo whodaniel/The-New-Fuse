@@ -5,6 +5,7 @@ export * from './envelope.js';
 export * from './extension-manifest.js';
 export * from './handoff.js';
 export * from './identity.js';
+export * from './jules.js';
 export * from './navigation.js';
 export * from './resource.js';
 export * from './sgp.js';
