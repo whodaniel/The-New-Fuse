@@ -1,6 +1,7 @@
 import { Brain, Network, Radio } from 'lucide-react';
 import React, { useState } from 'react';
 import PageShell from '../components/layout/PageShell';
+import { LOCAL_SEMANTIC_PATHS, localStaticSurfaceUrl } from '../config/localSurfaces';
 import { resolveWebAppBaseUrl, webSurfaceUrl } from '../config/webSurfaces';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
@@ -82,6 +83,27 @@ const KnowledgeHub: React.FC = () => {
       subtitle={`Agent topology · ${population.topologyNodes} graph nodes · ${describePopulation(population)} · ${population.channels} relay clusters · relay ${synergy.relayRegistered ? 'registered' : synergy.relayConnected ? 'connected' : 'offline'}`}
       actions={
         <>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => void openExternal(localStaticSurfaceUrl(LOCAL_SEMANTIC_PATHS.hub))}
+          >
+            Graph hub
+          </button>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => void openExternal(localStaticSurfaceUrl(LOCAL_SEMANTIC_PATHS.explorer))}
+          >
+            Explorer
+          </button>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => void openExternal(localStaticSurfaceUrl(LOCAL_SEMANTIC_PATHS.wordcount))}
+          >
+            Word freq
+          </button>
           <button
             type="button"
             className="secondary-button"

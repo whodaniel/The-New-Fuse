@@ -128,4 +128,28 @@ describe('Visualizations', () => {
     );
     expect(nativeSurfaceLink).toBeTruthy();
   }, 15000);
+
+  test('registers semantic hub, graph explorer, and wordcount report as static surfaces', () => {
+    render(
+      <MemoryRouter>
+        <Visualizations />
+      </MemoryRouter>
+    );
+
+    const decodeHref = (name: RegExp, src: string) => {
+      const candidates = screen.getAllByRole('link', { name });
+      const link = candidates.find((el) =>
+        (el.getAttribute('href') || '').includes('/visualizations/surface?')
+      );
+      expect(link).toBeTruthy();
+      expect(decodeURIComponent(link?.getAttribute('href') || '')).toContain(`src=${src}`);
+    };
+
+    decodeHref(
+      /unified semantic graph explorer/i,
+      '/visualizations/semantic/unified_graph_explorer.html'
+    );
+    decodeHref(/semantic hub/i, '/visualizations/semantic/index.html');
+    decodeHref(/word \/ term frequency report/i, '/visualizations/semantic/wordcount_report.html');
+  }, 15000);
 });

@@ -23,19 +23,3 @@ term→file `occurs_in` edges.
   cross_links)
 - See the `tnf-semantic-graph` skill for node namespaces, invariants, and
   rebuild rules.
-
-## Local live surfaces (`tnf boot`)
-
-`tnf boot` / `tnf local-ui` publish SYSTEM artifacts into
-`apps/frontend/public/visualizations/semantic/` (never `--recount`) and serve
-them from the desktop UI:
-
-- Hub: http://localhost:1420/visualizations/semantic/index.html
-- Explorer:
-  http://localhost:1420/visualizations/semantic/unified_graph_explorer.html
-- Word frequency:
-  http://localhost:1420/visualizations/semantic/wordcount_report.html
-
-Frontend Vite `:5173` and browser-control `:1421` start when those ports are
-free. Skip with `TNF_SKIP_LIVE_SURFACES=1`. Manual publish:
-`pnpm tnf:semantic:publish`.

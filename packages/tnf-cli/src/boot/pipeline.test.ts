@@ -21,11 +21,18 @@ describe('boot pipeline plan', () => {
 
     assert.equal(
       plan.length,
-      21,
-      'expected 21 boot steps including harness-context + voice-kws + continuity + attach'
+      22,
+      'expected 22 boot steps including harness-context + voice-kws + live-surfaces + continuity + attach'
     );
     assert.ok(byId['harness-context'], 'harness-context step required');
     assert.ok(byId['voice-kws-always-on'], 'voice-kws-always-on step required');
+    assert.ok(byId['local-live-surfaces'], 'local-live-surfaces step required');
+    assert.deepEqual(byId['local-live-surfaces'].launches, [
+      'node scripts/local-ui/ensure-local-live-surfaces.cjs',
+      'python3 scripts/semantic-graph/build_all.py --publish-only',
+      'frontend-app Vite (:5173)',
+      'browser-control (:1421)',
+    ]);
 
     assert.match(
       byId['turn-zero-onboard'].launches[0],

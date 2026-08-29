@@ -6,6 +6,10 @@ import compression from 'vite-plugin-compression';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { safariMontereyCompatPlugin } from './vite-plugins/safariMontereyCompat';
 import { tnfBrowserBridgePlugin } from './vite-plugins/tnfBrowserBridge';
+import {
+  defaultVisualizationsRoot,
+  tnfStaticSurfacesPlugin,
+} from './vite-plugins/tnfStaticSurfaces';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -38,9 +42,10 @@ export default defineConfig(({ mode }) => {
     },
   };
 
-  // Keep in sync with package.json `dev` (`--host 127.0.0.1 --port 1420`).
+  // Keep in sync with package.json `dev` (`--host 127.0.0.1 --port 1420 --strictPort`).
   // Do NOT default HMR to localhost:3000 — that opens a second WS listener on
   // [::1]:3000 and collides with relay-core (supervisor then sees HTTP 426).
+  // strictPort: if 1420 is taken, fail instead of silently binding 1421 (browser-control).
   const defaultDevHost = '127.0.0.1';
   const defaultDevPort = 1420;
   const serverHost = env.VITE_HOST || env.HOST || defaultDevHost;
@@ -58,6 +63,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      tnfStaticSurfacesPlugin(),
       tnfBrowserBridgePlugin(),
       safariMontereyCompatPlugin(),
       tsconfigPaths({
@@ -384,8 +390,11 @@ export default defineConfig(({ mode }) => {
     server: {
       host: serverHost,
       port: serverPort,
-      strictPort: false,
+      strictPort: true,
       hmr: getHMRConfig(),
+      fs: {
+        allow: [path.resolve(__dirname), defaultVisualizationsRoot()],
+      },
       // Allow production domain for CloudRuntime deployment
       allowedHosts: ['thenewfuse.com', 'www.thenewfuse.com', '.thenewfuse.com', 'localhost'],
       proxy: isDev
@@ -428,6 +437,7 @@ export default defineConfig(({ mode }) => {
             !req.url.startsWith('/api') &&
             !req.url.startsWith('/ws') &&
             !req.url.startsWith('/__tnf-browser') &&
+            !req.url.startsWith('/visualizations') &&
             !req.url.includes('.') &&
             req.method === 'GET'
           ) {
@@ -445,7 +455,7 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       environment: 'jsdom',
-      include: ['src/**/*.{test,spec}.{ts,tsx}'],
+      include: ['src/**/*.{test,spec}.{ts,tsx}', 'vite-plugins/**/*.{test,spec}.{ts,tsx}'],
     },
   };
 });

@@ -1,0 +1,159 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "dae30460-c799-4288-9cf4-9f006713ef27",
+  "created_at": "2026-08-29T13:39:47.891Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "feat/boot-local-live-surfaces-20260829",
+  "head_sha": "dc777f10cba7bface6578369b301e100356a4ba6",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Wired tnf boot / tnf local-ui to publish already-built semantic artifacts and serve them live at http://localhost:1420/visualizations/ without a sidecar python http.server.",
+    "Started frontend Vite :5173 and browser-control :1421 when those ports are free; Knowledge Hub now links Graph hub / Explorer / Word freq.",
+    "Hardened semantic publish for Python 3.9 (macOS python3), skip-if-missing concept KG / wordcount sources, and rewrite published hub/explorer hrefs so they resolve under the frontend public tree."
+  ],
+  "changed_paths": [
+    "apps/frontend/public/visualizations/semantic/README.md",
+    "apps/frontend/public/visualizations/semantic/index.html",
+    "apps/frontend/public/visualizations/semantic/unified_graph_explorer.html",
+    "apps/frontend/public/visualizations/semantic/unified_graph_stats.json",
+    "apps/frontend/src/pages/Visualizations.tsx",
+    "apps/frontend/src/pages/__tests__/Visualizations.test.tsx",
+    "apps/tauri-desktop/package.json",
+    "apps/tauri-desktop/src/config/localSurfaces.test.ts",
+    "apps/tauri-desktop/src/config/localSurfaces.ts",
+    "apps/tauri-desktop/src/pages/KnowledgeHub.tsx",
+    "apps/tauri-desktop/vite-plugins/tnfStaticSurfaces.test.ts",
+    "apps/tauri-desktop/vite-plugins/tnfStaticSurfaces.ts",
+    "apps/tauri-desktop/vite.config.ts",
+    "concordance_results/README.md",
+    "concordance_results/index.html",
+    "concordance_results/unified_graph_explorer.html",
+    "concordance_results/unified_graph_stats.json",
+    "docs/protocols/reports/session_handoff_boot-local-live-surfaces-20260829.json",
+    "docs/protocols/reports/session_handoff_boot-local-live-surfaces-20260829.md",
+    "package.json",
+    "packages/tnf-cli/src/boot/pipeline.test.ts",
+    "packages/tnf-cli/src/boot/pipeline.ts",
+    "scripts/local-ui/ensure-local-live-surfaces.cjs",
+    "scripts/local-ui/tnf-forefront-boot.cjs",
+    "scripts/local-ui/tnf-local-ui-boot.cjs",
+    "scripts/semantic-graph/build_all.py",
+    "scripts/semantic-graph/build_unified_graph.py",
+    "scripts/semantic-graph/common.py",
+    "scripts/tnf-ports.cjs"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "Verified locally: :1420 hub/explorer/wordcount HTTP 200 with correct titles; :5173 semantic hub 200; :1421 /panel/health JSON. Pipeline and static-surface unit tests passed."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Confirm origin/feat/boot-local-live-surfaces-20260829 is pushed",
+      "After merge, run tnf boot (or tnf local-ui) and open http://localhost:1420/visualizations/semantic/index.html",
+      "Leave TNF_SKIP_LIVE_SURFACES=1 if a host must boot without extra Vite processes"
+    ]
+  },
+  "next_actions": [
+    "Merge feat/boot-local-live-surfaces-20260829 to main when review is complete.",
+    "Do not commit generated llm-intel, marketplace catalog, api audit logs, or the broken tnf-onboard workspace-tier injection still in the working tree."
+  ],
+  "artifacts": {
+    "commits": ["dc777f10cba7bface6578369b301e100356a4ba6"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "corporate",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": ["local-ui", "semantic-graph"],
+    "staffed_by": ["cursor-grok"]
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:38.051Z",
+      "value": "73cea241cca190faa98a2a5ea5bfdec920faaff2"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:45.037Z",
+      "value": "dcfb3f7598c148ec362678bc4ce0834b1dca0e90"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:49.582Z",
+      "value": "bf45be8893c3453f35a86509e9102fb735cdbaa8"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:52.712Z",
+      "value": "[161]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:54.422Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:59.780Z",
+      "value": "LEAKED:packages/relay-core/src/master-clock.ts\nLEAKED:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:00.764Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:01.494Z",
+      "value": "7cd0046243a9ddea5b165094b0af9ae8676c3e4f\n2026-08-13"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:06.916Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=b4511fcacea76ed009a430927be7842683c89d7d\nbranch=sentinel-fix-marketplace-cmd-injection-11879217410415317362\ndirty=86"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:08.906Z",
+      "value": "REDIS_UNREACHABLE\nRELAY_OK"
+    }
+  ]
+}

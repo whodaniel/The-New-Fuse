@@ -1,6 +1,6 @@
 # TNF Staff Master Calendar and Master Schedule
 
-Generated: 2026-08-26T11:20:18.533Z
+Generated: 2026-08-29T13:40:35.928Z
 
 ## Summary
 
@@ -15,26 +15,26 @@ Generated: 2026-08-26T11:20:18.533Z
 
 | Schedule ID                        | Scope            | Category                  | Owner                           | Cadence         | TZ  | Enabled | Runtime  | Lock   | Subroutine                                                                  |
 | ---------------------------------- | ---------------- | ------------------------- | ------------------------------- | --------------- | --- | ------- | -------- | ------ | --------------------------------------------------------------------------- |
-| tnf-swarm-stress-test              | system_framework | self_improvement_core     | tnf-swarm-supervisor            | _/10 _ \* \* \* | UTC | yes     | running  | open   | scripts/orchestrator/swarm-stress-test.sh                                   |
-| tnf-twip-macro-board-refresh       | system_framework | observability             | twip-orchestration-bridge       | _/10 _ \* \* \* | UTC | yes     | deferred | open   | scripts/protocols/twip-macro-board.cjs                                      |
-| tnf-master-clock-super-cycle       | system_framework | orchestration_gate        | master-clock                    | _/15 _ \* \* \* | UTC | yes     | deferred | locked | scripts/protocols/synthetic-federation-gate-check.cjs                       |
-| tnf-openclaw-runtime-sync          | system_framework | observability             | master-clock                    | _/15 _ \* \* \* | UTC | yes     | deferred | open   | scripts/openclaw/tnf-openclaw-control.cjs                                   |
+| tnf-swarm-stress-test              | system_framework | self_improvement_core     | tnf-swarm-supervisor            | _/10 _ \* \* \* | UTC | yes     | healthy  | open   | scripts/orchestrator/swarm-stress-test.sh                                   |
+| tnf-twip-macro-board-refresh       | system_framework | observability             | twip-orchestration-bridge       | _/10 _ \* \* \* | UTC | yes     | healthy  | open   | scripts/protocols/twip-macro-board.cjs                                      |
+| tnf-master-clock-super-cycle       | system_framework | orchestration_gate        | master-clock                    | _/15 _ \* \* \* | UTC | yes     | error    | locked | scripts/protocols/synthetic-federation-gate-check.cjs                       |
+| tnf-openclaw-runtime-sync          | system_framework | observability             | master-clock                    | _/15 _ \* \* \* | UTC | yes     | healthy  | open   | scripts/openclaw/tnf-openclaw-control.cjs                                   |
 | tnf-marketplace-curation-cycle     | system_framework | system_framework          | tnf-marketplace-curator         | _/30 _ \* \* \* | UTC | yes     | healthy  | open   | scripts/orchestrator/marketplace-curation-agent.sh                          |
-| tnf-process-health-watchdog        | system_framework | observability             | master-clock                    | _/30 _ \* \* \* | UTC | yes     | deferred | open   | scripts/protocols/verify-process-health.cjs                                 |
+| tnf-process-health-watchdog        | system_framework | observability             | master-clock                    | _/30 _ \* \* \* | UTC | yes     | healthy  | open   | scripts/protocols/verify-process-health.cjs                                 |
 | tnf-terminal-awareness-reminder    | system_framework | system_terminal_awareness | tnf-agent-director              | _/30 _ \* \* \* | UTC | yes     | error    | open   | scripts/verify_frontload_state.sh                                           |
 | tnf-auto-git-push                  | system_framework | system_framework          | tnf-agent-director              | 0 \* \* \* \*   | UTC | yes     | healthy  | open   | scripts/orchestrator/auto-git-push.sh                                       |
-| tnf-growth-blocker-audit           | system_framework | self_improvement_core     | tnf-growth-blocker-auditor      | 0 _/4 _ \* \*   | UTC | yes     | unknown  | open   | .skills/tnf-growth-blocker-auditor/scripts/run_growth_blocker_audit.cjs     |
-| tnf-llm-arena-intel-collector      | system_framework | observability             | tnf-llm-intel-collector         | 0 _/4 _ \* \*   | UTC | yes     | unknown  | open   | scripts/llm-intel/llm-arena-intel-collector.cjs                             |
-| tnf-llm-verified-fleet-cycle       | system_framework | self_improvement_core     | tnf-llm-intel-optimizer         | 0 _/6 _ \* \*   | UTC | yes     | deferred | open   | scripts/llm-intel/tnf-llm-verified-fleet-cycle.cjs                          |
+| tnf-growth-blocker-audit           | system_framework | self_improvement_core     | tnf-growth-blocker-auditor      | 0 _/4 _ \* \*   | UTC | yes     | healthy  | open   | .skills/tnf-growth-blocker-auditor/scripts/run_growth_blocker_audit.cjs     |
+| tnf-llm-arena-intel-collector      | system_framework | observability             | tnf-llm-intel-collector         | 0 _/4 _ \* \*   | UTC | yes     | healthy  | open   | scripts/llm-intel/llm-arena-intel-collector.cjs                             |
+| tnf-llm-verified-fleet-cycle       | system_framework | self_improvement_core     | tnf-llm-intel-optimizer         | 0 _/6 _ \* \*   | UTC | yes     | healthy  | open   | scripts/llm-intel/tnf-llm-verified-fleet-cycle.cjs                          |
 | tnf-self-improvement-scorecard     | system_framework | self_improvement_core     | tnf-stack-self-improvement-loop | 0 _/6 _ \* \*   | UTC | yes     | deferred | locked | scripts/validate-protocol-schemas.cjs                                       |
-| tnf-staff-review-cycle             | system_framework | staff_review              | tnf-staff-review-agent          | 15 _/2 _ \* \*  | UTC | yes     | deferred | open   | .skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs           |
+| tnf-staff-review-cycle             | system_framework | staff_review              | tnf-staff-review-agent          | 15 _/2 _ \* \*  | UTC | yes     | healthy  | open   | .skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs           |
 | tnf-staff-role-call-and-scheduling | system_framework | staff_coordination        | tnf-staff-scheduling-agent      | _/20 _ \* \* \* | UTC | yes     | running  | open   | scripts/protocols/staffops-role-call.cjs                                    |
-| tnf-staffing-director-cycle        | system_framework | staff_architecture        | tnf-staffing-director-agent     | 30 _/6 _ \* \*  | UTC | yes     | unknown  | open   | .skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs |
+| tnf-staffing-director-cycle        | system_framework | staff_architecture        | tnf-staffing-director-agent     | 30 _/6 _ \* \*  | UTC | yes     | healthy  | open   | .skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs |
 | tnf-director-resonance-cycle       | system_framework | orchestration_gate        | tnf-agent-director              | manual          | UTC | yes     | unknown  | open   | n/a                                                                         |
-| tnf-llm-ranking-optimizer          | system_framework | self_improvement_core     | tnf-llm-intel-optimizer         | 30 _/4 _ \* \*  | UTC | yes     | unknown  | open   | scripts/llm-intel/llm-ranking-optimizer.cjs                                 |
+| tnf-llm-ranking-optimizer          | system_framework | self_improvement_core     | tnf-llm-intel-optimizer         | 30 _/4 _ \* \*  | UTC | yes     | healthy  | open   | scripts/llm-intel/llm-ranking-optimizer.cjs                                 |
 | tnf-subdirector-codegen-worker     | system_framework | orchestration_gate        | tnf-subdirector-codegen         | manual          | UTC | yes     | unknown  | open   | scripts/agents/subdirector-codegen-worker-cycle.sh                          |
 | tnf-subdirector-infra-worker       | system_framework | orchestration_gate        | tnf-subdirector-infra           | manual          | UTC | yes     | unknown  | open   | scripts/agents/subdirector-infra-worker-cycle.sh                            |
-| tnf-terminal-heartbeat-pulse       | system_framework | system_terminal_awareness | tnf-master-clock                | \* \* \* \* \*  | UTC | yes     | deferred | open   | scripts/runtime/terminal-heartbeat-pulse.cjs                                |
+| tnf-terminal-heartbeat-pulse       | system_framework | system_terminal_awareness | tnf-master-clock                | \* \* \* \* \*  | UTC | yes     | healthy  | open   | scripts/runtime/terminal-heartbeat-pulse.cjs                                |
 
 ## Interrelationships
 
@@ -103,8 +103,8 @@ Generated: 2026-08-26T11:20:18.533Z
 
 ## Potential Growth-Limiting Constraints
 
-- tnf-master-clock-super-cycle: system-lock-review (enabled=true, lock=true,
-  runtime=deferred)
+- tnf-master-clock-super-cycle: runtime-error (enabled=true, lock=true,
+  runtime=error)
 - tnf-terminal-awareness-reminder: runtime-error (enabled=true, lock=false,
   runtime=error)
 - tnf-self-improvement-scorecard: system-lock-review (enabled=true, lock=true,

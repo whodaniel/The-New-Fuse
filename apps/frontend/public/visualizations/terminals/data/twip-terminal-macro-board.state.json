@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T11:20:41.969Z",
+  "generatedAt": "2026-08-29T13:42:35.731Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,26 +12,34 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-08-26T11:20:40.458Z",
-    "totalTerminals": 5,
-    "returned": 5,
-    "source": "ps+tmux+capture+terminal-history",
+    "lastScanAt": "2026-08-29T13:41:12.080Z",
+    "totalTerminals": 7,
+    "returned": 7,
+    "source": "ps+tmux+capture",
     "tenant_id": "tnf-local",
     "include_commands": true,
     "include_content": true,
     "content_max_lines": 80,
     "content_max_chars": 8000,
-    "terminal_history_tabs": 5,
-    "content_excerpts_captured": 5
+    "terminal_history_tabs": 0,
+    "content_excerpts_captured": 0
   },
   "summary": {
-    "totalTerminals": 5,
-    "activeTerminals": 1,
-    "idleTerminals": 4,
-    "activeRatio": 0.2,
+    "totalTerminals": 7,
+    "activeTerminals": 7,
+    "idleTerminals": 0,
+    "activeRatio": 1,
     "topWorkExecutables": [
       {
         "name": "node",
+        "count": 4
+      },
+      {
+        "name": "pi",
+        "count": 2
+      },
+      {
+        "name": "cursor-agent",
         "count": 1
       }
     ],
@@ -40,23 +48,119 @@
         "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
         "tty": "/dev/ttys000",
         "paneId": "tty:ttys000",
-        "shellPid": 4875,
-        "processCount": 16,
+        "shellPid": 69690,
+        "processCount": 5,
         "multiplexer": "none",
         "workExecutables": [
           "node"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "➜  Local:   http://127.0.0.1:1420/ | ➜  press h + enter to show help",
+        "contextPreview": "",
         "contextRedactions": 0,
-        "hasContext": true
+        "hasContext": false
+      },
+      {
+        "twid": "405df1e6-09bc-5398-ba8f-82d61f26ef39",
+        "tty": "/dev/ttys002",
+        "paneId": "tty:ttys002",
+        "shellPid": 89668,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "pi"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "",
+        "contextRedactions": 0,
+        "hasContext": false
+      },
+      {
+        "twid": "f5ae7e85-9524-52e2-98b9-09284e8196f2",
+        "tty": "/dev/ttys005",
+        "paneId": "tty:ttys005",
+        "shellPid": 323,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "cursor-agent"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "",
+        "contextRedactions": 0,
+        "hasContext": false
+      },
+      {
+        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
+        "tty": "/dev/ttys006",
+        "paneId": "tty:ttys006",
+        "shellPid": 88163,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "pi"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "",
+        "contextRedactions": 0,
+        "hasContext": false
+      },
+      {
+        "twid": "57685c40-7a4c-517a-aced-6ebcccb6d734",
+        "tty": "/dev/ttys007",
+        "paneId": "tty:ttys007",
+        "shellPid": 94631,
+        "processCount": 6,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "",
+        "contextRedactions": 0,
+        "hasContext": false
+      },
+      {
+        "twid": "a7140a5b-332c-555d-8107-90d358e8e436",
+        "tty": "/dev/ttys010",
+        "paneId": "tty:ttys010",
+        "shellPid": 13370,
+        "processCount": 6,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "",
+        "contextRedactions": 0,
+        "hasContext": false
+      },
+      {
+        "twid": "47c2cfd3-6d97-5790-bbae-2f1124204c39",
+        "tty": "/dev/ttys011",
+        "paneId": "tty:ttys011",
+        "shellPid": 90166,
+        "processCount": 7,
+        "multiplexer": "none",
+        "workExecutables": [
+          "node"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "",
+        "contextRedactions": 0,
+        "hasContext": false
       }
     ],
     "safetySignals": {
       "approvalsBypassTerminals": 0,
       "remoteMcpTerminals": 0,
-      "contextCapturedTerminals": 1,
+      "contextCapturedTerminals": 0,
       "contextRedactions": 0
     }
   },
