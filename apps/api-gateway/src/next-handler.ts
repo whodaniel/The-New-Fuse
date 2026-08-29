@@ -1,13 +1,9 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
 // Static page renderer for gateway fallback.
 // Previously attempted Next.js but it caused:
 // 1. Symlink issues (pages/ pointed outside repo, Turbopack rejects)
 // 2. OOM during build (monorepo too large for Next.js turbopack)
 // 3. Dev server conflicts when next() spawns its own server
 // This simple static handler serves the three demo pages directly.
-const PAGES_DIR = path.resolve(__dirname, '..', '..', '..', 'pages');
 
 // Simple HTML templates for each page
 const PAGE_TEMPLATES: Record<string, string> = {
@@ -41,22 +37,13 @@ const PAGE_TEMPLATES: Record<string, string> = {
  * Returns a handler for serving static pages.
  * Serves HTML for known routes, 404 for others.
  *
- * Call this ONCE at bootstrap, not per request — it stats the pages directory.
+ * Call this ONCE at bootstrap, not per request.
  * The caller must register the resulting handler after the route table, so
  * routes the gateway owns ('/', '/health', the proxy prefixes) are matched
  * before this ever sees them. It deliberately keeps no exemption list: an
  * allowlist of "routes I must not swallow" silently rots as routes are added.
  */
 export async function ensureNextHandler(): Promise<(req: any, res: any) => void> {
-  // Log what we're serving
-  const pages = fs.existsSync(PAGES_DIR)
-    ? fs.readdirSync(PAGES_DIR).filter((f) => f.endsWith('.tsx') || f === 'index.tsx')
-    : [];
-  console.log(
-    `[next-handler] Serving ${pages.length} static pages from ${PAGES_DIR}:`,
-    pages.join(', ')
-  );
-
   return (req: any, res: any) => {
     const url = req.url || req.path || '';
     const cleanUrl = url.split('?')[0];
