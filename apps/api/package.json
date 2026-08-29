@@ -27,7 +27,7 @@
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/infrastructure": "workspace:*",
-    "@the-new-fuse/jules-skill": "workspace:*",
+    "@the-new-fuse/coding-agent-delegation": "workspace:*",
     "@the-new-fuse/llm-catalog": "workspace:*",
     "@the-new-fuse/n8n-workflows": "workspace:*",
     "@the-new-fuse/port-management": "workspace:*",

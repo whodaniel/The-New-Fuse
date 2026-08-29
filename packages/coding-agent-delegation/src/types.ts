@@ -109,3 +109,23 @@ export interface BatchSubmissionResult {
   sessions: JulesSession[];
   errors: Array<{ task: string; error: string }>;
 }
+
+/**
+ * Provider identifier for a remote coding-agent adapter.
+ * 'jules' is the first registered provider; extend this union as new
+ * adapters (e.g. other remote agent CLIs) are integrated.
+ */
+export type CodingAgentProviderId = 'jules';
+
+/**
+ * Provider-agnostic surface for remote coding-agent delegation.
+ * Implementations wrap a specific provider CLI/API (e.g. JulesClient wraps
+ * the `jules` CLI). The MCP tool surface in apps/api dispatches through
+ * this interface so new providers can be added without changing tool names.
+ */
+export interface RemoteCodingAgentClient {
+  createSession(options: CreateSessionOptions): Promise<JulesSession>;
+  listSessions(options?: ListSessionsOptions): Promise<JulesSession[]>;
+  getSession(sessionId: string): Promise<JulesSession | null>;
+  pullSession(options: PullSessionOptions): Promise<JulesCommandResult>;
+}

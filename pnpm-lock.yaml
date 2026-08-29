@@ -339,6 +339,9 @@ importers:
       '@the-new-fuse/api-types':
         specifier: workspace:*
         version: link:../../packages/api-types
+      '@the-new-fuse/coding-agent-delegation':
+        specifier: workspace:*
+        version: link:../../packages/coding-agent-delegation
       '@the-new-fuse/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -348,9 +351,6 @@ importers:
       '@the-new-fuse/infrastructure':
         specifier: workspace:*
         version: link:../../packages/infrastructure
-      '@the-new-fuse/jules-skill':
-        specifier: workspace:*
-        version: link:../../packages/jules-skill
       '@the-new-fuse/llm-catalog':
         specifier: workspace:*
         version: link:../../packages/llm-catalog
@@ -2794,9 +2794,32 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2
 
-  packages/claw-skills: {}
-
   packages/client: {}
+
+  packages/coding-agent-delegation:
+    dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.26.0
+        version: 1.29.0(zod@3.25.76)
+      execa:
+        specifier: ^9.6.1
+        version: 9.6.1
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^24.8.1
+        version: 24.12.3
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.1.3
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.15.33(@swc/helpers@0.5.21))(@types/node@24.12.3)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   packages/common:
     devDependencies:
@@ -3540,134 +3563,6 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2
 
-  packages/feature-suggestions:
-    dependencies:
-      '@hello-pangea/dnd':
-        specifier: 18.0.1
-        version: 18.0.1(@types/react@19.2.14)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@the-new-fuse/feature-tracker':
-        specifier: workspace:*
-        version: link:../feature-tracker
-      '@the-new-fuse/types':
-        specifier: workspace:*
-        version: link:../types
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      react:
-        specifier: ^19.2.5
-        version: 19.2.7
-      react-dom:
-        specifier: ^19.2.5
-        version: 19.2.7(react@19.2.7)
-    devDependencies:
-      '@testing-library/jest-dom':
-        specifier: ^6.9.1
-        version: 6.9.1
-      '@testing-library/react':
-        specifier: ^16.3.0
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@types/jest':
-        specifier: ^30.0.0
-        version: 30.0.0
-      '@types/react':
-        specifier: ^19.0.0
-        version: 19.2.14
-      identity-obj-proxy:
-        specifier: ^3.0.0
-        version: 3.0.0
-      jest:
-        specifier: ^30.3.0
-        version: 30.3.0(@types/node@24.12.3)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.27.7))
-      jest-environment-jsdom:
-        specifier: ^30.3.0
-        version: 30.4.0(bufferutil@4.1.0)(canvas@3.2.3)(utf-8-validate@6.0.6)
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.1.3
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@7.29.0)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.0))(esbuild@0.27.7)(jest-util@30.4.1)(jest@30.3.0(@types/node@24.12.3)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.27.7)))(typescript@6.0.2)
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.2
-
-  packages/feature-tracker:
-    dependencies:
-      '@emotion/react':
-        specifier: ^11.14.0
-        version: 11.14.0(@types/react@19.2.14)(react@19.2.7)
-      '@emotion/styled':
-        specifier: ^11.14.1
-        version: 11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.7))(@types/react@19.2.14)(react@19.2.7)
-      '@nestjs/common':
-        specifier: ^11.1.16
-        version: 11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      '@the-new-fuse/core':
-        specifier: workspace:*
-        version: link:../core
-      '@the-new-fuse/types':
-        specifier: workspace:*
-        version: link:../types
-      '@the-new-fuse/utils':
-        specifier: workspace:*
-        version: link:../utils
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      framer-motion:
-        specifier: ^12.23.24
-        version: 12.38.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      react:
-        specifier: ^19.2.5
-        version: 19.2.7
-      react-dom:
-        specifier: ^19.2.5
-        version: 19.2.7(react@19.2.7)
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
-      rxjs:
-        specifier: ^7.8.2
-        version: 7.8.2
-    devDependencies:
-      '@types/jest':
-        specifier: ^30.0.0
-        version: 30.0.0
-      '@types/react':
-        specifier: ^19.0.0
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.14)
-      '@types/react-router-dom':
-        specifier: 5.3.3
-        version: 5.3.3
-      '@types/selenium-webdriver':
-        specifier: ^4.35.1
-        version: 4.35.5
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^8.57.1
-        version: 8.59.2(@typescript-eslint/parser@8.59.2(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.2))(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.2)
-      '@typescript-eslint/parser':
-        specifier: ^8.57.1
-        version: 8.59.2(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.2)
-      eslint:
-        specifier: ^9.38.0
-        version: 9.39.4(jiti@2.7.0)
-      jest:
-        specifier: ^30.3.0
-        version: 30.3.0(@types/node@24.12.3)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.27.7))
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.1.3
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@7.29.0)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.0))(esbuild@0.27.7)(jest-util@30.4.1)(jest@30.3.0(@types/node@24.12.3)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.27.7)))(typescript@6.0.2)
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.2
-
   packages/google-sheets-mcp-server:
     dependencies:
       '@the-new-fuse/mcp-core':
@@ -3855,31 +3750,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.0)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.0))(esbuild@0.27.7)(jest-util@30.4.1)(jest@30.3.0(@types/node@24.12.3)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.27.7)))(typescript@6.0.2)
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.2
-
-  packages/jules-skill:
-    dependencies:
-      '@modelcontextprotocol/sdk':
-        specifier: ^1.26.0
-        version: 1.29.0(zod@3.25.76)
-      execa:
-        specifier: ^9.6.1
-        version: 9.6.1
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.76
-    devDependencies:
-      '@types/node':
-        specifier: ^24.8.1
-        version: 24.12.3
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.1.3
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.15.33(@swc/helpers@0.5.21))(@types/node@24.12.3)(typescript@6.0.2)
       typescript:
         specifier: ^6.0.2
         version: 6.0.2

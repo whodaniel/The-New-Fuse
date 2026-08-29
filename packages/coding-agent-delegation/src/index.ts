@@ -1,11 +1,11 @@
 /**
- * @the-new-fuse/jules-skill
- * Jules CLI integration skill for AI agent delegation
+ * @the-new-fuse/coding-agent-delegation
+ * Remote coding-agent delegation for TNF agents (Google Jules as first provider)
  *
  * This package provides:
- * 1. JulesClient - Programmatic interface to Jules CLI
- * 2. MCP Server - Model Context Protocol server for AI agent tools
- * 3. Types - TypeScript definitions for Jules operations
+ * 1. JulesClient - Programmatic interface to the Jules CLI (a RemoteCodingAgentClient impl)
+ * 2. MCP Server - Standalone Model Context Protocol server for AI agent tools
+ * 3. Types - TypeScript definitions incl. the provider-agnostic RemoteCodingAgentClient surface
  */
 
 // Export types

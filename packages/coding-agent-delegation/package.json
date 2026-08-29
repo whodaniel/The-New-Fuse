@@ -1,10 +1,10 @@
 {
-  "name": "@the-new-fuse/jules-skill",
+  "name": "@the-new-fuse/coding-agent-delegation",
   "files": [
     "dist"
   ],
   "version": "0.1.0",
-  "description": "Jules CLI integration skill for AI agent delegation - Enables agents to delegate coding tasks to Google Jules",
+  "description": "Remote coding-agent delegation for TNF agents - programmatic and MCP interfaces to delegate coding tasks to autonomous agents (Google Jules as the first provider)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "private": true,
@@ -29,6 +29,7 @@
     "typescript": "^6.0.2"
   },
   "keywords": [
+    "remote-coding-agent",
     "jules",
     "google",
     "ai-agent",
