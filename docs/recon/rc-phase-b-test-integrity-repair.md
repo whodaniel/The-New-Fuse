@@ -85,9 +85,11 @@ package has the broken pattern (`sync-core` uses a single token — safe).
 ### Final verification battery (3 consecutive runs, post-fix)
 
 - `pnpm test`: **exit 0, 30/30 suites, 719/719 tests, zero force-exited workers,
-  zero MaxListeners warnings** — 3/3 runs.
+  zero MaxListeners warnings** — 3/3 runs. (This battery predates the T3 guard
+  tests; the canonical total became 722 after they were added.)
 - `pnpm type-check`: exit 0.
-- Agent suite: 15/15, natural exit 0.
+- Agent suite: 13/13 at this point (15/15 after the T3 resolver guard), natural
+  exit 0.
 - No `--forceExit` anywhere; the RC `tnf-rc-gate` bandaid remains untouched.
 
 ### Residual observations (REPORTED)
@@ -111,7 +113,10 @@ package has the broken pattern (`sync-core` uses a single token — safe).
   CircuitBreaker/RBACManager `stop()` interval cleanup + idempotency
   (clearInterval spy) and ConnectionManager `shutdown()` signal-handler removal
   (listenerCount deltas).
-- Both suites pass; agent full suite 15/15; mcp-core type-check 0.
+- Both suites pass; agent full suite 15/15 (13 pre-guard + 2 resolver-guard
+  tests); mcp-core type-check 0.
+- Note on counts: the 3 teardown-ownership tests raise the canonical mcp-core
+  total from 719 (T2 battery) to 722. See "Final verification closure" below.
 
 ## T4 — Config drift report (no bulk edits; recorded, not fixed)
 
@@ -124,6 +129,69 @@ package has the broken pattern (`sync-core` uses a single token — safe).
 | 5   | Unquoted pipe in jest CLI flags breaks `sh` (mcp-core, fixed in T2); sweep shows no other affected package                                                                                                                                                                                                      | VERIFIED                                                                                   |
 | 6   | `ConnectionManager` registers `SIGTERM`/`SIGINT` handlers per instance (11+ instances → MaxListenersExceededWarning observed at base); `shutdown()` removes them, fixtures now call it; per-instance process-handler registration remains a design debt for long-running hosts                                  | VERIFIED (warnings at base); guarded by T3 test                                            |
 | 7   | Prior-session zombie jest probe (2:41 AM, main repo, `--detectOpenHandles --runInBand`) was alive during early runs — sessions must reap diagnostic jest processes or contaminate later runs                                                                                                                    | VERIFIED (`ps aux`), killed                                                                |
+
+## Final verification closure (post T3/T4, HEAD `219557365`)
+
+Two machine-recorded full runs of `pnpm test` exist at this HEAD:
+
+1. **Post-commit run, 2026-08-28 20:41 local** (preserved output
+   `/tmp/mcp-post.log`, ephemeral): 31/31 suites passed, **722 passed, 722
+   total**, zero force-exit lines, zero MaxListeners lines, log reaches
+   `Ran all test suites.` (quiet host). The prior session report's "722/722"
+   refers to this run — 722 total, all passing.
+2. **Closure run, 2026-08-29 02:35 UTC** (self-contained receipt, captured live,
+   no `--forceExit`):
+
+```
+receipt_version: 1
+command: pnpm test (packages/mcp-core)
+head_sha: 219557365b803a622d835cfed486ae078e9ec32c
+started_utc: 2026-08-29T02:35:26.000Z
+finished_utc: 2026-08-29T02:36:04.000Z
+elapsed_seconds: 38
+exit_code: 0
+force_exit_warnings: 0
+maxlisteners_warnings: 0
+shell_command_not_found_lines: 0
+natural_exit: yes
+--- jest summary ---
+Test Suites: 31 passed, 31 total
+Tests:       6 skipped, 716 passed, 722 total
+Snapshots:   0 total
+Time:        33.064 s
+```
+
+### 719 vs 722 reconciliation (REPORTED, fully explained)
+
+- 719 (T2 battery) + 3 T3 teardown-ownership guard tests = **722 canonical
+  total**. Both numbers are correct for their respective points in history;
+  neither is a contradiction.
+- The closure run shows **6 skipped, 716 passed** while the 20:41 run shows
+  **722 passed, 0 skipped**, at the same HEAD. Cause:
+  `src/error/ErrorMonitor.test.ts` gates its `describeTimingSensitive` block on
+  host load (`1-min loadavg > 2x cores`) — a deliberate pre-existing guard
+  **present at frozen base `f264e5e7d`** ("skip rather than flake"; this box
+  runs a multi-agent swarm). At closure time loadavg was 55–65 against 8 → the
+  block's own console line confirms:
+  `timing-sensitive suites skipped: 1-min load 65 > 8 (2x cores)`. A focused
+  diagnostic run of that suite reproduces exactly
+  `6 skipped, 14 passed, 20 total`.
+- The `src/performance/` suites are excluded from the canonical set by the
+  ignore pattern (path contains `performance`); their identical load-gating does
+  not affect the 722.
+- No assertion was weakened and no test was removed: totals match exactly, and
+  the skipped tests are wall-clock-timing tests by design.
+
+### Closure verification summary (VERIFIED)
+
+- Focused T3 guards: agent resolver-guard **2/2, exit 0**; mcp-core
+  teardown-ownership **3/3, exit 0, zero force-exit**.
+- Affected-package type-checks: `packages/agent` **exit 0**; `packages/mcp-core`
+  **exit 0**.
+- Full `pnpm test` at HEAD: exit 0, natural exit, 31/31 suites, 722 total (716
+  passed + 6 load-gated skips), zero force-exit, zero MaxListeners warnings.
+- `apps/frontend/src/data/codebase_map.json` remains intentionally unstaged
+  generated noise (not deleted, not reset, not committed).
 
 ## T5/T6 — Next RC candidate. PENDING (operator handoff)
 

@@ -51,3 +51,15 @@ at `docs/recon/rc-phase-b-test-integrity-repair.md`.
 
 - T5/T6: assemble the next RC candidate from the launch-train base and run the
   full Phase B matrix from a clean worktree at one immutable SHA.
+
+Update (closure): 719/722 discrepancy reconciled — 719 T2 battery + 3 T3 guards
+= 722 canonical total; closure run at HEAD 219557365: exit 0, 31/31 suites, 716
+passed + 6 load-gated skips (ErrorMonitor timing block, guard pre-existing at
+frozen base), zero force-exit/MaxListeners; focused guards 2/2 and 3/3;
+type-checks exit 0. Details in the repair evidence artifact.
+
+## Next Actions
+
+- Push branch and determine integration target from launch-train authority
+  (resource-governance RC line; do not assume main).
+- T5/T6 remain operator-handoff items (disk-constrained on this host).
