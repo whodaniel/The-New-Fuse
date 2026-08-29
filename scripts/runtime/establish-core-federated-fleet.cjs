@@ -97,23 +97,44 @@ function record(step, status, detail) {
   log(`${icon} ${step}${detail ? `: ${detail}` : ''}`);
 }
 
+function describeSpawnResult(result, timeoutMs) {
+  if (result.error) return result.error.message;
+  if (result.status === null) {
+    const sig = result.signal || 'SIGTERM';
+    return `timeout/killed (${sig}) after ${timeoutMs}ms`;
+  }
+  return `exit ${result.status}`;
+}
+
 function run(cmd, cmdArgs, opts = {}) {
   if (DRY) {
     record(opts.step || cmd, 'skip', `dry-run: ${cmd} ${(cmdArgs || []).join(' ')}`);
     return { status: 0, stdout: '', stderr: '' };
   }
+  const timeoutMs = opts.timeoutMs || 120000;
   const result = spawnSync(cmd, cmdArgs || [], {
     cwd: opts.cwd || ROOT,
     encoding: 'utf8',
     env: { ...process.env, ...(opts.env || {}) },
     stdio: opts.stdio || ['ignore', 'pipe', 'pipe'],
-    timeout: opts.timeoutMs || 120000,
+    timeout: timeoutMs,
   });
   if (result.status !== 0 && !opts.allowFail) {
     const err = (result.stderr || result.stdout || '').trim().slice(0, 400);
-    throw new Error(`${cmd} ${(cmdArgs || []).join(' ')} failed (${result.status}): ${err}`);
+    throw new Error(
+      `${cmd} ${(cmdArgs || []).join(' ')} failed (${describeSpawnResult(result, timeoutMs)}): ${err}`
+    );
   }
   return result;
+}
+
+function serviceLooksRunning(abs) {
+  const probe = spawnSync('bash', [abs, 'status'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    timeout: 15000,
+  });
+  return /(?:^|\n)(?:running|loaded):/.test(String(probe.stdout || ''));
 }
 
 function ensureDir(dir) {
@@ -461,10 +482,25 @@ function installServices() {
       continue;
     }
     try {
-      if (action) run('bash', [abs, action], { step: path.basename(rel), allowFail: false });
-      else run('bash', [abs], { step: path.basename(rel), allowFail: true });
+      if (action === 'install' && serviceLooksRunning(abs)) {
+        record(path.basename(rel), 'ok', 'already running');
+        continue;
+      }
+      if (action) {
+        run('bash', [abs, action], {
+          step: path.basename(rel),
+          allowFail: false,
+          timeoutMs: 90000,
+        });
+      } else {
+        run('bash', [abs], { step: path.basename(rel), allowFail: true });
+      }
       record(path.basename(rel), 'ok', action || 'boot');
     } catch (err) {
+      if (action === 'install' && serviceLooksRunning(abs)) {
+        record(path.basename(rel), 'ok', `recovered: already running after ${err.message}`);
+        continue;
+      }
       record(path.basename(rel), 'warn', err.message);
       receipt.warnings.push(err.message);
     }

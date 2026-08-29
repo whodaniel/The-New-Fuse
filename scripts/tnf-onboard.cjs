@@ -1518,12 +1518,30 @@ async function main() {
         stdio: 'inherit',
         env: process.env,
       });
+      const exitLabel =
+        result.status === 0
+          ? 0
+          : result.status ?? result.signal ?? result.error?.code ?? 'null';
       if (result.status === 0) {
         console.log('- established: Local Sub-Director identity + core OSS fleet');
         console.log('- receipt: ~/.tnf/core-fleet-latest.json');
       } else {
-        console.log(`- WARN: establish exited ${result.status}; install remains usable`);
-        console.log('- retry: node scripts/runtime/establish-core-federated-fleet.cjs');
+        let recovered = false;
+        try {
+          const receiptPath = path.join(require('node:os').homedir(), '.tnf', 'core-fleet-latest.json');
+          const st = fs.statSync(receiptPath);
+          const receipt = JSON.parse(fs.readFileSync(receiptPath, 'utf8'));
+          recovered = receipt.ok === true && Date.now() - st.mtimeMs < 10 * 60 * 1000;
+        } catch {
+          recovered = false;
+        }
+        if (recovered) {
+          console.log(`- established: receipt ok (process exited ${exitLabel})`);
+          console.log('- receipt: ~/.tnf/core-fleet-latest.json');
+        } else {
+          console.log(`- WARN: establish exited ${exitLabel}; install remains usable`);
+          console.log('- retry: node scripts/runtime/establish-core-federated-fleet.cjs');
+        }
       }
     }
   }

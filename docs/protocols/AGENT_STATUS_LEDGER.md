@@ -285,6 +285,7 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | --------------------- | -------------------------------------- | ------------------------------------ |
 | BROKER-Green          | `TNF:LOCAL:AGENT:TNF:BROKER_GREEN:001` | Running (verified)                   |
 | Browser Agent         | `browser-*` + `ID#:` (deterministic)   | Extension background WS bridge       |
+| Browser control surface | `TNF:LOCAL:AGENT:BROWSER-CONTROL-SURFACE:001` | Federation relay client (`apps/browser-control-surfaces`); not a staffed `.agent` definition |
 | Claude tab            | `page-agent-*` + `ID#:`                | On Green when tab synced             |
 | ChatGPT tab           | `page-agent-*` + `ID#:`                | On Green; inbound confirmed          |
 | Gemini tab            | `page-agent-*` + `ID#:`                | On Green                             |
@@ -1428,12 +1429,6 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 
 | 2026-08-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (7a3f8e2b-1c4d-4e5f-9a2b-6c7d8e9f0a1b) | ✅ HANDOFF_READY |
-
-### Newly Registered (This Session)
-
-| Agent                   | Identity                                      | Status                                                                                                                                                                                                                             |
-| ----------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| browser-control-surface | `TNF:LOCAL:AGENT:BROWSER-CONTROL-SURFACE:001` | **NEW** — registered at 2026-08-27T19:30:00.000Z; federation-relay-client aligned to relay-core RelayMessage protocol; 12/12 integration tests passing (jest, `apps/browser-control-surfaces/lib/federation-relay-client.test.ts`) |
 
 | 2026-08-26 | ox-alpha | Verified browser-control-surfaces federation relay
 integration: client rewritten to canonical TNFEnvelope protocol (REGISTER →

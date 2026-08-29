@@ -235,7 +235,7 @@ function resolvePath(fileName) {
 async function writeHeartbeat(payload) {
   const jsonPath = resolvePath('local-subdirector-heartbeat.json');
   const mdPath = resolvePath('local-subdirector-heartbeat.md');
-  const tmp = `${jsonPath}.${process.pid}.tmp`;
+  const tmp = `${jsonPath}.${process.pid}.${Date.now()}.tmp`;
   await fsp.writeFile(tmp, `${JSON.stringify(payload, null, 2)}\n`);
   await fsp.rename(tmp, jsonPath);
   await fsp.writeFile(mdPath, buildMarkdown(payload));
@@ -324,6 +324,8 @@ async function pollTerminalWindows(contentTailChars) {
   try {
     const { stdout } = await execFileAsync('osascript', ['-l', 'JavaScript', '-e', script], {
       maxBuffer: 16 * 1024 * 1024,
+      timeout: 15000,
+      killSignal: 'SIGKILL',
     });
     const parsed = JSON.parse(stdout || '[]');
     return Array.isArray(parsed) ? parsed : [];
@@ -337,6 +339,10 @@ async function collectProcessTable() {
   try {
     const { stdout } = await execFileAsync('ps', ['-axo', 'pid=,ppid=,tty=,comm=,args='], {
       maxBuffer: 8 * 1024 * 1024,
+      // 2026-08-29: unterminated `ps` stacked every 30s under load 600+ and
+      // took the box down. Never let inventory outlive a scan interval.
+      timeout: 8000,
+      killSignal: 'SIGKILL',
     });
     return stdout
       .split('\n')
@@ -415,6 +421,8 @@ async function resolveCwd(shellPid) {
   try {
     const { stdout } = await execFileAsync('lsof', ['-a', '-d', 'cwd', '-p', String(shellPid)], {
       maxBuffer: 1024 * 1024,
+      timeout: 3000,
+      killSignal: 'SIGKILL',
     });
     const line = stdout
       .split('\n')
@@ -572,8 +580,21 @@ function pruneMissingSessions(seenKeys) {
   }
 }
 
+let scanInFlight = false;
+
 async function scanOnce() {
+  if (scanInFlight) {
+    console.log('[local-subdirector] scan skipped: previous scan is still running');
+    return;
+  }
+  if (isFleetPaused()) {
+    console.log(JSON.stringify({ ok: true, skipped: 'fleet-paused' }));
+    shutdown();
+    return;
+  }
+  scanInFlight = true;
   cycle += 1;
+  try {
   await ensureDirectories();
   const now = new Date();
   const nowIso = now.toISOString();
@@ -724,6 +745,9 @@ async function scanOnce() {
   };
 
   await writeHeartbeat(payload);
+  } finally {
+    scanInFlight = false;
+  }
 }
 
 async function main() {
