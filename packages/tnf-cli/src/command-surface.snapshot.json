@@ -105,6 +105,58 @@
           "commands": []
         },
         {
+          "name": "quotas",
+          "aliases": [],
+          "description": "Show refreshed per-agent usage quotas for delegation",
+          "options": [
+            {
+              "flags": "--capability <cap>",
+              "description": "Required capability hint (repeatable)"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--rank",
+              "description": "Include delegation ranking"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "state",
+          "aliases": [],
+          "description": "Show onboarded agent-state observation snapshot (not authoritative)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--refresh",
+              "description": "Rebuild observation snapshot (requires mutation authority)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "state-history",
+          "aliases": [],
+          "description": "List recent agent-state history snapshots",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max snapshots"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "status",
           "aliases": [],
           "description": "Report this tnf-agent CLI binary: version, branch, wiring, capabilities",
@@ -161,7 +213,7 @@
                 },
                 {
                   "flags": "--targets <list>",
-                  "description": "Comma-separated targets (agy, antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, droid, hermes, kilo, opencode, project, tnf, all)"
+                  "description": "Comma-separated targets (agy, antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, droid, hermes, kilo, opencode, pi, project, tnf, all)"
                 }
               ],
               "commands": []
@@ -526,13 +578,13 @@
     {
       "name": "assimilate",
       "aliases": [],
-      "description": "Manage integration and routing with external AI CLIs and SDKs.",
+      "description": "Discover, evaluate, and route external agent capabilities into TNF-native systems.",
       "options": [],
       "commands": [
         {
           "name": "link",
           "aliases": [],
-          "description": "Link a new external agent CLI to the TNF routing table.",
+          "description": "Verify an external CLI against existing TNF provider/host authorities and write a machine-local link receipt.",
           "options": [],
           "commands": []
         },
@@ -551,8 +603,13 @@
         {
           "name": "scan",
           "aliases": [],
-          "description": "Run the Self-Evolution Flywheel to discover & weigh network agent patterns.",
-          "options": [],
+          "description": "Scan current TNF assimilation, provider, skill, and Agent Resource Fabric surfaces without inventing a parallel registry.",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit the composed assimilation surface report as JSON"
+            }
+          ],
           "commands": []
         }
       ]
@@ -1731,6 +1788,42 @@
             {
               "flags": "--json",
               "description": "Emit machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "ecosystem",
+      "aliases": [],
+      "description": "Authenticated ecosystem orientation / task-scoped hydration for control surfaces",
+      "options": [],
+      "commands": [
+        {
+          "name": "orient",
+          "aliases": [],
+          "description": "Cheap boot orientation snapshot (providers, health, authority refs, quota summary)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "show",
+          "aliases": [],
+          "description": "Task-scoped ecosystem hydration (lazy; use orient for boot)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--refresh",
+              "description": "Force re-hydrate"
             }
           ],
           "commands": []
@@ -3866,7 +3959,7 @@
     {
       "name": "metaskills",
       "aliases": [],
-      "description": "Meta-skills audit utilities",
+      "description": "Meta-skills audit and governance utilities",
       "options": [],
       "commands": [
         {
@@ -3877,6 +3970,22 @@
             {
               "flags": "--json",
               "description": "Print JSON output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "govern",
+          "aliases": [],
+          "description": "Govern meta-skill completeness and layer authority",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print JSON output"
+            },
+            {
+              "flags": "--strict",
+              "description": "Fail if any governed meta-skill is audit-incomplete"
             }
           ],
           "commands": []
@@ -4109,6 +4218,13 @@
       "name": "openclaw",
       "aliases": [],
       "description": "Optional adapter: pass through OpenClaw CLI if that harness is installed",
+      "options": [],
+      "commands": []
+    },
+    {
+      "name": "opencode",
+      "aliases": [],
+      "description": "Pass through any OpenCode CLI command with TNF harness MCP routing",
       "options": [],
       "commands": []
     },
@@ -4465,6 +4581,98 @@
       "commands": []
     },
     {
+      "name": "profile",
+      "aliases": [],
+      "description": "Manage local TNF user profiles and sessions",
+      "options": [],
+      "commands": [
+        {
+          "name": "list",
+          "aliases": ["ls"],
+          "description": "List local TNF profiles",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "login",
+          "aliases": [],
+          "description": "Authenticate a local (or optional cloud) TNF profile session",
+          "options": [
+            {
+              "flags": "--cloud",
+              "description": "Attempt cloud link to app.thenewfuse.com"
+            },
+            {
+              "flags": "--cloud-endpoint <url>",
+              "description": "Cloud endpoint override"
+            },
+            {
+              "flags": "--identity-mode <mode>",
+              "description": "local|cloud|sandbox|custom"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--passphrase <secret>",
+              "description": "Optional local passphrase"
+            },
+            {
+              "flags": "--profile <name>",
+              "description": "Profile name"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "logout",
+          "aliases": [],
+          "description": "End the active profile session",
+          "options": [
+            {
+              "flags": "--profile <name>",
+              "description": "Profile name"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "switch",
+          "aliases": [],
+          "description": "Switch active TNF profile",
+          "options": [
+            {
+              "flags": "--allow-logged-out",
+              "description": "Allow switch without an active session"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "whoami",
+          "aliases": [],
+          "description": "Show identity vs authentication vs capability vs authority distinctions",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "project",
       "aliases": [],
       "description": "Project-level configuration (tnf.jsonc, .tnf/command, .tnf/agent)",
@@ -4752,7 +4960,7 @@
       "options": [
         {
           "flags": "--dacc-role <role>",
-          "description": "DACC-v1 hierarchy position (director, orchestrator, broker, worker, participant)"
+          "description": "DACC-v1 hierarchy position (director, orchestrator, broker, worker, participant, local-subdirector)"
         },
         {
           "flags": "--dacc-role-from-config",
@@ -5741,6 +5949,34 @@
       "description": "Local Subdirector (tnf-cli-agent) control-plane utilities",
       "options": [],
       "commands": [
+        {
+          "name": "autonomy",
+          "aliases": [],
+          "description": "Manage Local Subdirector fleet autonomy",
+          "options": [
+            {
+              "flags": "--enable",
+              "description": "Enable autonomy"
+            },
+            {
+              "flags": "--grant <caps...>",
+              "description": "Grant specific capabilities (or \"all\")"
+            },
+            {
+              "flags": "--pause",
+              "description": "Pause autonomy"
+            },
+            {
+              "flags": "--revoke <caps...>",
+              "description": "Revoke specific capabilities"
+            },
+            {
+              "flags": "--status",
+              "description": "View effective authority status"
+            }
+          ],
+          "commands": []
+        },
         {
           "name": "cycle",
           "aliases": [],

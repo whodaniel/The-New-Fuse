@@ -294,7 +294,7 @@
     "format:check": "turbo run format:check",
     "format:root": "prettier --write .",
     "format:check:root": "prettier --check .",
-    "type-check": "turbo run type-check --filter=./apps/* --filter=./packages/* --filter=!@the-new-fuse/api --filter=!@the-new-fuse/tauri-desktop",
+    "type-check": "turbo run type-check --filter=./apps/* --filter=./packages/* --filter=!@the-new-fuse/api",
     "type-check:watch": "turbo run type-check --watch",
     "clear-ports": "node scripts/clear-ports.js",
     "ports:status": "node scripts/tnf-ports.cjs status",
