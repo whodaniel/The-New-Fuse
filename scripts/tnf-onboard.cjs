@@ -1257,6 +1257,37 @@ async function main() {
   printHeader('Frontload Checklist');
   FRONTLOAD_CHECKLIST.forEach((p) => console.log(`- ${p}: ${exists(p) ? 'present' : 'missing'}`));
 
+
+  printHeader("Workspace Tier Resolution");
+  try {
+    const tierResult = require("node:child_process").spawnSync(process.execPath, [
+      "scripts/harness/resolve-workspace-tier.cjs",
+      "--json"
+    ], {
+      cwd: ROOT,
+      encoding: "utf8",
+      env: process.env,
+      timeout: 10000
+    });
+    if (tierResult.status === 0) {
+      try {
+        const tierData = JSON.parse(tierResult.stdout || "{}");
+        console.log(`- workspace tier: ${tierData.tier || "unknown"}`);
+        console.log(`- reason: ${tierData.reason || "no reason provided"}`);
+        if (tierData.details) {
+          console.log(`- details: ${JSON.stringify(tierData.details)}`);
+        }
+      } catch {
+        console.log("- workspace tier: resolved (output parsing failed)");
+      }
+    } else {
+      const err = (tierResult.stderr || tierResult.stdout || "").toString().trim();
+      console.log(`- workspace tier: skipped (exit ${tierResult.status}${err ? ` — ${err.slice(0, 200)}` : ""})`);
+    }
+  } catch (err) {
+    console.log(`- workspace tier: error (${err?.message || "unknown"})`);
+  }
+
   printHeader('Harness Completeness (UNU)');
   try {
     const harnessArgs = parsed.repair
