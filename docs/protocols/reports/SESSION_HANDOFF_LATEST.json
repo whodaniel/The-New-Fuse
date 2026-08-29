@@ -1,7 +1,7 @@
 {
   "spec": "tnf/session-handoff/0.2",
   "handoff_id": "49c5009d-ffa5-4e61-9bbc-4274c5dcaad9",
-  "created_at": "2026-08-29T00:35:00.000Z",
+  "created_at": "2026-08-29T00:40:20.000Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "fix/rc-phase-b-test-integrity-20260828",
   "head_sha": "bd465336a624b1ca56f596262e38d46ee1869080",
@@ -13,7 +13,9 @@
     "T2 fixture teardown repairs (real teardown, no bandaids): ConnectionManager.test afterEach calls shutdown() (previously only closeAllConnections, leaking the per-instance health-check interval and signal handlers); MCPBroker.test 'errorBroker' is now stopped after its start-resolves assertion (previously leaked its registry cleanup interval); CircuitBreaker.test tracks and stops all constructed breakers and stops each fresh manager; RBACManager/PermissionValidator/SecurityIntegration stop their RBACManager instances.",
     "T2 determinism repairs (no assertion weakening): RBACManager cache test asserts cache identity via getRBACStatistics().cacheSize and result2 === result1 instead of wall-clock ordering; ToolExecutionEngine timeout tests pin resourceLimits.memory to 1 GiB because ResourceMonitor samples whole-process heap and the default 64 MiB limit raced the timeout path; SecurityIntegration time-range test captures endDate after flush().",
     "T2 script integrity fix: package.json test/test:unit passed an unquoted 'integration|performance' pattern that sh split at the pipe ('performance: command not found'), making every pnpm test exit 127 regardless of jest results; the ignore semantics now live in jest.config.ts testPathIgnorePatterns (integration, performance) and the scripts are 'jest --passWithNoTests'. ts-jest isolatedModules deprecation warnings and the tsconfig.test.json TS6307 project-include debt are recorded for the T4 drift report, not fixed here.",
-    "Verified (3 consecutive runs): pnpm test exit 0, 30/30 suites, 719/719 tests passed, zero force-exited workers, zero MaxListeners warnings, no shell errors; type-check exit 0; agent suite remains 13/13 natural exit 0. Residual parallel-exit contention between ToolExecutionEngine.test and ToolHandler.test workers (force-exit warning with exit 0) was investigated and is load-dependent, not a leaked handle; it did not reproduce in the final battery."
+    "Verified (3 consecutive runs): pnpm test exit 0, 30/30 suites, 719/719 tests passed, zero force-exited workers, zero MaxListeners warnings, no shell errors; type-check exit 0; agent suite remains 13/13 natural exit 0. Residual parallel-exit contention between ToolExecutionEngine.test and ToolHandler.test workers (force-exit warning with exit 0) was investigated and is load-dependent, not a leaked handle; it did not reproduce in the final battery.",
+    "T3 regression guards: packages/agent/src/resolver-guard.test.ts exercises both T1 resolver classes at import time (relative .js specifier + directory-mapped infrastructure), failing with the original Phase B error on regression; packages/mcp-core/src/lifecycle/teardown-ownership.test.ts pins CircuitBreaker/RBACManager stop() interval cleanup and idempotency plus ConnectionManager shutdown() signal-handler removal.",
+    "T4 config-drift report (recorded, no bulk edits): infrastructure/src tracked build artifacts, tsconfig.test.json TS6307, ts-jest isolatedModules deprecation, cross-package jest config drift, unquoted-pipe script defect sweep (mcp-core only), ConnectionManager per-instance signal-handler debt, prior-session zombie jest probe. Published at docs/recon/rc-phase-b-test-integrity-repair.md."
   ],
   "changed_paths": [
     "packages/mcp-core/jest.config.ts",
@@ -33,26 +35,31 @@
     "packages/mcp-core/src/server/MCPServer.ts",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/AGENT_STATUS_LEDGER.md"
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "packages/agent/src/resolver-guard.test.ts",
+    "packages/mcp-core/src/lifecycle/teardown-ownership.test.ts",
+    "docs/recon/rc-phase-b-test-integrity-repair.md"
   ],
   "verification": {
     "privacy_guard": "pass",
     "secret_sweep": "pass",
     "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Full non-integration mcp-core suite run 3x with natural exit 0; no --forceExit used anywhere; apps/frontend/src/data/codebase_map.json build noise intentionally excluded from this change set."
+    "notes": "Full non-integration mcp-core suite run 3x with natural exit 0; agent suite 15/15 incl. resolver guard; no --forceExit used anywhere; apps/frontend/src/data/codebase_map.json build noise intentionally excluded."
   },
   "continuation": {
     "owner": "tnf-orchestrator",
     "targets": ["librarian"],
     "priority": "high",
     "resume_checklist": [
-      "T3 regression guards: agent ESM .js import test and smallest mcp-core lifecycle regression test",
-      "T4 config-drift report: infrastructure/src tracked build artifacts, tsconfig.test.json TS6307, ts-jest isolatedModules deprecation, jest config drift classes, ConnectionManager per-instance signal-handler hygiene",
-      "T5/T6 next RC candidate assembly and full Phase B matrix from a clean worktree"
+      "T5 next RC candidate assembly from launch-train base (Subdirector P0 + lockfile fix; federation P0 separate)",
+      "T6 fresh clean worktree at one immutable SHA and full Phase B matrix re-run (cold turbo cache)",
+      "Operator items: PR #253 merge decision, Actions billing, live launchd restart for TNF_LIVE_CONFORMANCE_PROBE=1"
     ]
   },
-  "next_actions": ["Proceed to T3 regression guards on this branch"],
+  "next_actions": [
+    "Proceed to T5 next RC candidate assembly from the launch-train base"
+  ],
   "artifacts": {
     "commits": ["bd465336a624b1ca56f596262e38d46ee1869080"]
   },

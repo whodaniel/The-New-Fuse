@@ -42,3 +42,12 @@ agent suite 13/13 natural exit 0. No `--forceExit` used.
   tsconfig.test.json TS6307, ts-jest isolatedModules deprecation,
   ConnectionManager per-instance signal-handler hygiene)
 - T5/T6: next RC candidate assembly and full Phase B matrix
+
+Update (T3/T4): added resolver + teardown-ownership regression guards (agent
+15/15; mcp-core type-check 0) and published the config-drift evidence artifact
+at `docs/recon/rc-phase-b-test-integrity-repair.md`.
+
+## Next Actions
+
+- T5/T6: assemble the next RC candidate from the launch-train base and run the
+  full Phase B matrix from a clean worktree at one immutable SHA.
