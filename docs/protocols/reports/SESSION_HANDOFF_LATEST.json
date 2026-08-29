@@ -1,47 +1,60 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "f869f630-5962-4fc9-b9d3-6020c9afa016",
-  "created_at": "2026-08-28T20:25:55.000Z",
+  "handoff_id": "49c5009d-ffa5-4e61-9bbc-4274c5dcaad9",
+  "created_at": "2026-08-29T00:35:00.000Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "fix/rc-phase-b-test-integrity-20260828",
-  "head_sha": "f264e5e7d55059d248f72e66c9bdea317931fd69",
+  "head_sha": "bd465336a624b1ca56f596262e38d46ee1869080",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-RC-PHASE-B"],
   "work_summary": [
-    "T1 agent module resolution: added the relative ESM-import mapper to packages/agent/jest.config.js so ts-jest resolves NodeNext-style '../x.js' source imports (reproduced Phase B failure: Cannot find module '../cline_bridge.js') without altering production emission.",
-    "T1 resolver class 2: set moduleFileExtensions ts-first (same class as mcp-core jest.config.ts) so directory-mapped '@the-new-fuse/infrastructure' resolves src/index.ts; the tracked generated .js files in that directory are ESM and unparseable by the CJS jest runtime.",
-    "T1 fixture repair: rewrote the stale redis-agent-registry.test.ts fixture to the current RedisAgentRegistry contract (config-based constructor, connect(), Upstash REST pipeline writes, lowercase pipeline commands, hgetall/smembers/scan/zrange queries) with real assertions preserved; no skips, no assertion weakening.",
-    "Verified: individual test before/after, full @the-new-fuse/agent suite 13/13 natural exit 0, type-check pass, build pass, emitted dist imports retain .js suffixes."
+    "T2 production teardown ownership (VERIFIED via --detectOpenHandles --runInBand): MCPServer.ts request-timeout setTimeout now cleared in a finally block; CircuitBreaker gained idempotent stop(), CircuitBreakerManager stopAll(), remove() stops before delete, process.once('exit') bandaid removed; ConnectionPoolMonitor, CacheMonitor, and RBACManager constructor-started cleanup intervals now stored and stopped via idempotent stop(); MonitoringSystem.stopComponents stops cacheMonitor and connectionPoolMonitor and shutdown() invokes stopComponents even when not running.",
+    "T2 fixture teardown repairs (real teardown, no bandaids): ConnectionManager.test afterEach calls shutdown() (previously only closeAllConnections, leaking the per-instance health-check interval and signal handlers); MCPBroker.test 'errorBroker' is now stopped after its start-resolves assertion (previously leaked its registry cleanup interval); CircuitBreaker.test tracks and stops all constructed breakers and stops each fresh manager; RBACManager/PermissionValidator/SecurityIntegration stop their RBACManager instances.",
+    "T2 determinism repairs (no assertion weakening): RBACManager cache test asserts cache identity via getRBACStatistics().cacheSize and result2 === result1 instead of wall-clock ordering; ToolExecutionEngine timeout tests pin resourceLimits.memory to 1 GiB because ResourceMonitor samples whole-process heap and the default 64 MiB limit raced the timeout path; SecurityIntegration time-range test captures endDate after flush().",
+    "T2 script integrity fix: package.json test/test:unit passed an unquoted 'integration|performance' pattern that sh split at the pipe ('performance: command not found'), making every pnpm test exit 127 regardless of jest results; the ignore semantics now live in jest.config.ts testPathIgnorePatterns (integration, performance) and the scripts are 'jest --passWithNoTests'. ts-jest isolatedModules deprecation warnings and the tsconfig.test.json TS6307 project-include debt are recorded for the T4 drift report, not fixed here.",
+    "Verified (3 consecutive runs): pnpm test exit 0, 30/30 suites, 719/719 tests passed, zero force-exited workers, zero MaxListeners warnings, no shell errors; type-check exit 0; agent suite remains 13/13 natural exit 0. Residual parallel-exit contention between ToolExecutionEngine.test and ToolHandler.test workers (force-exit warning with exit 0) was investigated and is load-dependent, not a leaked handle; it did not reproduce in the final battery."
   ],
   "changed_paths": [
-    "packages/agent/jest.config.js",
-    "packages/agent/src/registry/redis-agent-registry.test.ts",
+    "packages/mcp-core/jest.config.ts",
+    "packages/mcp-core/package.json",
+    "packages/mcp-core/src/auth/PermissionValidator.test.ts",
+    "packages/mcp-core/src/auth/RBACManager.test.ts",
+    "packages/mcp-core/src/auth/RBACManager.ts",
+    "packages/mcp-core/src/auth/SecurityIntegration.test.ts",
+    "packages/mcp-core/src/broker/MCPBroker.test.ts",
+    "packages/mcp-core/src/client/ConnectionManager.test.ts",
+    "packages/mcp-core/src/error/CircuitBreaker.test.ts",
+    "packages/mcp-core/src/error/CircuitBreaker.ts",
+    "packages/mcp-core/src/handlers/ToolExecutionEngine.test.ts",
+    "packages/mcp-core/src/monitoring/CacheMonitor.ts",
+    "packages/mcp-core/src/monitoring/ConnectionPoolMonitor.ts",
+    "packages/mcp-core/src/monitoring/MonitoringSystem.ts",
+    "packages/mcp-core/src/server/MCPServer.ts",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": ""
+    "notes": "Full non-integration mcp-core suite run 3x with natural exit 0; no --forceExit used anywhere; apps/frontend/src/data/codebase_map.json build noise intentionally excluded from this change set."
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
+    "targets": ["librarian"],
     "priority": "high",
     "resume_checklist": [
-      "T2 mcp-core teardown leak diagnosis and lifecycle ownership repair",
-      "T4 sibling jest/ts-jest configuration drift report",
-      "T5/T6 next RC candidate assembly and full Phase B matrix"
+      "T3 regression guards: agent ESM .js import test and smallest mcp-core lifecycle regression test",
+      "T4 config-drift report: infrastructure/src tracked build artifacts, tsconfig.test.json TS6307, ts-jest isolatedModules deprecation, jest config drift classes, ConnectionManager per-instance signal-handler hygiene",
+      "T5/T6 next RC candidate assembly and full Phase B matrix from a clean worktree"
     ]
   },
-  "next_actions": [
-    "Proceed to T2 mcp-core teardown leak repair on this branch"
-  ],
+  "next_actions": ["Proceed to T3 regression guards on this branch"],
   "artifacts": {
-    "commits": ["f328e16919f8d96429f961040f2f59d7fd397b41"]
+    "commits": ["bd465336a624b1ca56f596262e38d46ee1869080"]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -55,80 +68,19 @@
     ]
   },
   "classification": {
-    "work_domain": "unknown",
-    "artifact_destination": "unknown",
-    "data_residency": "unknown",
-    "sensitivity": "unknown"
+    "work_domain": "personal",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "bounded_working",
+    "sensitivity": "internal"
   },
   "capabilities": {
-    "required": [],
-    "staffed_by": []
+    "required": ["test-engineering"],
+    "staffed_by": ["tnf-orchestrator"]
   },
   "publication": {
     "public_runtime_affected": false,
     "control_plane_affected": false,
     "satellites": []
   },
-  "freshness_receipts": [
-    {
-      "id": "github.dev.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:38.051Z",
-      "value": "73cea241cca190faa98a2a5ea5bfdec920faaff2"
-    },
-    {
-      "id": "github.public.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:45.037Z",
-      "value": "dcfb3f7598c148ec362678bc4ce0834b1dca0e90"
-    },
-    {
-      "id": "github.control-plane.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:49.582Z",
-      "value": "bf45be8893c3453f35a86509e9102fb735cdbaa8"
-    },
-    {
-      "id": "github.public.pr-queue",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:52.712Z",
-      "value": "[161]"
-    },
-    {
-      "id": "github.public.ruleset",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:54.422Z",
-      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
-    },
-    {
-      "id": "github.public.proprietary-leak",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:59.780Z",
-      "value": "LEAKED:packages/relay-core/src/master-clock.ts\nLEAKED:packages/relay-core/src/broker-agent.ts\nOK"
-    },
-    {
-      "id": "tnf.product-repo-map",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:00.764Z",
-      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
-    },
-    {
-      "id": "tnf.oss-app-boundary",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:01.494Z",
-      "value": "7cd0046243a9ddea5b165094b0af9ae8676c3e4f\n2026-08-13"
-    },
-    {
-      "id": "git.repository.identity",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:06.916Z",
-      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=b4511fcacea76ed009a430927be7842683c89d7d\nbranch=sentinel-fix-marketplace-cmd-injection-11879217410415317362\ndirty=86"
-    },
-    {
-      "id": "runtime.services",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:08.906Z",
-      "value": "REDIS_UNREACHABLE\nRELAY_OK"
-    }
-  ]
+  "freshness_receipts": []
 }
