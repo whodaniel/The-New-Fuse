@@ -132,16 +132,10 @@ check_ws_bridge_health() {
     curl -fsS --max-time 2 "http://127.0.0.1:$WS_BRIDGE_PORT/health" 2>/dev/null | grep -q '"status":"ok"'
 }
 
-# -----------------------------------------------------------------------------
-# Wrapper process detection (issue #176 regression fix) lives in
-# scripts/runtime/wrapper-process-lib.sh so it can be regression-tested
-# directly. The old loose `pgrep -f "$script_name"` matched ANY process whose
-# command line mentioned the filename (e.g. `tail -f <wrapper>`), which made
-# boot report "already running" and silently skip starting the agent.
-# -----------------------------------------------------------------------------
-# shellcheck disable=SC1091
-. "$SCRIPT_DIR/runtime/wrapper-process-lib.sh"
-TNF_WRAPPER_PID_FILE="$PID_FILE"
+is_wrapper_running() {
+    local script_name=$1
+    pgrep -f "$SCRIPT_DIR/$script_name" > /dev/null 2>&1 || pgrep -f "$script_name" > /dev/null 2>&1
+}
 
 command_available() {
     local command_name=$1

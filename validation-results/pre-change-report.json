@@ -1,12 +1,11 @@
 {
-  "timestamp": "2026-08-20T20:27:27.145Z",
-  "passed": 0,
-  "failed": 5,
+  "timestamp": "2026-08-26T13:21:45.784Z",
+  "passed": 1,
+  "failed": 4,
   "warnings": 2,
   "errors": [
-    "TypeScript compilation failed: Command failed: pnpm run type-check\nsh: turbo: command not found\n",
-    "Tests failed: Command failed: pnpm test -- --passWithNoTests\nnode:internal/modules/run_main:123\n    triggerUncaughtException(\n    ^\n\nError [ERR_MODULE_NOT_FOUND]: Cannot find package 'tsx' imported from /Users/danielgoldberg/Repos/tnf-monorepo/\nDid you mean to import \"tsx/dist/loader.mjs\"?\n    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)\n    at packageResolve (node:internal/modules/esm/resolve:768:81)\n    at moduleResolve (node:internal/modules/esm/resolve:855:18)\n    at defaultResolve (node:internal/modules/esm/resolve:985:11)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:747:20)\n    at ModuleLoader.resolve (node:internal/modules/esm/loader:724:38)\n    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:320:38)\n    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:680:36)\n    at TracingChannel.tracePromise (node:diagnostics_channel:350:14)\n    at ModuleLoader.import (node:internal/modules/esm/loader:679:21) {\n  code: 'ERR_MODULE_NOT_FOUND'\n}\n\nNode.js v22.22.3\n",
-    "Package integrity check failed: ENOENT: no such file or directory, stat 'apps/extensions'",
+    "Tests failed: Command failed: pnpm test -- --passWithNoTests\n• turbo 2.9.10\n WARNING  Unable to calculate transitive closures: Workspace 'apps/browser-control-surfaces' not found in lockfile.\n ERROR  @the-new-fuse/auth#test: command (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/packages/auth) /opt/tnf-node/bin/pnpm run test --passWithNoTests exited (1)\n ERROR  run failed: command  exited (1)\n",
+    "Package integrity check failed: ENOENT: no such file or directory, stat 'apps/extensions/external/gemini-cli-source/bundle/docs/CONTRIBUTING.md'",
     "Required tool not found: bun",
     "Environment validation failed: Command failed: bun --version\n/bin/sh: bun: command not found\n"
   ],

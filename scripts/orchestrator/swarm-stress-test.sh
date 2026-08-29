@@ -3,13 +3,6 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-# Endpoint authority (#176): resolve public/app endpoints from the generated
-# adaptive harness context; explicit env still wins.
-# shellcheck disable=SC1091
-. "${ROOT_DIR}/scripts/runtime/harness-context-env.sh"
-TNF_APP_BASE="${TNF_APP_BASE_URL:-$(harness_ctx_get TNF_APP_BASE_URL https://app.thenewfuse.com)}"
-TNF_PUBLIC_BASE_URL="${TNF_PUBLIC_BASE:-$(harness_ctx_get TNF_PUBLIC_BASE https://thenewfuse.com)}"
-
 # --- Singleton lock: prevent duplicate concurrent runs from multiple agents ---
 source "${ROOT_DIR}/scripts/lib/tnf-lock.sh"
 tnf_acquire_lock "swarm-stress-test" 600
@@ -32,31 +25,31 @@ TIMESTAMP=$(stamp)
 PASS=true
 RESULTS_JSON="{"
 
-# Test 1: app host main page (harness-context authority)
-log "Testing ${TNF_APP_BASE}..."
-if HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "${TNF_APP_BASE}" 2>/dev/null); then
+# Test 1: app.thenewfuse.com main page
+log "Testing app.thenewfuse.com..."
+if HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://app.thenewfuse.com" 2>/dev/null); then
     log "  Status: ${HTTP_CODE}"
     RESULTS_JSON="${RESULTS_JSON}\"app_tnf\": \"${HTTP_CODE}\""
 else
-    log "  FAILED to reach ${TNF_APP_BASE}"
+    log "  FAILED to reach app.thenewfuse.com"
     RESULTS_JSON="${RESULTS_JSON}\"app_tnf\": \"failed\""
     PASS=false
 fi
 
-# Test 2: public landing page (harness-context authority)
-log "Testing ${TNF_PUBLIC_BASE_URL}..."
-if HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "${TNF_PUBLIC_BASE_URL}" 2>/dev/null); then
+# Test 2: thenewfuse.com landing page
+log "Testing thenewfuse.com..."
+if HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://thenewfuse.com" 2>/dev/null); then
     log "  Status: ${HTTP_CODE}"
     RESULTS_JSON="${RESULTS_JSON},\"tnf_com\": \"${HTTP_CODE}\""
 else
-    log "  FAILED to reach ${TNF_PUBLIC_BASE_URL}"
+    log "  FAILED to reach thenewfuse.com"
     RESULTS_JSON="${RESULTS_JSON},\"tnf_com\": \"failed\""
     PASS=false
 fi
 
-# Test 3: Marketplace API (app host from harness context)
+# Test 3: Marketplace API
 log "Testing marketplace API..."
-if HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "${TNF_APP_BASE}/api/marketplace/catalog" 2>/dev/null); then
+if HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://app.thenewfuse.com/api/marketplace/catalog" 2>/dev/null); then
     log "  Status: ${HTTP_CODE}"
     RESULTS_JSON="${RESULTS_JSON},\"marketplace_api\": \"${HTTP_CODE}\""
 else

@@ -95,15 +95,24 @@ export function registerSubdirectorCommand(
       }
 
       if (options.revoke) {
-        current.capabilities = current.capabilities.filter((c: string) => !options.revoke.includes(c));
+        current.capabilities = current.capabilities.filter(
+          (c: string) => !options.revoke.includes(c)
+        );
       }
 
       const updated = auth.updateConfig(current);
 
-      if (options.status || (!options.enable && !options.pause && !options.grant && !options.revoke)) {
+      if (
+        options.status ||
+        (!options.enable && !options.pause && !options.grant && !options.revoke)
+      ) {
         console.log(chalk.bold('Local Subdirector Authority:'));
-        console.log(`  Autonomy: ${updated.autonomyEnabled ? chalk.green('Enabled') : chalk.yellow('Paused')}`);
-        console.log(`  Capabilities: ${updated.capabilities.length > 0 ? updated.capabilities.join(', ') : 'none'}`);
+        console.log(
+          `  Autonomy: ${updated.autonomyEnabled ? chalk.green('Enabled') : chalk.yellow('Paused')}`
+        );
+        console.log(
+          `  Capabilities: ${updated.capabilities.length > 0 ? updated.capabilities.join(', ') : 'none'}`
+        );
       } else {
         console.log(chalk.green('✅ Local Subdirector authority updated'));
       }

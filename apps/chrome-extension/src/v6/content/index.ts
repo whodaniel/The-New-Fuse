@@ -3,9 +3,11 @@
  *
  * SIMPLIFIED VERSION - Uses SimpleChatBridge for direct Gemini interaction.
  *
- * The floating panel is NOT auto-injected. It only appears when:
+ * The floating panel auto-opens on supported pages when settings.autoOpenPanel
+ * is true (default). It can also be opened via:
  * 1. User clicks "Open Panel" button in popup
  * 2. User presses Ctrl+Shift+F keyboard shortcut
+ * 3. Incoming federated messages that need injection (panel is surfaced first)
  */
 
 import { EXTENSION_VERSION as FUSE_VERSION } from '../shared/constants';
@@ -111,14 +113,7 @@ class FuseConnectContentScript {
     if (this.isInitialized) return;
     this.isInitialized = true;
 
-    console.debug('[FuseConnect v7] Content script initialized (panel AUTO-OPEN disabled)');
-
-    // Auto-open panel disabled by default per user request
-    // try {
-    //   this.showPanel();
-    // } catch (e) {
-    //   console.error('[FuseConnect v7] Failed to auto-open panel:', e);
-    // }
+    console.debug('[FuseConnect v7] Content script initialized');
 
     // Initialize the simple chat bridge with callbacks
     simpleChatBridge.init({
@@ -210,12 +205,38 @@ class FuseConnectContentScript {
     // Setup keyboard shortcuts
     this.setupKeyboardShortcuts();
 
+    // Auto-open injectable panel (default on). Federation injection requires
+    // panelVisible; keeping it closed silently dropped all relay traffic.
+    void this.maybeAutoOpenPanel();
+
     // Notify background that content script is ready
     this.safeSendMessage({
       type: 'CONTENT_SCRIPT_READY',
       url: window.location.href,
       hostname: window.location.hostname,
     });
+  }
+
+  /**
+   * Open the floating panel on load unless the operator disabled autoOpenPanel.
+   */
+  private async maybeAutoOpenPanel(): Promise<void> {
+    try {
+      const stored = await chrome.storage.local.get(['fuse_settings']);
+      const settings = stored?.fuse_settings || {};
+      if (settings.autoOpenPanel === false) {
+        console.debug('[FuseConnect v7] autoOpenPanel disabled in settings');
+        return;
+      }
+      this.showPanel();
+    } catch (e) {
+      console.warn('[FuseConnect v7] autoOpenPanel fallback:', e);
+      try {
+        this.showPanel();
+      } catch (err) {
+        console.error('[FuseConnect v7] Failed to auto-open panel:', err);
+      }
+    }
   }
 
   /**
@@ -1188,10 +1209,12 @@ class FuseConnectContentScript {
 
     const process = async () => {
       if (!this.panelVisible) {
-        // Per-tab safety: never auto-inject relay queue while panel is hidden.
-        this.injectionQueue = [];
-        this.isProcessingQueue = false;
-        return;
+        // Surface the injectable instead of dropping the federation queue.
+        this.showPanel();
+        if (!this.panelVisible) {
+          this.isProcessingQueue = false;
+          return;
+        }
       }
 
       if (this.injectionQueue.length === 0) {
@@ -1249,6 +1272,12 @@ class FuseConnectContentScript {
     if (msg?.metadata?.forceInject === true) return true;
     const channelId = msg?.channel || msg?.metadata?.channel || this.currentChannel;
     if (channelId && this.isChannelPaused(String(channelId))) return false;
+    // Ensure the injectable is visible before injecting into page chat.
+    // Auto-open was previously disabled, which made canAutoInject always false
+    // and silently dropped federated traffic ("injectable no longer working").
+    if (!this.panelVisible) {
+      this.showPanel();
+    }
     return this.panelVisible;
   }
 

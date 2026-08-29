@@ -1,6 +1,6 @@
 # TWIP Terminal Macro Board (Latest)
 
-Generated: 2026-08-13T22:40:36.915Z
+Generated: 2026-08-26T11:20:41.969Z
 Tenant: `tnf-local`
 Source: `ps+tmux+capture+terminal-history`
 Snapshot: `data/protocols/twip-inventory.snapshot.json`
@@ -8,10 +8,10 @@ Context capture: `enabled`
 
 ## Current Macro View
 
-- Total terminals: 1
+- Total terminals: 5
 - Active work terminals: 1
-- Idle terminals: 0
-- Active ratio: 1
+- Idle terminals: 4
+- Active ratio: 0.2
 - Top work executables: node(1)
 
 ## Safety Signals
@@ -23,7 +23,7 @@ Context capture: `enabled`
 
 ## Active Sessions (Sanitized)
 
-- `/dev/ttys000` -> node | ctx: 3. Cancel | >
+- `/dev/ttys000` -> node | ctx: ➜  Local:   http://127.0.0.1:1420/ | ➜  press h + enter to show help
 
 ## Delta vs Previous Run
 

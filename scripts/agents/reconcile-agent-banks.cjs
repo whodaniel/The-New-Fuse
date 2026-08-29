@@ -291,6 +291,7 @@ function main() {
   );
 
   const targetMap = {
+    agy: [path.join(home, '.agy', 'skills', 'imported-claude-agents')],
     codex: [path.join(home, '.codex', 'skills', 'imported-claude-agents')],
     claude: [path.join(home, '.claude', 'skills', 'imported-claude-agents')],
     gemini: [path.join(home, '.gemini', 'skills', 'imported-claude-agents')],

@@ -65,6 +65,8 @@ export interface FederationChannelMessage {
   content: string;
   timestamp: number;
   type?: string;
+  /** Optional message-class field emitted by some senders (e.g. A2A 'task'/'system'). */
+  messageType?: string;
   metadata?: Record<string, unknown>;
 }
 

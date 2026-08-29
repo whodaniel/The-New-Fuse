@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { verifyTnfGateDecisions } from '../../lib/verify-gate-decisions';
+import { verifyTnfGateDecisions } from '../lib/verify-gate-decisions';
 
-interface TnfUser {
+export interface TnfUser {
   id: string;
   email: string;
   role: 'super-admin' | 'admin' | 'agent' | 'participant';
@@ -9,7 +9,7 @@ interface TnfUser {
   permissions: Record<string, boolean>;
 }
 
-interface TnfAuthorizationState {
+export interface TnfAuthorizationState {
   user: TnfUser | null;
   loaded: boolean;
   permissions: Record<string, boolean>;
@@ -101,12 +101,7 @@ export function useTnfAuthorization() {
       'SECURITY_GATE',
     ];
 
-    const results = await Promise.all(
-      gates.map(async (gate) => ({
-        gate,
-        ...(await checkGateDecision(gate)),
-      }))
-    );
+    const results = await Promise.all(gates.map(async (gate) => await checkGateDecision(gate)));
 
     return results;
   }, [checkGateDecision]);

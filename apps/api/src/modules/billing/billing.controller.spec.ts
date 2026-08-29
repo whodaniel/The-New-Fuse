@@ -12,10 +12,9 @@
  *   4. The membership response includes { found, active, tier, userId } so the
  *      frontend can distinguish "unpaid STARTER" from "fully inactive/invalid".
  */
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getModelToken } from '@nestjs/mongoose';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { BillingController } from './billing.controller';
 import { PayPalService } from './paypal.service';
@@ -41,10 +40,7 @@ describe('BillingController – GET /billing/membership/me', () => {
         JwtModule.register({ secret: 'test-jwt-secret', signOptions: { expiresIn: '1h' } }),
       ],
       controllers: [BillingController],
-      providers: [
-        JwtAuthGuard,
-        { provide: PayPalService, useValue: payPalService },
-      ],
+      providers: [JwtAuthGuard, { provide: PayPalService, useValue: payPalService }],
     }).compile();
 
     controller = module.get<BillingController>(BillingController);
@@ -76,7 +72,9 @@ describe('BillingController – GET /billing/membership/me', () => {
 
     it('throws UnauthorizedException when req.user has no id or sub', async () => {
       const req = { user: {} };
-      await expect(controller.getMyMembership(req)).rejects.toThrow('Authenticated user is required');
+      await expect(controller.getMyMembership(req)).rejects.toThrow(
+        'Authenticated user is required'
+      );
     });
 
     it('returns active: false (not a logout trigger) for a new STARTER account', async () => {
@@ -93,21 +91,17 @@ describe('BillingController – GET /billing/membership/me', () => {
   describe('Guard wiring', () => {
     it('uses JwtAuthGuard (TNF-native), NOT Passport AuthGuard("jwt")', () => {
       // Verify the guard class reference on the method metadata
-      const guards = Reflect.getMetadata(
-        '__guards__',
-        BillingController.prototype.getMyMembership
-      );
+      const guards = Reflect.getMetadata('__guards__', BillingController.prototype.getMyMembership);
 
-      // If guards are registered at the handler level, JwtAuthGuard should be present.
-      // If there are no guards (global guard handles it), this is still acceptable.
-      // What must NOT be present is a Passport strategy reference.
+      // If guards are registered at the handler level, JwtAuthGuard (TNF-native)
+      // should be present. If there are no guards (global guard handles it),
+      // this is still acceptable. What must NOT be present is a Passport
+      // AuthGuard('jwt') reference — that's the unregistered-strategy defect
+      // this fix replaces.
       if (guards) {
-        const guardNames = guards.map((g: any) =>
-          typeof g === 'function' ? g.name : String(g)
-        );
-        expect(guardNames).not.toContain('JwtAuthGuard'); // Passport proxy wrapper name
-        // More importantly: should not throw because of missing Passport strategy
-        expect(guardNames.some((n: string) => n.includes('Jwt') || n.includes('jwt'))).toBe(true);
+        const guardNames = guards.map((g: any) => (typeof g === 'function' ? g.name : String(g)));
+        expect(guardNames).toContain('JwtAuthGuard'); // TNF-native guard
+        expect(guardNames).not.toContain('AuthGuard'); // Passport proxy wrapper name
       }
 
       // The import in billing.controller.ts must NOT reference @nestjs/passport

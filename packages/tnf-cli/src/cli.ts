@@ -21,6 +21,7 @@ import {
   type BootStepResult,
 } from './boot/pipeline.js';
 import { assertNoDuplicateCommands } from './commands/_registry.js';
+import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
@@ -38,7 +39,6 @@ import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.j
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
-import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';
@@ -1302,42 +1302,6 @@ const DEFAULT_SELF_IMPROVEMENT_API_URL = 'https://api.thenewfuse.com';
 // The landing domain serves a static marketing page; the React SPA (and every
 // router path the semantic audit enumerates) lives on the app domain.
 const DEFAULT_SELF_IMPROVEMENT_APP_URL = 'https://app.thenewfuse.com';
-
-type HarnessContextHosts = { apiBase?: string; publicBase?: string; appBase?: string };
-let harnessContextHostsCache: HarnessContextHosts | null | undefined;
-
-/**
- * Endpoint authority (#176): read hosts from the generated adaptive harness
- * context (.agent/runtime-state/harness-context.latest.json) written by
- * scripts/runtime/resolve-harness-context.cjs. Precedence per resolver is
- * explicit option > env > this authority > literal default, so the literals
- * remain only as mirrors of the authority's own defaults and every live boot
- * consumes the resolved values.
- */
-function readHarnessContextHosts(): HarnessContextHosts | null {
-  if (harnessContextHostsCache !== undefined) return harnessContextHostsCache;
-  harnessContextHostsCache = null;
-  try {
-    const abs = path.join(repoRoot, '.agent/runtime-state/harness-context.latest.json');
-    const parsed = JSON.parse(fs.readFileSync(abs, 'utf8')) as {
-      hosts?: Record<string, unknown>;
-    };
-    if (parsed && typeof parsed.hosts === 'object' && parsed.hosts !== null) {
-      const pick = (key: string): string | undefined => {
-        const value = parsed.hosts?.[key];
-        return typeof value === 'string' && value.length > 0 ? value : undefined;
-      };
-      harnessContextHostsCache = {
-        apiBase: pick('apiBase'),
-        publicBase: pick('publicBase'),
-        appBase: pick('appBase'),
-      };
-    }
-  } catch {
-    // Authority output absent/unreadable — resolvers fall through to defaults.
-  }
-  return harnessContextHostsCache;
-}
 const DEFAULT_FULL_AUTO_INTERVAL_MINUTES = 30;
 // Observed cycle duration is ~35 min, so 90 is a generous ceiling that still
 // catches a genuine hang long before it burns a day of autopilot time.
@@ -1517,7 +1481,6 @@ function resolveSelfImprovementBaseUrl(input?: string): string {
     normalizeToken(input) ??
     normalizeToken(process.env.TNF_BASE_URL) ??
     normalizeToken(process.env.PUBLIC_BASE_URL) ??
-    normalizeToken(readHarnessContextHosts()?.publicBase) ??
     DEFAULT_SELF_IMPROVEMENT_BASE_URL
   );
 }
@@ -1527,7 +1490,6 @@ function resolveSelfImprovementAppUrl(input?: string): string {
     normalizeToken(input) ??
     normalizeToken(process.env.TNF_APP_BASE_URL) ??
     normalizeToken(process.env.TNF_APP_URL) ??
-    normalizeToken(readHarnessContextHosts()?.appBase) ??
     DEFAULT_SELF_IMPROVEMENT_APP_URL
   );
 }
@@ -1539,7 +1501,6 @@ function resolveSelfImprovementApiUrl(input?: string): string {
     normalizeToken(process.env.TNF_API_BASE) ??
     normalizeToken(process.env.TNF_API_URL) ??
     normalizeToken(process.env.API_BASE_URL) ??
-    normalizeToken(readHarnessContextHosts()?.apiBase) ??
     DEFAULT_SELF_IMPROVEMENT_API_URL
   );
 }
@@ -3457,6 +3418,7 @@ const cliEntryPath = fileURLToPath(import.meta.url);
 // =============================================================================
 export const PLATFORM_TAXONOMY: string[] = [
   // AGENT_PLATFORM_TRAITS (canonical runtime)
+  'agy',
   'antigravity',
   'browser',
   'claude',
@@ -4541,6 +4503,7 @@ function resolveImplicitPassthroughArgs(
     'opencode',
     'kilo',
     'droid',
+    'agy',
   ];
 
   // A leading flag is never another CLI's subcommand, so there is nothing to
@@ -5555,62 +5518,6 @@ program
         const warnings: string[] = [];
         const stepResults: BootStepResult[] = [];
 
-        const recordStepResult = (
-          step: (typeof pipeline)[number],
-          status: 'ok' | 'failed' | 'skipped',
-          started: number,
-          error?: string
-        ): void => {
-          stepResults.push({
-            id: step.id,
-            label: step.label,
-            status,
-            critical: step.critical,
-            error,
-            durationMs: Date.now() - started,
-          });
-        };
-
-        const handleStepFailure = (
-          step: (typeof pipeline)[number],
-          message: string
-        ): 'fatal' | 'warning' => {
-          const isFatal = Boolean(options.strictGates) || step.critical;
-          if (isFatal) {
-            console.error(chalk.red(`   Error in step "${step.label}": ${message}`));
-            return 'fatal';
-          }
-          warnings.push(`${step.label}: ${message}`);
-          console.error(chalk.yellow(`   Warning in step "${step.label}": ${message}`));
-          return 'warning';
-        };
-
-        const writeFailureReceipt = (failedLabel: string): void => {
-          const receipt: BootReceipt = {
-            source: 'cli.boot',
-            profile: name,
-            timestamp: new Date().toISOString(),
-            strictGates: Boolean(options.strictGates),
-            nonInteractive: Boolean(options.nonInteractive),
-            attachAgent: options.attachAgent !== false,
-            withClaude: Boolean(options.withClaude),
-            forceOnboard: Boolean(options.forceOnboard),
-            skipOnboard: bootOptions.skipOnboard,
-            skipEnvValidation: Boolean(options.skipEnvValidation),
-            requireCore: Boolean(options.requireCore || options.strictGates),
-            autonomous: Boolean(options.autonomous),
-            steps: stepResults,
-            warnings,
-            ok: false,
-          };
-          try {
-            writeBootReceipt(repoRoot, receipt);
-          } catch {
-            // Best-effort receipt on fatal path.
-          }
-          throw new Error(`Critical boot failure in step: ${failedLabel}`);
-        };
-
         for (let i = 0; i < pipeline.length; i++) {
           const step = pipeline[i];
           // Attach is TTY-gated after the receipt is written.
@@ -5625,65 +5532,59 @@ program
             continue;
           }
 
-          // Contiguous parallelGroup members run concurrently (#176).
-          // Only warning-only, mutually independent checks declare a group;
-          // per-step warning/fatal semantics are identical to serial runs.
-          if (step.parallelGroup) {
-            const group: typeof pipeline = [];
-            let j = i;
-            while (j < pipeline.length && pipeline[j].parallelGroup === step.parallelGroup) {
-              if (pipeline[j].id !== 'attach-agent') group.push(pipeline[j]);
-              j++;
-            }
-
-            process.stdout.write(
-              chalk.white(
-                `[${i + 1}/${pipeline.length}] ${group.map((s) => s.label).join(' + ')} (concurrent)... \n`
-              )
-            );
-            const startedAts = new Map<string, number>();
-            const outcomes = await Promise.allSettled(
-              group.map(async (groupedStep) => {
-                startedAts.set(groupedStep.id, Date.now());
-                await groupedStep.action();
-              })
-            );
-
-            let fatalLabel: string | null = null;
-            for (const [k, outcome] of outcomes.entries()) {
-              const groupedStep = group[k];
-              const started = startedAts.get(groupedStep.id) ?? Date.now();
-              if (outcome.status === 'fulfilled') {
-                process.stdout.write(chalk.green(`   ✓ ${groupedStep.label} — OK\n`));
-                recordStepResult(groupedStep, 'ok', started);
-                continue;
-              }
-              process.stdout.write(chalk.red(`   ✗ ${groupedStep.label} — FAILED\n`));
-              const message =
-                outcome.reason instanceof Error ? outcome.reason.message : String(outcome.reason ?? 'unknown');
-              recordStepResult(groupedStep, 'failed', started, message);
-              if (handleStepFailure(groupedStep, message) === 'fatal') {
-                fatalLabel = fatalLabel ?? groupedStep.label;
-              }
-            }
-            if (fatalLabel) writeFailureReceipt(fatalLabel);
-            i = j;
-            continue;
-          }
-
           process.stdout.write(chalk.white(`[${i + 1}/${pipeline.length}] ${step.label}... `));
           const started = Date.now();
           try {
             await step.action();
             process.stdout.write(chalk.green('OK\n'));
-            recordStepResult(step, 'ok', started);
+            stepResults.push({
+              id: step.id,
+              label: step.label,
+              status: 'ok',
+              critical: step.critical,
+              durationMs: Date.now() - started,
+            });
           } catch (err: unknown) {
             process.stdout.write(chalk.red('FAILED\n'));
             const message = err instanceof Error ? err.message : String(err);
-            recordStepResult(step, 'failed', started, message);
-            if (handleStepFailure(step, message) === 'fatal') {
-              writeFailureReceipt(step.label);
+            const isFatal = Boolean(options.strictGates) || step.critical;
+            stepResults.push({
+              id: step.id,
+              label: step.label,
+              status: 'failed',
+              critical: step.critical,
+              error: message,
+              durationMs: Date.now() - started,
+            });
+            if (isFatal) {
+              console.error(chalk.red(`   Error in step "${step.label}": ${message}`));
+              const receipt: BootReceipt = {
+                source: 'cli.boot',
+                profile: name,
+                timestamp: new Date().toISOString(),
+                strictGates: Boolean(options.strictGates),
+                nonInteractive: Boolean(options.nonInteractive),
+                attachAgent: options.attachAgent !== false,
+                withClaude: Boolean(options.withClaude),
+                forceOnboard: Boolean(options.forceOnboard),
+                skipOnboard: bootOptions.skipOnboard,
+                skipEnvValidation: Boolean(options.skipEnvValidation),
+                requireCore: Boolean(options.requireCore || options.strictGates),
+                autonomous: Boolean(options.autonomous),
+                steps: stepResults,
+                warnings,
+                ok: false,
+              };
+              try {
+                writeBootReceipt(repoRoot, receipt);
+              } catch {
+                // Best-effort receipt on fatal path.
+              }
+              throw new Error(`Critical boot failure in step: ${step.label}`);
             }
+            const warningLine = `${step.label}: ${message}`;
+            warnings.push(warningLine);
+            console.error(chalk.yellow(`   Warning in step "${step.label}": ${message}`));
           }
         }
 

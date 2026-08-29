@@ -2,6 +2,7 @@
   "name": "@tnf/browser-control-surface",
   "version": "2.0.0",
   "description": "TNF Browser Control Surface - Multi-platform AI chat automation with federation integration",
+  "type": "module",
   "main": "index.ts",
   "exports": {
     ".": "./index.ts",
@@ -21,8 +22,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "jest --passWithNoTests",
-    "lint": "eslint src/**/*.ts src/**/*.tsx"
+    "test": "jest --config jest.config.cjs --passWithNoTests",
+    "lint": "eslint \"**/*.ts\" \"**/*.tsx\" --ignore-pattern dist --ignore-pattern node_modules --ignore-pattern \"**/*.test.ts\""
   },
   "peerDependencies": {
     "react": ">=18.0.0",

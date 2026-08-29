@@ -60,6 +60,7 @@ function detectOriginLabel(skillDir, repoRoot, home) {
   const p = skillDir.replace(/\\/g, '/');
   const rr = repoRoot.replace(/\\/g, '/');
   const hm = home.replace(/\\/g, '/');
+  if (p.startsWith(`${hm}/.agy/`)) return { llm: 'agy', scope: 'global' };
   if (p.startsWith(`${hm}/.codex/`)) return { llm: 'codex', scope: 'global' };
   if (p.startsWith(`${hm}/.claude/`)) return { llm: 'claude', scope: 'global' };
   if (p.startsWith(`${hm}/.gemini/`)) return { llm: 'gemini', scope: 'global' };
@@ -148,6 +149,7 @@ function main() {
   const snapshotsRoot = path.join(outRoot, 'snapshots');
 
   const folderSkillRoots = [
+    path.join(home, '.agy', 'skills'),
     path.join(home, '.codex', 'skills'),
     path.join(home, '.claude', 'skills'),
     path.join(home, '.gemini', 'skills'),
@@ -163,6 +165,7 @@ function main() {
     path.join(repoRoot, 'apps', 'picoclaw-overseer', 'workspace', 'skills'),
   ];
   const flatSkillRoots = [
+    path.join(home, '.agy', 'skills'),
     path.join(home, '.claude', 'skills'),
     path.join(home, '.gemini', 'skills'),
     path.join(home, '.opencode', 'skills'),

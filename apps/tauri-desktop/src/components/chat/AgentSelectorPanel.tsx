@@ -15,6 +15,7 @@ interface AgentSelectorPanelProps {
     apiOnline: boolean;
   };
   isConnected: boolean;
+  localFallbackReady: boolean;
 }
 
 export const AgentSelectorPanel: React.FC<AgentSelectorPanelProps> = ({
@@ -27,6 +28,7 @@ export const AgentSelectorPanel: React.FC<AgentSelectorPanelProps> = ({
   getAgentColor,
   synergy,
   isConnected,
+  localFallbackReady,
 }) => {
   const [filterPlatform, setFilterPlatform] = useState<string>('all');
   const [search, setSearch] = useState('');
@@ -75,14 +77,18 @@ export const AgentSelectorPanel: React.FC<AgentSelectorPanelProps> = ({
         {/* Quick Selection Actions */}
         <div className="flex gap-2 mt-3">
           <button
+            type="button"
             onClick={onSelectAll}
+            disabled={activeAgents.length === 0}
             className="flex-1 py-1 px-2 rounded-lg text-[11px] font-semibold transition-colors"
             style={{ background: 'var(--tnf-surface-hover)', color: 'var(--tnf-text-secondary)' }}
           >
             Select All
           </button>
           <button
+            type="button"
             onClick={onClearAll}
+            disabled={selectedAgents.length === 0}
             className="flex-1 py-1 px-2 rounded-lg text-[11px] font-semibold transition-colors"
             style={{ background: 'var(--tnf-surface-hover)', color: 'var(--tnf-text-muted)' }}
           >
@@ -127,8 +133,10 @@ export const AgentSelectorPanel: React.FC<AgentSelectorPanelProps> = ({
             'custom',
           ].map((cat) => (
             <button
+              type="button"
               key={cat}
               onClick={() => setFilterPlatform(cat)}
+              aria-pressed={filterPlatform === cat}
               className="px-2.5 py-1 rounded-md capitalize transition-colors"
               style={
                 filterPlatform === cat
@@ -160,6 +168,15 @@ export const AgentSelectorPanel: React.FC<AgentSelectorPanelProps> = ({
               <div
                 key={agent.id}
                 onClick={() => onToggleAgent(agent.id)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onToggleAgent(agent.id);
+                  }
+                }}
+                role="checkbox"
+                aria-checked={isSelected}
+                tabIndex={0}
                 className="group relative flex items-center gap-3 p-2.5 rounded-xl border text-left cursor-pointer transition-all"
                 style={
                   isSelected
@@ -208,6 +225,7 @@ export const AgentSelectorPanel: React.FC<AgentSelectorPanelProps> = ({
 
                 {/* Inspect Info Button */}
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     onInspectAgent(agent);
@@ -236,7 +254,9 @@ export const AgentSelectorPanel: React.FC<AgentSelectorPanelProps> = ({
                 ? 'bg-emerald-400 shadow-[0_0_8px_#10b981]'
                 : synergy.relayRegistered
                   ? 'bg-purple-400 shadow-[0_0_8px_#a855f7]'
-                  : 'bg-amber-400'
+                  : localFallbackReady
+                    ? 'bg-amber-400'
+                    : 'bg-red-400'
             }`}
           />
           <span className="font-medium">
@@ -244,7 +264,9 @@ export const AgentSelectorPanel: React.FC<AgentSelectorPanelProps> = ({
               ? 'API + WebSocket'
               : synergy.relayRegistered
                 ? 'Federation Swarm'
-                : 'Local JIT Engine'}
+                : localFallbackReady
+                  ? 'Local JIT Engine'
+                  : 'Runtime setup required'}
           </span>
         </div>
         <Shield className="w-3.5 h-3.5 text-slate-500" />
