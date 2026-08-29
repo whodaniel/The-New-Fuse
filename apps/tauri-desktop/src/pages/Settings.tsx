@@ -42,7 +42,6 @@ const Settings: React.FC = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [fallbackProvider, setFallbackProvider] = useState('NVIDIA NIM');
   const [defaultProvider, setDefaultProvider] = useState('NVIDIA NIM');
-  const [showAdvancedTui, setShowAdvancedTui] = useState(false);
   const [integrityStatus, setIntegrityStatus] = useState<string | null>(null);
 
   const handleRediscover = async () => {
@@ -286,7 +285,6 @@ const Settings: React.FC = () => {
                 <span className="slider"></span>
               </label>
             </div>
-
           </section>
 
           {/* Advanced / Experimental Section */}
@@ -298,27 +296,15 @@ const Settings: React.FC = () => {
                 <label>Retro Phosphor TUI Mode (Swarm Terminal)</label>
                 <p>Enhance the vibrancy of terminal output in the Swarm Terminal surface.</p>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                defaultValue="75"
-                className="range-input"
-              />
+              <input type="range" min="0" max="100" defaultValue="75" className="range-input" />
             </div>
-            
+
             <div className="setting-item">
               <div className="setting-info">
                 <label>Terminal Mirror Contrast</label>
                 <p>Adjust the contrast of the live terminal mirror in Mission Control.</p>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                defaultValue="50"
-                className="range-input"
-              />
+              <input type="range" min="0" max="100" defaultValue="50" className="range-input" />
             </div>
           </section>
 

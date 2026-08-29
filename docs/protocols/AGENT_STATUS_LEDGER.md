@@ -71,7 +71,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-27T20:45:56.693Z** — handoff
+Updated: **2026-08-29T04:47:37.724Z** — handoff
+`4283b14d-8b02-4347-adc8-d5f26a4b01fd` (`26be2886c104`).
 `e85d971f-770d-4cfe-98f6-4cd46280f557` (`f328e16919f8`).
 `883a32da-4f06-48ed-8efc-9013f70c7bfe` (`e169723bd328`).
 `dfd7f798-b0de-425d-85e5-93162b6668ce` (`b4511fcacea7`).
@@ -264,11 +265,12 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                                             |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Wire resolve-workspace-tier.cjs into the onboarder's automatic Turn Zero flow (currently advisory/manual-invoke only) — deferred because that flow is complex enough that changing it blind risks more than the current gap costs. |
-| **P0**   | Get operator approval for the AGENTS.md cross-link change (blocked by the agent-self-edit authority gate; not committed).                                                                                                          |
-| **P0**   | Decide whether/how to merge wip/resource-governance-\* into main; it currently sits on top of the sentinel-fix-marketplace-cmd-injection branch's tip, not main.                                                                   |
+| Priority | Action                                                                                                                                              |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Do not merge PR 264 until operator signoff after a green official root turbo build on a machine with >=8Gi free.                                    |
+| **P0**   | Keep PR 253 separate on recon/S1. Do not retarget or conflate.                                                                                      |
+| **P0**   | Re-run official pnpm run build (cold .turbo) then root type-check/test if required by launch-train, once disk headroom exists.                      |
+| **P0**   | Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1480,3 +1482,12 @@ clean | ✅ COMPLETE |
 
 | 2026-08-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (e85d971f-770d-4cfe-98f6-4cd46280f557) | ✅ HANDOFF_READY |
+
+| 2026-08-28 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f869f630-5962-4fc9-b9d3-6020c9afa016) | ✅ HANDOFF_READY |
+
+| 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(49c5009d-ffa5-4e61-9bbc-4274c5dcaad9) | ✅ HANDOFF_READY |
+
+| 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4283b14d-8b02-4347-adc8-d5f26a4b01fd) | ✅ HANDOFF_READY |

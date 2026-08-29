@@ -5,18 +5,30 @@ const ws = new WebSocket(relayUrl);
 
 ws.on('open', () => {
   console.log('[DEBUG] WebSocket connected');
-  
+
   // Send REGISTER message matching canonical protocol
   const registerMsg = {
     id: `reg-${Date.now()}`,
     type: 'REGISTER',
-    source: { agentId: 'browser-control-surface-test', platform: 'browser', provider: 'browser-control-surface', capabilities: ['dom', 'network', 'console'], daccRole: 'browser' },
+    source: {
+      agentId: 'browser-control-surface-test',
+      platform: 'browser',
+      provider: 'browser-control-surface',
+      capabilities: ['dom', 'network', 'console'],
+      daccRole: 'browser',
+    },
     target: 'relay',
-    payload: { agentId: 'browser-control-surface-test', platform: 'browser', provider: 'browser-control-surface', capabilities: ['dom', 'network', 'console'], daccRole: 'browser' },
+    payload: {
+      agentId: 'browser-control-surface-test',
+      platform: 'browser',
+      provider: 'browser-control-surface',
+      capabilities: ['dom', 'network', 'console'],
+      daccRole: 'browser',
+    },
     timestamp: Date.now(),
-    metadata: {}
+    metadata: {},
   };
-  
+
   console.log('[DEBUG] Sending REGISTER:', JSON.stringify(registerMsg, null, 2));
   ws.send(JSON.stringify(registerMsg));
 });
@@ -24,23 +36,29 @@ ws.on('open', () => {
 ws.on('message', (data) => {
   const msg = JSON.parse(data.toString());
   console.log('[DEBUG] Received:', JSON.stringify(msg, null, 2));
-  
+
   if (msg.type === 'REGISTRATION_CONFIRMED') {
     console.log('[DEBUG] Registration confirmed!');
     // Try creating a channel
     const createMsg = {
       id: `create-${Date.now()}`,
       type: 'CREATE_CHANNEL',
-      source: { agentId: 'browser-control-surface-test', platform: 'browser', provider: 'browser-control-surface', capabilities: ['dom', 'network', 'console'], daccRole: 'browser' },
+      source: {
+        agentId: 'browser-control-surface-test',
+        platform: 'browser',
+        provider: 'browser-control-surface',
+        capabilities: ['dom', 'network', 'console'],
+        daccRole: 'browser',
+      },
       target: 'relay',
       payload: { channelId: 'test-channel', channelType: 'broadcast', metadata: {} },
       timestamp: Date.now(),
-      metadata: { correlationId: `create-${Date.now()}` }
+      metadata: { correlationId: `create-${Date.now()}` },
     };
     console.log('[DEBUG] Sending CREATE_CHANNEL:', JSON.stringify(createMsg, null, 2));
     ws.send(JSON.stringify(createMsg));
   }
-  
+
   if (msg.type === 'CHANNEL_CREATED') {
     console.log('[DEBUG] Channel created!');
     ws.close();

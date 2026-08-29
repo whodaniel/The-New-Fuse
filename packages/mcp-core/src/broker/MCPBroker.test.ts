@@ -418,6 +418,12 @@ describe('MCPBroker', () => {
 
       // This would be mocked to throw an error
       await expect(errorBroker.start()).resolves.toBeUndefined();
+
+      // Fixture teardown: start() currently resolves (no failure is mocked),
+      // so this broker owns active timers that must be released.
+      if (errorBroker.isRunning()) {
+        await errorBroker.stop();
+      }
     });
 
     it('should handle stop errors gracefully', async () => {

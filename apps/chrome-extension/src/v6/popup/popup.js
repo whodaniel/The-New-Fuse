@@ -728,8 +728,7 @@ class FuseConnectPopup {
   }
 
   showInstallHelper() {
-    const repoRoot =
-      this.state.projectRoot || '$HOME/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse';
+    const repoRoot = this.state.projectRoot || '$HOME/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse';
     // Absolute path from native host when available; otherwise a shell-expandable fallback.
     const installCmd = this.state.projectRoot
       ? `cd "${repoRoot}/apps/chrome-extension" && ./install-v7.sh`

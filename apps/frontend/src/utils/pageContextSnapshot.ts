@@ -21,9 +21,16 @@ const SKIP_SELECTORS = [
 
 const SENSITIVE_PATTERNS: Array<{ pattern: RegExp; replacement: string }> = [
   // JWT / Bearer tokens
-  { pattern: /\beyJ[A-Za-z0-9-_]{10,}\.[A-Za-z0-9-_]{10,}\.[A-Za-z0-9-_]{10,}\b/g, replacement: '[REDACTED_JWT]' },
+  {
+    pattern: /\beyJ[A-Za-z0-9-_]{10,}\.[A-Za-z0-9-_]{10,}\.[A-Za-z0-9-_]{10,}\b/g,
+    replacement: '[REDACTED_JWT]',
+  },
   // Common API key formats (OpenAI, GitHub, Slack, Anthropic)
-  { pattern: /\b(?:sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9]{10,}|ant-[A-Za-z0-9_-]{20,})\b/g, replacement: '[REDACTED_API_KEY]' },
+  {
+    pattern:
+      /\b(?:sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9]{10,}|ant-[A-Za-z0-9_-]{20,})\b/g,
+    replacement: '[REDACTED_API_KEY]',
+  },
   // Credit card numbers
   { pattern: /\b(?:\d{4}[ -]?){3}\d{4}\b/g, replacement: '[REDACTED_CC]' },
   // US SSN

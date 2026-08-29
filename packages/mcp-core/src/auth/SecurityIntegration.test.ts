@@ -54,6 +54,9 @@ describe('MCP Security Integration Tests', () => {
   afterEach(async () => {
     await auditLogger.destroy();
 
+    // Release the background cache-cleanup interval owned by the manager.
+    rbacManager?.stop();
+
     // Clean up test directory
     try {
       rmSync(testLogDir, { recursive: true, force: true });
@@ -519,15 +522,18 @@ describe('MCP Security Integration Tests', () => {
     });
 
     it('should support time-based queries', async () => {
-      const now = new Date();
-      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
 
       // Log events at different times (simulated)
       await auditLogger.logAuthentication('user1', true, 'basic');
 
       // Flush events to storage
       await auditLogger.flush();
+
+      // Capture the range end AFTER the event exists, otherwise the event
+      // timestamp can land after `now` and the bounded query returns nothing.
+      const now = new Date();
 
       // Query recent events
       const recentEvents = await auditLogger.queryEvents({

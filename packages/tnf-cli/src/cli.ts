@@ -21,6 +21,7 @@ import {
   type BootStepResult,
 } from './boot/pipeline.js';
 import { assertNoDuplicateCommands } from './commands/_registry.js';
+import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
@@ -38,7 +39,6 @@ import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.j
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
-import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';

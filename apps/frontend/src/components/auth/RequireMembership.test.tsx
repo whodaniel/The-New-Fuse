@@ -10,8 +10,7 @@
  *   3. New STARTER accounts (active: false) being treated as unauthenticated
  *   4. Super Admin bypass remaining intact and unaffected by this fix
  */
-import { act, render, screen, waitFor } from '@testing-library/react';
-import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { API_ENDPOINTS } from '../../config/api';
@@ -132,10 +131,7 @@ describe('RequireMembership – 401 handling (non-destructive)', () => {
 
   it('DOES call logout when membership returns 401 AND /auth/me also returns 401 (genuine invalid session)', async () => {
     typedMockFetch.mockImplementation((url: string) => {
-      if (
-        url === API_ENDPOINTS.BILLING.MEMBERSHIP_ME ||
-        url === API_ENDPOINTS.AUTH.ME
-      ) {
+      if (url === API_ENDPOINTS.BILLING.MEMBERSHIP_ME || url === API_ENDPOINTS.AUTH.ME) {
         return Promise.resolve({ ok: false, status: 401 } as Response);
       }
       return Promise.resolve({ ok: false, status: 500 } as Response);

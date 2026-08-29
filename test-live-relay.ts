@@ -31,22 +31,25 @@ async function testLiveRelay() {
     console.log('✅ connect() resolved\n');
 
     // Wait for registration
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Create a test channel
     console.log('📝 Creating test channel...');
     await client.createChannel('test-channel', 'Test channel for live integration');
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Join the channel
     console.log('📝 Joining test channel...');
     await client.joinChannel('test-channel');
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Send a message
     console.log('📝 Sending test message...');
-    await client.sendChannelMessage('test-channel', JSON.stringify({ type: 'test', content: 'Hello from browser-control-surfaces!' }));
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await client.sendChannelMessage(
+      'test-channel',
+      JSON.stringify({ type: 'test', content: 'Hello from browser-control-surfaces!' })
+    );
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Check state
     console.log('\n📊 Client state:', client.getState());
@@ -62,7 +65,7 @@ async function testLiveRelay() {
     if ((client as any).socket) {
       (client as any).socket.close();
     }
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     console.log('\n🏁 Test complete');
   }
 }

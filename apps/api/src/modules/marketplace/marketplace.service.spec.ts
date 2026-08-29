@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MarketplaceService } from './marketplace.service';
-import { DatabaseService } from '@the-new-fuse/database';
 import { BadRequestException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { DatabaseService } from '@the-new-fuse/database';
+import { MarketplaceService } from './marketplace.service';
 
 jest.mock('node:child_process', () => ({
   spawn: jest.fn().mockReturnValue({
@@ -24,8 +24,8 @@ describe('MarketplaceService', () => {
           provide: DatabaseService,
           useValue: {
             // Mock whatever DB methods are needed
-          }
-        }
+          },
+        },
       ],
     }).compile();
 
@@ -39,12 +39,12 @@ describe('MarketplaceService', () => {
 
   describe('triggerResearchCrawl', () => {
     it('should throw BadRequestException if input.command is provided (Security constraint)', async () => {
-      await expect(service.triggerResearchCrawl({ command: 'echo "hacked"' }))
-        .rejects
-        .toThrow(BadRequestException);
-      await expect(service.triggerResearchCrawl({ command: 'echo "hacked"' }))
-        .rejects
-        .toThrow('Dynamically specifying shell commands is disabled for security reasons.');
+      await expect(service.triggerResearchCrawl({ command: 'echo "hacked"' })).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(service.triggerResearchCrawl({ command: 'echo "hacked"' })).rejects.toThrow(
+        'Dynamically specifying shell commands is disabled for security reasons.'
+      );
     });
 
     it('should not execute crawl and return dry_run when input.dryRun is true', async () => {

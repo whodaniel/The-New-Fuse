@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Channel, TnfChannelMessage, Agent } from '../types/federation';
+import React, { useState } from 'react';
+import { Agent, Channel, TnfChannelMessage } from '../types/federation';
 
 export interface ChannelManagerProps {
   channels: Channel[];
@@ -68,7 +68,14 @@ export const ChannelManager: React.FC<ChannelManagerProps> = ({
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '12px' }}>
       {/* Channel List */}
       <div style={{ flex: '0 0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '8px',
+          }}
+        >
           <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Channels</h3>
           <div style={{ display: 'flex', gap: '8px', fontSize: '11px' }}>
             {isConnected && <span style={{ color: '#4caf50' }}>● Connected</span>}
@@ -92,7 +99,15 @@ export const ChannelManager: React.FC<ChannelManagerProps> = ({
             + Create Channel
           </button>
         </div>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, maxHeight: '200px', overflowY: 'auto' }}>
+        <ul
+          style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: 0,
+            maxHeight: '200px',
+            overflowY: 'auto',
+          }}
+        >
           {channels.map((channel) => (
             <li
               key={channel.id}
@@ -107,7 +122,9 @@ export const ChannelManager: React.FC<ChannelManagerProps> = ({
                 transition: 'all 0.2s',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
                 <div>
                   <strong style={{ fontSize: '13px' }}>{channel.name}</strong>
                   {channel.description && (
@@ -268,7 +285,9 @@ export const ChannelManager: React.FC<ChannelManagerProps> = ({
       <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {selectedChannel ? (
           <>
-            <div style={{ padding: '8px 12px', background: '#f5f5f5', borderRadius: '4px 4px 0 0' }}>
+            <div
+              style={{ padding: '8px 12px', background: '#f5f5f5', borderRadius: '4px 4px 0 0' }}
+            >
               <strong>{selectedChannel.name}</strong>
               {selectedChannel.description && (
                 <span style={{ marginLeft: '8px', color: '#666', fontSize: '13px' }}>
@@ -315,7 +334,10 @@ export const ChannelManager: React.FC<ChannelManagerProps> = ({
                 </div>
               )}
             </div>
-            <form onSubmit={handleSendMessage} style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+            <form
+              onSubmit={handleSendMessage}
+              style={{ display: 'flex', gap: '8px', marginTop: '8px' }}
+            >
               <input
                 type="text"
                 value={messageInput}
@@ -347,7 +369,15 @@ export const ChannelManager: React.FC<ChannelManagerProps> = ({
             </form>
           </>
         ) : (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#999',
+            }}
+          >
             Select a channel to start chatting
           </div>
         )}

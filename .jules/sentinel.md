@@ -58,4 +58,5 @@ secure methods like `crypto.randomBytes(4).toString('hex')` or
 or session-related context.
 
 ## 2026-08-24 - [Command Injection] **Vulnerability:** [Command injection via input.command parameter in triggerResearchCrawl allowing arbitrary shell execution] **Learning:** [It existed because input.command string was passed unsanitized into a shell spawn call via spawn('sh', ['-lc', command])] **Prevention:** [Never pass unsanitized user input into a shell context. Disallow user overriding of system-defined commands or properly escape/sanitize them.]
+
 ## 2026-08-24 - [Command Injection] **Vulnerability:** [Command injection via input.command parameter in triggerResearchCrawl allowing arbitrary shell execution] **Learning:** [It existed because input.command string was passed unsanitized into a shell spawn call via spawn('sh', ['-lc', command])] **Prevention:** [Never pass unsanitized user input into a shell context. Disallow user overriding of system-defined commands or properly escape/sanitize them.]

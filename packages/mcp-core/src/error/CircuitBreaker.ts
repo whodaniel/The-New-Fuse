@@ -74,6 +74,7 @@ export class CircuitBreaker<T = any> extends EventEmitter {
   private successCount = 0;
   private lastFailureTime?: Date;
   private nextAttemptTime?: Date;
+  private monitoringInterval?: NodeJS.Timeout;
 
   // Rolling window for failure tracking
   private readonly requestHistory: Array<{ timestamp: Date; success: boolean }> = [];
@@ -355,14 +356,20 @@ export class CircuitBreaker<T = any> extends EventEmitter {
    * Start monitoring (emit periodic stats)
    */
   private startMonitoring(): void {
-    const monitoringInterval = setInterval(() => {
+    this.monitoringInterval = setInterval(() => {
       this.emit('stats', this.name, this.getStats());
     }, 30000); // Every 30 seconds
+  }
 
-    // Clean up on process exit
-    process.once('exit', () => {
-      clearInterval(monitoringInterval);
-    });
+  /**
+   * Stop background monitoring and release the interval handle.
+   * Idempotent; safe to call multiple times.
+   */
+  stop(): void {
+    if (this.monitoringInterval !== undefined) {
+      clearInterval(this.monitoringInterval);
+      this.monitoringInterval = undefined;
+    }
   }
 }
 
@@ -436,11 +443,25 @@ export class CircuitBreakerManager extends EventEmitter {
   }
 
   /**
+   * Stop all managed circuit breakers, releasing their monitoring intervals.
+   * Idempotent; safe to call multiple times.
+   */
+  stopAll(): void {
+    for (const [, circuitBreaker] of this.circuitBreakers) {
+      circuitBreaker.stop();
+    }
+  }
+
+  /**
    * Remove circuit breaker
    */
   remove(name: string): boolean {
+    const circuitBreaker = this.circuitBreakers.get(name);
     const removed = this.circuitBreakers.delete(name);
     if (removed) {
+      // Release the breaker's monitoring interval so a removed breaker cannot
+      // keep emitting stats (or holding a timer) after deregistration.
+      circuitBreaker?.stop();
       this.logger.debug(`Removed circuit breaker: ${name}`);
     }
     return removed;

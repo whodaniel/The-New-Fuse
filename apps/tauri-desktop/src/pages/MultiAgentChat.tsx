@@ -1,4 +1,3 @@
-import { scrollViewportToEnd } from '@the-new-fuse/ui-consolidated/scrollViewportToEnd';
 import { MessageSquare, PanelLeft, Settings, Sparkles } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import AgentDetailModal from '../components/chat/AgentDetailModal';
@@ -116,7 +115,7 @@ const MultiAgentChat: React.FC = () => {
     const viewport = messagesViewportRef.current;
     if (!viewport) return;
 
-    scrollViewportToEnd(viewport);
+    viewport.scrollTop = viewport.scrollHeight;
   }, [activeSession?.messages, isLoading]);
 
   // Listen for Federation Channel messages

@@ -7,11 +7,9 @@ const relayUrl = 'ws://127.0.0.1:3007/ws';
 console.log('Testing JWT-authenticated registration...');
 
 // Create a test JWT token
-const testToken = jwt.sign(
-  { sub: 'test-agent-123', aud: 'tnf-relay' },
-  JWT_SECRET,
-  { expiresIn: '1h' }
-);
+const testToken = jwt.sign({ sub: 'test-agent-123', aud: 'tnf-relay' }, JWT_SECRET, {
+  expiresIn: '1h',
+});
 
 console.log('Generated test token:', testToken);
 
@@ -19,18 +17,18 @@ const ws = new WebSocket(relayUrl);
 
 ws.on('open', () => {
   console.log('WebSocket connected');
-  
+
   // Send REGISTER message with JWT token
   const registerMsg = {
     id: 'test-register-1',
     type: 'REGISTER',
     source: { agentId: 'test-agent-123', agentName: 'Test Agent' },
     payload: {
-      token: testToken
+      token: testToken,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   console.log('Sending REGISTER message:', JSON.stringify(registerMsg, null, 2));
   ws.send(JSON.stringify(registerMsg));
 });
@@ -43,9 +41,9 @@ ws.on('message', (data) => {
     console.error('Failed to parse message:', data);
     return;
   }
-  
+
   console.log('Received message:', JSON.stringify(message, null, 2));
-  
+
   if (message.type === 'REGISTRATION_CONFIRMED') {
     console.log('✅ REGISTRATION_CONFIRMED received');
     console.log('Authenticated:', message.payload.relayInfo?.authenticated);

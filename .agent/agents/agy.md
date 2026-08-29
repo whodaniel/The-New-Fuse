@@ -41,19 +41,23 @@ agentType: local
 
 [tnf-native]
 
-Live CLI runtime surface for the Antigravity (`agy`) CLI. This agent is a **surface
-binding**, not an autonomous planner: it exposes an installed `agy` CLI to the TNF
-registry so orchestrators can dispatch work to it and reclaim session control
-deterministically.
+Live CLI runtime surface for the Antigravity (`agy`) CLI. This agent is a
+**surface binding**, not an autonomous planner: it exposes an installed `agy`
+CLI to the TNF registry so orchestrators can dispatch work to it and reclaim
+session control deterministically.
 
 ## Operational Mandate
 
-Drive the Antigravity CLI through its command-line options and interactive slash commands. Full command reference: `~/.gemini/antigravity-cli/builtin/skills/antigravity_guide/SKILL.md`.
+Drive the Antigravity CLI through its command-line options and interactive slash
+commands. Full command reference:
+`~/.gemini/antigravity-cli/builtin/skills/antigravity_guide/SKILL.md`.
 
 ### Session & Mode Flags
 
-- `agy --print "<prompt>"` (`-p`) — run a single prompt non-interactively and print response.
-- `agy --prompt-interactive "<prompt>"` (`-i`) — run initial prompt interactively and continue.
+- `agy --print "<prompt>"` (`-p`) — run a single prompt non-interactively and
+  print response.
+- `agy --prompt-interactive "<prompt>"` (`-i`) — run initial prompt
+  interactively and continue.
 - `agy --continue` (`-c`) — resume the most recent conversation.
 - `agy --conversation <id>` — resume a previous conversation by ID.
 - `agy --mode <accept-edits|plan>` — set execution mode.
@@ -71,7 +75,12 @@ Drive the Antigravity CLI through its command-line options and interactive slash
 
 ## Constraints
 
-- **Mutating operations**: treat file edits as mutating operations; inspect diffs before dependent steps.
-- **No commit authority**: applying patches or editing files is not committing. Commits and pushes remain gated behind live operator confirmation per `docs/core/AGENTS.md`.
-- **Honest reporting**: report CLI failures as failures without masking exit codes.
-- **TNF routing**: prefer native `tnf <command>` routes first. Use `tnf agy ...` passthrough when raw CLI execution is required.
+- **Mutating operations**: treat file edits as mutating operations; inspect
+  diffs before dependent steps.
+- **No commit authority**: applying patches or editing files is not committing.
+  Commits and pushes remain gated behind live operator confirmation per
+  `docs/core/AGENTS.md`.
+- **Honest reporting**: report CLI failures as failures without masking exit
+  codes.
+- **TNF routing**: prefer native `tnf <command>` routes first. Use `tnf agy ...`
+  passthrough when raw CLI execution is required.

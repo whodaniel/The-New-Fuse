@@ -765,7 +765,9 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
                 {browserAgentMode && (
                   <div className="flex items-center gap-1.5 rounded-md bg-blue-950/40 border border-blue-500/20 px-2.5 py-1 text-[11px] text-blue-300">
                     <Globe className="h-3.5 w-3.5 text-blue-400 shrink-0" />
-                    <span>Browser agent active: tasks execute in a local/operator browser instance.</span>
+                    <span>
+                      Browser agent active: tasks execute in a local/operator browser instance.
+                    </span>
                   </div>
                 )}
 

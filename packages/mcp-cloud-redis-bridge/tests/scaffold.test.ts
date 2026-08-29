@@ -32,8 +32,8 @@
 
 import { strict as assert } from 'node:assert';
 import { existsSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const pkgRoot = join(here, '..');
@@ -113,7 +113,7 @@ const tests = {
 
   'transports via stdio': scaffoldTest('stdio transport', async () => {
     const src = readFileSync(join(pkgRoot, 'src', 'index.ts'), 'utf8');
-    assert.ok(src.includes("StdioServerTransport"), 'stdio transport required');
+    assert.ok(src.includes('StdioServerTransport'), 'stdio transport required');
   }),
 
   'Redis client targets env-configurable URL': scaffoldTest('redis URL', async () => {
@@ -124,8 +124,9 @@ const tests = {
 
   // ---- TNF-P0 containment regression: set_director_identity ----------
 
-  'set_director_identity cannot be elevated by supplying wallet/nft strings':
-    scaffoldTest('set_director_identity denies unconditionally', () => {
+  'set_director_identity cannot be elevated by supplying wallet/nft strings': scaffoldTest(
+    'set_director_identity denies unconditionally',
+    () => {
       const src = readFileSync(join(pkgRoot, 'src', 'index.ts'), 'utf8');
       const body = extractCaseBody(src, 'set_director_identity');
       const code = stripLineComments(body);
@@ -142,11 +143,9 @@ const tests = {
       // Must fail closed with an explicit, unconditional throw — not a
       // silent no-op success response.
       assert.ok(/throw new Error/.test(code), 'must throw an explicit denial');
-      assert.ok(
-        !/return\s*\{/.test(code),
-        'must not return a success response (silent fallback)'
-      );
-    }),
+      assert.ok(!/return\s*\{/.test(code), 'must not return a success response (silent fallback)');
+    }
+  ),
 
   // ---- TNF-P0 containment regression: broadcast_super_director_prompt --
 
@@ -185,7 +184,11 @@ const tests = {
       // gated behind a conditional that a caller could satisfy (e.g. "only
       // deny if !authorizedIdentity" — that would let a caller who first
       // hits set_director_identity, or an operator-booted identity, through).
-      const firstStatement = code.trim().split('\n').find((l) => l.trim().length > 0) || '';
+      const firstStatement =
+        code
+          .trim()
+          .split('\n')
+          .find((l) => l.trim().length > 0) || '';
       assert.ok(
         !firstStatement.trim().startsWith('if'),
         'the denial must not be conditional on prior authorizedIdentity state'
@@ -218,7 +221,10 @@ const tests = {
         terminalAccess.includes('CLOUD_RUNTIME_PUBLIC_DOMAIN'),
         'get_terminal_access must still resolve the terminal URL'
       );
-      assert.ok(!/throw new Error/.test(terminalAccess), 'get_terminal_access must not be disabled');
+      assert.ok(
+        !/throw new Error/.test(terminalAccess),
+        'get_terminal_access must not be disabled'
+      );
 
       // verify_master_clock_signal is intentionally left reachable (it only
       // decrypts using a key the operator supplied at boot; it grants no

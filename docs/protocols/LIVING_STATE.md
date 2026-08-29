@@ -4,10 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Wire resolve-workspace-tier.cjs into the onboarder's
-automatic Turn Zero flow (currently advisory/manual-invoke only) — deferred
-because that flow is complex enough that changing it blind risks more than the
-current gap costs.
+**Current Directive:** Do not merge PR 264 until operator signoff after a green
+official root turbo build on a machine with >=8Gi free.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1113,6 +1111,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-29T04:47:45.751Z handoff `4283b14d-8b02-4347-adc8-d5f26a4b01fd` head
+  `26be2886c104` project `TNF-SESSION` — Do not merge PR 264 until operator
+  signoff after a green official root turbo build on a machine with >=8Gi free.
 
 - 2026-08-27T20:45:58.101Z handoff `e85d971f-770d-4cfe-98f6-4cd46280f557` head
   `f328e16919f8` project `TNF-SESSION` — Wire resolve-workspace-tier.cjs into

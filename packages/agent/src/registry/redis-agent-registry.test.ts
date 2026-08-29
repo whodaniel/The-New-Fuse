@@ -1,45 +1,68 @@
 import { AgentMetadata, RedisAgentRegistry } from './redis-agent-registry.js';
 
-// Mock Redis client
+// Current RedisAgentRegistry contract (src/registry/redis-agent-registry.ts):
+//   constructor(Partial<AgentRegistryConfig>)
+//   connect() -> createStandaloneRedisClient() + createUpstashRestClient()
+//   operations prefer the Upstash REST client when present:
+//     register/unregister/updateHeartbeat -> upstash.pipeline().hset/sadd/srem/zadd/zrem/del/expire -> exec()
+//     getAgent -> upstash.hgetall
+//     findAgentsByCapability -> upstash.smembers
+//     listAgents -> upstash.scan(Number(cursor), { match, count })
+//     getHealthyAgents -> upstash.zrange(healthKey, minScore, 1, { byScore: true })
+// The factories come from @the-new-fuse/infrastructure and are mocked here.
+
 const mockRedisClient = {
-  on: jest.fn(),
   connect: jest.fn().mockResolvedValue(undefined),
   quit: jest.fn().mockResolvedValue(undefined),
-  hGetAll: jest.fn(),
-  hSet: jest.fn(),
-  expire: jest.fn(),
-  del: jest.fn(),
-  sAdd: jest.fn(),
-  sRem: jest.fn(),
-  sMembers: jest.fn(),
+  hgetall: jest.fn(),
+  smembers: jest.fn(),
   scan: jest.fn(),
-  zRangeByScore: jest.fn(),
+  zrangebyscore: jest.fn(),
   multi: jest.fn(),
 };
 
-jest.mock('redis', () => ({
-  createClient: () => mockRedisClient,
+const mockPipeline = {
+  hset: jest.fn().mockReturnThis(),
+  expire: jest.fn().mockReturnThis(),
+  del: jest.fn().mockReturnThis(),
+  sadd: jest.fn().mockReturnThis(),
+  srem: jest.fn().mockReturnThis(),
+  zadd: jest.fn().mockReturnThis(),
+  zrem: jest.fn().mockReturnThis(),
+  exec: jest.fn().mockResolvedValue([]),
+};
+
+const mockUpstash = {
+  pipeline: jest.fn(() => mockPipeline),
+  hgetall: jest.fn(),
+  smembers: jest.fn(),
+  scan: jest.fn(),
+  zrange: jest.fn(),
+};
+
+jest.mock('@the-new-fuse/infrastructure', () => ({
+  createStandaloneRedisClient: jest.fn(() => mockRedisClient),
+  createUpstashRestClient: jest.fn(() => mockUpstash),
 }));
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const infrastructure = require('@the-new-fuse/infrastructure') as {
+  createStandaloneRedisClient: jest.Mock;
+  createUpstashRestClient: jest.Mock;
+};
 
 describe('RedisAgentRegistry', () => {
   let registry: RedisAgentRegistry;
-  let mockMulti: any;
 
-  beforeEach(() => {
-    registry = new RedisAgentRegistry({ redisUrl: 'redis://mock' });
-    mockMulti = {
-      hSet: jest.fn().mockReturnThis(),
-      expire: jest.fn().mockReturnThis(),
-      del: jest.fn().mockReturnThis(),
-      sAdd: jest.fn().mockReturnThis(),
-      sRem: jest.fn().mockReturnThis(),
-      zAdd: jest.fn().mockReturnThis(),
-      zRem: jest.fn().mockReturnThis(),
-      exec: jest.fn().mockResolvedValue([]),
-      hGetAll: jest.fn().mockReturnThis(),
-    };
-    mockRedisClient.multi.mockReturnValue(mockMulti);
+  beforeEach(async () => {
     jest.clearAllMocks();
+    mockPipeline.exec.mockResolvedValue([]);
+    registry = new RedisAgentRegistry({ redisUrl: 'redis://mock' });
+    await registry.connect();
+  });
+
+  afterEach(async () => {
+    await registry.disconnect();
   });
 
   const agent1: Omit<AgentMetadata, 'lastSeen'> = {
@@ -56,40 +79,49 @@ describe('RedisAgentRegistry', () => {
     status: 'online',
   };
 
+  describe('connect', () => {
+    it('creates standalone Redis and Upstash REST clients', async () => {
+      expect(infrastructure.createStandaloneRedisClient).toHaveBeenCalledTimes(1);
+      expect(infrastructure.createUpstashRestClient).toHaveBeenCalledTimes(1);
+      // Upstash pipeline is the primary write path once connected
+      await registry.updateHeartbeat('agent-1');
+      expect(mockUpstash.pipeline).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('register', () => {
     it('should register a new agent and index its capabilities', async () => {
-      mockRedisClient.hGetAll.mockResolvedValue({}); // No old agent
+      mockUpstash.hgetall.mockResolvedValue({}); // No old agent
       await registry.register(agent1);
 
-      expect(mockRedisClient.multi).toHaveBeenCalledTimes(1);
-      expect(mockMulti.hSet).toHaveBeenCalledWith(
+      expect(mockUpstash.pipeline).toHaveBeenCalledTimes(1);
+      expect(mockPipeline.hset).toHaveBeenCalledWith(
         'tnf:registry:agents:agent-1',
         expect.objectContaining({ id: 'agent-1' })
       );
-      expect(mockMulti.expire).toHaveBeenCalledWith('tnf:registry:agents:agent-1', 60);
-      expect(mockMulti.sAdd).toHaveBeenCalledWith(
+      expect(mockPipeline.expire).toHaveBeenCalledWith('tnf:registry:agents:agent-1', 60);
+      expect(mockPipeline.sadd).toHaveBeenCalledWith(
         'tnf:registry:agents:capability:test-capability-1',
         'agent-1'
       );
-      expect(mockMulti.exec).toHaveBeenCalledTimes(1);
+      expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
     });
 
     it('should update an existing agent and its capability indexes', async () => {
-      const oldAgentData = {
+      mockUpstash.hgetall.mockResolvedValue({
         id: 'agent-1',
         name: 'Test Agent 1',
         capabilities: JSON.stringify([{ name: 'old-capability' }]),
         lastSeen: Date.now().toString(),
-      };
-      mockRedisClient.hGetAll.mockResolvedValue(oldAgentData);
+      });
 
       await registry.register(agent1);
 
-      expect(mockMulti.sAdd).toHaveBeenCalledWith(
+      expect(mockPipeline.sadd).toHaveBeenCalledWith(
         'tnf:registry:agents:capability:test-capability-1',
         'agent-1'
       );
-      expect(mockMulti.sRem).toHaveBeenCalledWith(
+      expect(mockPipeline.srem).toHaveBeenCalledWith(
         'tnf:registry:agents:capability:old-capability',
         'agent-1'
       );
@@ -98,23 +130,22 @@ describe('RedisAgentRegistry', () => {
 
   describe('unregister', () => {
     it('should unregister an agent and remove it from capability sets', async () => {
-      const agentData = {
+      mockUpstash.hgetall.mockResolvedValue({
         id: 'agent-1',
         name: 'Test Agent 1',
         capabilities: JSON.stringify([{ name: 'test-capability-1' }]),
         lastSeen: Date.now().toString(),
-      };
-      mockRedisClient.hGetAll.mockResolvedValue(agentData);
+      });
 
       await registry.unregister('agent-1');
 
-      expect(mockRedisClient.multi).toHaveBeenCalledTimes(1);
-      expect(mockMulti.sRem).toHaveBeenCalledWith(
+      expect(mockUpstash.pipeline).toHaveBeenCalledTimes(1);
+      expect(mockPipeline.srem).toHaveBeenCalledWith(
         'tnf:registry:agents:capability:test-capability-1',
         'agent-1'
       );
-      expect(mockMulti.del).toHaveBeenCalledWith('tnf:registry:agents:agent-1');
-      expect(mockMulti.exec).toHaveBeenCalledTimes(1);
+      expect(mockPipeline.del).toHaveBeenCalledWith('tnf:registry:agents:agent-1');
+      expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -122,114 +153,102 @@ describe('RedisAgentRegistry', () => {
     it('should update the lastSeen timestamp and refresh the TTL', async () => {
       await registry.updateHeartbeat('agent-1');
 
-      expect(mockRedisClient.multi).toHaveBeenCalledTimes(1);
-      expect(mockMulti.hSet).toHaveBeenCalledWith(
-        'tnf:registry:agents:agent-1',
-        'lastSeen',
-        expect.any(Number)
-      );
-      expect(mockMulti.expire).toHaveBeenCalledWith('tnf:registry:agents:agent-1', 60);
-      expect(mockMulti.exec).toHaveBeenCalledTimes(1);
+      expect(mockUpstash.pipeline).toHaveBeenCalledTimes(1);
+      expect(mockPipeline.hset).toHaveBeenCalledWith('tnf:registry:agents:agent-1', {
+        lastSeen: expect.any(String),
+      });
+      expect(mockPipeline.expire).toHaveBeenCalledWith('tnf:registry:agents:agent-1', 60);
+      expect(mockPipeline.exec).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('findAgentsByCapability', () => {
     it('should return agents with the specified capability', async () => {
-      const agentIds = ['agent-1', 'agent-2'];
-      const agentData1 = {
-        ...agent1,
-        lastSeen: Date.now().toString(),
-        capabilities: JSON.stringify(agent1.capabilities),
-      };
-      const agentData2 = {
-        ...agent2,
-        lastSeen: Date.now().toString(),
-        capabilities: JSON.stringify(agent2.capabilities),
-      };
-
-      mockRedisClient.sMembers.mockResolvedValue(agentIds);
-      mockMulti.exec.mockResolvedValue([agentData1, agentData2]);
+      mockUpstash.smembers.mockResolvedValue(['agent-1', 'agent-2']);
+      mockUpstash.hgetall
+        .mockResolvedValueOnce({
+          ...agent1,
+          lastSeen: Date.now().toString(),
+          capabilities: JSON.stringify(agent1.capabilities),
+        } as unknown as Record<string, string>)
+        .mockResolvedValueOnce({
+          ...agent2,
+          lastSeen: Date.now().toString(),
+          capabilities: JSON.stringify(agent2.capabilities),
+        } as unknown as Record<string, string>);
 
       const agents = await registry.findAgentsByCapability('test-capability-1');
 
       expect(agents.length).toBe(2);
       expect(agents[0].id).toBe('agent-1');
       expect(agents[1].id).toBe('agent-2');
-      expect(mockRedisClient.sMembers).toHaveBeenCalledWith(
+      expect(mockUpstash.smembers).toHaveBeenCalledWith(
         'tnf:registry:agents:capability:test-capability-1'
       );
-      expect(mockMulti.hGetAll).toHaveBeenCalledWith('tnf:registry:agents:agent-1');
-      expect(mockMulti.hGetAll).toHaveBeenCalledWith('tnf:registry:agents:agent-2');
     });
   });
 
   describe('listAgents', () => {
     it('should return a list of all registered agents using SCAN', async () => {
       const keys = ['tnf:registry:agents:agent-1', 'tnf:registry:agents:agent-2'];
-      const agentData1 = {
-        ...agent1,
-        lastSeen: Date.now().toString(),
-        capabilities: JSON.stringify(agent1.capabilities),
-      };
-      const agentData2 = {
-        ...agent2,
-        lastSeen: Date.now().toString(),
-        capabilities: JSON.stringify(agent2.capabilities),
-      };
-
-      mockRedisClient.scan
-        .mockResolvedValueOnce({ cursor: '1', keys })
-        .mockResolvedValueOnce({ cursor: '0', keys: [] });
-      mockMulti.exec.mockResolvedValue([agentData1, agentData2]);
+      mockUpstash.scan.mockResolvedValueOnce([1, keys]).mockResolvedValueOnce([0, []]);
+      mockUpstash.hgetall
+        .mockResolvedValueOnce({
+          ...agent1,
+          lastSeen: Date.now().toString(),
+          capabilities: JSON.stringify(agent1.capabilities),
+        } as unknown as Record<string, string>)
+        .mockResolvedValueOnce({
+          ...agent2,
+          lastSeen: Date.now().toString(),
+          capabilities: JSON.stringify(agent2.capabilities),
+        } as unknown as Record<string, string>);
 
       const agents = await registry.listAgents();
 
       expect(agents.length).toBe(2);
-      expect(mockRedisClient.scan).toHaveBeenCalledWith('0' as any, {
-        MATCH: 'tnf:registry:agents:*',
-        COUNT: 100,
+      expect(mockUpstash.scan).toHaveBeenCalledWith(0, {
+        match: 'tnf:registry:agents:*',
+        count: 100,
       });
+      expect(agents[0].id).toBe('agent-1');
+      expect(agents[1].id).toBe('agent-2');
     });
   });
 
   describe('getAgent', () => {
     it('should return agent details', async () => {
-      const agentData = {
+      mockUpstash.hgetall.mockResolvedValue({
         ...agent1,
         lastSeen: Date.now().toString(),
         capabilities: JSON.stringify(agent1.capabilities),
-      };
-      mockRedisClient.hGetAll.mockResolvedValue(agentData);
+      } as unknown as Record<string, string>);
 
       const agent = await registry.getAgent('agent-1');
 
       expect(agent).not.toBeNull();
       expect(agent?.id).toBe('agent-1');
-      expect(mockRedisClient.hGetAll).toHaveBeenCalledWith('tnf:registry:agents:agent-1');
+      expect(mockUpstash.hgetall).toHaveBeenCalledWith('tnf:registry:agents:agent-1');
     });
   });
 
   describe('getHealthyAgents', () => {
     it('should return agents with a health score above the threshold', async () => {
-      const agentIds = ['agent-1'];
-      const agentData1 = {
+      mockUpstash.zrange.mockResolvedValue(['agent-1']);
+      mockUpstash.hgetall.mockResolvedValue({
         ...agent1,
         lastSeen: Date.now().toString(),
         capabilities: JSON.stringify(agent1.capabilities),
         healthScore: '0.95',
-      };
-      mockRedisClient.zRangeByScore.mockResolvedValue(agentIds);
-      mockMulti.exec.mockResolvedValue([agentData1]);
+      } as unknown as Record<string, string>);
 
       const agents = await registry.getHealthyAgents(0.9);
 
       expect(agents.length).toBe(1);
       expect(agents[0].id).toBe('agent-1');
-      expect(mockRedisClient.zRangeByScore).toHaveBeenCalledWith(
-        'tnf:registry:agents:health',
-        0.9,
-        1
-      );
+      expect(mockUpstash.zrange).toHaveBeenCalledWith('tnf:registry:agents:health', 0.9, 1, {
+        byScore: true,
+      });
     });
   });
 });

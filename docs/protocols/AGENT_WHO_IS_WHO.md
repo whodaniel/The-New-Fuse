@@ -1,6 +1,7 @@
 # Agent Who-Is-Who
 
-Human-friendly running record of **what people call an agent** vs **what it actually is**.
+Human-friendly running record of **what people call an agent** vs **what it
+actually is**.
 
 _Last refreshed: **2026-08-25 22:18:56 EDT**_
 
@@ -13,37 +14,40 @@ python3 scripts/system/tnf-agent-who-is-who.py --write
 
 ## Name cheat sheet
 
-| When you say… | Also called | Family | What it is |
-|---|---|---|---|
-| **Inky** | Enki, front door | TNF Voice | Audio front door / TTS persona — not a coding agent tty |
-| **Cursor** | Cursor Agent, cursor-agent | Cursor | Cursor’s terminal agent (this chat when voice-anchored here) |
-| **Claude** | Claude Code, claude-code | Anthropic | Claude Code CLI coding agent |
-| **Hermes** | Hermes Agent | Hermes | Hermes Agent CLI (tools, sessions, optional TNF boot step) |
-| **OpenClaw** | Open Claw, Claw, openclaw | OpenClaw | Optional OpenClaw operator surface routed through TNF |
-| **TNF** | TNF CLI, TNF TUI, TNF Agent | The New Fuse | Native TNF interactive agent (`tnf tui` / `tnf boot` attach) |
-| **Codex** | codex CLI | OpenAI | OpenAI Codex CLI coding agent |
-| **Gemini** | Gemini CLI | Google | Gemini CLI coding agent |
-| **Pi** | pi coding agent | Pi | Pi terminal coding agent |
-| **Aider** | — | Aider | Aider pair-programming CLI |
-| **Kilo** | kilo-cli | Kilo | Kilo CLI agent |
-| **OpenCode** | opencode | OpenCode | OpenCode CLI agent |
+| When you say… | Also called                 | Family       | What it is                                                   |
+| ------------- | --------------------------- | ------------ | ------------------------------------------------------------ |
+| **Inky**      | Enki, front door            | TNF Voice    | Audio front door / TTS persona — not a coding agent tty      |
+| **Cursor**    | Cursor Agent, cursor-agent  | Cursor       | Cursor’s terminal agent (this chat when voice-anchored here) |
+| **Claude**    | Claude Code, claude-code    | Anthropic    | Claude Code CLI coding agent                                 |
+| **Hermes**    | Hermes Agent                | Hermes       | Hermes Agent CLI (tools, sessions, optional TNF boot step)   |
+| **OpenClaw**  | Open Claw, Claw, openclaw   | OpenClaw     | Optional OpenClaw operator surface routed through TNF        |
+| **TNF**       | TNF CLI, TNF TUI, TNF Agent | The New Fuse | Native TNF interactive agent (`tnf tui` / `tnf boot` attach) |
+| **Codex**     | codex CLI                   | OpenAI       | OpenAI Codex CLI coding agent                                |
+| **Gemini**    | Gemini CLI                  | Google       | Gemini CLI coding agent                                      |
+| **Pi**        | pi coding agent             | Pi           | Pi terminal coding agent                                     |
+| **Aider**     | —                           | Aider        | Aider pair-programming CLI                                   |
+| **Kilo**      | kilo-cli                    | Kilo         | Kilo CLI agent                                               |
+| **OpenCode**  | opencode                    | OpenCode     | OpenCode CLI agent                                           |
 
 ### Easy mix-ups
 
-- **Claude** ≠ **OpenClaw** — Claude is Anthropic’s coding CLI; OpenClaw is a separate operator surface.
-- **Hermes** ≠ **Claude** / **OpenClaw** — Hermes is its own agent runtime (`hermes`).
-- **TNF TUI** ≠ **Cursor Agent** — both can take voice, but they are different windows/ttys.
+- **Claude** ≠ **OpenClaw** — Claude is Anthropic’s coding CLI; OpenClaw is a
+  separate operator surface.
+- **Hermes** ≠ **Claude** / **OpenClaw** — Hermes is its own agent runtime
+  (`hermes`).
+- **TNF TUI** ≠ **Cursor Agent** — both can take voice, but they are different
+  windows/ttys.
 - **Inky** is the voice front door / speaker, not a coding agent.
 
 ## Live right now
 
-| Name | Window (tty) | PID | Note |
-|---|---|---|---|
-| **Claude** (`claude`) | `ttys000` | 99427 | — |
-| **Hermes** (`hermes`) | `ttys004` | 59621 | — |
-| **OpenCode** (`opencode`) | `ttys002` | 3778 | — |
-| **OpenCode** (`opencode`) | `ttys007` | 64049 | — |
-| **OpenCode** (`opencode`) | `ttys009` | 63123 | — |
+| Name                      | Window (tty) | PID   | Note |
+| ------------------------- | ------------ | ----- | ---- |
+| **Claude** (`claude`)     | `ttys000`    | 99427 | —    |
+| **Hermes** (`hermes`)     | `ttys004`    | 59621 | —    |
+| **OpenCode** (`opencode`) | `ttys002`    | 3778  | —    |
+| **OpenCode** (`opencode`) | `ttys007`    | 64049 | —    |
+| **OpenCode** (`opencode`) | `ttys009`    | 63123 | —    |
 
 ## Voice beam anchor
 
@@ -54,4 +58,3 @@ _No voice target locked._
 - **Cmd+Option+Click** a Terminal tab — retarget beam
 - `voice-target-agent --prefer claude|hermes|cursor-agent|tnf|…`
 - Ask Inky to move the anchor
-

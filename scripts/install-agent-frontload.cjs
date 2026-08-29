@@ -4,9 +4,33 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { execFileSync } = require('node:child_process');
 
 const HOME = os.homedir();
-const REPO_ROOT = path.resolve(__dirname, '..');
+const SCRIPT_REPO_ROOT = path.resolve(__dirname, '..');
+
+function resolveCanonicalRepoRoot(repoRoot, gitCommonDir) {
+  if (!gitCommonDir) return repoRoot;
+  const resolvedCommonDir = path.resolve(repoRoot, gitCommonDir.trim());
+  return path.basename(resolvedCommonDir) === '.git'
+    ? path.dirname(resolvedCommonDir)
+    : repoRoot;
+}
+
+function discoverCanonicalRepoRoot(repoRoot = SCRIPT_REPO_ROOT) {
+  try {
+    const gitCommonDir = execFileSync(
+      'git',
+      ['-C', repoRoot, 'rev-parse', '--git-common-dir'],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+    );
+    return resolveCanonicalRepoRoot(repoRoot, gitCommonDir);
+  } catch {
+    return repoRoot;
+  }
+}
+
+const REPO_ROOT = discoverCanonicalRepoRoot();
 const BEGIN = '<!-- TNF-FRONTLOAD:BEGIN — managed by scripts/install-agent-frontload.cjs; edits inside are overwritten -->';
 const END = '<!-- TNF-FRONTLOAD:END -->';
 const VERSION = 'TNF-FRONTLOAD:v2';
@@ -78,6 +102,10 @@ function parseArgs(argv) {
   return out;
 }
 
+function isClaudeTarget(requested) {
+  return !requested || requested.has('claude') || requested.has('claude code') || requested.has('claude.sessionstart');
+}
+
 function classify(target) {
   const fileExists = fs.existsSync(target.contextFile);
   const dirExists = fs.existsSync(target.dirHint || path.dirname(target.contextFile));
@@ -145,7 +173,7 @@ function main() {
   const block = buildBlock(REPO_ROOT);
   const requested = opts.targets ? new Set(opts.targets) : null;
   const targets = requested ? TARGETS.filter((t) => requested.has(t.id) || requested.has(t.runtime.toLowerCase())) : TARGETS;
-  if (requested && !targets.length) throw new Error(`No matching targets: ${opts.targets.join(', ')}`);
+  if (requested && !targets.length && !isClaudeTarget(requested)) throw new Error(`No matching targets: ${opts.targets.join(', ')}`);
   const rows = [];
   for (const target of targets) {
     const c = classify(target);
@@ -178,7 +206,7 @@ function main() {
     fs.writeFileSync(target.contextFile, next, 'utf8');
     rows.push({ id: target.id, runtime: target.runtime, file: shown, state: 'managed-current', action: 'updated', ok: true });
   }
-  if (!requested || requested.has('claude') || requested.has('claude code')) rows.push(ensureClaudeHook({ verify: opts.verify, dryRun: opts.dryRun }));
+  if (isClaudeTarget(requested)) rows.push(ensureClaudeHook({ verify: opts.verify, dryRun: opts.dryRun }));
   const failed = rows.filter((row) => !row.ok);
   const payload = { ok: failed.length === 0, version: VERSION, repoRoot: REPO_ROOT, mode: opts.verify ? 'verify' : opts.dryRun ? 'dry-run' : opts.repair ? 'repair' : 'install', rows, failed: failed.map((x) => x.id) };
   if (opts.json) console.log(JSON.stringify(payload, null, 2));
@@ -192,4 +220,13 @@ function main() {
 if (require.main === module) {
   try { main(); } catch (error) { console.error(`install-agent-frontload: ${error.message}`); process.exit(1); }
 }
-module.exports = { buildBlock, applyBlock, classify, TARGETS, VERSION };
+module.exports = {
+  buildBlock,
+  applyBlock,
+  classify,
+  discoverCanonicalRepoRoot,
+  isClaudeTarget,
+  resolveCanonicalRepoRoot,
+  TARGETS,
+  VERSION,
+};

@@ -238,7 +238,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       return result as unknown as T[];
     }
     const result = await db.execute(sql.raw(query));
-    return result as T[];
+    return result as unknown as T[];
   }
 
   /**

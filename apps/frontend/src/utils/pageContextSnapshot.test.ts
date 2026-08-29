@@ -3,7 +3,8 @@ import { sanitizePageText } from './pageContextSnapshot';
 
 describe('pageContextSnapshot sanitization', () => {
   it('redacts sensitive API keys and JWTs', () => {
-    const raw = 'Secret OpenAI key is sk-123456789012345678901234 and JWT is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+    const raw =
+      'Secret OpenAI key is sk-123456789012345678901234 and JWT is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
     const { text, redactionCount } = sanitizePageText(raw);
 
     expect(text).toContain('[REDACTED_API_KEY]');
