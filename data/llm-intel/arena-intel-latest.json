@@ -1,53 +1,53 @@
 {
-  "id": "intel_1787705843540",
-  "collectedAt": "2026-08-26T00:57:23.526Z",
+  "id": "intel_1788004854816",
+  "collectedAt": "2026-08-29T12:00:54.609Z",
   "arenaData": [
     {
       "source": "lm-arena-leaderboard",
       "sourceName": "LM Arena (Chatbot Arena)",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard",
-      "collectedAt": "2026-08-26T00:57:26.172Z",
-      "status": "error",
-      "error": "Invalid URL",
-      "rankings": []
+      "collectedAt": "2026-08-29T12:01:05.903Z",
+      "status": "success",
+      "rankings": [],
+      "rawLength": 533857
     },
     {
       "source": "lm-arena-vision",
       "sourceName": "LM Arena Vision",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=vision",
-      "collectedAt": "2026-08-26T00:57:27.380Z",
+      "collectedAt": "2026-08-29T12:01:07.950Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 513738
+      "rawLength": 533923
     },
     {
       "source": "lm-arena-hard",
       "sourceName": "LM Arena Hard Prompts",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=hard",
-      "collectedAt": "2026-08-26T00:57:28.536Z",
+      "collectedAt": "2026-08-29T12:01:09.607Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 513732
+      "rawLength": 533917
     },
     {
       "source": "lm-arena-code",
       "sourceName": "LM Arena Coding",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=coding",
-      "collectedAt": "2026-08-26T00:57:29.761Z",
+      "collectedAt": "2026-08-29T12:01:10.896Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 513735
+      "rawLength": 533923
     },
     {
       "source": "agent-arena",
       "sourceName": "Agent Arena",
       "sourceType": "arena",
       "url": "https://agent-arena.com/leaderboard",
-      "collectedAt": "2026-08-26T00:57:30.728Z",
+      "collectedAt": "2026-08-29T12:01:11.605Z",
       "status": "success",
       "rankings": [],
       "rawLength": 862
@@ -57,17 +57,17 @@
       "sourceName": "Artificial Analysis",
       "sourceType": "benchmark",
       "url": "https://artificialanalysis.ai/leaderboard",
-      "collectedAt": "2026-08-26T00:57:31.227Z",
+      "collectedAt": "2026-08-29T12:01:11.942Z",
       "status": "partial",
       "rankings": [],
-      "rawLength": 14613
+      "rawLength": 14713
     },
     {
       "source": "open-llm-leaderboard",
       "sourceName": "Open LLM Leaderboard (HuggingFace)",
       "sourceType": "benchmark",
       "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
-      "collectedAt": "2026-08-26T00:57:31.481Z",
+      "collectedAt": "2026-08-29T12:01:12.241Z",
       "status": "success",
       "rankings": [
         {
@@ -88,7 +88,7 @@
       "sourceName": "Aider Coding Leaderboard",
       "sourceType": "benchmark",
       "url": "https://aider.chat/docs/leaderboards/",
-      "collectedAt": "2026-08-26T00:57:31.943Z",
+      "collectedAt": "2026-08-29T12:01:14.648Z",
       "status": "success",
       "rankings": [
         {
@@ -109,7 +109,7 @@
       "sourceName": "SWE-bench Leaderboard",
       "sourceType": "benchmark",
       "url": "https://www.swebench.com/",
-      "collectedAt": "2026-08-26T00:57:34.580Z",
+      "collectedAt": "2026-08-29T12:01:24.140Z",
       "status": "success",
       "rankings": [
         {
@@ -130,14 +130,14 @@
     {
       "feed": "HuggingFace Blog",
       "url": "https://huggingface.co/blog/feed.xml",
-      "collectedAt": "2026-08-26T00:57:34.874Z",
+      "collectedAt": "2026-08-29T12:01:26.391Z",
       "status": "success",
       "articles": []
     },
     {
       "feed": "OpenAI Blog",
       "url": "https://openai.com/blog/rss.xml",
-      "collectedAt": "2026-08-26T00:57:35.397Z",
+      "collectedAt": "2026-08-29T12:01:26.888Z",
       "status": "error",
       "error": "Invalid URL",
       "articles": []
@@ -145,7 +145,7 @@
     {
       "feed": "Anthropic News",
       "url": "https://www.anthropic.com/rss.xml",
-      "collectedAt": "2026-08-26T00:57:35.646Z",
+      "collectedAt": "2026-08-29T12:01:27.787Z",
       "status": "error",
       "error": "HTTP 404",
       "articles": []
@@ -153,7 +153,7 @@
     {
       "feed": "r/LocalLLaMA",
       "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
-      "collectedAt": "2026-08-26T00:57:35.905Z",
+      "collectedAt": "2026-08-29T12:01:27.941Z",
       "status": "error",
       "error": "HTTP 403",
       "articles": []
@@ -161,7 +161,7 @@
     {
       "feed": "r/MachineLearning",
       "url": "https://www.reddit.com/r/MachineLearning/new/.json",
-      "collectedAt": "2026-08-26T00:57:36.201Z",
+      "collectedAt": "2026-08-29T12:01:28.187Z",
       "status": "error",
       "error": "HTTP 403",
       "articles": []
@@ -272,8 +272,8 @@
     },
     {
       "model": "meta/llama-3.3-70b-instruct",
-      "status": "timeout",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     },
     {
@@ -284,9 +284,9 @@
     },
     {
       "model": "meta/llama-3.2-90b-vision-instruct",
-      "status": "timeout",
-      "httpStatus": 0,
-      "latencyMs": null
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 1793
     },
     {
       "model": "meta/llama-guard-4-12b",
@@ -296,15 +296,15 @@
     },
     {
       "model": "openai/gpt-oss-120b",
-      "status": "timeout",
-      "httpStatus": 0,
-      "latencyMs": null
+      "status": "live",
+      "httpStatus": 200,
+      "latencyMs": 948
     },
     {
       "model": "openai/gpt-oss-20b",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 389
+      "latencyMs": 307
     },
     {
       "model": "microsoft/phi-4-multimodal-instruct",
@@ -393,15 +393,15 @@
   ],
   "summary": {
     "arenaSources": 9,
-    "arenaSourcesOk": 7,
+    "arenaSourcesOk": 8,
     "totalRankings": 6,
     "newsFeeds": 5,
     "newsFeedsOk": 1,
     "totalArticles": 0,
     "nvidiaModelsProbed": 37,
-    "nvidiaLive": 1,
-    "nvidiaSlow": 5,
-    "nvidiaEol": 26
+    "nvidiaLive": 3,
+    "nvidiaSlow": 2,
+    "nvidiaEol": 27
   },
-  "completedAt": "2026-08-26T00:58:23.079Z"
+  "completedAt": "2026-08-29T12:02:01.133Z"
 }

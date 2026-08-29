@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-08-26T13:43:17.396Z",
+  "timestamp": "2026-08-29T13:38:48.914Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 802,
+      "durationMs": 598,
       "data": {
-        "branch": "sentinel-fix-marketplace-cmd-injection-11879217410415317362",
-        "commit": "74591da4e",
+        "branch": "main",
+        "commit": "dc777f10c",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 1410,
+      "durationMs": 1921,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -25,7 +25,7 @@
     "selfEvolution": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 1,
+      "durationMs": 23,
       "data": {
         "status": "skipped"
       }
@@ -39,31 +39,35 @@
       }
     },
     "processHealth": {
-      "ok": true,
-      "verdict": "clean",
-      "durationMs": 1479,
+      "ok": false,
+      "verdict": "findings",
+      "findings": 2,
+      "durationMs": 1553,
       "data": {
-        "findings": 0,
-        "healthy": 17,
-        "detail": []
+        "findings": 2,
+        "healthy": 15,
+        "detail": [
+          "error: tnf-master-clock-super-cycle",
+          "error: tnf-terminal-awareness-reminder"
+        ]
       }
     },
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 3,
+      "durationMs": 1,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 3704,
+  "totalDurationMs": 4253,
   "summary": {
-    "clean": 4,
-    "findings": 0,
+    "clean": 3,
+    "findings": 1,
     "unresolved": 2,
     "errored": 0,
-    "totalFindings": 0
+    "totalFindings": 2
   }
 }
