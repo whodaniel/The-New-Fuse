@@ -81,7 +81,7 @@ export function registerSubdirectorCommand(
     .option('--status', 'View effective authority status')
     .action((options: any) => {
       // Lazy load service to avoid cyclic deps if any
-      
+
       const auth = new LocalSubdirectorAuthorityService(repoRoot);
       const current = auth.getConfig();
 
@@ -109,4 +109,3 @@ export function registerSubdirectorCommand(
       }
     });
 }
-

@@ -5,7 +5,14 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const { buildBlock, applyBlock, classify, TARGETS } = require('./install-agent-frontload.cjs');
+const {
+  buildBlock,
+  applyBlock,
+  classify,
+  isClaudeTarget,
+  resolveCanonicalRepoRoot,
+  TARGETS,
+} = require('./install-agent-frontload.cjs');
 
 test('managed host block routes through canonical tnf:onboard, not legacy onboarder', () => {
   const block = buildBlock('/repo');
@@ -35,4 +42,16 @@ test('zcode surface classifies through the standard managed lifecycle', () => {
   assert.equal(classify(target).state, 'unverified');
   fs.writeFileSync(target.contextFile, applyBlock('', buildBlock('/repo')));
   assert.equal(classify(target).state, 'managed-current');
+});
+test('linked worktrees resolve global frontloads through the canonical checkout', () => {
+  assert.equal(
+    resolveCanonicalRepoRoot('/repo/worktrees/rc-candidate', '/repo/The-New-Fuse/.git'),
+    '/repo/The-New-Fuse',
+  );
+  assert.equal(resolveCanonicalRepoRoot('/repo/The-New-Fuse', '.git'), '/repo/The-New-Fuse');
+});
+test('Claude Code can be selected as a standalone repair target', () => {
+  assert.equal(isClaudeTarget(new Set(['claude'])), true);
+  assert.equal(isClaudeTarget(new Set(['claude.sessionstart'])), true);
+  assert.equal(isClaudeTarget(new Set(['codex'])), false);
 });
