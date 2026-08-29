@@ -211,18 +211,26 @@ CHROME_CSS = """
 """
 
 
+def _chrome_nav_links(active, prefix=""):
+    # Keep class-attribute assembly out of f-string expressions so Python 3.9
+    # (macOS /usr/bin/python3) can still publish on boot.
+    parts = []
+    for href, label in NAV_PAGES:
+        on = ' class="on"' if href == active else ""
+        parts.append(f'<a href="{prefix}{href}"{on}>{label}</a>')
+    return "".join(parts)
+
+
 def chrome_header(active, prefix=""):
     logo = logo_data_uri()
     img = f'<img src="{logo}" alt="TNF logo">' if logo else ""
-    nav = "".join(f'<a href="{prefix}{href}"{" class=\"on\"" if href == active else ""}>{label}</a>'
-                  for href, label in NAV_PAGES)
+    nav = _chrome_nav_links(active, prefix)
     return (f'<div id="tnfhdr">{img}<span class="brand">The New Fuse</span>'
             f'<nav>{nav}</nav></div>')
 
 
 def chrome_sidebar(active, prefix=""):
-    nav = "".join(f'<a href="{prefix}{href}"{" class=\"on\"" if href == active else ""}>{label}</a>'
-                  for href, label in NAV_PAGES)
+    nav = _chrome_nav_links(active, prefix)
     return f'<div id="tnfnav"><div class="nt">Navigate</div>{nav}</div>'
 
 

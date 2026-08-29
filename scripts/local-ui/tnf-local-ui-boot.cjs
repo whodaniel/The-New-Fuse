@@ -39,6 +39,9 @@ function printUsage() {
   console.log('  --skip-relay   Do not start relay-core in background');
   console.log('  --skip-onboard Skip tnf onboard preflight');
   console.log('  -h, --help     Show help');
+  console.log('');
+  console.log('Also publishes semantic visualizations and starts frontend :5173 +');
+  console.log('browser-control :1421 when those ports are free.');
 }
 
 function ensureRepoRoot() {
@@ -67,6 +70,9 @@ function main() {
 
   console.log('\n[2/4] Harness boot');
   run('pnpm', ['run', '-s', 'tnf:harness:boot']);
+
+  console.log('\n[2.5/4] Local live surfaces (semantic + frontend + browser-control)');
+  run('node', ['scripts/local-ui/ensure-local-live-surfaces.cjs']);
 
   if (!args.skipRelay) {
     console.log('\n[3/4] Relay service');
@@ -119,6 +125,8 @@ function main() {
   }
 
   console.log('Launching web local UI on http://localhost:1420');
+  console.log('  Semantic hub:  http://localhost:1420/visualizations/semantic/index.html');
+  console.log('  Graph explorer: http://localhost:1420/visualizations/semantic/unified_graph_explorer.html');
   if (process.env.TNF_FOREFRONT === '1') {
     console.log('Forefront mode: deep link http://localhost:1420/#/browser');
   }
