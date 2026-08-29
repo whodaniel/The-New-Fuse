@@ -53,6 +53,7 @@
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/modules/mcp/examples/**",
-    "src/examples/**"
+    "src/examples/**",
+    "src/**/*.node-test.mts"
   ]
 }
