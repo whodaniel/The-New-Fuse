@@ -1,0 +1,73 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "a91f3e07-6d24-4c88-b519-7f42ac3e8d16",
+  "created_at": "2026-08-29T10:05:00.000Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "integration/rc-t5-candidate-20260829",
+  "head_sha": "ed9e5e400191c71502ffa0b17c546b0095e28281",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Cherry-pick Turn Zero authority repair 14532d942c618de6324f7d61476ca5e007803b6e (from recon/s1-cron-provision-reproducibility) onto the reconciled RC branch.",
+    "Conflict resolution: validator scripts/protocols/validate-turn-zero-authority.cjs taken from the repair (superset of main's 0ef80e941 independent equivalent fix; scripts/lib/tnf-canonical-onboarding.cjs verified present); six point-in-time state/snapshot docs (master-reconciliation report \u00d72, AGENT_STATUS_LEDGER, LIVING_STATE, SESSION_HANDOFF_LATEST \u00d72) kept from main's newer versions.",
+    "New file docs/protocols/TNF_CONTINUOUS_SELF_IMPROVEMENT_PROTOCOL.md and synthetic-federation-gate-check.cjs update carried in from the repair.",
+    "Verified: node scripts/protocols/validate-turn-zero-authority.cjs exits 0 (local mode OK) in the merged tree \u2014 the RC BLOCKED state is resolved."
+  ],
+  "changed_paths": [
+    "docs/protocols/TNF_CONTINUOUS_SELF_IMPROVEMENT_PROTOCOL.md",
+    "scripts/protocols/synthetic-federation-gate-check.cjs",
+    "scripts/protocols/validate-turn-zero-authority.cjs",
+    "docs/protocols/reports/SESSION_HANDOFF_RC_T5_TURN_ZERO_INTEGRATION_20260829.json",
+    "docs/protocols/reports/SESSION_HANDOFF_RC_T5_TURN_ZERO_INTEGRATION_20260829.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "Turn Zero validator smoke-run exit 0 (local); ci mode re-verified before push."
+  },
+  "continuation": {
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": [
+      "Run Turn Zero validator in ci mode; clear CLI escalation halt; run pretest preflight chain.",
+      "Push RC branch, mark PR #264 ready, merge per operator direction; no force."
+    ]
+  },
+  "next_actions": [
+    "Verify both Turn Zero modes, clear escalation halt, push, merge PR #264."
+  ],
+  "artifacts": {
+    "commits": []
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": false,
+    "operation_in_progress": "turn zero repair integration",
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": []
+}
