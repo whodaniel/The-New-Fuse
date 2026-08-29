@@ -15,7 +15,7 @@ Every protocol file in `docs/protocols/` belongs to a specific functional tier
 and connects logically to sibling and child sub-protocols.
 
 This document provides the authoritative map, logical explanations, and
-parent-child dependencies across all 77 protocol specifications in TNF.
+parent-child dependencies across all 78 protocol specifications in TNF.
 
 ```mermaid
 graph TD
@@ -59,6 +59,7 @@ validation.
 | [`TURN_ZERO_MANDATE.md`](./TURN_ZERO_MANDATE.md)                                                     | • `SESSION_HANDOFF_ENFORCEMENT.md`<br/>• `TURN_END_MANDATE.md`  | **Session Lifecycle Engine:** Mandates staged context loading, environment surface rendering, and clean handoffs.      |
 | [`STATE_FRESHNESS_AXIOM_SUITE.md`](./STATE_FRESHNESS_AXIOM_SUITE.md)                                 | • `LIVING_STATE.md`<br/>• `TNF_BOOK_OF_AXIOMS.md`               | **Empirical Grounding:** Mandates continuous re-verification of runtime evidence; forbids cached assumptions.          |
 | [`TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md`](./TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md) | • `TNF_AGENT_SHELL_HYGIENE.md`<br/>• `twip-operator-runbook.md` | **Terminal Isolation (TWIP):** Prevents agent interference with human terminal windows across Dual-Terminal processes. |
+| [`DURABLE_LOCAL_RUNTIME_MANDATE.md`](./DURABLE_LOCAL_RUNTIME_MANDATE.md) | • `scripts/lib/resolve-tnf-repo.cjs`<br/>• `scripts/lib/resolve-tnf-repo.sh`<br/>• `TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md` (sibling, retention not provenance)<br/>• `HOST_LIFECYCLE/host_lifecycle_protocol.md` | **No Local Hotfixes:** `~/.tnf/`-installed runtime is a build output of this checkout, produced by versioned installers — never hand-edited. Fixes go in the generator, not the artifact. Distinct from Artifacts Lifecycle (which governs retention/pruning of transient state, not generation provenance) and from Host Lifecycle #177 (third-party host tools, not TNF's own runtime). |
 
 ---
 

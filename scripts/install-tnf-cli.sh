@@ -118,19 +118,46 @@ pnpm --dir "${REPO_DIR}" --filter @the-new-fuse/tnf-cli... run build
 mkdir -p "${BIN_DIR}"
 cat > "${BIN_DIR}/tnf" <<EOF
 #!/usr/bin/env bash
+# tnf launcher — see docs/protocols/DURABLE_LOCAL_RUNTIME_MANDATE.md.
+# A candidate is only accepted if it has an executable ./tnf, IS a live git
+# work tree, AND has the canonical remote identity (whodaniel/tnf-monorepo)
+# — an orphaned/broken worktree, or a downstream publication-target clone,
+# can still have ./tnf physically on disk.
 set -euo pipefail
+
+_tnf_canonical_origin_ok() {
+  local url slug
+  url="\$(git -C "\$1" remote get-url origin 2>/dev/null)" || return 1
+  [[ -n "\$url" ]] || return 1
+  slug="\${url%.git}"
+  slug="\${slug#git@*:}"
+  slug="\${slug#https://*/}"
+  slug="\${slug#http://*/}"
+  slug="\${slug%/}"
+  slug="\$(printf '%s' "\$slug" | tr '[:upper:]' '[:lower:]')"
+  [[ "\$slug" == "whodaniel/tnf-monorepo" ]]
+}
+
+_tnf_candidate_ok() {
+  [[ -x "\$1/tnf" ]] || return 1
+  git -C "\$1" rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
+  _tnf_canonical_origin_ok "\$1"
+}
 
 declare -a CANDIDATES=()
 
 if [[ -n "\${TNF_REPO_DIR:-}" ]]; then
   CANDIDATES+=("\${TNF_REPO_DIR}")
 fi
+if [[ -n "\${TNF_ROOT_DIR:-}" ]]; then
+  CANDIDATES+=("\${TNF_ROOT_DIR}")
+fi
 
 CANDIDATES+=("${REPO_DIR}")
 CANDIDATES+=("\${HOME}/.tnf-cli/fuse")
 
 for repo in "\${CANDIDATES[@]}"; do
-  if [[ -x "\${repo}/tnf" ]]; then
+  if _tnf_candidate_ok "\${repo}"; then
     exec bash "\${repo}/tnf" "\$@"
   fi
 done

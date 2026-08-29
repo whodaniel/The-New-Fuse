@@ -59,8 +59,8 @@ import { CronService } from './services/CronService.js';
 import { decideDispatch, resolveRecipient } from './services/DispatchGuard.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
-import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { MemoryCompactorEngine } from './services/MemoryCompactorEngine.js';
+import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { ParityService } from './services/ParityService.js';
 import { PluginsService } from './services/PluginsService.js';
 import { ServiceHealthService } from './services/ServiceHealthService.js';
@@ -104,6 +104,7 @@ import {
   tallyFullAutoRuns,
 } from './utils/full-auto-cycle.js';
 import { resolveBuiltinToolsAsOpenAI } from './utils/llm-tools.js';
+import { loadHomeCredentials } from './utils/load-home-credentials.js';
 import {
   DEFAULT_OPERATOR_WINDOW_MS,
   detectOperatorWindowDirective,
@@ -248,6 +249,10 @@ function loadLocalEnv(rootDir: string): void {
     if (!value || exportedKeys.has(key) || process.env[key]) continue;
     process.env[key] = value;
   }
+
+  // Machine-local keys (OpenRouter, etc.) after repo files so NVIDIA in
+  // .tnf.local.env / the shell is never overwritten.
+  loadHomeCredentials();
 }
 
 loadLocalEnv(repoRoot);
@@ -287,6 +292,20 @@ async function runCommand(
   }
   const started = Date.now();
   const cwd = options.cwd || repoRoot;
+
+  let authConfig: any = null;
+  try {
+    const { LocalSubdirectorAuthorityService } =
+      await import('./services/LocalSubdirectorAuthorityService.js');
+    authConfig = new LocalSubdirectorAuthorityService(repoRoot).getConfig();
+  } catch {}
+
+  const receiptProps = {
+    actor: DEFAULT_AGENT_IDENTITY.name,
+    localRealm: repoRoot,
+    authorityGrant: authConfig?.capabilities,
+  };
+
   try {
     await spawnWithTimeout(cmd, args, { ...options, cwd });
     recordCommandOutcome(repoRoot, {
@@ -296,6 +315,7 @@ async function runCommand(
       cwd,
       ok: true,
       durationMs: Date.now() - started,
+      ...receiptProps,
     });
   } catch (err: any) {
     recordCommandOutcome(repoRoot, {
@@ -305,7 +325,8 @@ async function runCommand(
       cwd,
       ok: false,
       durationMs: Date.now() - started,
-      error: err?.message || String(err),
+      error: err.message,
+      ...receiptProps,
     });
     throw err;
   }
@@ -442,9 +463,7 @@ async function requireSuperAdmin(
         );
       }
       console.log(
-        chalk.green(
-          `\n✅ Generated and persisted a new Super Admin token (value not printed).`
-        )
+        chalk.green(`\n✅ Generated and persisted a new Super Admin token (value not printed).`)
       );
       console.log(chalk.green(`Updated .env assignments for ${SUPER_ADMIN_ENV_KEY}.`));
       console.log(
@@ -491,9 +510,7 @@ async function requireSuperAdmin(
         );
       }
       console.log(
-        chalk.green(
-          `\n✅ Generated and persisted a new Super Admin token (value not printed).`
-        )
+        chalk.green(`\n✅ Generated and persisted a new Super Admin token (value not printed).`)
       );
       console.log(chalk.green(`Wrote .env assignments for ${SUPER_ADMIN_ENV_KEY}.`));
       console.log(
@@ -1285,42 +1302,6 @@ const DEFAULT_SELF_IMPROVEMENT_API_URL = 'https://api.thenewfuse.com';
 // The landing domain serves a static marketing page; the React SPA (and every
 // router path the semantic audit enumerates) lives on the app domain.
 const DEFAULT_SELF_IMPROVEMENT_APP_URL = 'https://app.thenewfuse.com';
-
-type HarnessContextHosts = { apiBase?: string; publicBase?: string; appBase?: string };
-let harnessContextHostsCache: HarnessContextHosts | null | undefined;
-
-/**
- * Endpoint authority (#176): read hosts from the generated adaptive harness
- * context (.agent/runtime-state/harness-context.latest.json) written by
- * scripts/runtime/resolve-harness-context.cjs. Precedence per resolver is
- * explicit option > env > this authority > literal default, so the literals
- * remain only as mirrors of the authority's own defaults and every live boot
- * consumes the resolved values.
- */
-function readHarnessContextHosts(): HarnessContextHosts | null {
-  if (harnessContextHostsCache !== undefined) return harnessContextHostsCache;
-  harnessContextHostsCache = null;
-  try {
-    const abs = path.join(repoRoot, '.agent/runtime-state/harness-context.latest.json');
-    const parsed = JSON.parse(fs.readFileSync(abs, 'utf8')) as {
-      hosts?: Record<string, unknown>;
-    };
-    if (parsed && typeof parsed.hosts === 'object' && parsed.hosts !== null) {
-      const pick = (key: string): string | undefined => {
-        const value = parsed.hosts?.[key];
-        return typeof value === 'string' && value.length > 0 ? value : undefined;
-      };
-      harnessContextHostsCache = {
-        apiBase: pick('apiBase'),
-        publicBase: pick('publicBase'),
-        appBase: pick('appBase'),
-      };
-    }
-  } catch {
-    // Authority output absent/unreadable — resolvers fall through to defaults.
-  }
-  return harnessContextHostsCache;
-}
 const DEFAULT_FULL_AUTO_INTERVAL_MINUTES = 30;
 // Observed cycle duration is ~35 min, so 90 is a generous ceiling that still
 // catches a genuine hang long before it burns a day of autopilot time.
@@ -1500,7 +1481,6 @@ function resolveSelfImprovementBaseUrl(input?: string): string {
     normalizeToken(input) ??
     normalizeToken(process.env.TNF_BASE_URL) ??
     normalizeToken(process.env.PUBLIC_BASE_URL) ??
-    normalizeToken(readHarnessContextHosts()?.publicBase) ??
     DEFAULT_SELF_IMPROVEMENT_BASE_URL
   );
 }
@@ -1510,7 +1490,6 @@ function resolveSelfImprovementAppUrl(input?: string): string {
     normalizeToken(input) ??
     normalizeToken(process.env.TNF_APP_BASE_URL) ??
     normalizeToken(process.env.TNF_APP_URL) ??
-    normalizeToken(readHarnessContextHosts()?.appBase) ??
     DEFAULT_SELF_IMPROVEMENT_APP_URL
   );
 }
@@ -1522,7 +1501,6 @@ function resolveSelfImprovementApiUrl(input?: string): string {
     normalizeToken(process.env.TNF_API_BASE) ??
     normalizeToken(process.env.TNF_API_URL) ??
     normalizeToken(process.env.API_BASE_URL) ??
-    normalizeToken(readHarnessContextHosts()?.apiBase) ??
     DEFAULT_SELF_IMPROVEMENT_API_URL
   );
 }
@@ -3440,6 +3418,7 @@ const cliEntryPath = fileURLToPath(import.meta.url);
 // =============================================================================
 export const PLATFORM_TAXONOMY: string[] = [
   // AGENT_PLATFORM_TRAITS (canonical runtime)
+  'agy',
   'antigravity',
   'browser',
   'claude',
@@ -3456,13 +3435,21 @@ export const PLATFORM_TAXONOMY: string[] = [
   'hermes',
   'kilo',
   'opencode',
+  'pi',
   'project',
   'tnf',
 ];
 // DACC-v1 hierarchy values surfaced by `tnf traits list agent_roles`. These
 // two arrays are the contract for `tnf traits list`. Adding a new role or
 // platform here is the canonical way to extend the runtime taxonomy.
-const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant'];
+const AGENT_ROLE_TRAITS = [
+  'director',
+  'orchestrator',
+  'broker',
+  'worker',
+  'participant',
+  'local-subdirector',
+];
 const AGENT_PLATFORM_TRAITS = PLATFORM_TAXONOMY;
 // Valid qualifiers for `--director-tier`, used to distinguish the local
 // sub-director / cloud super-director authority split (see
@@ -4391,6 +4378,11 @@ function isKiloPassthroughArgv(argv: string[]): boolean {
   return subcommand === 'kilo';
 }
 
+function isOpencodePassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'opencode';
+}
+
 function isDroidPassthroughArgv(argv: string[]): boolean {
   const subcommand = argv[2];
   return subcommand === 'droid';
@@ -4410,15 +4402,10 @@ const topLevelCommandsCacheFile = path.join(
   'top-level-commands.json'
 );
 const TOP_LEVEL_COMMANDS_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-let topLevelCommandsDiskCache: Record<
-  string,
-  { commands: string[]; probedAt: number }
-> | null = null;
+let topLevelCommandsDiskCache: Record<string, { commands: string[]; probedAt: number }> | null =
+  null;
 
-function loadTopLevelCommandsDiskCache(): Record<
-  string,
-  { commands: string[]; probedAt: number }
-> {
+function loadTopLevelCommandsDiskCache(): Record<string, { commands: string[]; probedAt: number }> {
   if (topLevelCommandsDiskCache === null) {
     let loaded: Record<string, { commands: string[]; probedAt: number }> = {};
     try {
@@ -4431,10 +4418,7 @@ function loadTopLevelCommandsDiskCache(): Record<
   return topLevelCommandsDiskCache;
 }
 
-function saveTopLevelCommandsDiskCache(
-  cliName: string,
-  commands: Set<string>
-): void {
+function saveTopLevelCommandsDiskCache(cliName: string, commands: Set<string>): void {
   const cache = loadTopLevelCommandsDiskCache();
   cache[cliName] = { commands: [...commands], probedAt: Date.now() };
   try {
@@ -4478,10 +4462,7 @@ function getTopLevelCommands(cliName: string): Set<string> {
   }
 
   const cached = loadTopLevelCommandsDiskCache()[cliName];
-  if (
-    cached &&
-    Date.now() - cached.probedAt < TOP_LEVEL_COMMANDS_CACHE_TTL_MS
-  ) {
+  if (cached && Date.now() - cached.probedAt < TOP_LEVEL_COMMANDS_CACHE_TTL_MS) {
     const fromDisk = new Set(cached.commands);
     cachedTopLevelCommands[cliName] = fromDisk;
     return fromDisk;
@@ -4519,8 +4500,10 @@ function resolveImplicitPassthroughArgs(
     'claude',
     'pi',
     'command-code',
+    'opencode',
     'kilo',
     'droid',
+    'agy',
   ];
 
   // A leading flag is never another CLI's subcommand, so there is nothing to
@@ -5535,62 +5518,6 @@ program
         const warnings: string[] = [];
         const stepResults: BootStepResult[] = [];
 
-        const recordStepResult = (
-          step: (typeof pipeline)[number],
-          status: 'ok' | 'failed' | 'skipped',
-          started: number,
-          error?: string
-        ): void => {
-          stepResults.push({
-            id: step.id,
-            label: step.label,
-            status,
-            critical: step.critical,
-            error,
-            durationMs: Date.now() - started,
-          });
-        };
-
-        const handleStepFailure = (
-          step: (typeof pipeline)[number],
-          message: string
-        ): 'fatal' | 'warning' => {
-          const isFatal = Boolean(options.strictGates) || step.critical;
-          if (isFatal) {
-            console.error(chalk.red(`   Error in step "${step.label}": ${message}`));
-            return 'fatal';
-          }
-          warnings.push(`${step.label}: ${message}`);
-          console.error(chalk.yellow(`   Warning in step "${step.label}": ${message}`));
-          return 'warning';
-        };
-
-        const writeFailureReceipt = (failedLabel: string): void => {
-          const receipt: BootReceipt = {
-            source: 'cli.boot',
-            profile: name,
-            timestamp: new Date().toISOString(),
-            strictGates: Boolean(options.strictGates),
-            nonInteractive: Boolean(options.nonInteractive),
-            attachAgent: options.attachAgent !== false,
-            withClaude: Boolean(options.withClaude),
-            forceOnboard: Boolean(options.forceOnboard),
-            skipOnboard: bootOptions.skipOnboard,
-            skipEnvValidation: Boolean(options.skipEnvValidation),
-            requireCore: Boolean(options.requireCore || options.strictGates),
-            autonomous: Boolean(options.autonomous),
-            steps: stepResults,
-            warnings,
-            ok: false,
-          };
-          try {
-            writeBootReceipt(repoRoot, receipt);
-          } catch {
-            // Best-effort receipt on fatal path.
-          }
-          throw new Error(`Critical boot failure in step: ${failedLabel}`);
-        };
-
         for (let i = 0; i < pipeline.length; i++) {
           const step = pipeline[i];
           // Attach is TTY-gated after the receipt is written.
@@ -5605,65 +5532,59 @@ program
             continue;
           }
 
-          // Contiguous parallelGroup members run concurrently (#176).
-          // Only warning-only, mutually independent checks declare a group;
-          // per-step warning/fatal semantics are identical to serial runs.
-          if (step.parallelGroup) {
-            const group: typeof pipeline = [];
-            let j = i;
-            while (j < pipeline.length && pipeline[j].parallelGroup === step.parallelGroup) {
-              if (pipeline[j].id !== 'attach-agent') group.push(pipeline[j]);
-              j++;
-            }
-
-            process.stdout.write(
-              chalk.white(
-                `[${i + 1}/${pipeline.length}] ${group.map((s) => s.label).join(' + ')} (concurrent)... \n`
-              )
-            );
-            const startedAts = new Map<string, number>();
-            const outcomes = await Promise.allSettled(
-              group.map(async (groupedStep) => {
-                startedAts.set(groupedStep.id, Date.now());
-                await groupedStep.action();
-              })
-            );
-
-            let fatalLabel: string | null = null;
-            for (const [k, outcome] of outcomes.entries()) {
-              const groupedStep = group[k];
-              const started = startedAts.get(groupedStep.id) ?? Date.now();
-              if (outcome.status === 'fulfilled') {
-                process.stdout.write(chalk.green(`   ✓ ${groupedStep.label} — OK\n`));
-                recordStepResult(groupedStep, 'ok', started);
-                continue;
-              }
-              process.stdout.write(chalk.red(`   ✗ ${groupedStep.label} — FAILED\n`));
-              const message =
-                outcome.reason instanceof Error ? outcome.reason.message : String(outcome.reason ?? 'unknown');
-              recordStepResult(groupedStep, 'failed', started, message);
-              if (handleStepFailure(groupedStep, message) === 'fatal') {
-                fatalLabel = fatalLabel ?? groupedStep.label;
-              }
-            }
-            if (fatalLabel) writeFailureReceipt(fatalLabel);
-            i = j;
-            continue;
-          }
-
           process.stdout.write(chalk.white(`[${i + 1}/${pipeline.length}] ${step.label}... `));
           const started = Date.now();
           try {
             await step.action();
             process.stdout.write(chalk.green('OK\n'));
-            recordStepResult(step, 'ok', started);
+            stepResults.push({
+              id: step.id,
+              label: step.label,
+              status: 'ok',
+              critical: step.critical,
+              durationMs: Date.now() - started,
+            });
           } catch (err: unknown) {
             process.stdout.write(chalk.red('FAILED\n'));
             const message = err instanceof Error ? err.message : String(err);
-            recordStepResult(step, 'failed', started, message);
-            if (handleStepFailure(step, message) === 'fatal') {
-              writeFailureReceipt(step.label);
+            const isFatal = Boolean(options.strictGates) || step.critical;
+            stepResults.push({
+              id: step.id,
+              label: step.label,
+              status: 'failed',
+              critical: step.critical,
+              error: message,
+              durationMs: Date.now() - started,
+            });
+            if (isFatal) {
+              console.error(chalk.red(`   Error in step "${step.label}": ${message}`));
+              const receipt: BootReceipt = {
+                source: 'cli.boot',
+                profile: name,
+                timestamp: new Date().toISOString(),
+                strictGates: Boolean(options.strictGates),
+                nonInteractive: Boolean(options.nonInteractive),
+                attachAgent: options.attachAgent !== false,
+                withClaude: Boolean(options.withClaude),
+                forceOnboard: Boolean(options.forceOnboard),
+                skipOnboard: bootOptions.skipOnboard,
+                skipEnvValidation: Boolean(options.skipEnvValidation),
+                requireCore: Boolean(options.requireCore || options.strictGates),
+                autonomous: Boolean(options.autonomous),
+                steps: stepResults,
+                warnings,
+                ok: false,
+              };
+              try {
+                writeBootReceipt(repoRoot, receipt);
+              } catch {
+                // Best-effort receipt on fatal path.
+              }
+              throw new Error(`Critical boot failure in step: ${step.label}`);
             }
+            const warningLine = `${step.label}: ${message}`;
+            warnings.push(warningLine);
+            console.error(chalk.yellow(`   Warning in step "${step.label}": ${message}`));
           }
         }
 
@@ -5823,9 +5744,20 @@ program
           process.exit(2);
         }
 
+        const {
+          LocalSubdirectorAuthorityService,
+        } = require('./services/LocalSubdirectorAuthorityService.js');
+        const authService = new LocalSubdirectorAuthorityService(repoRoot);
+        const authConfig = authService.getConfig();
+
         const yolo = Boolean(options.yolo || options.force);
-        const autonomous =
+        let autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
+
+        if (DEFAULT_AGENT_IDENTITY.role === 'local-subdirector' && authConfig.autonomyEnabled) {
+          autonomous = true;
+        }
+
         const wantsOneshot = Boolean(options.print || options.oneshot);
 
         if (options.model) {
@@ -6901,7 +6833,11 @@ function loadDefaultAgentIdentity(): {
   const identityPath = path.join(process.env.HOME || os.homedir(), '.tnf', 'agent.yaml');
   const defaults = {
     name: process.env.AGENT_NAME || 'tnf-local-subdirector',
-    role: process.env.AGENT_ROLE || 'director',
+    role:
+      process.env.AGENT_ROLE ||
+      (process.argv.includes('agent') && !process.argv.includes('run')
+        ? 'local-subdirector'
+        : 'generic-agent'),
     platform: process.env.AGENT_PLATFORM || 'tnf',
     directorTier: process.env.TNF_DIRECTOR_TIER || 'sub',
   };
@@ -8744,32 +8680,37 @@ harness
   .argument('[client]', 'claude|cursor|codex|gemini|agy|hermes|pi|openclaw')
   .option('--no-launch', 'Provision MCP config only; do not start the client')
   .option('--require-doctor', 'Fail if doctor checks fail')
-  .action(async (client: string | undefined, options: { noLaunch?: boolean; requireDoctor?: boolean }) => {
-    try {
-      const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
-      const known = new Set<string>(HARNESS_CLIENTS.map((entry) => entry.id));
-      let chosen = requested;
-      if (chosen && !known.has(chosen)) {
-        throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
+  .action(
+    async (
+      client: string | undefined,
+      options: { noLaunch?: boolean; requireDoctor?: boolean }
+    ) => {
+      try {
+        const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
+        const known = new Set<string>(HARNESS_CLIENTS.map((entry) => entry.id));
+        let chosen = requested;
+        if (chosen && !known.has(chosen)) {
+          throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
+        }
+        if (!chosen) {
+          const preferred = HARNESS_CLIENTS.filter((entry) => entry.id !== 'openclaw');
+          const found = preferred.find((entry) => {
+            const resolved = findExecutableOnPath(entry.binary);
+            return Boolean(resolved);
+          });
+          chosen = found?.id || 'claude';
+          console.log(chalk.dim(`No client specified; staffing with ${chosen}`));
+        }
+        const args = ['scripts/tnf-start-ai.cjs', chosen];
+        if (options.noLaunch) args.push('--no-launch');
+        if (options.requireDoctor) args.push('--require-doctor');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-      if (!chosen) {
-        const preferred = HARNESS_CLIENTS.filter((entry) => entry.id !== 'openclaw');
-        const found = preferred.find((entry) => {
-          const resolved = findExecutableOnPath(entry.binary);
-          return Boolean(resolved);
-        });
-        chosen = found?.id || 'claude';
-        console.log(chalk.dim(`No client specified; staffing with ${chosen}`));
-      }
-      const args = ['scripts/tnf-start-ai.cjs', chosen];
-      if (options.noLaunch) args.push('--no-launch');
-      if (options.requireDoctor) args.push('--require-doctor');
-      await runCommand('node', args);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 // A1 — establish ≠ operate (observe/fail-closed; never stops full-auto loops)
 {
@@ -9093,7 +9034,9 @@ registry
     }
   });
 
-const metaskills = program.command('metaskills').description('Meta-skills audit utilities');
+const metaskills = program
+  .command('metaskills')
+  .description('Meta-skills audit and governance utilities');
 metaskills
   .command('audit')
   .description('Audit meta-skills and scaffolding readiness')
@@ -9102,6 +9045,22 @@ metaskills
     try {
       const args = ['scripts/tnf-metaskills-audit.cjs'];
       if (options.json) args.push('--json');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+metaskills
+  .command('govern')
+  .description('Govern meta-skill completeness and layer authority')
+  .option('--json', 'Print JSON output')
+  .option('--strict', 'Fail if any governed meta-skill is audit-incomplete')
+  .action(async (options: { json?: boolean; strict?: boolean }) => {
+    try {
+      const args = ['scripts/skills/tnf-meta-skill-meta-skill.cjs'];
+      if (options.json) args.push('--json');
+      if (options.strict) args.push('--strict');
       await runCommand('node', args);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -10092,6 +10051,14 @@ program
   .argument('[args...]', 'Arguments forwarded to pi')
   .action(async (args: string[]) => {
     await runPassthrough('pi', args);
+  });
+
+program
+  .command('opencode')
+  .description('Pass through any OpenCode CLI command with TNF harness MCP routing')
+  .argument('[args...]', 'Arguments forwarded to opencode')
+  .action(async (args: string[]) => {
+    await runPassthrough('opencode', args);
   });
 
 program
@@ -19645,10 +19612,7 @@ pluginsCommand
   .option('--activate', 'Activate after installation')
   .option('--json', 'Print machine-readable output')
   .action(
-    async (
-      source: string,
-      options: { version?: string; activate?: boolean; json?: boolean }
-    ) => {
+    async (source: string, options: { version?: string; activate?: boolean; json?: boolean }) => {
       const service = new PluginsService();
       let plugin = await service.install(source, options.version);
       if (options.activate) plugin = await service.enable(plugin.name);
@@ -19682,7 +19646,9 @@ for (const action of ['enable', 'disable', 'remove', 'status'] as const) {
       const service = new PluginsService();
       if (action === 'remove') {
         await service.remove(name);
-        console.log(options.json ? JSON.stringify({ removed: name }) : chalk.green(`Removed ${name}`));
+        console.log(
+          options.json ? JSON.stringify({ removed: name }) : chalk.green(`Removed ${name}`)
+        );
         return;
       }
       const plugin =
@@ -19806,7 +19772,9 @@ kanbanCommand
     }
   });
 
-const memoryCommand = program.command('memory').description('Memory provider and compaction management');
+const memoryCommand = program
+  .command('memory')
+  .description('Memory provider and compaction management');
 memoryCommand
   .command('list')
   .description('List all configured memory providers')
@@ -19823,7 +19791,9 @@ memoryCommand
 
 memoryCommand
   .command('compact')
-  .description('Compact, distill, and prune raw multi-agent brain transcripts (Gemini, Claude, Codex)')
+  .description(
+    'Compact, distill, and prune raw multi-agent brain transcripts (Gemini, Claude, Codex)'
+  )
   .option('--dry-run', 'Simulate compaction without writing or deleting files')
   .option('--prune-raw', 'Remove raw uncompacted logs older than threshold')
   .option('--max-age-days <n>', 'Age threshold in days for pruning raw logs', '14')
@@ -19832,18 +19802,20 @@ memoryCommand
       const compactor = new MemoryCompactorEngine();
       const maxAgeDays = options.maxAgeDays ? parseInt(options.maxAgeDays, 10) : 14;
       console.log(chalk.bold.cyan('\n🧠 Starting Multi-Agent Memory Compaction Sweep...\n'));
-      
+
       const report = await compactor.compactAllTranscripts({
         dryRun: options.dryRun,
         pruneRaw: options.pruneRaw,
-        maxAgeDays
+        maxAgeDays,
       });
 
       console.log(chalk.bold.green('✅ Memory Compaction Complete:'));
       console.log(`  - Sessions Scanned:   ${chalk.yellow(report.scannedCount)}`);
       console.log(`  - Sessions Compacted: ${chalk.green(report.compactedCount)}`);
       console.log(`  - Raw Logs Pruned:    ${chalk.magenta(report.prunedCount)}`);
-      console.log(`  - Estimated Savings:  ${chalk.cyan((report.bytesSaved / (1024 * 1024)).toFixed(2) + ' MB')}`);
+      console.log(
+        `  - Estimated Savings:  ${chalk.cyan((report.bytesSaved / (1024 * 1024)).toFixed(2) + ' MB')}`
+      );
       console.log(`  - Vault Storage:      ${chalk.dim(report.artifactsPath)}\n`);
     } catch (err: any) {
       console.error(chalk.red(`Error during compaction: ${err.message}`));
@@ -19857,8 +19829,10 @@ memoryCommand
   .action(async () => {
     try {
       const compactor = new MemoryCompactorEngine();
-      console.log(chalk.bold.cyan('\n🔍 Auditing Cross-Agent Memory Congruence & Attribution...\n'));
-      
+      console.log(
+        chalk.bold.cyan('\n🔍 Auditing Cross-Agent Memory Congruence & Attribution...\n')
+      );
+
       const audit = await compactor.auditDrift();
       console.log(chalk.bold.green('✅ Memory Congruence Audit Report:'));
       console.log(`  - Fidelity Score:       ${chalk.bold(audit.overallFidelityScore + '%')}`);
@@ -21868,6 +21842,10 @@ async function main(): Promise<void> {
   }
   if (isPiPassthroughArgv(argv)) {
     await runPassthrough('pi', argv.slice(3));
+    return;
+  }
+  if (isOpencodePassthroughArgv(argv)) {
+    await runPassthrough('opencode', argv.slice(3));
     return;
   }
   if (isKiloPassthroughArgv(argv)) {

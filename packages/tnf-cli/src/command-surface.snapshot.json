@@ -105,58 +105,6 @@
           "commands": []
         },
         {
-          "name": "quotas",
-          "aliases": [],
-          "description": "Show refreshed per-agent usage quotas for delegation",
-          "options": [
-            {
-              "flags": "--capability <cap>",
-              "description": "Required capability hint (repeatable)"
-            },
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            },
-            {
-              "flags": "--rank",
-              "description": "Include delegation ranking"
-            }
-          ],
-          "commands": []
-        },
-        {
-          "name": "state",
-          "aliases": [],
-          "description": "Show onboarded agent-state observation snapshot (not authoritative)",
-          "options": [
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            },
-            {
-              "flags": "--refresh",
-              "description": "Rebuild observation snapshot (requires mutation authority)"
-            }
-          ],
-          "commands": []
-        },
-        {
-          "name": "state-history",
-          "aliases": [],
-          "description": "List recent agent-state history snapshots",
-          "options": [
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            },
-            {
-              "flags": "--limit <n>",
-              "description": "Max snapshots"
-            }
-          ],
-          "commands": []
-        },
-        {
           "name": "status",
           "aliases": [],
           "description": "Report this tnf-agent CLI binary: version, branch, wiring, capabilities",
@@ -213,7 +161,7 @@
                 },
                 {
                   "flags": "--targets <list>",
-                  "description": "Comma-separated targets (antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, droid, hermes, kilo, opencode, project, tnf, all)"
+                  "description": "Comma-separated targets (agy, antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, droid, hermes, kilo, opencode, project, tnf, all)"
                 }
               ],
               "commands": []
@@ -1791,42 +1739,6 @@
             {
               "flags": "--json",
               "description": "Emit machine-readable JSON"
-            }
-          ],
-          "commands": []
-        }
-      ]
-    },
-    {
-      "name": "ecosystem",
-      "aliases": [],
-      "description": "Authenticated ecosystem orientation / task-scoped hydration for control surfaces",
-      "options": [],
-      "commands": [
-        {
-          "name": "orient",
-          "aliases": [],
-          "description": "Cheap boot orientation snapshot (providers, health, authority refs, quota summary)",
-          "options": [
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            }
-          ],
-          "commands": []
-        },
-        {
-          "name": "show",
-          "aliases": [],
-          "description": "Task-scoped ecosystem hydration (lazy; use orient for boot)",
-          "options": [
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            },
-            {
-              "flags": "--refresh",
-              "description": "Force re-hydrate"
             }
           ],
           "commands": []
@@ -4569,100 +4481,6 @@
       "description": "Inspect and manage TNF development ports",
       "options": [],
       "commands": []
-    },
-    {
-      "name": "profile",
-      "aliases": [],
-      "description": "Manage local TNF user profiles and sessions",
-      "options": [],
-      "commands": [
-        {
-          "name": "list",
-          "aliases": [
-            "ls"
-          ],
-          "description": "List local TNF profiles",
-          "options": [
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            }
-          ],
-          "commands": []
-        },
-        {
-          "name": "login",
-          "aliases": [],
-          "description": "Authenticate a local (or optional cloud) TNF profile session",
-          "options": [
-            {
-              "flags": "--cloud",
-              "description": "Attempt cloud link to app.thenewfuse.com"
-            },
-            {
-              "flags": "--cloud-endpoint <url>",
-              "description": "Cloud endpoint override"
-            },
-            {
-              "flags": "--identity-mode <mode>",
-              "description": "local|cloud|sandbox|custom"
-            },
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            },
-            {
-              "flags": "--passphrase <secret>",
-              "description": "Optional local passphrase"
-            },
-            {
-              "flags": "--profile <name>",
-              "description": "Profile name"
-            }
-          ],
-          "commands": []
-        },
-        {
-          "name": "logout",
-          "aliases": [],
-          "description": "End the active profile session",
-          "options": [
-            {
-              "flags": "--profile <name>",
-              "description": "Profile name"
-            }
-          ],
-          "commands": []
-        },
-        {
-          "name": "switch",
-          "aliases": [],
-          "description": "Switch active TNF profile",
-          "options": [
-            {
-              "flags": "--allow-logged-out",
-              "description": "Allow switch without an active session"
-            },
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            }
-          ],
-          "commands": []
-        },
-        {
-          "name": "whoami",
-          "aliases": [],
-          "description": "Show identity vs authentication vs capability vs authority distinctions",
-          "options": [
-            {
-              "flags": "--json",
-              "description": "Machine-readable JSON"
-            }
-          ],
-          "commands": []
-        }
-      ]
     },
     {
       "name": "project",

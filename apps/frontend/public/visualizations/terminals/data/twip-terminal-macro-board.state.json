@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T22:40:36.915Z",
+  "generatedAt": "2026-08-26T11:20:41.969Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,23 +12,23 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-08-13T22:40:36.458Z",
-    "totalTerminals": 1,
-    "returned": 1,
+    "lastScanAt": "2026-08-26T11:20:40.458Z",
+    "totalTerminals": 5,
+    "returned": 5,
     "source": "ps+tmux+capture+terminal-history",
     "tenant_id": "tnf-local",
     "include_commands": true,
     "include_content": true,
     "content_max_lines": 80,
     "content_max_chars": 8000,
-    "terminal_history_tabs": 1,
-    "content_excerpts_captured": 1
+    "terminal_history_tabs": 5,
+    "content_excerpts_captured": 5
   },
   "summary": {
-    "totalTerminals": 1,
+    "totalTerminals": 5,
     "activeTerminals": 1,
-    "idleTerminals": 0,
-    "activeRatio": 1,
+    "idleTerminals": 4,
+    "activeRatio": 0.2,
     "topWorkExecutables": [
       {
         "name": "node",
@@ -40,15 +40,15 @@
         "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
         "tty": "/dev/ttys000",
         "paneId": "tty:ttys000",
-        "shellPid": 1111,
-        "processCount": 6,
+        "shellPid": 4875,
+        "processCount": 16,
         "multiplexer": "none",
         "workExecutables": [
           "node"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "3. Cancel | >",
+        "contextPreview": "➜  Local:   http://127.0.0.1:1420/ | ➜  press h + enter to show help",
         "contextRedactions": 0,
         "hasContext": true
       }

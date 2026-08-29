@@ -31,6 +31,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import { MCPToolRuntimeService } from '../services/MCPToolRuntimeService.js';
 import {
   AGENT_BROWSER_OPERATIONS,
   type AgentBrowserOperation,
@@ -38,7 +39,6 @@ import {
   runAgentBrowser,
 } from '../utils/browser-routing.js';
 import { resolvePrompt } from '../utils/prompt-input.js';
-import { MCPToolRuntimeService } from '../services/MCPToolRuntimeService.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -78,6 +78,7 @@ interface JsonResult {
     resultSummary: string;
     durationMs: number;
     ok: boolean;
+    receipt?: any;
   }>;
   finishReason: string;
   durationMs: number;
@@ -650,10 +651,44 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
     async (name: string, args: Record<string, unknown>) => {
       const tTool = Date.now();
       let response: string | Record<string, unknown>;
+      let authorized = true;
+      let denyReason = '';
+      let authoritySource = '';
       try {
+        const {
+          LocalSubdirectorAuthorityService,
+        } = require('../services/LocalSubdirectorAuthorityService.js');
+        const auth = new LocalSubdirectorAuthorityService(cwd);
+        const authConfig = auth.getConfig();
+
+        const isSubdirector = auth.verifyLocalSubdirectorIdentity(
+          process.env.TNF_SUBDIRECTOR_IDENTITY_TOKEN || ''
+        );
+
+        if (isSubdirector) {
+          authoritySource = 'LocalSubdirector (Verified Identity)';
+          if (!authConfig.autonomyEnabled) {
+            authorized = false;
+            denyReason = 'Fleet autonomy is paused.';
+          } else if (!auth.isAuthorized(name) && !auth.isAuthorized('all')) {
+            authorized = false;
+            denyReason = `Capability '${name}' is not granted to Local Subdirector.`;
+          }
+        } else {
+          // Subordinate agent uses cryptographically signed delegation
+          authoritySource = 'Delegated Subordinate';
+          const delegationToken = process.env.TNF_DELEGATED_AUTHORITY_TOKEN || '';
+          if (!auth.verifyDelegation(delegationToken, name)) {
+            authorized = false;
+            denyReason = `Subordinate agent lacks valid cryptographically signed delegated authority for '${name}'.`;
+          }
+        }
+
         // Plan/ask / --tools none: refuse tool execution even if the model asks.
         if (Array.isArray(enabledTools) && enabledTools.length === 0) {
           response = { ok: false, error: `tool '${name}' disabled (tools=none)` };
+        } else if (!authorized) {
+          response = { ok: false, error: `Authority Denied: ${denyReason}` };
         } else {
           response = await executeBuiltinTool(name, args, { cwd, quiet: !!opts.quiet });
         }
@@ -670,6 +705,14 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
           typeof response === 'string' ? truncate(response, 240) : summarizeObject(response),
         durationMs,
         ok,
+        receipt: {
+          actor: process.env.AGENT_NAME || 'tnf-subordinate',
+          realm: 'local',
+          requestedCapability: name,
+          authorized: authorized,
+          authoritySource: authoritySource,
+          denyReason: denyReason,
+        },
       });
       return response;
     },

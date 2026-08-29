@@ -328,6 +328,8 @@ export interface ExtensionSettings {
   // Chat Detection
   chatDetection: ChatDetectionConfig;
   autoInject: boolean;
+  /** Auto-open the floating injectable panel when the content script loads. */
+  autoOpenPanel: boolean;
 
   // UI
   panel: {

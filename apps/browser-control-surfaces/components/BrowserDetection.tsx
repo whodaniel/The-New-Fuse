@@ -1,6 +1,10 @@
-import './BrowserDetection.css';
+// NOTE: this component's styling already lives in the shared
+// ../BROWSER_CONTROL_SURFACE.css (see .tnf-browser-detection,
+// .detection-header, .platform-info there). A component-scoped
+// BrowserDetection.css was referenced here but never created; removed the
+// dead import rather than fabricate a duplicate stylesheet.
 
-interface BrowserDetectionProps {
+export interface BrowserDetectionProps {
   currentUrl: string | null;
   isControlling: boolean;
   onStartControl: () => Promise<any>;

@@ -235,7 +235,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   async executeRaw<T = unknown>(query: string, params?: unknown[]): Promise<T[]> {
     if (params && params.length > 0) {
       const result = await queryClient.unsafe(query, params as any[]);
-      return result as T[];
+      return result as unknown as T[];
     }
     const result = await db.execute(sql.raw(query));
     return result as T[];

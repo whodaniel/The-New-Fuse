@@ -14,8 +14,8 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { API_ENDPOINTS } from '../config/api';
-import { RequireMembership } from './auth/RequireMembership';
+import { API_ENDPOINTS } from '../../config/api';
+import { RequireMembership } from './RequireMembership';
 
 // ---------------------------------------------------------------------------
 // Shared mock scaffolding
@@ -23,15 +23,15 @@ import { RequireMembership } from './auth/RequireMembership';
 
 const mockLogout = vi.fn();
 
-vi.mock('../hooks/useAuth', () => ({
+vi.mock('../../hooks/useAuth', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
-vi.mock('../hooks/useAuthorization', () => ({
+vi.mock('../../hooks/useAuthorization', () => ({
   useAuthorization: () => mockUseAuthorization(),
 }));
 
-vi.mock('../utils/authToken', () => ({
+vi.mock('../../utils/authToken', () => ({
   authFetch: vi.fn(),
 }));
 
@@ -39,7 +39,7 @@ let mockUseAuth: () => any;
 let mockUseAuthorization: () => any;
 
 // Keep a typed reference so individual tests can configure responses
-import { authFetch as mockAuthFetch } from '../utils/authToken';
+import { authFetch as mockAuthFetch } from '../../utils/authToken';
 const typedMockFetch = mockAuthFetch as ReturnType<typeof vi.fn>;
 
 // Suppress console.warn noise in test output

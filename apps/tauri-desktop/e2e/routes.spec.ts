@@ -71,4 +71,35 @@ test.describe('desktop route navigation', () => {
     await expectPageTitle(page, 'Settings');
     expect(page.url()).toContain('#/settings');
   });
+
+  test('chat workspace stays contained and preserves a readable message pane', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await page.goto('/#/chat');
+    await expectPageTitle(page, 'Multi-Agent Swarm Chat');
+
+    const layout = page.locator('.chat-layout');
+    const conversation = page.getByRole('main').last();
+
+    await expect(layout).toHaveCSS('flex-direction', 'row');
+    await expect(page.getByRole('button', { name: 'Show History' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Chat message' })).toBeVisible();
+
+    const geometry = await page.evaluate(() => ({
+      pageScrollY: window.scrollY,
+      conversationWidth: [...document.querySelectorAll('main')].at(-1)?.getBoundingClientRect()
+        .width,
+      headerPadding: getComputedStyle([...document.querySelectorAll('header')].at(-1)!).padding,
+      feedPadding: getComputedStyle(document.querySelector('[aria-label="Conversation messages"]')!)
+        .padding,
+    }));
+
+    expect(geometry.pageScrollY).toBe(0);
+    expect(geometry.conversationWidth).toBeGreaterThan(700);
+    expect(geometry.headerPadding).toBe('16px');
+    expect(geometry.feedPadding).toBe('24px');
+
+    await page.getByRole('button', { name: 'Show History' }).click();
+    await expect(page.getByRole('button', { name: 'Hide History' })).toBeVisible();
+    await expect(conversation).toBeVisible();
+  });
 });

@@ -232,6 +232,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   autoConnect: true,
   chatDetection: DEFAULT_CHAT_DETECTION,
   autoInject: true,
+  autoOpenPanel: true,
   panel: {
     defaultPosition: { x: 20, y: 20 },
     defaultSize: { width: 360, height: 480 },

@@ -98,16 +98,17 @@ describe('BillingController – GET /billing/membership/me', () => {
         BillingController.prototype.getMyMembership
       );
 
-      // If guards are registered at the handler level, JwtAuthGuard should be present.
-      // If there are no guards (global guard handles it), this is still acceptable.
-      // What must NOT be present is a Passport strategy reference.
+      // If guards are registered at the handler level, JwtAuthGuard (TNF-native)
+      // should be present. If there are no guards (global guard handles it),
+      // this is still acceptable. What must NOT be present is a Passport
+      // AuthGuard('jwt') reference — that's the unregistered-strategy defect
+      // this fix replaces.
       if (guards) {
         const guardNames = guards.map((g: any) =>
           typeof g === 'function' ? g.name : String(g)
         );
-        expect(guardNames).not.toContain('JwtAuthGuard'); // Passport proxy wrapper name
-        // More importantly: should not throw because of missing Passport strategy
-        expect(guardNames.some((n: string) => n.includes('Jwt') || n.includes('jwt'))).toBe(true);
+        expect(guardNames).toContain('JwtAuthGuard'); // TNF-native guard
+        expect(guardNames).not.toContain('AuthGuard'); // Passport proxy wrapper name
       }
 
       // The import in billing.controller.ts must NOT reference @nestjs/passport

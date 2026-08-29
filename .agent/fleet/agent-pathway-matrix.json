@@ -1,19 +1,14 @@
 {
-  "generatedAt": "2026-07-23T19:29:01.112Z",
-  "updatedAt": "2026-07-25T19:00:00.000Z",
-  "taxonomy": {
-    "note": "Pathway clusters (e.g. names containing orchestrator) are persona/skill domains, not master-clock baton ownership. Role ⊥ platform. Canonical viz: apps/frontend/public/visualizations/graphs/dacc-role-platform-axes.html",
-    "baton": "ORCHESTRATOR-{timestamp} from master-clock only"
-  },
+  "generatedAt": "2026-08-26T13:58:15.424Z",
   "canonicalSources": {
     "tnfBank": ".agent/agents/*.md",
     "claudeBank": ".claude/agents/*.md",
     "sharedImportedSkills": ".skills/imported-claude-agents/*/SKILL.md"
   },
   "counts": {
-    "tnfBank": 190,
-    "claudeBank": 136,
-    "importedSkills": 136
+    "tnfBank": 196,
+    "claudeBank": 139,
+    "importedSkills": 139
   },
   "drift": {
     "claudeMissingInImported": [],
@@ -26,6 +21,7 @@
       "claude-code-cli",
       "code-fossil-investigator",
       "codequality-agent",
+      "codex-cli-agent",
       "continuous-improver",
       "cto-agent",
       "data-agent",
@@ -40,14 +36,15 @@
       "frontend-specialist",
       "game-developer",
       "gemini-cli",
+      "gemini-cli-agent",
       "kilo",
-      "master-of-taxonomies",
       "media-evidence-investigator",
       "mobile-agent",
       "mobile-developer",
       "news-scout",
       "notes-ledger-investigator",
       "openclaw-fleet",
+      "opencode-cli-agent",
       "orchestrator",
       "penetration-tester",
       "perf-agent",
@@ -59,6 +56,7 @@
       "personal-historical-archaeologist",
       "primitive-master",
       "project-planner",
+      "qodercli",
       "repo-lineage-investigator",
       "research-agent",
       "scout-llm-discovery",
@@ -100,6 +98,7 @@
       "claude-code-cli",
       "code-fossil-investigator",
       "codequality-agent",
+      "codex-cli-agent",
       "continuous-improver",
       "cto-agent",
       "data-agent",
@@ -114,14 +113,15 @@
       "frontend-specialist",
       "game-developer",
       "gemini-cli",
+      "gemini-cli-agent",
       "kilo",
-      "master-of-taxonomies",
       "media-evidence-investigator",
       "mobile-agent",
       "mobile-developer",
       "news-scout",
       "notes-ledger-investigator",
       "openclaw-fleet",
+      "opencode-cli-agent",
       "orchestrator",
       "penetration-tester",
       "perf-agent",
@@ -133,6 +133,7 @@
       "personal-historical-archaeologist",
       "primitive-master",
       "project-planner",
+      "qodercli",
       "repo-lineage-investigator",
       "research-agent",
       "scout-llm-discovery",
@@ -157,6 +158,7 @@
       "agent-relationship-grapher",
       "agent-search-engine",
       "agent-tagger",
+      "agy",
       "algorithm-adaptation-agent",
       "analytics-and-reporting-agent",
       "asset-sourcer-agent",
@@ -173,6 +175,7 @@
       "campaign-reporting-agent",
       "codebase-pathway-tracer",
       "cognitive-bias-optimizer-agent",
+      "command-code",
       "community-engagement-agent",
       "community-manager-agent",
       "competitive-intelligence-agent",
@@ -219,6 +222,7 @@
       "link-building-agent",
       "live-stream-manager-agent",
       "logical-reasoning-agent",
+      "master-of-taxonomies",
       "mcp-bridge-qa-agent",
       "monetization-strategy-agent",
       "nexus-orchestrator-qa-agent",
@@ -278,13 +282,24 @@
   },
   "runtimeCoverage": [
     {
+      "target": "agy",
+      "status": "processed",
+      "writes": [
+        {
+          "destination": "/Users/danielgoldberg/.agy/skills/imported-claude-agents",
+          "action": "created",
+          "skillCount": 139
+        }
+      ]
+    },
+    {
       "target": "codex",
       "status": "processed",
       "writes": [
         {
           "destination": "/Users/danielgoldberg/.codex/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 136
+          "skillCount": 141
         }
       ]
     },
@@ -295,7 +310,7 @@
         {
           "destination": "/Users/danielgoldberg/.claude/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 136
+          "skillCount": 150
         }
       ]
     },
@@ -306,7 +321,7 @@
         {
           "destination": "/Users/danielgoldberg/.gemini/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 136
+          "skillCount": 141
         }
       ]
     },
@@ -316,8 +331,8 @@
       "writes": [
         {
           "destination": "/Users/danielgoldberg/.cursor/skills-cursor/imported-claude-agents",
-          "action": "synced",
-          "skillCount": 136
+          "action": "created",
+          "skillCount": 139
         }
       ]
     },
@@ -328,7 +343,7 @@
         {
           "destination": "/Users/danielgoldberg/.opencode/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 136
+          "skillCount": 150
         }
       ]
     },
@@ -339,7 +354,7 @@
         {
           "destination": "/Users/danielgoldberg/.kilo/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 138
+          "skillCount": 150
         }
       ]
     },
@@ -350,7 +365,7 @@
         {
           "destination": "/Users/danielgoldberg/.augment/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 136
+          "skillCount": 141
         }
       ]
     },
@@ -361,7 +376,7 @@
         {
           "destination": "/Users/danielgoldberg/.tnf/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 137
+          "skillCount": 141
         }
       ]
     },
@@ -372,12 +387,12 @@
         {
           "destination": "/Users/danielgoldberg/.hermes/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 136
+          "skillCount": 141
         },
         {
           "destination": "/Users/danielgoldberg/.hermes/hermes-agent/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 136
+          "skillCount": 141
         }
       ]
     },
@@ -386,9 +401,9 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/imported-claude-agents",
+          "destination": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/.agent/skills/imported-claude-agents",
           "action": "synced",
-          "skillCount": 136
+          "skillCount": 139
         }
       ]
     }

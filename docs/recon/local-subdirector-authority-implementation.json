@@ -1,0 +1,36 @@
+{
+  "beforeState": {
+    "defaultRole": "director",
+    "autonomyEnforcement": "absent",
+    "receipts": "missing-actor-fields"
+  },
+  "enforcementPoints": [
+    "cli.ts: loadDefaultAgentIdentity, runAgentsRun overrides, recordCommandOutcome",
+    "agents-run.ts: executeBuiltinTool",
+    "subdirector.ts: autonomy management",
+    "action-receipt.ts: ActionReceipt 0.2",
+    "LocalSubdirectorAuthorityService.ts: core config"
+  ],
+  "remainingBypasses": [
+    "Direct script execution",
+    "mcp_call_tool sub-routing"
+  ],
+  "tests": [
+    "Bootstrap defaults to local-subdirector",
+    "Narrowing revokes capabilities",
+    "Pause stops autonomous execution",
+    "Delegation isolates child agents"
+  ],
+  "commands": [
+    "tnf subdirector autonomy --enable",
+    "tnf subdirector autonomy --grant <caps>",
+    "tnf subdirector autonomy --revoke <caps>",
+    "tnf subdirector autonomy --pause",
+    "tnf subdirector autonomy --status"
+  ],
+  "receiptsSchema": "tnf/action-receipt/0.2",
+  "unknownItems": [
+    "Deep subagent delegation edge cases",
+    "Cron job bypass interactions"
+  ]
+}

@@ -25,8 +25,10 @@ import {
   Bot,
   FilePenLine,
   Globe,
+  Lock,
   MessageSquare,
   Settings2,
+  ShieldCheck,
   Sparkles,
   Wand2,
   X,
@@ -115,6 +117,7 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
   const [prefs, setPrefs] = useState<AIAssistPreferences>(() => readAIAssistPreferences());
   const [browserAgentMode, setBrowserAgentMode] = useState(false);
   const [pageSnapshotChars, setPageSnapshotChars] = useState(0);
+  const [pageRedactions, setPageRedactions] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -143,7 +146,10 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
   const buildPageContext = () => {
     const factors = prefs.includeUserFactors ? readUserSessionFactors() : null;
     const snapshot = prefs.includePageContent ? capturePageContentSnapshot() : null;
-    if (snapshot) setPageSnapshotChars(snapshot.charCount);
+    if (snapshot) {
+      setPageSnapshotChars(snapshot.charCount);
+      setPageRedactions(snapshot.redactionCount);
+    }
 
     return {
       page: pageInfo?.name,
@@ -197,6 +203,7 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
       if (prefs.includePageContent) {
         const snap = capturePageContentSnapshot();
         setPageSnapshotChars(snap.charCount);
+        setPageRedactions(snap.redactionCount);
       }
     }
   }, [open, messages, prefs.includePageContent]);
@@ -452,21 +459,40 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
           >
             <header className="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
               <div className="min-w-0">
-                <h2
-                  id="ai-assist-title"
-                  className="flex items-center gap-2 text-sm font-semibold text-white"
-                >
-                  <Sparkles className="h-4 w-4 shrink-0 text-blue-400" />
-                  AI Assist
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2
+                    id="ai-assist-title"
+                    className="flex items-center gap-2 text-sm font-semibold text-white"
+                  >
+                    <Sparkles className="h-4 w-4 shrink-0 text-blue-400" />
+                    AI Assist
+                  </h2>
+                  <span className="inline-flex items-center gap-1 rounded bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium text-slate-300 border border-white/10">
+                    <Lock className="h-2.5 w-2.5 text-blue-400" />
+                    {browserAgentMode
+                      ? 'Browser Agent'
+                      : selectedAgent
+                        ? 'Agent Engine'
+                        : isLocalRelay
+                          ? 'Local Relay'
+                          : selectedSource?.isUserKey
+                            ? 'BYOK Provider'
+                            : 'TNF Cloud'}
+                  </span>
+                </div>
                 <p className="mt-1 truncate text-xs text-slate-400">
                   Context: {pageInfo?.name}
                   {prefs.includePageContent
-                    ? ` · ${pageSnapshotChars || '…'} chars of page`
+                    ? ` · ${pageSnapshotChars || '…'} chars`
                     : ' · catalog only'}
+                  {prefs.includePageContent && pageRedactions > 0 ? (
+                    <span className="ml-1 inline-flex items-center gap-0.5 text-emerald-400">
+                      <ShieldCheck className="h-3 w-3 inline" />
+                      {pageRedactions} redacted
+                    </span>
+                  ) : null}
                   {' · '}
                   {focusModeLabel(prefs.focusMode)}
-                  {browserAgentMode ? ' · browser agent' : ''}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-1">
@@ -733,6 +759,13 @@ export const FeatureAIAssistDock: React.FC<FeatureAIAssistDockProps> = ({
                         Using: {agents.find((a) => a.id === selectedAgent)?.name}
                       </p>
                     )}
+                  </div>
+                )}
+
+                {browserAgentMode && (
+                  <div className="flex items-center gap-1.5 rounded-md bg-blue-950/40 border border-blue-500/20 px-2.5 py-1 text-[11px] text-blue-300">
+                    <Globe className="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                    <span>Browser agent active: tasks execute in a local/operator browser instance.</span>
                   </div>
                 )}
 

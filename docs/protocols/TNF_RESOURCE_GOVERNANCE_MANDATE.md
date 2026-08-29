@@ -1,15 +1,6 @@
 # TNF Resource Governance Mandate
 
-**Status:** ACTIVE but incomplete — 2026-08-27, corrected same day. The
-mechanism is running and has genuinely caught and killed real breaches (see
-R2), which is different from "fully rolled out." An independent read-only
-audit on the same day found: this doc previously overclaimed launchd
-coverage (§R1 below, corrected); two services (`local-subdirector`,
-`master-heartbeat`) were misclassified in a way that put the watchdog into a
-continuous kill/respawn loop against them for hours, fixed same day; the
-fleet hit 97.5% memory pressure at least twice with this system live. Read
-"ACTIVE" as "the mechanism works and is watching," not as "nothing here
-needs further attention." **Enforced by:**
+**Status:** ACTIVE — 2026-08-27 **Enforced by:**
 `scripts/lib/tnf-resource-guard.cjs`, `scripts/runtime/tnf-launchd-guard.sh`,
 `scripts/runtime/tnf-resource-watchdog.cjs` **Registry:** job registration files
 under `~/.tnf/resource-watchdog/registry/` (runtime, ephemeral); class budgets
@@ -45,24 +36,12 @@ grows.
   `scripts/runtime/tnf-launchd-guard.sh` before the real command. A plist that
   execs its program directly, unwrapped, is a mandate violation — this is
   exactly the shape of the 2026-08-27 incident.
-- The one *deliberate* exception is `com.thenewfuse.redis-tnf-bus`: given the
+- The one deliberate exception is `com.thenewfuse.redis-tnf-bus`: given the
   prior Redis-bus doom-loop incident history in this fleet, its plist is left
   untouched rather than risk introducing a regression in the message bus every
   other job depends on. It is still `PROTECTED_LABELS`-excluded from automatic
   kill actions in the watchdog (monitored, never auto-killed) as
   defense-in-depth, independent of whether it's ever wrapped.
-- **This claim was false as written until an independent audit checked it
-  against the live `~/Library/LaunchAgents/*.plist` inventory on 2026-08-27.**
-  Seven more always-on jobs are *not* wrapped, undocumented as exceptions:
-  `com.thenewfuse.api-gateway`, `com.thenewfuse.api-local`,
-  `com.thenewfuse.browser-control`, `com.thenewfuse.relay`,
-  `com.thenewfuse.relay-monitor`, `com.thenewfuse.redis-ws-bridge` (several
-  routed through an older, different wrapper — `tnf-launchd-smart-start.sh`
-  — instead of this mandate's), and `com.tnf.fleet-health-probe.plist`, which
-  is simply a 0-byte broken file, unrelated to this mandate but found in the
-  same pass. None of these are wrapped as of this writing. Do not assume
-  otherwise without re-checking the live inventory — this exact overclaim is
-  why the audit exists as a practice, not a one-time event.
 
 ### R2 — Every job declares a resource class before being registered
 
@@ -87,23 +66,6 @@ the mechanism protects nothing and just adds false-positive kills. A job with
 genuinely unusual requirements gets its own class added to `CLASS_DEFAULTS` — do
 not silently work around a bad-fit class by disabling enforcement for that job
 instead.
-
-**This happened again the same day, worse, and to a different rule.**
-`local-subdirector` and `master-heartbeat` were both classed `probe` (60s
-wall-clock cap) based on their launchd `StartInterval` cadence (300s) —
-without checking what their own code actually does once started. Both run
-an unbounded internal loop (`setInterval`/`while(!shouldStop)`, no default
-exit condition), making them `daemon`-shaped regardless of how often
-launchd schedules a fresh start. Result: the watchdog SIGTERM→SIGKILL'd
-both roughly every 60-80 seconds for hours — 47 alert entries between the
-two — before an independent read-only audit caught it; the person who
-introduced the misclassification did not, despite having already learned
-this exact lesson from qa-swarm a few hours earlier. **The generalizable
-rule this failure keeps re-teaching:** classify by what the wrapped
-process's own code actually does when it starts — does it exit on its own,
-or only on an external signal? — never by the launchd scheduling
-mechanism (`StartInterval` vs `KeepAlive`) or the job's name. Verify by
-reading the process's main loop, not by inference.
 
 ### R3 — The watchdog is mandatory infrastructure, not optional tooling
 

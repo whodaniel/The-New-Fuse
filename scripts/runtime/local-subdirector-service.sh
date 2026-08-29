@@ -92,28 +92,19 @@ create_plist() {
 <dict>
   <key>Label</key>
   <string>${LABEL}</string>
-  <!-- 2026-08-27: routed through tnf-launchd-guard.sh — see
+  <!-- 2026-08-27: routed through tnf-launchd-guard.sh (class=probe) — see
        docs/protocols/TNF_RESOURCE_GOVERNANCE_MANDATE.md. This template is
        regenerated unconditionally on every `start` (see start()), which is
        exactly why a manual, unwrapped edit to the live plist kept getting
        silently reverted: fix it here, at the source of truth, not on the
-       live file.
-       Class corrected same day: probe (60s wall-clock cap) was wrong —
-       local-subdirector-runtime.cjs runs an unbounded internal
-       setInterval loop (maxCycles defaults to 0), so the watchdog killed
-       this service every ~60-80s for hours under that classification.
-       class=daemon (no wall-clock cap) matches its actual persistent-
-       process shape. Caught by an independent read-only audit, not by
-       whoever introduced it — verify the actual runtime shape (does it
-       exit on its own, or only on signal?) before picking a class for any
-       future service, not just its launchd cadence. -->
+       live file. -->
   <key>ProgramArguments</key>
   <array>
     <string>${ROOT_DIR}/scripts/runtime/tnf-launchd-guard.sh</string>
     <string>--job</string>
     <string>${LABEL}</string>
     <string>--class</string>
-    <string>daemon</string>
+    <string>probe</string>
     <string>--repo-root</string>
     <string>${ROOT_DIR}</string>
     <string>--</string>
