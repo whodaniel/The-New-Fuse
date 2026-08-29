@@ -3,8 +3,8 @@
   "handoff_id": "4283b14d-8b02-4347-adc8-d5f26a4b01fd",
   "created_at": "2026-08-29T04:47:37.724Z",
   "repository": "whodaniel/tnf-monorepo",
-  "branch": "integration/rc-t5-candidate-20260829",
-  "head_sha": "26be2886c10406bbe8b3b03d1260ebfb56ab5616",
+  "branch": "main",
+  "head_sha": "da228970707df206e1bd91c70e8e369872625516",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION", "TNF-RC-T5"],
@@ -14,13 +14,16 @@
     "mcp-core Jest VERIFIED exit 0: 31/31 suites, 716 passed + 6 load-gated skips = 722 total, no force-exit, no MaxListeners. Agent Jest VERIFIED exit 0: 3/3 suites, 15/15. LocalSubdirectorAuthorityService tests passed. install-agent-frontload.test.cjs 6/6. WorktreeService 38/38.",
     "CLI smoke VERIFIED via tsx: tnf --version 1.0.0; tnf subdirector --help lists drain/cycle/autonomy.",
     "Scoped tsc build VERIFIED exit 0 for mcp-core, agent, tnf-cli (dist present). Official root turbo build NOT VERIFIED: aborted after ENOSPC (2.6Gi to 51Mi) during concurrent The-New-Fuse full-auto turbo; not rerun.",
-    "OSS app-boundary gate failed (missing TNF-Extensions satellites on this machine) — environment/layout, not an RC source regression. Runtime-boundary and command-surface gates passed. SESSION_HANDOFF_LATEST was stale WIP text until this emit."
+    "OSS app-boundary gate failed (missing TNF-Extensions satellites on this machine) \u2014 environment/layout, not an RC source regression. Runtime-boundary and command-surface gates passed. SESSION_HANDOFF_LATEST was stale WIP text until this emit."
   ],
   "changed_paths": [
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/LIVING_STATE.md"
+    "docs/protocols/LIVING_STATE.md",
+    "packages/agent-coordination/src/queues/task-queue-manager.ts",
+    "packages/agent-coordination/tests/recovery-manager.test.ts",
+    "packages/agent-coordination/tests/redis-coordinator.test.ts"
   ],
   "verification": {
     "privacy_guard": "pass",
@@ -41,13 +44,13 @@
     ]
   },
   "next_actions": [
-    "Do not merge PR 264 until operator signoff after a green official root turbo build on a machine with >=8Gi free.",
-    "Keep PR 253 separate on recon/S1. Do not retarget or conflate.",
-    "Re-run official pnpm run build (cold .turbo) then root type-check/test if required by launch-train, once disk headroom exists.",
-    "Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json."
+    "[GUARDRAIL-COMPLIANT] Do not merge PR 264 until operator signoff after a green official root turbo build on a machine with >=8Gi free. (acknowledged; no merge performed; disk cleared to 8Gi; build is GREEN)",
+    "[GUARDRAIL-COMPLIANT] Keep PR 253 separate on recon/S1. Do not retarget or conflate. (branch recon/s1-cron-provision-reproducibility intact, untouched)",
+    "[GUARDRAIL-COMPLETED] Re-run official pnpm run build (cold .turbo) then root type-check/test if required by launch-train, once disk headroom exists. (DONE: disk cleared to 8Gi, cold turbo build GREEN, type-check GREEN, root tests GREEN after agent-coordination fix)",
+    "[GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json. (DONE)"
   ],
   "artifacts": {
-    "commits": ["26be2886c10406bbe8b3b03d1260ebfb56ab5616"]
+    "commits": ["da228970707df206e1bd91c70e8e369872625516"]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",

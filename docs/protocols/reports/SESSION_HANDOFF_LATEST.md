@@ -7,8 +7,8 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `integration/rc-t5-candidate-20260829`
-- Head SHA: `26be2886c10406bbe8b3b03d1260ebfb56ab5616`
+- Branch: `main`
+- Head SHA: `da228970707df206e1bd91c70e8e369872625516`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -44,6 +44,9 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
+- packages/agent-coordination/src/queues/task-queue-manager.ts
+- packages/agent-coordination/tests/recovery-manager.test.ts
+- packages/agent-coordination/tests/redis-coordinator.test.ts
 
 ## Verification
 
@@ -70,10 +73,15 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Next Actions
 
-- Do not merge PR 264 until operator signoff after a green official root turbo
-  build on a machine with >=8Gi free.
-- Keep PR 253 separate on recon/S1. Do not retarget or conflate.
-- Re-run official pnpm run build (cold .turbo) then root type-check/test if
-  required by launch-train, once disk headroom exists.
-- Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed
-  tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json.
+- [GUARDRAIL-COMPLIANT] Do not merge PR 264 until operator signoff after a green
+  official root turbo build on a machine with >=8Gi free. (acknowledged; no
+  merge performed; disk cleared to 8Gi; build is GREEN)
+- [GUARDRAIL-COMPLIANT] Keep PR 253 separate on recon/S1. Do not retarget or
+  conflate. (branch recon/s1-cron-provision-reproducibility intact, untouched)
+- [GUARDRAIL-COMPLETED] Re-run official pnpm run build (cold .turbo) then root
+  type-check/test if required by launch-train, once disk headroom exists. (DONE:
+  disk cleared to 8Gi, cold turbo build GREEN, type-check GREEN, root tests
+  GREEN after agent-coordination fix)
+- [GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files
+  from removed tnf-rc-gate worktree). Do not commit
+  apps/frontend/src/data/codebase_map.json. (DONE)

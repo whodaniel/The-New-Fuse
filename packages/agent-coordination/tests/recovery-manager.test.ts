@@ -32,8 +32,8 @@ describe('RecoveryManager (real redis)', () => {
     await flushPrefix(redis, PREFIX);
   });
 
-  it('performHealthCheck reports no offline agents when none are present', async () => {
-    const offline = await (recovery as any).performHealthCheck();
+  it('detectOfflineAgents reports no offline agents when none are present', async () => {
+    const offline = await (recovery as any).detectOfflineAgents();
     expect(offline).toEqual([]);
   });
 

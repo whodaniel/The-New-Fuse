@@ -1,11 +1,11 @@
-import { EventEmitter } from 'events';
 import { Logger } from '@nestjs/common';
 import { Queue, QueueEvents, Worker } from 'bullmq';
+import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 
-import { TaskStatus } from '../types/coordination.types';
-import { PersistentMetricsCollector } from '../monitoring/PersistentMetricsCollector.js';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { PersistentMetricsCollector } from '../monitoring/PersistentMetricsCollector.js';
+import { TaskStatus } from '../types/coordination.types';
 
 import type { Job } from 'bullmq';
 import type { MessageSerializer } from '../serializers/message-serializer.js';
@@ -22,6 +22,12 @@ export class TaskQueueManager extends EventEmitter {
   private readonly processors: Map<string, TaskProcessor> = new Map();
   private readonly serializer: MessageSerializer;
   private readonly redisConnection: any;
+  /**
+   * Dedicated connection for BullMQ blocking commands (QueueEvents, Worker).
+   * BullMQ mandates maxRetriesPerRequest: null for connections that execute
+   * blocking Redis commands (BRPOPLPUSH, XREAD).
+   */
+  private readonly bullmqBlockingConnection: any;
 
   constructor(
     private readonly redisService: UnifiedRedisService,
@@ -31,6 +37,11 @@ export class TaskQueueManager extends EventEmitter {
   ) {
     super();
     this.redisConnection = redisService.getClient();
+    // BullMQ QueueEvents and Worker use blocking commands that require
+    // maxRetriesPerRequest: null. Duplicate the client with the override.
+    this.bullmqBlockingConnection = (this.redisConnection as any).duplicate({
+      maxRetriesPerRequest: null,
+    });
     this.serializer = serializer;
   }
 
@@ -60,7 +71,8 @@ export class TaskQueueManager extends EventEmitter {
     this.queues.set(name, queue);
 
     // Set up queue events
-    const events = new QueueEvents(name, { connection: this.redisConnection as any });
+    // QueueEvents uses blocking XREAD — must use the dedicated blocking connection
+    const events = new QueueEvents(name, { connection: this.bullmqBlockingConnection as any });
     this.queueEvents.set(name, events);
 
     this.setupQueueEventHandlers(name, events);
@@ -121,7 +133,8 @@ export class TaskQueueManager extends EventEmitter {
         }
       },
       {
-        connection: this.redisConnection as any,
+        // Worker uses blocking BRPOPLPUSH — must use the dedicated blocking connection
+        connection: this.bullmqBlockingConnection as any,
         concurrency: queueConfig.concurrency || 1,
         autorun: true,
       }
@@ -333,6 +346,12 @@ export class TaskQueueManager extends EventEmitter {
     this.queues.clear();
 
     this.processors.clear();
+
+    // Close the dedicated BullMQ blocking connection
+    if (this.bullmqBlockingConnection && typeof this.bullmqBlockingConnection.quit === 'function') {
+      await this.bullmqBlockingConnection.quit().catch(() => undefined);
+    }
+
     this.logger.log('Task queue manager closed');
   }
 
@@ -408,7 +427,9 @@ export class TaskQueueManager extends EventEmitter {
         } catch (error) {
           const msg = error instanceof Error ? error.message : String(error);
           if (msg.includes('Missing lock')) {
-            this.logger.debug(`Could not fail active task ${task.id} immediately (lock held). Waiting for stall detection.`);
+            this.logger.debug(
+              `Could not fail active task ${task.id} immediately (lock held). Waiting for stall detection.`
+            );
           } else {
             this.logger.warn(`Failed to fail task ${task.id}: ${msg}`);
           }

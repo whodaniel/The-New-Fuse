@@ -35,11 +35,20 @@ describe('RedisCoordinator (real redis)', () => {
     expect(coordinator.getMetrics().activeAgents).toBeGreaterThanOrEqual(1);
   });
 
-  it('unregisters an agent and clears its presence in real redis', async () => {
+  it('unregisters an agent: marks presence offline and removes from active set', async () => {
     await coordinator.registerAgent('agent-1', { role: 'worker' });
     await coordinator.unregisterAgent('agent-1');
 
-    expect(await redis.get(PREFIX + 'presence:agent-1')).toBeNull();
+    // Presence key is retained as an offline tombstone (by design — RecoveryManager
+    // relies on it to detect offline agents and release their locks/tasks).
+    const raw = await redis.get(PREFIX + 'presence:agent-1');
+    expect(raw).not.toBeNull();
+    const presence = JSON.parse(raw!);
+    expect(presence.status).toBe('offline');
+
+    // Agent must be removed from the active set.
+    const isActive = await redis.sismember(PREFIX + 'agents:active', 'agent-1');
+    expect(isActive).toBe(false);
   });
 
   it('sends a direct message through real pub/sub without error', async () => {
