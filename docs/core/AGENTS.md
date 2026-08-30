@@ -201,17 +201,18 @@ merge or deploy can cost a production outage.
 
 ## Harness staffing policy
 
-TNF capabilities (coding-agent session, MCP surface, credential rotation, sandbox
-wake, chat-UI bridge) are staffed by whichever installed harness can fulfill them.
-Claude, Cursor, Codex, Gemini, Hermes, Pi, and any future client are interchangeable
-adapters. OpenClaw is one optional adapter, not the role.
+TNF capabilities (coding-agent session, MCP surface, credential rotation,
+sandbox wake, chat-UI bridge) are staffed by whichever installed harness can
+fulfill them. Claude, Cursor, Codex, Gemini, Hermes, Pi, and any future client
+are interchangeable adapters. OpenClaw is one optional adapter, not the role.
 
 1. Treat TNF as the primary control plane.
-2. Prefer native TNF commands (`tnf harness staff`, `tnf cursor`, `tnf claude`, …).
-3. If a vendor CLI is installed and TNF has not assimilated a native surface, pass
-   through that CLI (`tnf <client> …`).
-4. Do not invoke a raw vendor binary unless the task is debugging that adapter or
-   the operator explicitly asks for it.
+2. Prefer native TNF commands (`tnf harness staff`, `tnf cursor`, `tnf claude`,
+   …).
+3. If a vendor CLI is installed and TNF has not assimilated a native surface,
+   pass through that CLI (`tnf <client> …`).
+4. Do not invoke a raw vendor binary unless the task is debugging that adapter
+   or the operator explicitly asks for it.
 
 `tnf harness clients` lists who can currently staff the role.
 `tnf compat openclaw` remains a compatibility map for that one optional adapter.
@@ -222,10 +223,10 @@ Agents must strictly identify and operate within one of three domain contexts.
 The active domain dictates the expected degree of proactivity, technical rigor,
 and autonomy.
 
-1. **Corporate Dev Work:** Work on the core TNF framework itself (system-level,
-   canonical protocols, framework-wide utilities). Demands the highest level of
-   rigor, regression testing, and strict adherence to established TNF legacy
-   protocols.
+1. **Core Framework Engineering:** Work on the core TNF framework itself
+   (system-level, canonical protocols, framework-wide utilities). Demands the
+   highest level of rigor, regression testing, and strict adherence to
+   established TNF legacy protocols.
 2. **Agency Dev Work:** Work serving a specific user's agency or clients.
    Balances speed of delivery with robust architecture.
 3. **Personal Dev Work:** Daily personal tasks, organization, and custom agent
@@ -241,7 +242,8 @@ Turn Zero authority:
 - Any external mirror (for example `~/GEMINI.md`) is non-authoritative.
 
 Use `tnf harness clients` as the source of truth for who can staff a capability.
-Use `tnf compat openclaw` only when working the optional OpenClaw compatibility map.
+Use `tnf compat openclaw` only when working the optional OpenClaw compatibility
+map.
 
 ## Operations Index
 

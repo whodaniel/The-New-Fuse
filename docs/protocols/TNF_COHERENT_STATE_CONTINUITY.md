@@ -3,28 +3,39 @@
 `[CLASS:PRIME] [STATUS:ACTIVE] [DOC_TYPE:ARCHITECTURE_DOCTRINE] [VISIBILITY:COLLECTIVE]`
 
 **Established:** 2026-08-18  
-**Scope:** product-neutral architecture derived from Turn Zero V2, capability-first staffing, repository separation, state freshness, multi-agent concurrency, and operator-directed design synthesis.
+**Scope:** product-neutral architecture derived from Turn Zero V2,
+capability-first staffing, repository separation, state freshness, multi-agent
+concurrency, and operator-directed design synthesis.
 
 ## Purpose
 
-TNF should not model a changing world as a pile of immutable assertions. It should preserve a continuously testable chain connecting **human intent, historical context, current observation, authority, action, consequence, receipt, memory, and next state**.
+TNF should not model a changing world as a pile of immutable assertions. It
+should preserve a continuously testable chain connecting **human intent,
+historical context, current observation, authority, action, consequence,
+receipt, memory, and next state**.
 
 The architectural objective is **coherence across change**.
 
 ## Persistent logical kernel
 
-Eight primitives remain useful across code, agents, workflows, personal operating systems, organizations, and external services:
+Eight primitives remain useful across code, agents, workflows, personal
+operating systems, organizations, and external services:
 
 1. **Intent** — the outcome actually sought.
 2. **Authority** — who or what is permitted to decide or mutate.
 3. **Context** — the minimum relevant information required to act.
-4. **Capability** — the ability required by the task, independent of provider identity.
-5. **Boundary** — where information, authority, money, code, or responsibility may flow.
+4. **Capability** — the ability required by the task, independent of provider
+   identity.
+5. **Boundary** — where information, authority, money, code, or responsibility
+   may flow.
 6. **Action** — a bounded operation against current state.
 7. **Receipt** — evidence of what actually occurred.
-8. **Handoff** — sufficient state for another actor to continue without reconstructing reality from scratch.
+8. **Handoff** — sufficient state for another actor to continue without
+   reconstructing reality from scratch.
 
-Named agents, repositories, models, programs, and vendors are **providers, containers, authority surfaces, or state stores** participating in this grammar; they are not the grammar itself.
+Named agents, repositories, models, programs, and vendors are **providers,
+containers, authority surfaces, or state stores** participating in this grammar;
+they are not the grammar itself.
 
 ## Continuous execution loop
 
@@ -50,7 +61,9 @@ HANDOFF
 REVIEW / NEXT INTENT
 ```
 
-This is the continuous form of Turn Zero + Turn End. Turn Zero establishes enough verified context and authority to safely act. Turn End preserves enough proof-bearing state to continue.
+This is the continuous form of Turn Zero + Turn End. Turn Zero establishes
+enough verified context and authority to safely act. Turn End preserves enough
+proof-bearing state to continue.
 
 ## Canonical truth is evidentiary
 
@@ -77,7 +90,9 @@ confidence:
   state: verified | reported | inferred | unknown
 ```
 
-A repository is canonical because current repository maps, governance contracts, ref observations, and observed publication behavior support that claim. A remembered repository name is not sufficient evidence.
+A repository is canonical because current repository maps, governance contracts,
+ref observations, and observed publication behavior support that claim. A
+remembered repository name is not sufficient evidence.
 
 ## Proof-bearing state
 
@@ -97,11 +112,14 @@ State =
   + possible next transitions
 ```
 
-Agents should pass proof-bearing state where the cost is justified, not naked conclusions.
+Agents should pass proof-bearing state where the cost is justified, not naked
+conclusions.
 
 ## Memory dimensions
 
-TNF should avoid flattening all memory into one undifferentiated store. Different memory classes have different authority, lifetime, retrieval, and privacy semantics:
+TNF should avoid flattening all memory into one undifferentiated store.
+Different memory classes have different authority, lifetime, retrieval, and
+privacy semantics:
 
 - **episodic** — what happened;
 - **semantic** — what was learned;
@@ -114,25 +132,34 @@ TNF should avoid flattening all memory into one undifferentiated store. Differen
 
 ## Relative context
 
-The same entity can have different valid relational projections depending on task and observer. For example, a repository may simultaneously be a development source, publication upstream, historical lineage object, or external fork target.
+The same entity can have different valid relational projections depending on
+task and observer. For example, a repository may simultaneously be a development
+source, publication upstream, historical lineage object, or external fork
+target.
 
-TNF should represent these as explicit relationships rather than forcing one global label onto every context.
+TNF should represent these as explicit relationships rather than forcing one
+global label onto every context.
 
 ## Capability is not authority
 
-A provider's ability to perform an operation is independent of permission to perform it.
+A provider's ability to perform an operation is independent of permission to
+perform it.
 
 ```text
 actor.capabilities ≠ actor.authority_scope
 ```
 
-A mutation should be permitted only when required capability and required authority both resolve successfully.
+A mutation should be permitted only when required capability and required
+authority both resolve successfully.
 
 ## Context must be scoped and fresh
 
-Do not copy all context everywhere. Resolve authoritative references and hydrate only the information required by the current intent.
+Do not copy all context everywhere. Resolve authoritative references and hydrate
+only the information required by the current intent.
 
-Existence is not freshness. A commit object existing does not prove it is the current branch tip. A process existing does not prove service health. A historical schedule does not prove it remains active.
+Existence is not freshness. A commit object existing does not prove it is the
+current branch tip. A process existing does not prove service health. A
+historical schedule does not prove it remains active.
 
 Volatile claims therefore require observations with freshness semantics.
 
@@ -141,11 +168,13 @@ Volatile claims therefore require observations with freshness semantics.
 Before mutation, classify independently across at least:
 
 ### Work domain
-- corporate
+
+- core
 - agency
 - personal
 
 ### Artifact destination
+
 - OSS runtime
 - public contract
 - private control plane
@@ -153,6 +182,7 @@ Before mutation, classify independently across at least:
 - external
 
 ### Data residency / sensitivity
+
 - product state
 - bounded working artifact
 - external durable storage
@@ -165,7 +195,8 @@ and:
 - private
 - restricted
 
-A personal or client workflow may generate a generalizable OSS mechanism without making the source personal context public.
+A personal or client workflow may generate a generalizable OSS mechanism without
+making the source personal context public.
 
 **Rule: universalize the pattern, not the private context.**
 
@@ -190,7 +221,8 @@ The general lifecycle is:
 READ → CLAIM → MUTATE → VERIFY → RELEASE / HANDOFF
 ```
 
-This applies to Git index/worktrees, migrations, deployment branches, browser sessions, generated artifacts, and other shared mutation surfaces.
+This applies to Git index/worktrees, migrations, deployment branches, browser
+sessions, generated artifacts, and other shared mutation surfaces.
 
 ## Verification outranks narrative
 
@@ -209,13 +241,18 @@ evidence:
 
 over prose-only completion claims.
 
-TNF should distinguish **verified fact**, **reported state**, **inference**, and **unknown**.
+TNF should distinguish **verified fact**, **reported state**, **inference**, and
+**unknown**.
 
 ## Contradiction is information
 
-When a locally correct abstraction fails in another context, treat the contradiction as evidence that the abstraction is incomplete.
+When a locally correct abstraction fails in another context, treat the
+contradiction as evidence that the abstraction is incomplete.
 
-The Turn Zero V2 public-boundary correction is the reference pattern: an internal repository-identity rule was correct for canonical development but too absolute for legitimate OSS forks. The contradiction yielded a better relational model rather than a weakened rule.
+The Turn Zero V2 public-boundary correction is the reference pattern: an
+internal repository-identity rule was correct for canonical development but too
+absolute for legitimate OSS forks. The contradiction yielded a better relational
+model rather than a weakened rule.
 
 ## Propagation discipline
 
@@ -233,7 +270,8 @@ Test independently
 Propagate generalized mechanism
 ```
 
-Do not proliferate local workarounds, stale assumptions, private context, or unverified conclusions as universal doctrine.
+Do not proliferate local workarounds, stale assumptions, private context, or
+unverified conclusions as universal doctrine.
 
 ## Handoff is part of execution
 
@@ -255,9 +293,12 @@ A transcript is useful history but is not a substitute for a structured handoff.
 
 A productive systems-level definition of alignment for TNF is:
 
-> Preserve legitimate human intent through chains of delegated action across heterogeneous systems while maintaining explicit authority, context integrity, accountability, reversibility where possible, and human recourse.
+> Preserve legitimate human intent through chains of delegated action across
+> heterogeneous systems while maintaining explicit authority, context integrity,
+> accountability, reversibility where possible, and human recourse.
 
-This is a research and engineering framing, not a claim that the general AI alignment problem is solved.
+This is a research and engineering framing, not a claim that the general AI
+alignment problem is solved.
 
 ## Design test
 
@@ -273,4 +314,6 @@ For any new TNF feature or protocol, ask:
 8. What generalized lesson, if any, should propagate?
 9. What must the next actor know to continue coherently?
 
-If those answers are unavailable for a consequential operation, the system should reduce confidence, request authority/context, or stop rather than fabricate continuity.
+If those answers are unavailable for a consequential operation, the system
+should reduce confidence, request authority/context, or stop rather than
+fabricate continuity.

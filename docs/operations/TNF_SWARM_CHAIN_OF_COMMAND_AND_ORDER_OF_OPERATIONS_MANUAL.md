@@ -1,4 +1,4 @@
-# TNF Corporate Chain of Command and Order of Operations Manual
+# TNF Swarm Chain of Command and Order of Operations Manual
 
 Status: Draft for Adoption  
 Effective Date: 2026-03-26  
@@ -18,7 +18,7 @@ TNF so:
 
 ## 2. Official Operations Team Naming
 
-Corporate operations organization name:
+Swarm operations organization name:
 
 - `TNF Development Operations Command` (`TNF-DOC`)
 
@@ -214,7 +214,7 @@ Access policy:
 Primary artifacts:
 
 1. `data/protocols/tnf-staff-master-calendar.json`
-2. `docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md`
+2. `docs/operations/TNF_SWARM_MASTER_SCHEDULE.md`
 3. `reports/protocols/growth-blocker-audit/growth-blocker-audit-latest.json`
 4. `reports/protocols/growth-blocker-audit/growth-blocker-audit-latest.md`
 

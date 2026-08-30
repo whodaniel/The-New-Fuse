@@ -28,7 +28,7 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - data/llm-intel/ranking-recommendations.json
 - data/llm-intel/ranking-report-latest.md
 - data/marketplace/catalog-items.json
-- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
+- docs/operations/TNF_SWARM_MASTER_SCHEDULE.md
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/protocols/reports/session_handoff_generated-runtime-snapshots-20260829.json

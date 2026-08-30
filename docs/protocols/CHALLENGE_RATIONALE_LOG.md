@@ -405,7 +405,7 @@ with no dependency on the commit landing first. Existing entries with
 - file: docs/protocols/TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md (new), D25 added to
   DIRECTIVES.md §1, scripts/protocols/check-artifacts-lifecycle.cjs (new),
   scripts/operations/swarm-disk-retention.sh (wired to consult the policy),
-  docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md (new row for
+  docs/operations/TNF_SWARM_MASTER_SCHEDULE.md (new row for
   `tnf-terminal-heartbeat-pulse` per D15)
 - doc_hash:
   sha256:36366b04d3ae319c4e84e9ae56af6ecc720d71c891f26a37382e3914ee65c123
@@ -537,3 +537,14 @@ with no dependency on the commit landing first. Existing entries with
   config.
 - attributed_to: Daniel Goldberg (operator), 2026-08-11 chat guidance after
   Spark sanitize / OSS-safety review.
+
+### [2026-08-30] Semantic Cohesion Reconciliation
+
+- **File:** `TNF_SYSTEM_LEXICON.md`
+- **Rationale:** The document was [STATUS:LOCKED] but inherently contradicted
+  the multi-tenant architecture and industrial/biological metaphors used by
+  active cluster agents (e.g., `AGENTS.md` and `PROTOCOL_MAP.md`). As per the
+  Operator's directive to reconcile and purge the "Corporate" metaphor across
+  the fleet, the lexicon was updated to adopt a unified Swarm/Cluster/Node and
+  Library/Class/Domain topology.
+- **Authorizer:** Operator (via explicit "proceed on all fronts" directive).

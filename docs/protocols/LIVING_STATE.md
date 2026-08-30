@@ -273,6 +273,10 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-26T03:28:18.479Z New script(s) created:
 - [✅] 2026-08-26T08:10:23.175Z New script(s) created:
 - [✅] 2026-08-30T18:14:48.033Z New script(s) created: probe.cjs, rc-matrix.sh,
+- [✅] 2026-08-30T18:44:31.300Z New script(s) created: agentic-ontology-audit.sh
+- [✅] 2026-08-30T18:59:23.279Z New script(s) created:
+  tnf-recursive-logic-sieve.sh
+
   run-phase-b-only.sh, run-phase-b-wait.sh, run-phase-b.sh, run-rc-gate.sh
 
   verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,

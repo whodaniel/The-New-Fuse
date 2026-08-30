@@ -32,8 +32,8 @@ contextual asset, and fleet dispatch to the active tenant context:
   enforced via Supabase RLS policies and API Gateway middleware
   (`apps/api-gateway/src/guards/security.guard.ts`).
 - **Tri-Fold Domain Adaptability:**
-  1. **Corporate Dev Domain:** Focuses on framework compliance, system
-     architecture, core performance, and strict protocol adherence.
+  1. **Core Dev Domain:** Focuses on framework compliance, system architecture,
+     core performance, and strict protocol adherence.
   2. **Agency / Client Domain:** Focuses on client-specific SLAs, isolated
      tenant workspaces, custom branding, ROI/KPI metrics, and tenant-scoped
      credentials.

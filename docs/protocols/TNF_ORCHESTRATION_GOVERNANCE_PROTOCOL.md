@@ -41,10 +41,10 @@ A scheduled task that runs in the dark is an untrusted task.
   (`CLOUD_RUNTIME`), Local Cron (`jules:supervisor`), or Master Clock must emit
   a verifiable state heartbeat indicating completion status, duration, and ops
   performed.
-- **The Stale Run Window:** If a task on the
-  `TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md` goes longer than 3x its scheduled
-  interval without an emitted success heartbeat, it is marked as `stale` and is
-  eligible for automatic suspension by the Orchestrator.
+- **The Stale Run Window:** If a task on the `TNF_SWARM_MASTER_SCHEDULE.md` goes
+  longer than 3x its scheduled interval without an emitted success heartbeat, it
+  is marked as `stale` and is eligible for automatic suspension by the
+  Orchestrator.
 
 ## 4. Periodic Agent Audits
 
@@ -59,8 +59,8 @@ explicitly tasked with evaluating schedule density.
 
 ## 5. Drift Protection (SaaS vs. Local)
 
-The `TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md` serves as the single source of
-truth for both:
+The `TNF_SWARM_MASTER_SCHEDULE.md` serves as the single source of truth for
+both:
 
 - `CLOUD_RUNTIME_CRON_SETUP.md` (SaaS layer mappings)
 - `tnf-voice-cron-entries.txt` (Local crontabs)

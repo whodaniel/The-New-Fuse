@@ -8,7 +8,8 @@ Status: canonical engineering reconciliation complete; external gates remain.
 - Public publication target: `whodaniel/The-New-Fuse`
 - Private publication target: `whodaniel/fuse-control-plane`
 - Canonical source: `e3635bccda9e98836ddfb686d0f98bda5ba2a04f`
-- Public publication: `The-New-Fuse` PR #160, merged as `2c5fa089cf10058745e3720b2ae4d09c7fb4294a`
+- Public publication: `The-New-Fuse` PR #160, merged as
+  `2c5fa089cf10058745e3720b2ae4d09c7fb4294a`
 - Pending public publication: PR #161 from canonical `e3635bcc`
 
 ## Completed Work
@@ -18,8 +19,8 @@ Status: canonical engineering reconciliation complete; external gates remain.
 2. Merged process single-instance locking through monorepo PR #125.
 3. Repaired public-overlay application builds, contract stubs, gitlink handling,
    and topology documentation through PR #126.
-4. Implemented Green/DACC V1 context references, executor-only hydration,
-   Redis TTL/CAS behavior, CER telemetry, and failure tests through PR #127.
+4. Implemented Green/DACC V1 context references, executor-only hydration, Redis
+   TTL/CAS behavior, CER telemetry, and failure tests through PR #127.
 5. Removed credentials from publication command lines through PR #128.
 6. Aligned all active handoff producers and validators with
    `tnf/session-handoff/0.2` through PR #129.
@@ -27,9 +28,9 @@ Status: canonical engineering reconciliation complete; external gates remain.
    partial clone and direct replacement-tree commit through PR #130.
 8. Published the current open runtime through the upstream separation pipeline.
    Both proprietary boundary gates passed. Public issue #157 is closed.
-9. Migrated Bolt, Palette, and Sentinel schedules from public
-   `The-New-Fuse` to canonical `tnf-monorepo`; public scheduled-task inventory
-   was zero after reload. The first canonical run is due at 21:30 EDT.
+9. Migrated Bolt, Palette, and Sentinel schedules from public `The-New-Fuse` to
+   canonical `tnf-monorepo`; public scheduled-task inventory was zero after
+   reload. The first canonical run is due at 21:30 EDT.
 10. Added publication status, validation-gate, and portable recovery-path
     continuity through monorepo PRs #131 and #132, then republished through
     public PR #160.
@@ -77,8 +78,8 @@ Dirty-path lanes:
   provider status, reconciliation reports, and validation reports. Preserve in
   the capsule; regenerate from current main instead of copying them.
 - **Needs owner review:** `data/marketplace/catalog-items.json` and
-  `docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md`. Review semantic
-  additions separately before any upstream port.
+  `docs/operations/TNF_SWARM_MASTER_SCHEDULE.md`. Review semantic additions
+  separately before any upstream port.
 
 No pull, merge, rebase, reset, checkout, restore, stash, clean, or commit was
 performed in the protected checkout during this reconciliation.
@@ -108,7 +109,8 @@ performed in the protected checkout during this reconciliation.
 - PR #129: V2 handoff tests 2/2; protocol-contract schema check passed.
 - PR #130: publication tests 3/3; full open-runtime dry run passed.
 - PR #131: Turn Zero and handoff-source validation passed; handoff tests 3/3.
-- PR #132: privacy, secret, docs PII, and portable-path publication gates passed.
+- PR #132: privacy, secret, docs PII, and portable-path publication gates
+  passed.
 - Extension contract: protocol package build and typecheck passed; manifest
   tests 7/7; plugin lifecycle tests 13/13; CLI build and typecheck passed;
   command surface 474/474; all remaining CLI tests passed. The full chained CLI

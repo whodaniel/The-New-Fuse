@@ -1,11 +1,10 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`
-Spec: `tnf/session-handoff/0.2`
-Created At: `2026-08-29T22:06:08.623Z`
-Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
+Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
+`2026-08-29T22:06:08.623Z` Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
 
 ## Scope
+
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `main`
@@ -13,18 +12,26 @@ Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
 - Sensitive Scope: `internal`
 
 ## Classification
+
 - Work Domain: `unknown`
 - Artifact Destination: `unknown`
 - Data Residency: `unknown`
 - Sensitivity: `unknown`
 
 ## Work Summary
-- Archived 4 zero-consumer packages (claude-skills, jules-integration, gemini-browser-skill, features) into archive/skill-consolidation-20260829
-- Removed dead deps: jules-integration (api-gateway), feature-suggestions (tauri-desktop build:deps + vite alias), feature-tracker (backend), stale alias (frontend vite)
-- Removed unused @the-new-fuse/features externals from ui-consolidated tsup/vite configs
-- Re-homed jules webhook contract into protocol-contracts (zod schema-first jules.ts); gateway controller imports canonical contract
+
+- Archived 4 zero-consumer packages (claude-skills, jules-integration,
+  gemini-browser-skill, features) into archive/skill-consolidation-20260829
+- Removed dead deps: jules-integration (api-gateway), feature-suggestions
+  (tauri-desktop build:deps + vite alias), feature-tracker (backend), stale
+  alias (frontend vite)
+- Removed unused @the-new-fuse/features externals from ui-consolidated tsup/vite
+  configs
+- Re-homed jules webhook contract into protocol-contracts (zod schema-first
+  jules.ts); gateway controller imports canonical contract
 
 ## Changed Paths
+
 - apps/api-gateway/package.json
 - apps/api-gateway/src/gateway/jules-webhook.controller.ts
 - apps/backend/package.json
@@ -228,13 +235,13 @@ Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
 - archive/skill-consolidation-20260829/features/auth/components/ResetPassword.tsx-e
 - archive/skill-consolidation-20260829/features/auth/components/TwoFactorAuth.tsx
 - archive/skill-consolidation-20260829/features/auth/components/TwoFactorAuth.tsx-e
-- archive/skill-consolidation-20260829/features/auth/components/__tests__/GoogleSignInButton.test.jsx
-- archive/skill-consolidation-20260829/features/auth/components/__tests__/GoogleSignInButton.test.tsx
-- archive/skill-consolidation-20260829/features/auth/components/__tests__/GoogleSignInButton.test.tsx-e
-- archive/skill-consolidation-20260829/features/auth/components/__tests__/Profile.test.tsx
-- archive/skill-consolidation-20260829/features/auth/components/__tests__/Profile.test.tsx-e
-- archive/skill-consolidation-20260829/features/auth/components/__tests__/TwoFactorAuth.test.tsx
-- archive/skill-consolidation-20260829/features/auth/components/__tests__/TwoFactorAuth.test.tsx-e
+- archive/skill-consolidation-20260829/features/auth/components/**tests**/GoogleSignInButton.test.jsx
+- archive/skill-consolidation-20260829/features/auth/components/**tests**/GoogleSignInButton.test.tsx
+- archive/skill-consolidation-20260829/features/auth/components/**tests**/GoogleSignInButton.test.tsx-e
+- archive/skill-consolidation-20260829/features/auth/components/**tests**/Profile.test.tsx
+- archive/skill-consolidation-20260829/features/auth/components/**tests**/Profile.test.tsx-e
+- archive/skill-consolidation-20260829/features/auth/components/**tests**/TwoFactorAuth.test.tsx
+- archive/skill-consolidation-20260829/features/auth/components/**tests**/TwoFactorAuth.test.tsx-e
 - archive/skill-consolidation-20260829/features/auth/components/index.ts
 - archive/skill-consolidation-20260829/features/chat/ChatContext.tsx
 - archive/skill-consolidation-20260829/features/chat/ChatContext.tsx-e
@@ -490,8 +497,8 @@ Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
 - archive/skill-consolidation-20260829/gemini-browser-skill/src/tsconfig.json
 - archive/skill-consolidation-20260829/gemini-browser-skill/tsconfig.json
 - archive/skill-consolidation-20260829/jules-integration/README.md
-- archive/skill-consolidation-20260829/jules-integration/__tests__/JulesAgentAdapter.test.ts
-- archive/skill-consolidation-20260829/jules-integration/__tests__/JulesWebhookHandler.test.ts
+- archive/skill-consolidation-20260829/jules-integration/**tests**/JulesAgentAdapter.test.ts
+- archive/skill-consolidation-20260829/jules-integration/**tests**/JulesWebhookHandler.test.ts
 - archive/skill-consolidation-20260829/jules-integration/jest.config.js
 - archive/skill-consolidation-20260829/jules-integration/jest.resolver.cjs
 - archive/skill-consolidation-20260829/jules-integration/package.json
@@ -514,7 +521,7 @@ Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
 - packages/agent-coordination/tests/recovery-manager.test.ts
 - packages/agent-coordination/tests/redis-coordinator.test.ts
 - .gitignore
-- apps/api-gateway/src/controllers/__tests__/health.controller.spec.ts
+- apps/api-gateway/src/controllers/**tests**/health.controller.spec.ts
 - apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json
 - apps/api/src/app.module.ts
 - apps/api/src/controllers/onboarding.controller.integration.spec.ts
@@ -541,7 +548,7 @@ Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
 - apps/frontend/src/pages/Landing/index.tsx
 - apps/frontend/src/pages/OnboardingFlow/index.tsx
 - apps/frontend/src/pages/auth/Login.tsx
-- apps/frontend/src/pages/auth/__tests__/LoginRedirect.test.tsx
+- apps/frontend/src/pages/auth/**tests**/LoginRedirect.test.tsx
 - apps/frontend/src/pages/dashboard/TNFConsoleDashboard.tsx
 - apps/frontend/src/stubs/lucide-react.tsx
 - apps/tauri-desktop/src/ComprehensiveRouter.tsx
@@ -560,7 +567,7 @@ Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
 - data/marketplace/catalog-items.json
 - docs/getting-started/README.md
 - docs/guides/installation.md
-- docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md
+- docs/operations/TNF_SWARM_MASTER_SCHEDULE.md
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
@@ -586,22 +593,30 @@ Handoff ID: `14e23d83-c540-4152-bdf9-1bd554112c4e`
 - packages/tnf-cli/src/services/FirstRunJourneyService.ts
 
 ## Verification
+
 - privacy_guard: `pass`
 - secret_sweep: `pass`
 - docs_pii_guard: `pass`
 - supabase_rls_audit: `na`
 
 ## Continuation
+
 - Owner: `pi-coding-agent`
 - Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
+
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
 - Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers
-- Phase 3: generalize jules-skill MCP tool surface to remote-coding-agent delegation
-- Phase 4: move feature-tracker/feature-suggestions UI assets to TNF-Extensions (backend keeps native feedback module)
+
+- Phase 2: relocate claw-skills markdown packs to skill-content distribution +
+  repoint symlink consumers
+- Phase 3: generalize jules-skill MCP tool surface to remote-coding-agent
+  delegation
+- Phase 4: move feature-tracker/feature-suggestions UI assets to TNF-Extensions
+  (backend keeps native feedback module)

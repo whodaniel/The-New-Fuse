@@ -94,3 +94,37 @@ criteria:
 2. **Library Assignment:** Which `Namespace` does it belong to?
 3. **Flag Application:** Has it been assigned a `CLASS` and `STATUS`?
 4. **Linkage Check:** Does it have an `Attribution` resource pointer?
+
+---
+
+## 2. The Hierarchy of Agents and Infrastructure
+
+To maintain strict semantic cohesion and prevent dangerous overlap, TNF
+exclusively uses a unified **Network/Biological** metaphor for active systems
+and a strict **Object-Oriented** metaphor for static data.
+
+_The terms "Corporate", "Department", and "Staff" are permanently deprecated._
+
+### A. Infrastructure (The Metal & The Network)
+
+- **FLEET:** Strictly refers to the underlying compute infrastructure (Docker
+  containers, Cloudflare edge nodes, local instances). Agents _run on_ the
+  Fleet; they are _not_ the Fleet.
+- **NODE:** A single hardware or serverless instance within the Fleet.
+
+### B. Synthetic Intelligence (The AI)
+
+- **SWARM:** The collective totality of all active AI agents within TNF.
+- **AGENT:** A singular, instantiated LLM loop executing tasks.
+- **CLUSTER:** A highly specific, grouped subset of the Swarm focused on a
+  single pipeline (e.g., _Cluster 2: Synthesis_).
+- **PIPELINE:** A sequential workflow that data passes through (e.g., the
+  Ingestion Pipeline).
+- **ROLE:** The assigned persona and capability set of an Agent.
+
+### C. Logical Boundaries (The Code)
+
+- **CORE / FRAMEWORK:** The foundational protocols, engine, and backend of TNF
+  (Tiers 1-6).
+- **SOVEREIGN:** Private, user-specific data and artifacts strictly isolated
+  from the Core.
