@@ -1,15 +1,15 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "59f59846-1721-49ab-b11d-0632cab3d186",
-  "created_at": "2026-08-30T18:32:34.933Z",
+  "handoff_id": "402c1773-882c-488e-8c46-1a7752f93d83",
+  "created_at": "2026-08-30T18:44:31.308Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "d679ba89a4684270ddea8825c76c83f32ab45e81",
+  "head_sha": "ca5bf8dbf76604359da5a5dc5b232c991b7a69e9",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
   "work_summary": [
-    "feat(governance): codify Active Follow-Through Mandate as core tenet"
+    "feat(ontology): map all system classifiers and automate follow-through auditing"
   ],
   "changed_paths": [
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
@@ -18,8 +18,9 @@
     "data/marketplace/catalog-items.json",
     "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/TNF_GOVERNANCE_TENETS.md",
     "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "docs/protocols/TNF_ONTOLOGY_MASTER_MAP.md",
+    "scripts/protocols/agentic-ontology-audit.sh",
     "packages/rust-relay/"
   ],
   "verification": {
@@ -45,10 +46,10 @@
     "[GUARDRAIL-COMPLIANT] Keep PR 253 separate on recon/S1. Do not retarget or conflate. (branch recon/s1-cron-provision-reproducibility intact, untouched)",
     "[GUARDRAIL-COMPLETED] Re-run official pnpm run build (cold .turbo) then root type-check/test if required by launch-train, once disk headroom exists. (DONE: disk cleared to 8Gi, cold turbo build GREEN, type-check GREEN, root tests GREEN after agent-coordination fix)",
     "[GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json. (DONE)",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 9 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 10 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["d679ba89a4684270ddea8825c76c83f32ab45e81"],
+    "commits": ["ca5bf8dbf76604359da5a5dc5b232c991b7a69e9"],
     "deployment_urls": [],
     "database_migrations": []
   },
