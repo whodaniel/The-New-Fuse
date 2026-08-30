@@ -548,3 +548,12 @@ with no dependency on the commit landing first. Existing entries with
   the fleet, the lexicon was updated to adopt a unified Swarm/Cluster/Node and
   Library/Class/Domain topology.
 - **Authorizer:** Operator (via explicit "proceed on all fronts" directive).
+
+### [2026-08-30] Dynamic Context Broker Injection
+
+- **File:** `TNF_DOCUMENT_TAGGING_PROTOCOL.md`
+- **Rationale:** To implement the JIT Context Broker and prevent context bloat,
+  the tagging protocol was extended to support `[CLUSTER_BINDING: <value>]`.
+  This tag allows the broker to dynamically map protocol documents to specific
+  agent clusters at runtime.
+- **Authorizer:** Operator (via explicit "proceed" directive).

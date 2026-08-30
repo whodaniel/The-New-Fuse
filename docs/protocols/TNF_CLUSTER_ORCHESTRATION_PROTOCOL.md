@@ -1,5 +1,6 @@
-`[CLASS:PRIME] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
-restored for Gate 3 compliance; reclassify on next vetting pass.
+`[CLUSTER_BINDING: SYNTHESIS]` `[CLASS:PRIME] [STATUS:PENDING]`
+`[DOC_AUDIT_BACKFILL:2026-07-14]` — header restored for Gate 3 compliance;
+reclassify on next vetting pass.
 
 # 🕸️ TNF Cluster Orchestration Protocol
 

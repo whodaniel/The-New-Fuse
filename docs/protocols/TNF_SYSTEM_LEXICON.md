@@ -1,6 +1,7 @@
-`[CLASS:PRIME] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
-[DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE] restored for Gate 3
-compliance; reclassify on next vetting pass.
+`[CLUSTER_BINDING: ALL]` `[CLASS:PRIME] [STATUS:PENDING]`
+`[DOC_AUDIT_BACKFILL:2026-07-14]` — header [DOC_TYPE:PROTOCOL_STANDARD]
+[VISIBILITY:COLLECTIVE] restored for Gate 3 compliance; reclassify on next
+vetting pass.
 
 # 📖 TNF System Lexicon & Hierarchical Definitions
 
