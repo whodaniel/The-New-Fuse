@@ -31,7 +31,7 @@ flowchart TD
     Extraction --> Scrutiny{Gate 2: Super Admin Logical Scrutiny & Empirical Validation}
 
     Scrutiny -->|Passes: Universal Code / Spec / Protocol| Track1[Track 1: Core Open-Source Engine<br/>packages/*, docs/protocols/, .agent/skills/<br/>Shipped to Public GitHub]
-    Scrutiny -->|Passes: Persona / Custom Workflow / Research| Track2[Track 2: Sovereign Second Brain<br/>data/intelligence-artifacts/, data/logic-digests/<br/>Private User Account & Vault]
+    Scrutiny -->|Passes: Persona / Custom Workflow / Research| Track2[Track 2: Sovereign Second Brain<br/>../User-Data/$USER/intelligence-artifacts/, ../User-Data/$USER/logic-digests/<br/>Private User Account & Vault]
     Scrutiny -->|Fails: Fluff / Hallucination / Outdated Trap| Prune[Archived to Cold Storage .gz<br/>Pruned from Active Context]
 ```
 
@@ -70,9 +70,9 @@ strict logical gates before being admitted to either track:
 
 - **Track 1 Artifacts**: Land in `packages/`, `apps/`, `docs/protocols/`, or
   `.agent/skills/`.
-- **Track 2 Artifacts**: Land in `data/intelligence-artifacts/` and
-  `data/logic-digests/` (and are `.gitignore`d or scoped to private repo
-  branches).
+- **Track 2 Artifacts**: Land in `../User-Data/$USER/intelligence-artifacts/`
+  and `../User-Data/$USER/logic-digests/` (and are `.gitignore`d or scoped to
+  private repo branches).
 - **Raw Media**: Gzipped and vaulted into `_archive/` (zero RAM waste, zero data
   loss).
 
@@ -84,8 +84,9 @@ To prevent future AI agents from having **any ambiguity** about where files
 belong:
 
 1. **Rule of Clean Public Commits**:
-   - Never commit `data/intelligence-artifacts/`, `data/logic-digests/`, or
-     `data/video-transcripts/` to public OSS branches.
+   - Never commit `../User-Data/$USER/intelligence-artifacts/`,
+     `../User-Data/$USER/logic-digests/`, or `../User-Data/$USER/media-intake/`
+     to public OSS branches.
    - These are private second-brain data and remain strictly under user-profile
      residency.
 2. **Rule of Upstream Promotion**:
@@ -114,12 +115,14 @@ belong:
       ".agent/skills/*"
     ],
     "sovereign_second_brain_paths": [
-      "data/intelligence-artifacts/*",
-      "data/logic-digests/*",
+      "../User-Data/$USER/intelligence-artifacts/*",
+      "../User-Data/$USER/logic-digests/*",
       "data/harness/memory/*",
       "~/.tnf/agent-state/*"
     ],
-    "cold_archive_paths": ["data/intelligence-artifacts/_archive/*"]
+    "cold_archive_paths": [
+      "../User-Data/$USER/intelligence-artifacts/_archive/*"
+    ]
   }
 }
 ```

@@ -33,7 +33,7 @@ is the controlled transition of data across operational tiers:
 
 3. **Cold Tier (Verbatim Storage & Failure Archaeology)**:
    - Raw transcripts, full VTT logs, and historical JSON snapshots are moved to
-     `data/intelligence-artifacts/_archive/` and compressed.
+     `../User-Data/$USER/intelligence-artifacts/_archive/` and compressed.
    - Backlinked via unique identifiers (`MCID` / `resource_pointer`) so that any
      summary can be verified against its raw origin if needed.
 

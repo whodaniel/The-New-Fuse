@@ -1,3 +1,4 @@
+Updated: 2026-08-30T14:15:55-04:00 — User-Data refactor
 `[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
 restored for Gate 3 compliance; reclassify on next vetting pass.
 

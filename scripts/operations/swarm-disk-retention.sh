@@ -65,7 +65,7 @@ prune_dir "${TNF_HOME}/poll-jobs" "poll jobs"
 prune_dir "${ROOT_DIR}/.agent/runtime-logs" "runtime logs"
 prune_dir "${HOME}/.hermes/cron/output" "hermes cron output"
 prune_dir "${HOME}/.hermes/logs" "hermes logs"
-prune_dir "${ROOT_DIR}/data/intelligence-artifacts/_archive" "cold intelligence transcripts archive"
+prune_dir "${ROOT_DIR}/../User-Data/$USER/intelligence-artifacts/_archive" "cold intelligence transcripts archive"
 
 # Agent-state history — bounded onboarded fleet snapshots (never touch latest.json)
 AGENT_STATE_ROOT="${TNF_HOME}/agent-state"

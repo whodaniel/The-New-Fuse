@@ -3,7 +3,10 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers
+
+**Current Directive:** Phase 2: relocate claw-skills markdown packs to
+skill-content distribution + repoint symlink consumers
+
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-26 Antigravity CLI (AGY) Onboarding, Protocol Authority
@@ -269,6 +272,9 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-26T00:36:33.894Z New script(s) created:
 - [✅] 2026-08-26T03:28:18.479Z New script(s) created:
 - [✅] 2026-08-26T08:10:23.175Z New script(s) created:
+- [✅] 2026-08-30T18:14:48.033Z New script(s) created: probe.cjs, rc-matrix.sh,
+  run-phase-b-only.sh, run-phase-b-wait.sh, run-phase-b.sh, run-rc-gate.sh
+
   verify-extension-dist.cjs, install-tnf-host-wrappers.cjs,
   resolve-tnf-repo.cjs, resolve-tnf-repo.sh, tnf-canonical-onboarding.cjs,
   tnf-status.cjs, resolve-tnf-repo.test.cjs, resolve-tnf-repo.test.sh
@@ -1109,7 +1115,9 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-08-29T22:08:28.315Z handoff `14e23d83-c540-4152-bdf9-1bd554112c4e` head `5e7e2c894feb` project `TNF-SESSION` — Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers
+- 2026-08-29T22:08:28.315Z handoff `14e23d83-c540-4152-bdf9-1bd554112c4e` head
+  `5e7e2c894feb` project `TNF-SESSION` — Phase 2: relocate claw-skills markdown
+  packs to skill-content distribution + repoint symlink consumers
 
 - 2026-08-29T04:47:45.751Z handoff `4283b14d-8b02-4347-adc8-d5f26a4b01fd` head
   `26be2886c104` project `TNF-SESSION` — Do not merge PR 264 until operator
@@ -1235,67 +1243,77 @@ and generated refactoring_consensus_report.md.
   restart relay for Redis leak fix; keep receipts/codebase_map uncommitted.
 
 - 2026-08-16T23:51:24.210Z handoff `d2b506ee-2124-4f7e-b0b7-1de4fc75396f` head
-  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
-  next optional: browser-control-surfaces + api harness/browser modules.
+  `46d52c686131` project `TNF-SESSION` — Defer bulk
+  ../User-Data/$USER/intelligence-artifacts; next optional:
+  browser-control-surfaces + api harness/browser modules.
 
 - 2026-08-16T23:51:22.727Z handoff `423fa937-710e-4e11-8693-5ffbd88e0c74` head
-  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
-  next optional: browser-control-surfaces + api harness/browser modules.
+  `46d52c686131` project `TNF-SESSION` — Defer bulk
+  ../User-Data/$USER/intelligence-artifacts; next optional:
+  browser-control-surfaces + api harness/browser modules.
 
 - 2026-08-16T23:49:48.372Z handoff `af8c0004-e64a-418a-84b4-4e57f562ceae` head
-  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
-  optionally batch browser-control-surfaces + api harness/browser modules next.
+  `46d52c686131` project `TNF-SESSION` — Defer bulk
+  ../User-Data/$USER/intelligence-artifacts; optionally batch
+  browser-control-surfaces + api harness/browser modules next.
 
 - 2026-08-16T23:49:45.042Z handoff `947a718f-c650-4e97-ba26-5bfb38b6afd7` head
-  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
-  optionally batch browser-control-surfaces + api harness/browser modules next.
+  `46d52c686131` project `TNF-SESSION` — Defer bulk
+  ../User-Data/$USER/intelligence-artifacts; optionally batch
+  browser-control-surfaces + api harness/browser modules next.
 
 - 2026-08-16T23:49:07.703Z handoff `8d233dd6-69e1-4276-826f-168f9b5fc8b3` head
-  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
-  optionally batch browser-control-surfaces + api harness/browser modules next.
+  `46d52c686131` project `TNF-SESSION` — Defer bulk
+  ../User-Data/$USER/intelligence-artifacts; optionally batch
+  browser-control-surfaces + api harness/browser modules next.
 
 - 2026-08-16T23:49:04.215Z handoff `13b94a78-8998-470f-9a92-8c54ed4c28c1` head
-  `46d52c686131` project `TNF-SESSION` — Defer bulk data/intelligence-artifacts;
-  optionally batch browser-control-surfaces + api harness/browser modules next.
+  `46d52c686131` project `TNF-SESSION` — Defer bulk
+  ../User-Data/$USER/intelligence-artifacts; optionally batch
+  browser-control-surfaces + api harness/browser modules next.
 
 - 2026-08-16T23:36:20.806Z handoff `1132dbda-3c8d-4afe-91d2-9234155f969e` head
   `197368a76713` project `TNF-SESSION` — Continue dirty-tree: frontend
-  backup/settings UI; defer bulk data/intelligence-artifacts.
+  backup/settings UI; defer bulk ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T23:36:19.670Z handoff `9973e7a5-182f-4f46-87f5-2ded03cc1428` head
   `197368a76713` project `TNF-SESSION` — Continue dirty-tree: frontend
-  backup/settings UI; defer bulk data/intelligence-artifacts.
+  backup/settings UI; defer bulk ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T23:28:27.123Z handoff `7d20be19-7db2-4a02-806d-6746e20636df` head
   `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
-  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+  v6/v7; frontend backup UI; defer bulk
+  ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T23:28:26.076Z handoff `348a52bb-a18e-4dde-a414-592ccc832a89` head
   `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
-  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+  v6/v7; frontend backup UI; defer bulk
+  ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T23:24:04.855Z handoff `2f9b9d3d-bc8e-4dab-bb1b-811fd1e0a664` head
   `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
-  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+  v6/v7; frontend backup UI; defer bulk
+  ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T23:24:01.985Z handoff `bc8e9967-f74d-4a39-8df0-c9aa57c14942` head
   `f99d234e0f36` project `TNF-SESSION` — Continue dirty-tree: chrome-extension
-  v6/v7; frontend backup UI; defer bulk data/intelligence-artifacts.
+  v6/v7; frontend backup UI; defer bulk
+  ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T22:57:55.146Z handoff `54428d94-2559-482f-8753-4fc7c57ed068` head
   `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
   redis leak tests; chrome-extension; frontend backup UI; defer bulk
-  data/intelligence-artifacts.
+  ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T22:57:50.541Z handoff `166e64da-d6c3-4d3e-af26-32e915cc1f8e` head
   `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
   redis leak tests; chrome-extension; frontend backup UI; defer bulk
-  data/intelligence-artifacts.
+  ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T22:51:46.946Z handoff `1f8cb103-f122-44f3-93fc-008ff1a0b1cc` head
   `d933e9a67a2a` project `TNF-SESSION` — Continue dirty-tree batches: relay
   redis leak tests; chrome-extension; frontend backup UI; defer bulk
-  data/intelligence-artifacts.
+  ../User-Data/$USER/intelligence-artifacts.
 
 - 2026-08-16T22:39:24.222Z handoff `a99de94e-7865-4263-9cc4-b146e1da10ac` head
   `25d51faad2a7` project `TNF-SESSION` — Optional: build/test/commit unrelated

@@ -236,7 +236,7 @@ ALWAYS_EXCLUDE=(
   ".agent/skills/antigravity/loki-mode/benchmarks/results"
   # Generated run records that embed absolute paths
   "data/ingestion-runs"
-  "data/intelligence-artifacts"
+  "../User-Data/$USER/intelligence-artifacts"
   # Personal user data: an Apple Notes export. Not system data, not a fixture.
   "data/apple-notes-new-may-2026.json"
   # Fleet/agent run snapshots — regenerated locally, embed absolute paths

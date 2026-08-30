@@ -60,8 +60,8 @@ Every intelligence artifact must be scored by these criteria:
   challenge protocol or newly merged CI execution), the artifact is flagged for
   archival.
 - **Archival Action:** The agent MUST change the artifact's status to
-  `[STATUS:ARCHIVED]` and move it to the `data/intelligence-artifacts/_archive/`
-  directory.
+  `[STATUS:ARCHIVED]` and move it to the
+  `../User-Data/$USER/intelligence-artifacts/_archive/` directory.
 - **Historical Integrity:** Archived artifacts remain untouched and retain their
   original `source_pointer`. They serve as the system's "Failure Archaeology"
   and can be referenced for root-cause analysis when debugging regressions.
