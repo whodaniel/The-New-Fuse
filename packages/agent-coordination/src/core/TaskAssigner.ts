@@ -1,11 +1,5 @@
 import { EventEmitter } from 'events';
-import {
-  Task,
-  AgentInfo,
-  TaskAssignment,
-  AgentStatus,
-  CoordinationConfig,
-} from './types.js';
+import { AgentInfo, AgentStatus, CoordinationConfig, Task, TaskAssignment } from './types.js';
 
 /**
  * Task assignment and load balancing
@@ -55,9 +49,18 @@ export class TaskAssigner extends EventEmitter {
         ? new Date(Date.now() + this.config.taskTimeout)
         : undefined,
       metadata: {
-        isolatedContext: true, // Enforce strict context boundaries
-        maxContextTokens: 4096
-      }
+        isolatedContext: true,
+        maxContextTokens: 4096,
+        specificationId:
+          typeof task.metadata?.specificationId === 'string'
+            ? task.metadata.specificationId
+            : undefined,
+        contextBranchId:
+          typeof task.metadata?.contextBranchId === 'string'
+            ? task.metadata.contextBranchId
+            : undefined,
+        assemblyLine: task.metadata?.assemblyLine === true,
+      },
     };
 
     this.assignments.set(task.id, assignment);
@@ -69,10 +72,7 @@ export class TaskAssigner extends EventEmitter {
   /**
    * Filter agents that can handle the task
    */
-  private filterEligibleAgents(
-    task: Task,
-    agents: AgentInfo[]
-  ): AgentInfo[] {
+  private filterEligibleAgents(task: Task, agents: AgentInfo[]): AgentInfo[] {
     return agents.filter((agent) => {
       // Check agent status
       if (agent.status !== AgentStatus.IDLE && agent.status !== AgentStatus.BUSY) {
@@ -85,10 +85,7 @@ export class TaskAssigner extends EventEmitter {
       }
 
       // Check capabilities if required
-      if (
-        this.config.loadBalancing?.considerCapabilities &&
-        task.requiredCapabilities
-      ) {
+      if (this.config.loadBalancing?.considerCapabilities && task.requiredCapabilities) {
         const agentCapabilityNames = agent.capabilities.map((c) => c.name);
         const hasAllCapabilities = task.requiredCapabilities.every((required) =>
           agentCapabilityNames.includes(required)
