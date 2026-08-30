@@ -117,6 +117,20 @@ Only after the task is known:
 - domain-specific protocols/runbooks;
 - `AGENT_STATUS_LEDGER.md` when fleet/known-gap state is actually relevant.
 
+### Department / operator-memory route
+
+When the operator names a corporate department (HR, Marketing, Design, Legal,
+Tech, Finance, Product, Ops) or says "remember this":
+
+- `docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`
+- `data/departments/corporate-departments.json`
+- `data/departments/staffing-index.json` (names only)
+- `docs/protocols/HARNESS_MEMORY_LAYER.md`
+
+Do not dump agent or skill bodies. Progressive injection: department show →
+`skill-bank-query` → one `SKILL.md` / agent file when invoking it. Persist facts
+with `tnf remember retain`, not chat acknowledgement.
+
 ### Engineering route
 
 For nontrivial TNF engineering/architecture/debugging/implementation/review,

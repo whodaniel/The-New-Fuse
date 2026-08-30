@@ -43,4 +43,7 @@ rerun onboarding.
 
 Operating discipline: **Inspect → Act → Verify**.
 
+Named operator departments and the remember write-path:
+`docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`.
+
 See `docs/claude.md` for broader project conventions.

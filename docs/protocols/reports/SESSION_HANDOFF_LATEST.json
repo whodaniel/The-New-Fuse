@@ -1,59 +1,76 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e",
-  "created_at": "2026-08-30T21:27:00.000Z",
+  "handoff_id": "b31dab82-3f94-40d0-9e73-8dc39a894e44",
+  "created_at": "2026-08-30T21:38:47.956Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "25bf5505f39e7840172ee0c870a604a11be7b6f8",
+  "head_sha": "231c52cc1ee08f66c532b1b13676cf22c046a9cc",
   "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "internal",
-  "project_ids": ["TNF-AGENT-ADAPTERS"],
+  "sensitive_scope": "public",
+  "project_ids": [],
   "work_summary": [
-    "Bootstrapped @the-new-fuse/agent-adapters package (packages/agent-adapters/)",
-    "Reconstructed TypeScript source (src/GoogleAgentsCliAdapter.ts, src/index.ts) from compiled dist output",
-    "Added package.json, tsconfig.json, vitest.config.ts, .gitignore for the package",
-    "Wrote SKILL.md documenting adapter usage, error mapping table, CLI roadmap (items 3–7)",
-    "Wrote vitest test suite: 17 tests covering round-trip identity, error bijection, and edge cases — all passing",
-    "Ran pnpm install to register @the-new-fuse/agent-adapters in pnpm-lock.yaml",
-    "Built package clean via tsc -b"
+    "Operator departments are first-class CLI lanes (HR Marketing Design Legal Tech Finance Product Ops)",
+    "Remember-this persists via tnf remember retain not chat acknowledgement",
+    "Additive department tags on TNF-owned agents/skills without rewriting category",
+    "Docs updated and Turn End receipt written"
   ],
   "changed_paths": [
-    "packages/agent-adapters/src/GoogleAgentsCliAdapter.ts",
-    "packages/agent-adapters/src/index.ts",
-    "packages/agent-adapters/src/__tests__/GoogleAgentsCliAdapter.test.ts",
-    "packages/agent-adapters/package.json",
-    "packages/agent-adapters/tsconfig.json",
-    "packages/agent-adapters/vitest.config.ts",
-    "packages/agent-adapters/SKILL.md",
-    "packages/agent-adapters/.gitignore",
-    "pnpm-lock.yaml"
+    ".agent/SYSTEM_PROMPT.md",
+    "CLAUDE.md",
+    "data/departments/corporate-departments.json",
+    "data/departments/staffing-index.json",
+    "data/harness/harness-config.json",
+    "docs/README.md",
+    "docs/SKILL_BANK_OPERATIONS.md",
+    "docs/core/FRONTLOAD_MANIFEST.md",
+    "docs/core/MEMORY.md",
+    "docs/core/memory/2026-08-30.md",
+    "docs/core/memory/README.md",
+    "docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/HARNESS_CONFIG.md",
+    "docs/protocols/HARNESS_MEMORY_LAYER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/TNF_SYSTEM_LEXICON.md",
+    "docs/protocols/reports/AGENT_CATEGORY_MAPPING_AUDIT_2026-08-10.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "packages/tnf-cli/README.md",
+    "packages/tnf-cli/src/__tests__/departments.test.ts",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/commands/department.ts",
+    "packages/tnf-cli/src/commands/remember.ts",
+    "packages/tnf-cli/src/departments.ts",
+    "packages/tnf-cli/src/slashCommands.ts",
+    "scripts/departments/apply-department-categories.cjs"
   ],
   "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "17/17 vitest tests passing. TypeScript build clean (tsc -b exit 0). pnpm install completed. No runtime dependencies added."
+    "notes": "Docs/logging pass only. Department apply script was already idempotent. CLI command-surface snapshot not rebuilt this turn."
   },
   "continuation": {
     "owner": "operator",
     "targets": ["orchestrator"],
     "priority": "medium",
     "resume_checklist": [
+      "Read docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md",
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Next: implement MicroToolAdapter bridge (item 3 from opencode follow-up)",
-      "Next: implement tnf ga:invoke / ga:status / ga:map-error CLI commands (item 5)",
-      "Next: propagate skill via tnf-skill-ubiquity-propagation to .opencode/skills, .claude/skills (item 7)"
+      "Do not commit unless the operator asks. Do not use git commit --no-verify.",
+      "If committing a multi-receipt pack: TNF_HANDOFF_ALLOW_MULTI_RECEIPT=1 plus a matching Super Admin token"
     ]
   },
   "next_actions": [
-    "MicroToolAdapter: wrap any MicroTool as legacy ToolHandler so mcp-server/broker surfaces serve stateless tools automatically",
-    "CLI commands: tnf ga:invoke, tnf ga:status, tnf ga:map-error — requires tnf-command-surface-gate oracle update",
-    "Live transport: wire --transport stdio|http behind adapter for real Google Agents CLI round-trip",
-    "Skill ubiquity: tnf-skill-ubiquity-propagation to land SKILL.md in all agent runtime skill dirs"
+    "Rebuild @the-new-fuse/tnf-cli and refresh packages/tnf-cli/src/command-surface.snapshot.json",
+    "Optional: regenerate .agent/SKILL_MANIFEST.md after TNF-owned skill category backfill",
+    "Public The-New-Fuse PR 161 remains open (publication sync not a feature PR)",
+    "Prior leftover (agent-adapters): MicroToolAdapter + tnf ga:invoke/status/map-error + skill ubiquity",
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): uncommitted department/remember/docs work — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": [],
+    "commits": ["231c52cc1ee08f66c532b1b13676cf22c046a9cc"],
     "deployment_urls": [],
     "database_migrations": []
   },
@@ -69,26 +86,80 @@
     ]
   },
   "classification": {
-    "work_domain": "agency",
+    "work_domain": "core",
     "artifact_destination": "oss_runtime",
-    "data_residency": "bounded_working",
-    "sensitivity": "internal"
+    "data_residency": "product_state",
+    "sensitivity": "public"
   },
   "capabilities": {
-    "required": ["typescript", "vitest", "pnpm"],
-    "staffed_by": ["antigravity"]
+    "required": ["departments", "memory", "docs", "cli"],
+    "staffed_by": ["cursor"]
   },
   "publication": {
-    "public_runtime_affected": false,
-    "control_plane_affected": false,
+    "public_runtime_affected": true,
+    "control_plane_affected": true,
     "satellites": []
   },
   "freshness_receipts": [
     {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:38.051Z",
+      "value": "73cea241cca190faa98a2a5ea5bfdec920faaff2"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:45.037Z",
+      "value": "dcfb3f7598c148ec362678bc4ce0834b1dca0e90"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:49.582Z",
+      "value": "bf45be8893c3453f35a86509e9102fb735cdbaa8"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:52.712Z",
+      "value": "[161]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:54.422Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:59.780Z",
+      "value": "LEAKED:packages/relay-core/src/master-clock.ts\nLEAKED:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:00.764Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:01.494Z",
+      "value": "7cd0046243a9ddea5b165094b0af9ae8676c3e4f\n2026-08-13"
+    },
+    {
       "id": "git.repository.identity",
-      "state": "FRESH",
-      "observed_at": "2026-08-30T21:27:00.000Z",
-      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=25bf5505f39e7840172ee0c870a604a11be7b6f8\nbranch=main\ndirty=true"
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:06.916Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=b4511fcacea76ed009a430927be7842683c89d7d\nbranch=sentinel-fix-marketplace-cmd-injection-11879217410415317362\ndirty=86"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:08.906Z",
+      "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
   ]
 }

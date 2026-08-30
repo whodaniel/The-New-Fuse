@@ -1,69 +1,45 @@
-# Session Handoff: @the-new-fuse/agent-adapters Bootstrap
+# SESSION_HANDOFF_LATEST
 
-**Handoff ID:** `c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e`  
-**Supersedes:** `a44d535c-f1ba-495e-bbcb-2455c691dffc`  
-**Created:** 2026-08-30T21:27:00Z  
-**Agent:** antigravity  
-**Branch:** `main` @ `25bf5505f`
+Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
+`2026-08-30T21:38:47.956Z` Handoff ID: `b31dab82-3f94-40d0-9e73-8dc39a894e44`
 
----
+## Repository
 
-## Work Completed
+- Actual: `whodaniel/tnf-monorepo`
+- Canonical TNF source: `whodaniel/tnf-monorepo`
+- Origin: `https://github.com/whodaniel/tnf-monorepo.git`
+- Branch: `main`
+- Head SHA: `231c52cc1ee08f66c532b1b13676cf22c046a9cc`
 
-Bootstrapped the `@the-new-fuse/agent-adapters` package from scratch,
-reconstructing the TypeScript source from the compiled `dist/` artifact left by
-opencode.
+## Classification
 
-### Files Created
+- Work domain: `core`
+- Artifact destination: `oss_runtime`
+- Data residency: `product_state`
+- Sensitivity: `public`
 
-| File                                                                   | Purpose                                   |
-| ---------------------------------------------------------------------- | ----------------------------------------- |
-| `packages/agent-adapters/src/GoogleAgentsCliAdapter.ts`                | Adapter source (reconstructed from dist)  |
-| `packages/agent-adapters/src/index.ts`                                 | Barrel export                             |
-| `packages/agent-adapters/src/__tests__/GoogleAgentsCliAdapter.test.ts` | 17 vitest tests                           |
-| `packages/agent-adapters/package.json`                                 | Package manifest, zero runtime deps       |
-| `packages/agent-adapters/tsconfig.json`                                | TypeScript build config                   |
-| `packages/agent-adapters/vitest.config.ts`                             | Test runner config                        |
-| `packages/agent-adapters/SKILL.md`                                     | Usage docs + roadmap                      |
-| `packages/agent-adapters/.gitignore`                                   | Excludes dist/                            |
-| `pnpm-lock.yaml`                                                       | Updated (pnpm install registered package) |
+## Capabilities
 
-### Test Results
+- Required: departments, memory, docs, cli
+- Staffed by: cursor
 
-```
-✓ src/__tests__/GoogleAgentsCliAdapter.test.ts (17 tests) 18ms
-Test Files  1 passed (1)
-     Tests  17 passed (17)
-```
+## Work Summary
 
-### Build
+- Operator departments are first-class CLI lanes (HR Marketing Design Legal Tech
+  Finance Product Ops)
+- Remember-this persists via tnf remember retain not chat acknowledgement
+- Additive department tags on TNF-owned agents/skills without rewriting category
+- Docs updated and Turn End receipt written
 
-`pnpm build` (tsc -b) exits cleanly. No type errors.
+## Next Actions
 
----
-
-## Next Actions (Open Roadmap, items 3–7)
-
-1. **MicroToolAdapter** — wrap any `MicroTool` as legacy `ToolHandler` so
-   mcp-server/broker surfaces serve stateless tools automatically (item 3)
-2. **CLI commands** — `tnf ga:invoke`, `tnf ga:status`, `tnf ga:map-error` —
-   requires `tnf-command-surface-gate` oracle update (item 5)
-3. **Live transport** — `--transport stdio|http` behind adapter for real Google
-   Agents CLI round-trip (item 6)
-4. **Skill ubiquity** — propagate via `tnf-skill-ubiquity-propagation` to
-   `.opencode/skills`, `.claude/skills` etc. (item 7)
-
----
-
-## Resume Checklist
-
-- [ ] Implement `MicroToolAdapter` in `packages/agent-adapters/src/`
-- [ ] Add `tnf ga:*` commands to `packages/tnf-cli/src/commands/`
-- [ ] Update command-surface oracle snapshot after CLI changes
-- [ ] Wire live transport and run one end-to-end round-trip
-- [ ] Run `tnf-skill-ubiquity-propagation` to propagate SKILL.md
-
----
-
-`TNF_PROTOCOL_ACK` · handoff `c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e` · agent:
-antigravity · 2026-08-30T21:31:00Z
+- Rebuild `@the-new-fuse/tnf-cli` and refresh
+  `packages/tnf-cli/src/command-surface.snapshot.json`
+- Optional: regenerate `.agent/SKILL_MANIFEST.md` after TNF-owned skill category
+  backfill
+- Public `The-New-Fuse` PR 161 remains open (publication sync not a feature PR)
+- Prior leftover (agent-adapters): MicroToolAdapter +
+  `tnf ga:invoke/status/map-error` + skill ubiquity
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): uncommitted
+  department/remember/docs work — see
+  `docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation`

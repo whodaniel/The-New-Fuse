@@ -9,6 +9,19 @@ Broker, Recursive Logic Sieve, Lexical Forgiveness, and Synergistic Alignment.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
+- [✅] **2026-08-30 Operator departments, remember write-path, staffing index**:
+  - **Named departments are first-class lanes** (HR, Marketing, Design, Legal,
+    Tech, Finance, Product, Ops). Informal "team/staff/department" still maps to
+    Cluster. SOP: `docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`.
+  - **Remember writes:** `tnf remember retain` (harness layer +
+    `~/.tnf/memory/notes.jsonl`). Chat acknowledgement is not memory.
+  - **Staffing:** `data/departments/staffing-index.json`. Existing `category`
+    values were not rewritten. Vendor skill packs indexed only. Listings stay
+    names → skill-bank-query → one body.
+  - **Handoff multi-receipt:** Super Admin override
+    (`TNF_HANDOFF_ALLOW_MULTI_RECEIPT=1` + matching token). Do not use
+    `--no-verify`.
+
 - [✅] **2026-08-30 The Synergistic Alignment & Harness Overhaul**:
   - **Context Broker & JIT Injection:** Built `tnf-context-broker.cjs` to
     dynamically inject context bound to specific Clusters (e.g.,

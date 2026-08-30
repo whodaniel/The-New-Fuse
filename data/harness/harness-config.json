@@ -2,7 +2,7 @@
   "$schema": "./harness-config.schema.json",
   "id": "tnf-harness",
   "version": "1.2.0",
-  "updatedAt": "2026-08-22T18:30:00.000Z",
+  "updatedAt": "2026-08-30T21:40:00.000Z",
   "authorities": [
     "docs/protocols/HARNESS_CONFIG.md",
     "docs/protocols/TURN_ZERO_MANDATE.md",
@@ -124,13 +124,14 @@
       "evidence": [
         "docs/core/MEMORY.md",
         "docs/protocols/HARNESS_MEMORY_LAYER.md",
+        "tnf remember retain|recall",
         "scripts/harness/memory-layer.cjs",
         "data/harness/memory/",
         "scripts/harness/trajectory.cjs",
         "data/harness/trajectories/",
         "docs/protocols/reports/SESSION_HANDOFF_LATEST.json"
       ],
-      "notes": "MEMORY.md = static procedural curated facts. memory-layer.cjs = retain/recall dynamic layer. Do not conflate. Assimilation routes stateful histories here instead of static resource dedupe."
+      "notes": "MEMORY.md = static procedural curated facts. tnf remember / memory-layer.cjs = retain/recall dynamic layer. Do not conflate. Assimilation routes stateful histories here instead of static resource dedupe. Operator departments: docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md."
     },
     "tools_mcp_supply_chain": {
       "status": "implemented",

@@ -3,6 +3,9 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
+- **Updated: 2026-08-30T21:38:49.292ZZ** — Operator departments are first-class
+  CLI lanes (HR Marketing Design Legal Tech Finance Product Ops)
+
 - **Updated: 2026-08-30T21:31:00.000Z** — feat(agent-adapters): bootstrap
   `@the-new-fuse/agent-adapters` package
   (`c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e`). Reconstructed TS source from dist,

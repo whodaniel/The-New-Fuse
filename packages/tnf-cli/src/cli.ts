@@ -30,6 +30,7 @@ import { registerBrowserCommand } from './commands/browser.js';
 import { registerCatalogCommand } from './commands/catalog.js';
 import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
+import { registerDepartmentCommands } from './commands/department.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerFleetCommands } from './commands/fleet/index.js';
 import { registerGoogleAiCommand } from './commands/google-ai.js';
@@ -40,6 +41,7 @@ import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
+import { registerRememberCommands } from './commands/remember.js';
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
@@ -19702,6 +19704,8 @@ registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
 registerAgentStateQuotaEcosystemCommands(program, repoRoot);
 registerStaffingCommands(program);
+registerDepartmentCommands(program, repoRoot);
+registerRememberCommands(program, repoRoot);
 registerFleetCommands(program);
 // Free NVIDIA / LLM catalog inspector + active-model switcher. Reads from
 // data/providers/catalog.json + data/providers/nvidia-models.json (single

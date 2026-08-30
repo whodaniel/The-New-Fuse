@@ -117,6 +117,33 @@ TNF should assimilate reusable improvements discovered through any provider or w
 
 Strip personal/client/tenant/legal/medical/financial/credential facts before promoting a generalized mechanism into shared product source.
 
+## Departments
+
+Operators may address work by **department** (HR, Marketing, Design, Legal,
+Tech, Finance, Product, Ops). Those lanes are first-class and are not Clusters.
+
+```bash
+tnf department list
+tnf department show legal
+tnf department route "ask HR about onboarding"
+```
+
+Listings are names only. Progressive injection: department show →
+`skill-bank-query` → one `SKILL.md` / agent file. SOP:
+`docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`.
+
+## Remember
+
+If the operator says "remember this", persist the fact. Chat acknowledgement is
+not memory.
+
+```bash
+tnf remember retain "<durable fact>"
+tnf remember recall "<query>"
+```
+
+Promote standing consensus into `docs/core/MEMORY.md` during Turn End.
+
 ## Completion / Handoff
 
 Before declaring significant work complete, report or persist:

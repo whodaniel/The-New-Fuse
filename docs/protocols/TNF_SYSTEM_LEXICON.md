@@ -104,7 +104,12 @@ To maintain strict semantic cohesion and prevent dangerous overlap, TNF
 exclusively uses a unified **Network/Biological** metaphor for active systems
 and a strict **Object-Oriented** metaphor for static data.
 
-_The terms "Corporate", "Department", and "Staff" are permanently deprecated._
+_Generic "Corporate" and "Staff" remain informal aliases, not protocol
+identities. Named operator-facing departments (HR, Marketing, Design, Legal,
+Tech, Finance, Product, Ops) are first-class routing lanes — they are not
+Clusters. Informal "department" / "team" / "staff" still maps to Cluster when
+the speaker is not naming one of those lanes. See
+`docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`._
 
 ### A. Infrastructure (The Metal & The Network)
 
@@ -119,6 +124,10 @@ _The terms "Corporate", "Department", and "Staff" are permanently deprecated._
 - **AGENT:** A singular, instantiated LLM loop executing tasks.
 - **CLUSTER:** A highly specific, grouped subset of the Swarm focused on a
   single pipeline (e.g., _Cluster 2: Synthesis_).
+- **DEPARTMENT (named):** An operator-facing corporate lane — HR, Marketing,
+  Design, Legal, Tech, Finance, Product, Ops. Used for staffing and CLI routing
+  (`tnf department`). Distinct from Cluster. Catalog:
+  `data/departments/corporate-departments.json`.
 - **PIPELINE:** A sequential workflow that data passes through (e.g., the
   Ingestion Pipeline).
 - **ROLE:** The assigned persona and capability set of an Agent.
@@ -141,12 +150,14 @@ performing dynamic semantic mapping back to the foundational Lexicon.
 When an agent encounters an informal term, it must mentally (or
 programmatically) trace it to its canonical equivalent before processing:
 
-| Human / Colloquial Term           | Foundational Lexicon Equivalent | Agent Action                                                                          |
-| :-------------------------------- | :------------------------------ | :------------------------------------------------------------------------------------ |
-| **"Team", "Staff", "Department"** | **Swarm, Cluster**              | Map to the correct Agent Cluster (e.g., "Creative Team" maps to "Synthesis Cluster"). |
-| **"Employee", "Worker", "Bot"**   | **Agent, Node**                 | Map to the specific execution entity (e.g., `tnf-swarm-supervisor`).                  |
-| **"Company", "Corporate"**        | **Core Framework, System**      | Map to the overarching TNF monorepo or global protocols.                              |
-| **"Rules", "Guidelines"**         | **Tenets, Protocols**           | Route to `docs/protocols/` and enforce Gate vetting.                                  |
+| Human / Colloquial Term                                                          | Foundational Lexicon Equivalent | Agent Action                                                                          |
+| :------------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------------------------ |
+| **"Team", "Staff"**                                                              | **Swarm, Cluster**              | Map to the correct Agent Cluster (e.g., "Creative Team" maps to "Synthesis Cluster"). |
+| **Generic "department"**                                                         | **Cluster**                     | When no named lane is given, map to Cluster.                                          |
+| **Named department** (HR, Marketing, Design, Legal, Tech, Finance, Product, Ops) | **Department**                  | Route via `tnf department`; do not collapse into a generic Cluster.                   |
+| **"Employee", "Worker", "Bot"**                                                  | **Agent, Node**                 | Map to the specific execution entity (e.g., `tnf-swarm-supervisor`).                  |
+| **"Company", "Corporate"**                                                       | **Core Framework, System**      | Map to the overarching TNF monorepo or global protocols.                              |
+| **"Rules", "Guidelines"**                                                        | **Tenets, Protocols**           | Route to `docs/protocols/` and enforce Gate vetting.                                  |
 
 _Self-Prompting Note:_ If an agent is unsure of a mapping, it must default to
 the broadest applicable class and propose a new mapping alias in the next cycle.
