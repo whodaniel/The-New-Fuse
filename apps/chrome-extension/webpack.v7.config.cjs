@@ -98,6 +98,12 @@ module.exports = (env, argv) => {
             // Avoid re-minifying the tiny boot shell (keeps load path predictable).
             info: { minimized: true },
           },
+          {
+            from: './src/v6/sidepanel',
+            to: 'sidepanel',
+            // Manifest side_panel.default_path must exist or Chrome refuses Load Unpacked.
+            info: { minimized: true },
+          },
           // Committed icon source of truth (do not use noErrorOnMissing — Chrome
           // refuses Load Unpacked when action icons are absent).
           { from: './assets/icons', to: 'icons' },

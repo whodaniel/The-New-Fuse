@@ -1,0 +1,80 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "eb79ee36-d6fe-4cb9-85ee-ddd440b70cdd",
+  "created_at": "2026-08-30T16:57:08.221Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "feat/fuse-connect-panel-close",
+  "head_sha": "20651e976732c66db017833f32be551b15486a9a",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Stop Fuse Connect auto-inject on Gemini and make the close control destroy the dock.",
+    "Copy src/v6/sidepanel into dist-v7 so Chrome Load Unpacked no longer fails on a missing side_panel path."
+  ],
+  "changed_paths": [
+    "apps/chrome-extension/src/v6/content/index.ts",
+    "apps/chrome-extension/src/v6/content/injectable/FloatingPanel.ts",
+    "apps/chrome-extension/webpack.v7.config.cjs",
+    "apps/chrome-extension/scripts/verify-extension-dist.cjs",
+    "docs/protocols/reports/session_handoff_fuse-connect-panel-close-20260830.json",
+    "docs/protocols/reports/session_handoff_fuse-connect-panel-close-20260830.md"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "relay-core tests 52/52 already green on sibling Stage 0 worktree. Fuse Connect verified by webpack copy + verify-extension-dist required files."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "From apps/chrome-extension run build:v7, then Chrome \u2192 Load unpacked from dist-v7 and Reload.",
+      "On Gemini, confirm the dock is not injected until opened and the X dismisses it."
+    ]
+  },
+  "next_actions": [
+    "Reload the unpacked Fuse Connect build from dist-v7 after this commit.",
+    "Do not merge PR 264 or retarget PR 253 as part of this landing."
+  ],
+  "artifacts": {
+    "commits": ["20651e976732c66db017833f32be551b15486a9a"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": false,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "corporate",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": ["frontend"],
+    "staffed_by": ["cursor-grok"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "git.repository.identity",
+      "state": "CURRENT",
+      "observed_at": "2026-08-30T16:57:08.221Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=20651e976732c66db017833f32be551b15486a9a\nbranch=feat/fuse-connect-panel-close\ndirty=0"
+    }
+  ]
+}

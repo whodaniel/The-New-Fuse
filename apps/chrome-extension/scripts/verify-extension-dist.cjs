@@ -20,6 +20,8 @@ const required = [
   'content/index.js',
   'popup/index.html',
   'popup/popup.js',
+  'sidepanel/index.html',
+  'sidepanel/sidepanel.js',
 ];
 
 const missing = required.filter((rel) => {

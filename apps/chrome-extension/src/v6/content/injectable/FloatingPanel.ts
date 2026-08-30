@@ -29,6 +29,8 @@ interface FloatingPanelOptions {
   position?: { x: number; y: number };
   size?: { width: number; height: number };
   mode?: PanelMode;
+  isPinned?: boolean;
+  onDismiss?: () => void;
 }
 
 interface AIVideoPanelState {
@@ -70,6 +72,7 @@ export class EnhancedFloatingPanel {
   // Unique panel identifier
   private readonly panelId: string;
   private readonly hostName: string;
+  private readonly onDismiss?: () => void;
   private myAgentId: string | null = null;
 
   // Data
@@ -148,8 +151,10 @@ export class EnhancedFloatingPanel {
     this.hostName = window.location.hostname.replace(/\./g, '-');
     this.panelId = `${this.hostName}-${Math.random().toString(36).substring(2, 8)}`;
 
+    this.onDismiss = options.onDismiss;
+
     this.state = {
-      mode: options.mode || 'expanded', // UPDATED: Default to expanded
+      mode: options.mode || 'collapsed', // UPDATED: Default to collapsed
       position: options.position || { x: 20, y: 20 },
       size: options.size || { width: 360, height: 480 },
       activeTab: 'chat',
@@ -162,8 +167,9 @@ export class EnhancedFloatingPanel {
     console.log(`[FuseConnect] Panel initialized with ID: ${this.panelId}`);
 
     this.loadState();
-    this.inject();
-    this.setupListeners();
+
+    // Do not append DOM until show(). Construction used to inject a hidden
+    // panel that still docked the host page via documentElement.marginRight.
 
     // Request current connection state from background script
     this.requestConnectionState();
@@ -265,9 +271,10 @@ export class EnhancedFloatingPanel {
     // Remove existing
     document.getElementById('fuse-connect-panel-v7')?.remove();
 
-    // Create container
+    // Create container - hidden by default until show() is called
     this.container = document.createElement('div');
     this.container.id = 'fuse-connect-panel-v7';
+    this.container.style.display = 'none';
     this.container.innerHTML = this.render();
 
     // Inject styles
@@ -276,7 +283,7 @@ export class EnhancedFloatingPanel {
     // Add to page
     document.body.appendChild(this.container);
 
-    // Apply position and size
+    this.setupListeners();
     this.applyPositionAndSize();
   }
 
@@ -367,6 +374,28 @@ export class EnhancedFloatingPanel {
         width: 48px !important;
         height: 48px !important;
         border-radius: 50% !important;
+        overflow: visible !important;
+      }
+
+      .fcp6-minimized-close {
+        position: absolute !important;
+        top: -6px !important;
+        right: -6px !important;
+        width: 18px !important;
+        height: 18px !important;
+        border-radius: 50% !important;
+        background: #ff3366 !important;
+        border: 1px solid rgba(255,255,255,0.75) !important;
+        color: #fff !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+        padding: 0 !important;
+        z-index: 20 !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
 
       /* Header */
@@ -455,6 +484,18 @@ export class EnhancedFloatingPanel {
       .fcp6-btn:hover {
         background: rgba(0,217,255,0.3) !important;
         color: #00D9FF !important;
+      }
+
+      .fcp6-btn-close {
+        background: rgba(255, 51, 102, 0.22) !important;
+        color: #ff6b81 !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+      }
+
+      .fcp6-btn-close:hover {
+        background: rgba(255, 51, 102, 0.5) !important;
+        color: #fff !important;
       }
 
       .fcp6-badge {
@@ -921,11 +962,26 @@ export class EnhancedFloatingPanel {
     `;
   }
 
+  private clearPageDock(): void {
+    document.documentElement.style.marginRight = '';
+  }
+
+  private isDomVisible(): boolean {
+    return (
+      !!this.container && this.container.isConnected && this.container.style.display !== 'none'
+    );
+  }
+
   /**
    * Apply position and size from state
    */
   private applyPositionAndSize(): void {
     if (!this.container) return;
+
+    if (!this.isDomVisible()) {
+      this.clearPageDock();
+      return;
+    }
 
     const { position, mode } = this.state;
     const size = {
@@ -1329,9 +1385,10 @@ export class EnhancedFloatingPanel {
    */
   private renderMinimized(): string {
     return `
-      <div class="fcp6-panel minimized" id="fuse-panel-minimized" data-testid="fuse-panel-minimized" data-action="expand" aria-label="Expand Fuse Connect Panel">
+      <div class="fcp6-panel minimized" id="fuse-panel-minimized" data-testid="fuse-panel-minimized" data-action="expand" aria-label="Expand Fuse Connect Panel" style="position: relative;">
         <div class="fcp6-icon">⚡</div>
         ${this.unreadCount > 0 ? `<span class="fcp6-badge">${this.unreadCount}</span>` : ''}
+        <button class="fcp6-minimized-close" data-action="close" title="Close" aria-label="Close">✕</button>
       </div>
     `;
   }
@@ -1358,6 +1415,7 @@ export class EnhancedFloatingPanel {
           <button class="fcp6-btn" id="fuse-btn-toggle" data-testid="fuse-btn-toggle" data-action="toggle" title="${this.state.mode === 'collapsed' ? 'Expand' : 'Collapse'}" aria-label="${this.state.mode === 'collapsed' ? 'Expand panel' : 'Collapse panel'}">
             ${this.state.mode === 'collapsed' ? '▼' : '▲'}
           </button>
+          <button class="fcp6-btn fcp6-btn-close" id="fuse-btn-close" data-testid="fuse-btn-close" data-action="close" title="Close panel" aria-label="Close panel">✕</button>
         </div>
       </div>
       ${this.state.mode !== 'collapsed' ? this.renderChannelSelector() : ''}
@@ -3007,19 +3065,18 @@ export class EnhancedFloatingPanel {
   }
 
   /**
-   * Hide the panel
+   * Hide the panel by removing it from the page. Close is dismiss, not display:none.
    */
   hide(): void {
-    if (this.container) {
-      this.container.style.display = 'none';
-    }
+    this.clearPageDock();
+    this.destroy();
   }
 
   /**
    * Check if panel is visible
    */
   isVisible(): boolean {
-    return this.container?.style.display !== 'none';
+    return this.isDomVisible();
   }
 
   /**
@@ -3030,10 +3087,16 @@ export class EnhancedFloatingPanel {
   }
 
   /**
-  /**
    * Destroy panel
    */
   destroy(): void {
+    this.clearPageDock();
+
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+    }
+
     // Remove Chrome message listener to prevent memory leaks and duplicate handlers
     if (this.chromeMessageListener) {
       chrome.runtime.onMessage.removeListener(this.chromeMessageListener);
@@ -3061,10 +3124,11 @@ export class EnhancedFloatingPanel {
     }
 
     this.container?.remove();
+    this.container = null;
     document.getElementById('fuse-connect-styles-v7')?.remove();
+    document.getElementById('fuse-connect-panel-v7')?.remove();
   }
 
-  /**
   /**
    * Handle generic actions from data-action attributes
    */
@@ -3075,6 +3139,10 @@ export class EnhancedFloatingPanel {
         break;
       case 'pin':
         this.togglePin();
+        break;
+      case 'close':
+        this.hide();
+        this.onDismiss?.();
         break;
       case 'minimize':
         this.minimize();
