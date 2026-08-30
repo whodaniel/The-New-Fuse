@@ -2,7 +2,7 @@
   "schema": "tnf.amendment.staff_review_validation.v1",
   "generatedAt": "2026-08-10T02:35:00.000Z",
   "authority": "Staff Review / StaffOps validation (staff-review-agent embodiment)",
-  "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "repo": "<TNF_ROOT>",
   "intake": "docs/operations/audits/amendments/00_INTAKE.md",
   "subdirector_intake_decision": {
     "path": "docs/operations/audits/amendments/01_SUBDIRECTOR_INTAKE_DECISION.md",

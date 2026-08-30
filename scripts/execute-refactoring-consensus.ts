@@ -1,7 +1,10 @@
-import { ConsensusPattern, ConsensusStrategy } from '../packages/agent-coordination/dist/patterns/ConsensusPattern.js';
-import type { AgentInfo } from '../packages/agent-coordination/dist/core/types.js';
 import fs from 'fs/promises';
 import path from 'path';
+import type { AgentInfo } from '../packages/agent-coordination/dist/core/types.js';
+import {
+  ConsensusPattern,
+  ConsensusStrategy,
+} from '../packages/agent-coordination/dist/patterns/ConsensusPattern.js';
 
 // Minimal mock Coordinator to run without full Redis setup
 class MockCoordinator {
@@ -35,14 +38,20 @@ async function runRefactoringConsensus() {
       id: 'agent-claude-specialist',
       name: 'Claude-3.5-Sonnet',
       type: 'specialist',
-      capabilities: [{ name: 'ux-design', version: '1.0' }, { name: 'architecture-review', version: '1.0' }],
+      capabilities: [
+        { name: 'ux-design', version: '1.0' },
+        { name: 'architecture-review', version: '1.0' },
+      ],
       maxConcurrentTasks: 3,
     },
     {
       id: 'agent-codex-backend',
       name: 'Codex-Backend',
       type: 'engineer',
-      capabilities: [{ name: 'refactoring', version: '1.0' }, { name: 'backend-dev', version: '1.0' }],
+      capabilities: [
+        { name: 'refactoring', version: '1.0' },
+        { name: 'backend-dev', version: '1.0' },
+      ],
       maxConcurrentTasks: 4,
     },
     {
@@ -56,9 +65,12 @@ async function runRefactoringConsensus() {
       id: 'agent-master-clock-sentinel',
       name: 'Master-Clock-Sentinel',
       type: 'monitor',
-      capabilities: [{ name: 'system-monitoring', version: '1.0' }, { name: 'stall-detection', version: '1.0' }],
+      capabilities: [
+        { name: 'system-monitoring', version: '1.0' },
+        { name: 'stall-detection', version: '1.0' },
+      ],
       maxConcurrentTasks: 5,
-    }
+    },
   ];
 
   // Define simulated agent votes and rationale
@@ -66,33 +78,40 @@ async function runRefactoringConsensus() {
     {
       voterId: 'agent-gemini-worker',
       approve: true,
-      reason: 'The proposed decomposition of MasterClock reduces file complexity from ~1,000 lines of highly coupled code to focused, single-responsibility services. Dedicated services prevent state pollution and simplify testing.',
+      reason:
+        'The proposed decomposition of MasterClock reduces file complexity from ~1,000 lines of highly coupled code to focused, single-responsibility services. Dedicated services prevent state pollution and simplify testing.',
     },
     {
       voterId: 'agent-claude-specialist',
       approve: true,
-      reason: 'Splitting out SuperCycleSchedulerService and cron parsing is excellent. Separating RelayConnectionManager from ChannelManagerService respects architectural boundaries. We must ensure session stability during reconnection.',
+      reason:
+        'Splitting out SuperCycleSchedulerService and cron parsing is excellent. Separating RelayConnectionManager from ChannelManagerService respects architectural boundaries. We must ensure session stability during reconnection.',
     },
     {
       voterId: 'agent-codex-backend',
       approve: true,
-      reason: 'Decomposing direct Redis/Upstash calls into RedisClientManager encapsulates state storage cleanly. Moving prioritization logic to TaskSchedulerService preserves clear module boundaries.',
+      reason:
+        'Decomposing direct Redis/Upstash calls into RedisClientManager encapsulates state storage cleanly. Moving prioritization logic to TaskSchedulerService preserves clear module boundaries.',
     },
     {
       voterId: 'agent-security-auditor',
       approve: true,
-      reason: 'Approve with reservation: Decomposing credentials handling in RedisClientManager must be done securely. We should implement rate-limiting in AgentRegistryService to prevent malicious register spam.',
+      reason:
+        'Approve with reservation: Decomposing credentials handling in RedisClientManager must be done securely. We should implement rate-limiting in AgentRegistryService to prevent malicious register spam.',
     },
     {
       voterId: 'agent-master-clock-sentinel',
       approve: true,
-      reason: 'The decomposition keeps heartbeats and stall detection decoupled from user channel message parsing. This makes the main loop far more resilient against blockages from slow agents.',
-    }
+      reason:
+        'The decomposition keeps heartbeats and stall detection decoupled from user channel message parsing. This makes the main loop far more resilient against blockages from slow agents.',
+    },
   ];
 
   // Subscribe to consensus events for transparency
   consensus.on('consensus:started', (data) => {
-    console.log(`[EVENT] Consensus process started with ${data.agentCount} agents. Strategy: ${data.strategy}`);
+    console.log(
+      `[EVENT] Consensus process started with ${data.agentCount} agents. Strategy: ${data.strategy}`
+    );
   });
 
   consensus.on('consensus:proposal:created', (proposal) => {
@@ -104,15 +123,21 @@ async function runRefactoringConsensus() {
   });
 
   consensus.on('consensus:vote:cast', (vote) => {
-    console.log(`[EVENT] Vote cast by ${vote.voterId}: ${vote.approve ? 'APPROVE' : 'REJECT'} - "${vote.reason}"`);
+    console.log(
+      `[EVENT] Vote cast by ${vote.voterId}: ${vote.approve ? 'APPROVE' : 'REJECT'} - "${vote.reason}"`
+    );
   });
 
   consensus.on('consensus:voting:completed', (data) => {
-    console.log(`[EVENT] Voting completed for proposal ${data.proposalId}. total votes: ${data.voteCount}`);
+    console.log(
+      `[EVENT] Voting completed for proposal ${data.proposalId}. total votes: ${data.voteCount}`
+    );
   });
 
   consensus.on('consensus:evaluated', (result) => {
-    console.log(`[EVENT] Consensus evaluated. Achieved: ${result.achieved}, Approval rate: ${result.approvalRate * 100}%, Participation: ${result.participationRate * 100}%`);
+    console.log(
+      `[EVENT] Consensus evaluated. Achieved: ${result.achieved}, Approval rate: ${result.approvalRate * 100}%, Participation: ${result.participationRate * 100}%`
+    );
   });
 
   // The refactoring proposal value
@@ -126,9 +151,9 @@ async function runRefactoringConsensus() {
       'SuperCycleSchedulerService',
       'RedisClientManager',
       'RelayConnectionManager',
-      'SelfPromptService'
+      'SelfPromptService',
     ],
-    refactoringPlanHash: 'refactoring_plan.md'
+    refactoringPlanHash: 'refactoring_plan.md',
   };
 
   // Start consensus in background
@@ -139,7 +164,7 @@ async function runRefactoringConsensus() {
     {
       maxRounds: 1,
       timeout: 10000,
-      strategy: ConsensusStrategy.SUPERMAJORITY
+      strategy: ConsensusStrategy.SUPERMAJORITY,
     }
   );
 
@@ -212,7 +237,7 @@ Based on the consensus feedback, the following guards will be verified during th
 `;
 
   // Write report to AppData Brain directory (as user-facing artifact)
-  const homeDir = process.env.HOME || '/Users/danielgoldberg';
+  const homeDir = process.env.HOME || os.homedir();
   const conversationId = process.env.CONVERSATION_ID || '3958f1f2-83cd-4c10-9e59-8ef3ca58caeb';
   const brainDir = path.join(homeDir, '.gemini/antigravity-cli/brain', conversationId);
   await fs.mkdir(brainDir, { recursive: true });
@@ -221,7 +246,8 @@ Based on the consensus feedback, the following guards will be verified during th
   console.log(`Saved brain artifact report to: ${brainPath}`);
 
   // Also write to project workspace root for direct visibility
-  const workspacePath = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/refactoring_consensus_report.md';
+  const workspacePath =
+    '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/refactoring_consensus_report.md';
   await fs.writeFile(workspacePath, markdownReport, 'utf8');
   console.log(`Saved workspace report to: ${workspacePath}`);
 }

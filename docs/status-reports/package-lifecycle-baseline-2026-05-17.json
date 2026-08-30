@@ -1,7 +1,7 @@
 {
   "summary": {
     "generatedAt": "2026-05-17T13:26:54.110Z",
-    "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+    "root": "<TNF_ROOT>",
     "packageCount": 66,
     "byLifecycleState": {
       "active": 36,

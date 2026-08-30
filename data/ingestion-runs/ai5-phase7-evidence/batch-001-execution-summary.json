@@ -22,7 +22,7 @@
     "scanStatus": "timeout-on-large-monorepo",
     "blockerRootCause": "TNF monorepo size (174+ directories) causes deepsec scan to hang during file discovery phase",
     "evidenceCaptured": true,
-    "evidencePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/directive-1-init-deepsec.json"
+    "evidencePath": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/directive-1-init-deepsec.json"
   },
   "recommendation": {
     "immediate": "Mark directives 2-6 as blocked:scan-timeout until scan infrastructure is optimized",

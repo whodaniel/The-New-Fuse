@@ -25,9 +25,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "Running bot setup script in terminal"
-        ]
+        "file_hints": ["Running bot setup script in terminal"]
       },
       "source": {
         "source_id": "yt-ai5-7xuWZ-3lyQE",
@@ -56,7 +54,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:39.992665Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-c986b240a1097b6e.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-c986b240a1097b6e.json"
         }
       ],
       "updatedAt": "2026-06-11T18:19:58.651942Z",
@@ -101,9 +99,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "AI pipelines"
-        ]
+        "file_hints": ["AI pipelines"]
       },
       "source": {
         "source_id": "yt-ai5-lAAcjj5fISE",
@@ -132,7 +128,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:39.995812Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-f8e0537dc402cd7d.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-f8e0537dc402cd7d.json"
         }
       ],
       "updatedAt": "2026-06-11T18:19:59.230217Z",
@@ -212,7 +208,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:39.998059Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-1379d655a387b57e.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-1379d655a387b57e.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:27.419998Z",
@@ -257,9 +253,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "evaluation_suite.py or business_rules_engine.py"
-        ]
+        "file_hints": ["evaluation_suite.py or business_rules_engine.py"]
       },
       "source": {
         "source_id": "yt-ai5-jwtpMSRAPAQ",
@@ -292,7 +286,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:39.999380Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-2f6875662149bec5.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-2f6875662149bec5.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:27.799413Z",
@@ -340,9 +334,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "Hermes Agent/Messaging Connectors Module"
-        ]
+        "file_hints": ["Hermes Agent/Messaging Connectors Module"]
       },
       "source": {
         "source_id": "yt-ai5-gb5TlGw6Uks",
@@ -375,7 +367,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:40.000632Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-3efcb13f76545c0b.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-3efcb13f76545c0b.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:27.971690Z",
@@ -423,9 +415,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "eval_suite/deterministic_code_evals.py"
-        ]
+        "file_hints": ["eval_suite/deterministic_code_evals.py"]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -458,7 +448,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:40.004078Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-c249bb82e9ad3dfa.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-c249bb82e9ad3dfa.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:29.637934Z",
@@ -506,9 +496,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "agent_framework/tool_call_evaluator.py"
-        ]
+        "file_hints": ["agent_framework/tool_call_evaluator.py"]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -541,7 +529,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:40.004526Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-c6ef0132a57824fd.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-c6ef0132a57824fd.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:29.836785Z",
@@ -589,9 +577,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "Agent TAR Configuration / Runtime Environment"
-        ]
+        "file_hints": ["Agent TAR Configuration / Runtime Environment"]
       },
       "source": {
         "source_id": "yt-ai5-WQv3xjb4WgQ",
@@ -624,7 +610,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:40.004955Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-d138a0b08d99d321.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-d138a0b08d99d321.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:29.924906Z",
@@ -672,9 +658,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "Evaluation Framework / Evaluation Scripts"
-        ]
+        "file_hints": ["Evaluation Framework / Evaluation Scripts"]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -707,7 +691,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:40.001186Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-4157c1eb323c81a6.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-4157c1eb323c81a6.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:28.056110Z",
@@ -755,9 +739,7 @@
       "dispatchEligible": true,
       "implementationTarget": {
         "area": "v2-extracted",
-        "file_hints": [
-          "eval_suite/lm_judges.py"
-        ]
+        "file_hints": ["eval_suite/lm_judges.py"]
       },
       "source": {
         "source_id": "yt-ai5-Xfl50508LZM",
@@ -790,7 +772,7 @@
           "type": "phase7-verification",
           "state": "ready",
           "at": "2026-06-16T02:35:40.001696Z",
-          "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-evidence/act-4ac367caa36e1f4d.json"
+          "path": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-evidence/act-4ac367caa36e1f4d.json"
         }
       ],
       "updatedAt": "2026-06-11T18:20:28.164789Z",

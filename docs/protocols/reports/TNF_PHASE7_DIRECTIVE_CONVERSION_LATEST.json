@@ -1,9 +1,9 @@
 {
   "generatedAt": "2026-06-16T02:44:24.498679Z",
   "phase": "phase7-directive-conversion",
-  "actionQueuePath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-action-queue.json",
-  "ledgerPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json",
-  "batchPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json",
+  "actionQueuePath": "<TNF_ROOT>/data/ingestion-runs/ai5-new-may-2026-action-queue.json",
+  "ledgerPath": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-directive-conversion-ledger.json",
+  "batchPath": "<TNF_ROOT>/data/ingestion-runs/ai5-phase7-tight-loop-batch-001.json",
   "summary": {
     "total": 689,
     "stateCounts": {

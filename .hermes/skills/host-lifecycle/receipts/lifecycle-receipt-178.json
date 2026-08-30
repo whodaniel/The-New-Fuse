@@ -4,7 +4,7 @@
   "workstream_claim": "Host Lifecycle Guardian - generic adapter + synthetic verification + Hermes real-host evidence",
   "agent": "hermes-operator (TNF)",
   "lane": "agent-resource-fabric / lifecycle",
-  "branch_worktree": "main at /Users/danielgoldberg/Repos/tnf-monorepo (HEAD 477eda3)",
+  "branch_worktree": "main at <USER_HOME>/Repos/tnf-monorepo (HEAD 477eda3)",
   "state_before_mutation": "42 dirty files present (pre-existing WIP); no destructive vendor upgrade performed",
   "verification_plan_run": true,
   "synthetic_tests": {
@@ -28,7 +28,16 @@
   },
   "real_hosts_discovered_evidence": {
     "hermes": "v0.20.4 git (verified)",
-    "other_hosts": ["ZCode", "Claude", "Kilo", "Codex", "Gemini", "OpenCode", "Cursor", "OpenClaw"],
+    "other_hosts": [
+      "ZCode",
+      "Claude",
+      "Kilo",
+      "Codex",
+      "Gemini",
+      "OpenCode",
+      "Cursor",
+      "OpenClaw"
+    ],
     "evidence_status": "profiles not yet created (require safe adapter discovery per host; not performed to avoid destructive mutation without rollback proof)"
   },
   "files_added_modified": [

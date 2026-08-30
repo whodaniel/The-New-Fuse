@@ -1,6 +1,6 @@
 #!/bin/bash
 # Use default model (nvidia/meta/llama-3.3-70b-instruct)
-TNF_DIR="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+TNF_DIR="${TNF_ROOT:-$(pwd)}"
 
 echo "[AGENT-2] Starting codebase color/contrast audit (using nvidia)..." >> $HOME/tnf-swarm-audit/agent2-code.log
 

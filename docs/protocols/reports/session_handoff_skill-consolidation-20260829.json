@@ -7,9 +7,7 @@
   "head_sha": "5e7e2c894feb2cbaa1e6b5ac1de77e6d29906ee9",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-SESSION"
-  ],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
     "Archived 4 zero-consumer packages (claude-skills, jules-integration, gemini-browser-skill, features) into archive/skill-consolidation-20260829",
     "Removed dead deps: jules-integration (api-gateway), feature-suggestions (tauri-desktop build:deps + vite alias), feature-tracker (backend), stale alias (frontend vite)",
@@ -552,7 +550,7 @@
     "data/marketplace/catalog-items.json",
     "docs/getting-started/README.md",
     "docs/guides/installation.md",
-    "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md",
+    "docs/operations/TNF_SWARM_MASTER_SCHEDULE.md",
     "docs/operations/tnf-master-reconciliation-report-latest.json",
     "docs/operations/tnf-master-reconciliation-report-latest.md",
     "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
@@ -589,10 +587,7 @@
   },
   "continuation": {
     "owner": "pi-coding-agent",
-    "targets": [
-      "story-architect",
-      "librarian"
-    ],
+    "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -606,9 +601,7 @@
     "Phase 4: move feature-tracker/feature-suggestions UI assets to TNF-Extensions (backend keeps native feedback module)"
   ],
   "artifacts": {
-    "commits": [
-      "5e7e2c894feb2cbaa1e6b5ac1de77e6d29906ee9"
-    ]
+    "commits": ["5e7e2c894feb2cbaa1e6b5ac1de77e6d29906ee9"]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",

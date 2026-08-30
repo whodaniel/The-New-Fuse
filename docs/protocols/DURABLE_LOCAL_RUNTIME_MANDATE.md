@@ -27,7 +27,7 @@ benefits from it). The fix belongs in the generator, in source control.
 ## 2. Case study: six independent repo-root resolvers
 
 On 2026-08-24, a report of
-`tnf-status authority missing: /Users/.../Repos/tnf-monorepo/...` led to
+`tnf-status authority missing: /home/.../Repos/tnf-monorepo/...` led to
 discovering the same "find the TNF checkout" logic implemented **six separate
 times**, independently, all with the same latent flaw (validating a candidate
 directory by _marker-file existence only_, never confirming it's a live git work

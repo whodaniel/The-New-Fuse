@@ -137,7 +137,10 @@ export function registerRefreshContextCommand(program: Command, repoRoot: string
     });
 
   // Alias: `tnf refresh_context` (snake_case preferred by some shells)
-  cmd.command('list').action(() => {
-    console.log('Use `tnf refresh-context --help` for options.');
-  });
+  cmd
+    .command('list')
+    .description('List available context elements')
+    .action(() => {
+      console.log('Use `tnf refresh-context --help` for options.');
+    });
 }

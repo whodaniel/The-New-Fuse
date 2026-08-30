@@ -2,7 +2,7 @@
   "schema": "tnf.amendment.implementation_queue.v1",
   "sealedAt": "2026-08-09T22:37:30-04:00",
   "seal_status": "SEALED",
-  "repo": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "repo": "<TNF_ROOT>",
   "authority": "TNF Orchestrator \u2014 sealed after Sub-Director + Staff Review",
   "sources": {
     "intake": "docs/operations/audits/amendments/00_INTAKE.md",
@@ -59,7 +59,7 @@
         "conflicts := [\"None with adversarial dual full-auto \u2014 verdict UX only.\"]",
         "Add regression fixture: preflight ok + handoff gate block must not end with ALL PROTOCOLS PASSED."
       ],
-      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && rg -n 'ALL PROTOCOLS PASSED|VERDICT:' packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts packages/tnf-cli/src/cli.ts scripts/protocols/enforce-session-handoff.cjs",
+      "first_command": "cd <TNF_ROOT> && rg -n 'ALL PROTOCOLS PASSED|VERDICT:' packages/tnf-cli/src/orchestration/ProtocolInterceptor.ts packages/tnf-cli/src/cli.ts scripts/protocols/enforce-session-handoff.cjs",
       "verify_probe": "tnf protocol gate --no-splash; if fail, stdout must contain 'VERDICT: FAIL' and must not end with 'ALL PROTOCOLS PASSED'; exit code must match VERDICT",
       "rollback": "TNF_PROTOCOL_GATE_LEGACY_BANNER=1",
       "kill_jobs_forbidden": true,
@@ -93,7 +93,7 @@
         "Create rollup reading: core-fleet-latest.json, subdirector-autopilot-latest.json, df free+capacity%, bridge process+ttl, thin-client zombie ratio, handoff head_sha vs git HEAD.",
         "Harness inspect calls rollup; critical \u21d2 overall FAIL (fail-closed) while listing individual checks; gate via TNF_AUTONOMY_HEALTH_FAIL_CLOSED."
       ],
-      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && mkdir -p scripts/runtime && test ! -f scripts/runtime/tnf-autonomy-health-rollup.cjs && printf '%s\\n' 'BEGIN implement A1 rollup: create scripts/runtime/tnf-autonomy-health-rollup.cjs emitting {status:healthy|degraded|critical}' || echo 'rollup stub present \u2014 continue wire to tnf autonomy health'",
+      "first_command": "cd <TNF_ROOT> && mkdir -p scripts/runtime && test ! -f scripts/runtime/tnf-autonomy-health-rollup.cjs && printf '%s\\n' 'BEGIN implement A1 rollup: create scripts/runtime/tnf-autonomy-health-rollup.cjs emitting {status:healthy|degraded|critical}' || echo 'rollup stub present \u2014 continue wire to tnf autonomy health'",
       "verify_probe": "node scripts/runtime/tnf-autonomy-health-rollup.cjs --json | jq -e '.status'; tnf autonomy health --no-splash; expect non-zero exit when status=critical; rollup critical \u21d2 harness inspect fails",
       "rollback": "TNF_AUTONOMY_HEALTH_FAIL_CLOSED=0",
       "kill_jobs_forbidden": true,
@@ -133,7 +133,7 @@
         "Add validator scripts/protocols/validate-living-state-directive.cjs wired into protocol gate profile.",
         "Verify via: tnf state show --full | rg -n 'CURRENT_DIRECTIVE:(START|END)' proves single fenced slot."
       ],
-      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && rg -n 'CURRENT_DIRECTIVE|Current Directive' docs/protocols/LIVING_STATE.md scripts/turn-end.cjs scripts/protocols/emit-session-handoff.cjs scripts/protocols/enforce-session-handoff.cjs scripts/protocols/validate-handoff-source-drift.cjs",
+      "first_command": "cd <TNF_ROOT> && rg -n 'CURRENT_DIRECTIVE|Current Directive' docs/protocols/LIVING_STATE.md scripts/turn-end.cjs scripts/protocols/emit-session-handoff.cjs scripts/protocols/enforce-session-handoff.cjs scripts/protocols/validate-handoff-source-drift.cjs",
       "verify_probe": "node scripts/protocols/validate-living-state-directive.cjs; tnf state show --full | rg -n 'CURRENT_DIRECTIVE:(START|END)'; after tip-align, handoff head_sha == git rev-parse HEAD OR Living State STATUS:DRIFT",
       "rollback": "node scripts/protocols/validate-living-state-directive.cjs --mode=warn",
       "kill_jobs_forbidden": true,
@@ -171,7 +171,7 @@
         "STAFF CONDITION: Negative assert \u2014 audit goals must not schedule execute-safe-refactors (log/JSON check in verify).",
         "After smoke: rm -f docs/operations/audits/amendments/_orchestrate_smoke.md"
       ],
-      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && rg -n 'executeGoal|execute-safe-refactors|tnf-refactoring-triage|REPORT_ONLY' packages/tnf-cli/src/orchestration.ts packages/tnf-cli/src/orchestration-enhancements.ts packages/tnf-cli/src/cli.ts",
+      "first_command": "cd <TNF_ROOT> && rg -n 'executeGoal|execute-safe-refactors|tnf-refactoring-triage|REPORT_ONLY' packages/tnf-cli/src/orchestration.ts packages/tnf-cli/src/orchestration-enhancements.ts packages/tnf-cli/src/cli.ts",
       "verify_probe": "tnf orchestrate --goal 'REPORT-ONLY audit: write docs/operations/audits/amendments/_orchestrate_smoke.md with one line ping' --no-splash; test -s docs/operations/audits/amendments/_orchestrate_smoke.md; assert orchestrator log/JSON has no execute-safe-refactors for audit goal; rm -f docs/operations/audits/amendments/_orchestrate_smoke.md",
       "rollback": "TNF_ORCHESTRATE_ALLOW_MUTATE_ON_AUDIT=1",
       "kill_jobs_forbidden": true,
@@ -206,7 +206,7 @@
         "Must not conflict with pause/fleet-pause (explicit policy); only auto-kill is forbidden.",
         "THIS QUEUE ITEM MUST NOT INCLUDE ANY KILL JOB \u2014 dual full-auto contention is adversarial observe-only."
       ],
-      "first_command": "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && mkdir -p scripts/operations docs/operations && printf '' >> docs/operations/tnf-full-auto-contention.jsonl && rg -n 'full-auto start|contend|CONTENTION' packages/tnf-cli/src/cli.ts scripts/operations 2>/dev/null; echo 'BEGIN implement observe-only contention script (no kill path on default)'",
+      "first_command": "cd <TNF_ROOT> && mkdir -p scripts/operations docs/operations && printf '' >> docs/operations/tnf-full-auto-contention.jsonl && rg -n 'full-auto start|contend|CONTENTION' packages/tnf-cli/src/cli.ts scripts/operations 2>/dev/null; echo 'BEGIN implement observe-only contention script (no kill path on default)'",
       "verify_probe": "With dual loops running: tnf full-auto contend status --json | jq -e '.loopCount >= 2'; observer must not change PIDs (before/after pgrep identical)",
       "rollback": "Remove contend command / observe script; no process impact",
       "kill_jobs_forbidden": true,

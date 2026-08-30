@@ -1,13 +1,6 @@
 {
-  "tags": [
-    "github-actions",
-    "mcp",
-    "nestjs",
-    "node"
-  ],
-  "sentinels": [
-    "package.json"
-  ],
+  "tags": ["github-actions", "mcp", "nestjs", "node"],
+  "sentinels": ["package.json"],
   "detectedAt": "2026-06-16T02:35:42.539Z",
-  "rootPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+  "rootPath": "<TNF_ROOT>"
 }

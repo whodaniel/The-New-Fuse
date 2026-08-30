@@ -2,7 +2,7 @@
 
 Branch: `fix/rc-phase-b-test-integrity-20260828` Base (frozen failed RC,
 immutable): `f264e5e7d55059d248f72e66c9bdea317931fd69` Worktree:
-`/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/worktrees/rc-phase-b-test-integrity`
+`<USER_HOME>/Desktop/A1-Inter-LLM-Com/TNF/worktrees/rc-phase-b-test-integrity`
 Commits: T1 `bd465336a624b1ca56f596262e38d46ee1869080`, T2 `bc15e29c6` (+T3/T4
 commit), no force-push, no amend of base.
 

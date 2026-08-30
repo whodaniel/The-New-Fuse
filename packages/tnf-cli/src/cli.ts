@@ -8982,7 +8982,7 @@ program
   .description('Run Turn End protocol: update LIVING_STATE and SESSION_HANDOFF artifacts')
   .action(async () => {
     try {
-      await runCommand('node', ['scripts/turn-end.cjs']);
+      await runCommand('node', ['scripts/turn-end-v2.cjs']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);

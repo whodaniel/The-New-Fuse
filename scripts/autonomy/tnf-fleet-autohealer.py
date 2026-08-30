@@ -13,7 +13,7 @@ import redis
 import urllib.request
 import json
 
-REPO_ROOT = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+REPO_ROOT = os.environ.get("TNF_ROOT", os.getcwd())
 LOG_DIR = f"{REPO_ROOT}/.agent/runtime-logs"
 
 def log(msg, level="INFO"):

@@ -1,7 +1,7 @@
 {
   "schema": "tnf.live-agent-work-check.v1",
   "generatedAt": "2026-08-09T02:24:05.413Z",
-  "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+  "root": "<TNF_ROOT>",
   "host": "Daniels-MacBook-Pro",
   "git": {
     "branch": "## fix/honest-failure-reporting...origin/fix/honest-failure-reporting [ahead 14]",
@@ -19,7 +19,7 @@
       " M apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
       " M apps/virtual-library-blueprints",
       " M data/llm-provider-status.json",
-      " M docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md",
+      " M docs/operations/TNF_SWARM_MASTER_SCHEDULE.md",
       " M docs/operations/tnf-master-reconciliation-report-latest.json",
       " M docs/operations/tnf-master-reconciliation-report-latest.md",
       " M docs/protocols/LIVE_AGENT_WORK_CHECK.md",
@@ -64,14 +64,14 @@
     }
   },
   "processes": [
-    "39570     1 S       43:54 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/.tnf/local-subdirector/bin/local-subdirector-runtime.cjs",
+    "39570     1 S       43:54 <USER_HOME>/.local/bin/node <USER_HOME>/.tnf/local-subdirector/bin/local-subdirector-runtime.cjs",
     "90324 49415 S    03:50:56 /Applications/Claude.app/Contents/Helpers/chrome-native-host chrome-extension://fcoeoabgfenejglbffodgkkbkcdhcgfn/",
-    "97422     1 S    01:11:01 /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/.tnf/master-heartbeat/bin/tnf-master-heartbeat-loop.cjs",
-    " 2075  1371 S+   06:55:25 node /Users/danielgoldberg/.hermes/node/bin/codex --dangerously-bypass-approvals-and-sandbox",
-    " 2076  2075 R+   06:55:25 /Users/danielgoldberg/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex --dangerously-bypass-approvals-and-sandbox",
-    "98043  2076 S    02:53:29 /Users/danielgoldberg/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex-code-mode-host",
+    "97422     1 S    01:11:01 <USER_HOME>/.local/bin/node <USER_HOME>/.tnf/master-heartbeat/bin/tnf-master-heartbeat-loop.cjs",
+    " 2075  1371 S+   06:55:25 node <USER_HOME>/.hermes/node/bin/codex --dangerously-bypass-approvals-and-sandbox",
+    " 2076  2075 R+   06:55:25 <USER_HOME>/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex --dangerously-bypass-approvals-and-sandbox",
+    "98043  2076 S    02:53:29 <USER_HOME>/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex-code-mode-host",
     "61523 60837 S+      30:33 claude",
-    "79138 78479 S+   05:31:10 /Users/danielgoldberg/.local/bin/cursor-agent --use-system-ca /Users/danielgoldberg/.local/share/cursor-agent/versions/2026.08.04-aaa8809/index.js",
+    "79138 78479 S+   05:31:10 <USER_HOME>/.local/bin/cursor-agent --use-system-ca <USER_HOME>/.local/share/cursor-agent/versions/2026.08.04-aaa8809/index.js",
     "33030 32459 S+   04:46:21 claude",
     "66454 65571 S+   04:15:17 opencode"
   ],
@@ -138,7 +138,7 @@
       "staleAfterSeconds": 90,
       "record": {
         "exists": true,
-        "path": "/Users/danielgoldberg/.tnf/local-subdirector/state/local-subdirector-heartbeat.json",
+        "path": "<USER_HOME>/.tnf/local-subdirector/state/local-subdirector-heartbeat.json",
         "mtimeMs": 1786242233278.453,
         "ageSeconds": 14,
         "payload": {
@@ -165,7 +165,7 @@
             "relayUrl": "ws://127.0.0.1:3000/ws",
             "relayChannel": "fuse-activity-log",
             "relayOutboxDir": "/tmp/thefuse/terminal",
-            "stateDir": "/Users/danielgoldberg/.tnf/local-subdirector/state"
+            "stateDir": "<USER_HOME>/.tnf/local-subdirector/state"
           },
           "summary": {
             "observedSessions": 6,
@@ -186,7 +186,7 @@
               "source": "terminal-applescript",
               "busy": true,
               "status": "active",
-              "cwd": "/Users/danielgoldberg",
+              "cwd": "<USER_HOME>",
               "shellPid": 60837,
               "foregroundPid": 61523,
               "foregroundCommand": "claude",
@@ -209,7 +209,7 @@
               "source": "terminal-applescript",
               "busy": true,
               "status": "active",
-              "cwd": "/Users/danielgoldberg",
+              "cwd": "<USER_HOME>",
               "shellPid": 1371,
               "foregroundPid": 2075,
               "foregroundCommand": "node",
@@ -232,7 +232,7 @@
               "source": "terminal-applescript",
               "busy": false,
               "status": "idle",
-              "cwd": "/Users/danielgoldberg",
+              "cwd": "<USER_HOME>",
               "shellPid": 82923,
               "foregroundPid": 82923,
               "foregroundCommand": "zsh",
@@ -255,7 +255,7 @@
               "source": "terminal-applescript",
               "busy": true,
               "status": "stalled",
-              "cwd": "/Users/danielgoldberg",
+              "cwd": "<USER_HOME>",
               "shellPid": 32459,
               "foregroundPid": 33030,
               "foregroundCommand": "claude",
@@ -278,7 +278,7 @@
               "source": "terminal-applescript",
               "busy": true,
               "status": "stalled",
-              "cwd": "/Users/danielgoldberg",
+              "cwd": "<USER_HOME>",
               "shellPid": 78479,
               "foregroundPid": 79138,
               "foregroundCommand": "danielgol",
@@ -301,7 +301,7 @@
               "source": "terminal-applescript",
               "busy": true,
               "status": "stalled",
-              "cwd": "/Users/danielgoldberg",
+              "cwd": "<USER_HOME>",
               "shellPid": 65571,
               "foregroundPid": 66454,
               "foregroundCommand": "opencode",
@@ -361,7 +361,7 @@
       "staleAfterSeconds": 180,
       "record": {
         "exists": true,
-        "path": "/Users/danielgoldberg/.tnf/master-heartbeat/state/master-heartbeat-latest.json",
+        "path": "<USER_HOME>/.tnf/master-heartbeat/state/master-heartbeat-latest.json",
         "mtimeMs": 1786242245099.8564,
         "ageSeconds": 2,
         "payload": {
@@ -373,7 +373,7 @@
             "role": "tnf-master-clock"
           },
           "config": {
-            "rootDir": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+            "rootDir": "<TNF_ROOT>",
             "intervalMs": 15000,
             "commandTimeoutMs": 120000,
             "watchdogEveryCycles": 3,
@@ -383,7 +383,7 @@
             "roleMapReconcileEveryCycles": 5760,
             "allowPromptInjection": false,
             "interactiveSafeMode": true,
-            "interactiveSafeModeFile": "/Users/danielgoldberg/.tnf/flags/interactive-safe-mode"
+            "interactiveSafeModeFile": "<USER_HOME>/.tnf/flags/interactive-safe-mode"
           },
           "summary": {
             "totalSteps": 3,
@@ -435,14 +435,14 @@
       "staleAfterSeconds": 1800,
       "record": {
         "exists": true,
-        "path": "/Users/danielgoldberg/.tnf/core-fleet-latest.json",
+        "path": "<USER_HOME>/.tnf/core-fleet-latest.json",
         "mtimeMs": 1786241080761.5396,
         "ageSeconds": 1166,
         "payload": {
           "ok": true,
           "generatedAt": "2026-08-09T02:04:07.398Z",
           "dryRun": false,
-          "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+          "root": "<TNF_ROOT>",
           "steps": [
             {
               "step": "nft-identity",
@@ -453,25 +453,25 @@
             {
               "step": "identity",
               "status": "ok",
-              "detail": "already Local Sub-Director (/Users/danielgoldberg/.tnf/agent.yaml)",
+              "detail": "already Local Sub-Director (<USER_HOME>/.tnf/agent.yaml)",
               "at": "2026-08-09T02:04:07.407Z"
             },
             {
               "step": "env-hints",
               "status": "ok",
-              "detail": "/Users/danielgoldberg/.tnf/core-fleet.env",
+              "detail": "<USER_HOME>/.tnf/core-fleet.env",
               "at": "2026-08-09T02:04:07.409Z"
             },
             {
               "step": "sync:local-subdirector",
               "status": "ok",
-              "detail": "/Users/danielgoldberg/.tnf/local-subdirector",
+              "detail": "<USER_HOME>/.tnf/local-subdirector",
               "at": "2026-08-09T02:04:07.569Z"
             },
             {
               "step": "sync:master-heartbeat",
               "status": "ok",
-              "detail": "/Users/danielgoldberg/.tnf/master-heartbeat",
+              "detail": "<USER_HOME>/.tnf/master-heartbeat",
               "at": "2026-08-09T02:04:07.646Z"
             },
             {
@@ -501,7 +501,7 @@
             {
               "step": "mcp",
               "status": "ok",
-              "detail": "/Users/danielgoldberg/.tnf/mcp.json",
+              "detail": "<USER_HOME>/.tnf/mcp.json",
               "at": "2026-08-09T02:04:24.410Z"
             },
             {
@@ -563,7 +563,7 @@
       "staleAfterSeconds": 3600,
       "record": {
         "exists": true,
-        "path": "/Users/danielgoldberg/.tnf/handoff-current.json",
+        "path": "<USER_HOME>/.tnf/handoff-current.json",
         "mtimeMs": 1786241759517.6516,
         "ageSeconds": 487,
         "payload": {
@@ -591,7 +591,7 @@
             "2026-08-09T02:15:59.495Z The-New-Fuse fix/honest-failure-reporting ID:1185e130-3a3b-433d-a6ef-cad2b6608c86"
           ],
           "CLOUD_HEALTH": {},
-          "SOURCE": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+          "SOURCE": "<TNF_ROOT>/docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
           "priority": "high",
           "branch": "fix/honest-failure-reporting",
           "head_sha": "d7190c18191b9653eed481fd17429df56d342b8c",
@@ -604,7 +604,7 @@
       "staleAfterSeconds": 3600,
       "record": {
         "exists": true,
-        "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "path": "<TNF_ROOT>/docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
         "mtimeMs": 1786241843720.4622,
         "ageSeconds": 403,
         "payload": {
@@ -681,7 +681,7 @@
     "wedgedSignals": [],
     "likelyWedged": false,
     "config": {
-      "configFile": "/Users/danielgoldberg/.tnf/redis/redis.conf",
+      "configFile": "<USER_HOME>/.tnf/redis/redis.conf",
       "processId": "76532",
       "save": "",
       "shutdownOnSigterm": "nosave"
@@ -712,7 +712,7 @@
       "41194 41174 S       43:35 node dist/master-clock.js"
     ],
     "masterClockProcessCandidates": [
-      "41174     1 S       43:35 bash -lc cd '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core' && REDIS_URL='redis://localhost:6379' RELAY_URL='ws://127.0.0.1:3000/ws' LEDGER_API_BASE='http://localhost:3001' STALL_THRESHOLD='45000' RECOVERY_INTERVAL='30000' SELF_PROMPT_ENABLED='true' SELF_PROMPT_COOLDOWN_MS='30000' node dist/master-clock.js",
+      "41174     1 S       43:35 bash -lc cd '<TNF_ROOT>/packages/relay-core' && REDIS_URL='redis://localhost:6379' RELAY_URL='ws://127.0.0.1:3000/ws' LEDGER_API_BASE='http://localhost:3001' STALL_THRESHOLD='45000' RECOVERY_INTERVAL='30000' SELF_PROMPT_ENABLED='true' SELF_PROMPT_COOLDOWN_MS='30000' node dist/master-clock.js",
       "41194 41174 S       43:35 node dist/master-clock.js"
     ],
     "masterClockProcessCount": 1,
@@ -721,7 +721,7 @@
       "schema": "tnf.federated-ws-channel-check.v1",
       "generatedAt": "2026-08-09T02:24:18.110Z",
       "host": "Daniels-MacBook-Pro",
-      "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+      "root": "<TNF_ROOT>",
       "relayUrl": "ws://127.0.0.1:3000/ws",
       "runId": "fed-ws-1786242248574",
       "keepAlive": false,
@@ -849,7 +849,7 @@
       ],
       "ok": true,
       "verdict": "pass",
-      "reportPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json"
+      "reportPath": "<TNF_ROOT>/docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json"
     }
   },
   "tokens": {
@@ -860,7 +860,7 @@
   },
   "fullAuto": {
     "exists": true,
-    "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/operations/tnf-full-auto-state.json",
+    "path": "<TNF_ROOT>/docs/operations/tnf-full-auto-state.json",
     "mtimeMs": 1786206273087.746,
     "ageSeconds": 35985,
     "payload": {
@@ -876,7 +876,7 @@
         "finishedAt": "2026-08-03T22:59:15.470Z",
         "durationMs": 869753,
         "ok": false,
-        "error": "/Users/danielgoldberg/.hermes/node/bin/node exited with code 1"
+        "error": "<USER_HOME>/.hermes/node/bin/node exited with code 1"
       }
     }
   },

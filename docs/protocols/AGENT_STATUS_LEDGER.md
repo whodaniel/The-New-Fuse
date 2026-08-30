@@ -3,6 +3,9 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
+- **Updated: 2026-08-30T20:04:37.113ZZ** — docs(protocols): explicit turn end
+  mandate enforcement and automation
+
 - **Updated: 2026-08-30T20:01:24.847489Z** — [SUPER ADMIN OVERRIDE]: Pierced
   repository bounds to inject ~/.tnf/lessons-learned.md into the Context
   Broker.\n- **Updated: 2026-08-30T15:32:39-04:00** — Codify Synergistic

@@ -21,7 +21,7 @@ from typing import Optional
 import time
 
 # TNF Paths
-TNF_ROOT = Path("/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse")
+TNF_ROOT = Path(os.environ.get("TNF_ROOT", os.getcwd()))
 DEEPSEC_DIR = TNF_ROOT / ".deepsec"
 DATA_DIR = DEEPSEC_DIR / "data"
 

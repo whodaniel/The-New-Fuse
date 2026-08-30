@@ -2,12 +2,12 @@
   "generatedAt": "2026-08-16T19:47:52.219839Z",
   "dryRun": false,
   "playlist": {
-    "path": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/data/ai-6-playlist-detected.json",
+    "path": "<TNF_ROOT>/data/ai-6-playlist-detected.json",
     "playlistId": "PLSdNsZjFbYrWjIziXgBbWDJewYMtAv5Z4",
     "count": 0
   },
   "notes": {
-    "dbPath": "/Users/danielgoldberg/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite",
+    "dbPath": "<USER_HOME>/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite",
     "folderTitle": "NEW- May-2026",
     "folderPk": 6199,
     "count": 267
@@ -1552,16 +1552,16 @@
           ],
           "strategic": [
             "# Wrote Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/REVIEW_PROTOCOL.md",
-            "$ mkdir -p /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/reviews /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/review /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/reports/reviews",
+            "$ mkdir -p <TNF_ROOT>/data/reviews <TNF_ROOT>/scripts/review <TNF_ROOT>/reports/reviews",
             "# Wrote Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/review/init_review.mjs",
             "# Wrote Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/review/review_node.mjs",
             "# Wrote Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/review/audit_review.mjs",
             "# Wrote Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/review/reconciliation_dashboard.mjs",
-            "$ chmod +x /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/review/*.mjs && cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/review/init_review.mjs 2>&1",
-            "Status file: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/reviews/node_status.json",
-            "Log file: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/reviews/review_log.jsonl",
-            "Contradictions: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/reviews/contradictions.json",
-            "Missing files: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/reviews/missing.json"
+            "$ chmod +x <TNF_ROOT>/scripts/review/*.mjs && cd <TNF_ROOT> && node <TNF_ROOT>/scripts/review/init_review.mjs 2>&1",
+            "Status file: <TNF_ROOT>/data/reviews/node_status.json",
+            "Log file: <TNF_ROOT>/data/reviews/review_log.jsonl",
+            "Contradictions: <TNF_ROOT>/data/reviews/contradictions.json",
+            "Missing files: <TNF_ROOT>/data/reviews/missing.json"
           ],
           "governance": [
             "Build a procedural protocol for reviewing files",
@@ -1918,10 +1918,10 @@
         "taxonomy": {
           "procedural": [
             "# Final tnf-cli type check",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli && npx tsc --noEmit 2>&1 | grep -v \"npm warn\" | grep \"error TS\" | wc -l",
+            "$ cd <TNF_ROOT>/packages/tnf-cli && npx tsc --noEmit 2>&1 | grep -v \"npm warn\" | grep \"error TS\" | wc -l",
             "# Final Go build check",
             "2>&1 && go build -o /dev/null .",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-core && npx tsc --noEmit 2>&1 | grep -v \"npm warn\" | grep \"error TS\" | wc -l",
+            "$ cd <TNF_ROOT>/packages/tnf-core && npx tsc --noEmit 2>&1 | grep -v \"npm warn\" | grep \"error TS\" | wc -l",
             "Fix curl|sh RCE in UpgradeService.ts (line 246)",
             "Re-verify tnf-cli after UpgradeService fix",
             "Fix api-client missing .js extensions on 13 integration files + index",
@@ -1939,9 +1939,9 @@
             "Removed process.env[SUPER_ADMIN_ENV_KEY] from auth check in cli.ts:76"
           ],
           "strategic": [
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli && npx tsc --noEmit 2>&1 | grep -v \"npm warn\" | grep \"error TS\" | wc -l",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-orchestrator-go && go vet ./...",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-core && npx tsc --noEmit 2>&1 | grep -v \"npm warn\" | grep \"error TS\" | wc -l",
+            "$ cd <TNF_ROOT>/packages/tnf-cli && npx tsc --noEmit 2>&1 | grep -v \"npm warn\" | grep \"error TS\" | wc -l",
+            "$ cd <TNF_ROOT>/packages/tnf-orchestrator-go && go vet ./...",
+            "$ cd <TNF_ROOT>/packages/tnf-core && npx tsc --noEmit 2>&1 | grep -v \"npm warn\" | grep \"error TS\" | wc -l",
             "Fix api-client missing .js extensions on 13 integration files + index",
             "Added .js to 13 integration files importing ../../core/ApiClient and ../../config/ApiConfig + fixed services/index.ts and root index.ts",
             "./types.js in 4 files (ContextAwareOrchestrator, provider-registry, vector-store, pinecone-provider)",
@@ -2038,7 +2038,7 @@
             "Use when: looking up how often a term/identifier appears across the TNF codebase, finding high-value vocabulary for agent prompts, checking communication pattern usage, identifying dominant coding patterns, exploring identifier distribution by category or file.\"",
             "- JSON viz data (top 500 words + categories): `https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/concordance_viz_data.json`",
             "- Stats JSON: `https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/stats.json`",
-            "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance_viz_data.json`",
+            "- `<TNF_ROOT>/concordance_results/concordance_viz_data.json`",
             "Fetch the viz JSON.",
             "curl -s \"https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/public/concordance/20260508_124525/concordance_viz_data.json\" | python3 -c \"",
             "import json, sys",
@@ -2052,17 +2052,17 @@
             "- Keywords & Reserved, Types & Interfaces, Function Names, Agent & System",
             "- UI & Components, Data & State, Error & Status, Config & Env",
             "- Network & API, Domain-Specific",
-            "python3 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate_concordance.py",
+            "python3 <TNF_ROOT>/scripts/generate_concordance.py",
             "To regenerate the visualizer HTML + React JSON:"
           ],
           "strategic": [
-            "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance.tsv.gz`",
-            "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance_viz_data.json`",
-            "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html`",
-            "zgrep -i \"orchestrat\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/concordance.tsv.gz",
-            "zcat /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/concordance_results/per_file_index.tsv.gz | grep \"specific/path.ts\"",
-            "python3 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate_concordance.py",
-            "python3 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/generate_concordance_viz.py",
+            "- `<TNF_ROOT>/concordance_results/concordance.tsv.gz`",
+            "- `<TNF_ROOT>/concordance_results/concordance_viz_data.json`",
+            "- `<TNF_ROOT>/apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html`",
+            "zgrep -i \"orchestrat\" <TNF_ROOT>/concordance_results/concordance.tsv.gz",
+            "zcat <TNF_ROOT>/concordance_results/per_file_index.tsv.gz | grep \"specific/path.ts\"",
+            "python3 <TNF_ROOT>/scripts/generate_concordance.py",
+            "python3 <TNF_ROOT>/scripts/generate_concordance_viz.py",
             "Read Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/mcp-core/src/index.ts"
           ],
           "governance": [
@@ -2836,15 +2836,15 @@
             "Grep \"Concordance System\" in Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md (1 match)",
             "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md [offset=84]",
             "Edit Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md",
-            "- `/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html`",
+            "- `<TNF_ROOT>/apps/frontend/public/visualizations/TNF_CONCORDANCE_VISUALIZER.html`",
             "- Current local file: Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/",
             "# Restore codebase_map.json from git in ~/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
-            "$ git show eed740a988ae1c36bd758a883b839c96a4af302c:apps/frontend/src/data/codebase_map.json > /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json 2>&1 && wc -c /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json",
-            "6692995 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json",
-            "$ python3 -c \"import json; d=json.load(open('/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json')); print(f'nodes: {len(d[\\\"nodes\\\"])}, edges: {len(d[\\\"edges\\\"])}')\"",
-            "$ mv /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map_restored.json /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map.json",
-            "$ wc -c /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map.json",
-            "6692995 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/frontend/src/data/codebase_map.json"
+            "$ git show eed740a988ae1c36bd758a883b839c96a4af302c:apps/frontend/src/data/codebase_map.json > <TNF_ROOT>/apps/frontend/src/data/codebase_map_restored.json 2>&1 && wc -c <TNF_ROOT>/apps/frontend/src/data/codebase_map_restored.json",
+            "6692995 <TNF_ROOT>/apps/frontend/src/data/codebase_map_restored.json",
+            "$ python3 -c \"import json; d=json.load(open('<TNF_ROOT>/apps/frontend/src/data/codebase_map_restored.json')); print(f'nodes: {len(d[\\\"nodes\\\"])}, edges: {len(d[\\\"edges\\\"])}')\"",
+            "$ mv <TNF_ROOT>/apps/frontend/src/data/codebase_map_restored.json <TNF_ROOT>/apps/frontend/src/data/codebase_map.json",
+            "$ wc -c <TNF_ROOT>/apps/frontend/src/data/codebase_map.json",
+            "6692995 <TNF_ROOT>/apps/frontend/src/data/codebase_map.json"
           ],
           "governance": [
             "all 6 phrase groups (agent, communication, vocabulary, intelligence, resilience, governance)",
@@ -3992,7 +3992,7 @@
           ],
           "strategic": [
             "protocol standards from some other Agentic plat form or LLM provider, that",
-            "@/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/",
+            "@<TNF_ROOT>/.claude/agents/",
             "audience-persona-architect-agent.md",
             "business-model-architect-agent.md",
             "contextual-model-implementation-architect.md",
@@ -4000,10 +4000,10 @@
             "facebook-strategy-agent.md",
             "instagram-strategy-agent.md",
             "inter-agentic-workflow-definer.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/l",
+            "<TNF_ROOT>/.claude/agents/l",
             "meta-agent-architect.md",
             "monetization-strategy-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/o",
+            "<TNF_ROOT>/.claude/agents/o",
             "oto-sequence-architect-agent.md",
             "personal-brand-architect-agent.md",
             "platform-selection-agent.md",
@@ -6115,12 +6115,12 @@
             "change likely depends on repo conventions.",
             "codebase, then trace the progressive-disclosure and sequencer paths before",
             "Ran rg -n \"progressive|disclosure|sequencer|sequence|workflow action|",
-            "/Users/danielgoldberg/tnf-swarm-audit/agent-1-visual.sh:6:echo \"[AGENT-1]",
+            "<USER_HOME>/tnf-swarm-audit/agent-1-visual.sh:6:echo \"[AGENT-1]",
             "collection.nml:499:<ALBUM TITLE=\"Step Sequencer: Essential Percussion",
-            "/Users/danielgoldberg/.config/tnf",
-            "/Users/danielgoldberg/tnf-swarm-audit/agent-1-visual.sh",
-            "/Users/danielgoldberg/apps/api-gateway/src/auth/strategies/jwt.strategy.ts",
-            "The main repo appears to be /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/",
+            "<USER_HOME>/.config/tnf",
+            "<USER_HOME>/tnf-swarm-audit/agent-1-visual.sh",
+            "<USER_HOME>/apps/api-gateway/src/auth/strategies/jwt.strategy.ts",
+            "The main repo appears to be <USER_HOME>/Desktop/A1-Inter-LLM-Com/",
             "m checking its local TNF context files and git state now, then",
             "Ran sed -n '1,120p' .agent/handoff_notes.txt 2>/dev/null || true",
             "# TNF CTO Agent Handoff Notes",
@@ -6132,21 +6132,21 @@
             "Ran sed -n '1,180p' .agent/context/resource-map.md 2>/dev/null || true"
           ],
           "strategic": [
-            "/Users/danielgoldberg/.openclaw/agents/tnf-architect",
-            "/Users/danielgoldberg/apps/api-gateway/src/auth/strategies/jwt.strategy.ts",
-            "The main repo appears to be /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/",
+            "<USER_HOME>/.openclaw/agents/tnf-architect",
+            "<USER_HOME>/apps/api-gateway/src/auth/strategies/jwt.strategy.ts",
+            "The main repo appears to be <USER_HOME>/Desktop/A1-Inter-LLM-Com/",
             "* Advanced Multi-Service Integration Example",
             "Read implementation-plan-orchestration.md",
             "orchestration plan, and it is not a progressive sequencer: random prompts, no",
             "behavior in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/src/",
             "danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse.",
-            "printf '/exit\\n' | /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-"
+            "printf '/exit\\n' | <USER_HOME>/Desktop/A1-Inter-LLM-Com/The-New-"
           ],
           "governance": [
-            "/Users/danielgoldberg/tnf-swarm-audit/agent-1-visual.sh:6:echo \"[AGENT-1]",
-            "danielgoldberg/apps /Users/danielgoldberg/tnf-swarm-audit /Users/",
-            "/Users/danielgoldberg/tnf-swarm-audit/agent-1-visual.sh",
-            "/Users/danielgoldberg/tnf-swarm-audit/fix-grep.sh",
+            "<USER_HOME>/tnf-swarm-audit/agent-1-visual.sh:6:echo \"[AGENT-1]",
+            "danielgoldberg/apps <USER_HOME>/tnf-swarm-audit /Users/",
+            "<USER_HOME>/tnf-swarm-audit/agent-1-visual.sh",
+            "<USER_HOME>/tnf-swarm-audit/fix-grep.sh",
             "s resource map points at a newer Turn Zero/Living State protocol, so",
             "stage state, no response-change gate, no streaming guard beyond readiness, and"
           ]
@@ -7858,13 +7858,13 @@
             "tnf: TNF Free LLM Fleet, TNF LLVM",
             "claw cleanup` (renames it to ~/.openclaw.pre-migration",
             "/cost Show cost and token accounting status for the current session.",
-            "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+            "cd <TNF_ROOT>",
             "Operation interrupted: waiting for model response (2.8s elapsed).",
             "Provider: nvidia Model: z-ai/glm-5.1",
             "Select a model (50 available)",
             "Session: 20260614_154728_4b8482 creative: architecture-diagram,",
             "Model: z-ai/glm-5.1",
-            "Working Dir: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+            "Working Dir: <TNF_ROOT>",
             "Unknown command: /cost show cost and token accounting status for the current session.",
             "/handoff - Hand off this session to a messaging platform (Telegram,",
             "Discord, etc.) (usage: /handoff <platform>)",
@@ -8650,9 +8650,7 @@
         },
         "taxonomy": {
           "procedural": [],
-          "strategic": [
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/tauri-desktop"
-          ],
+          "strategic": ["<TNF_ROOT>/apps/tauri-desktop"],
           "governance": []
         },
         "utility_metrics": {
@@ -10253,7 +10251,7 @@
           "procedural": [
             "Execute safe disk recovery (git tmp, logs, caches, build artifacts)",
             "Add swarm log retention + heartbeat prune script",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node",
+            "$ cd <TNF_ROOT> && node",
             "Orphaned git tmp_pack_*",
             "Rebuilds on next desktop build",
             "npm/pnpm cache prune",
@@ -10265,7 +10263,7 @@
             "Recommended next steps",
             "Want me to wire the retention script into the super-cycle cron and restart",
             "Finished Desktop, heartbeat history, pnpm store sizes",
-            "/Users/danielgoldberg/Library/pnpm 2>/dev/null 30s in",
+            "<USER_HOME>/Library/pnpm 2>/dev/null 30s in",
             "~20GB (mostly The-New-Fuse repo + apps)",
             "Repo tree: ~15GB (down ~5GB from git tmp packs, Tauri target, mirror",
             "pnpm store: ~8.4GB (pruned; still large but mostly active packages)",
@@ -10273,8 +10271,8 @@
             "Gap: Heartbeat history hit 600MB+, Hermes cron output 15k files, git"
           ],
           "strategic": [
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && node",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com",
+            "$ cd <TNF_ROOT> && node",
+            "<USER_HOME>/Desktop/A1-Inter-LLM-Com",
             "Desktop/A1-Inter-LLM-Com/The-New-Fuse",
             "Desktop/A1-Inter-LLM-Com"
           ],
@@ -11580,12 +11578,12 @@
             "Thought: The user wants me to verify if the slash commands, skills, TNF CLI, and TNF CLI agent are all up to date.",
             "First, let me check what slash commands exist in the CLI:",
             "# Verify TNF CLI TypeScript compiles",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm exec tsc --noEmit -p packages/tnf-cli/tsconfig.json 2>&1 | head -20",
+            "$ cd <TNF_ROOT> && pnpm exec tsc --noEmit -p packages/tnf-cli/tsconfig.json 2>&1 | head -20",
             "[WARN] The \"pnpm\" field in package.json is no longer read by pnpm.",
             "The following keys were ignored: \"pnpm.overrides\".",
             "See https://pnpm.io/settings for the new home of each setting.",
             "# Check git status for uncommitted changes",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && git status --short 2>&1 | head -20",
+            "$ cd <TNF_ROOT> && git status --short 2>&1 | head -20",
             "M .agent/SYSTEM_PROMPT.md",
             "M .agent/agents/continuous-improver.md",
             "D .agent/agents/picoclaw-perplexity.md",
@@ -11597,8 +11595,8 @@
             "D .agent/fleet/users/agents/picoclaw-perplexity.md"
           ],
           "strategic": [
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm exec tsc --noEmit -p packages/tnf-cli/tsconfig.json 2>&1 | head -20",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && git status --short 2>&1 | head -20",
+            "$ cd <TNF_ROOT> && pnpm exec tsc --noEmit -p packages/tnf-cli/tsconfig.json 2>&1 | head -20",
+            "$ cd <TNF_ROOT> && git status --short 2>&1 | head -20",
             "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/tnf-cli.md [limit=20, offset=195]",
             "Grep \"slashCommands\\.set\\(|command\\.name.*=.*'\" in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/src/cli.ts (16 matches)",
             "Grep \"command\\.name ===\" in Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/src/cli.ts (15 matches)",
@@ -11610,8 +11608,8 @@
             "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/src/slashCommands.ts [limit=240, offset=150]",
             "Grep \"skill| Skill\" in Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent (10 matches)",
             "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/agents/tnf-cli.md [limit=80]",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/ 2>&1 | head -30",
-            "$ ls -d /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skills/*/ 2>&1 | xargs -I{} basename {} | sort",
+            "$ ls -la <TNF_ROOT>/.agent/skills/ 2>&1 | head -30",
+            "$ ls -d <TNF_ROOT>/.agent/skills/*/ 2>&1 | xargs -I{} basename {} | sort",
             "senior-architect - DOES NOT EXIST",
             "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/src/slashCommands.ts [limit=40, offset=181]",
             "- senior-architect",
@@ -12059,7 +12057,7 @@
             "Thought: The user wants me to run the TNF onboard command.",
             "Based on the docs, I should run pnpm run tnf:onboard in the TNF repo directory.",
             "# Run TNF onboarding in the repo",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run tnf:onboard",
+            "$ cd <TNF_ROOT> && pnpm run tnf:onboard",
             "[WARN] The \"pnpm\" field in package.json is no longer read by pnpm.",
             "The following keys were ignored: \"pnpm.overrides\".",
             "See https://pnpm.io/settings for the new home of each setting.",
@@ -12067,8 +12065,8 @@
             "No other active agent terminals detected."
           ],
           "strategic": [
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && pnpm run tnf:onboard",
-            "> the-new-fuse@ tnf:onboard /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+            "$ cd <TNF_ROOT> && pnpm run tnf:onboard",
+            "> the-new-fuse@ tnf:onboard <TNF_ROOT>"
           ],
           "governance": []
         },
@@ -12734,19 +12732,19 @@
             "tnf-cli.md updated Dual-mode architecture, anti-protocol-trap rules",
             "Orphaned JS cleanup Removed 80 build artifacts (-9152 lines)",
             "The TNF CLI agent now has user-first responsiveness with dual-mode architecture (Interactive/Swarm) and follows the anti-protocol-trap rules to stay active and engaged.",
-            "$ ls -la /Users/danielgoldberg/.tnf/handoff-current.json /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/LIVING_STATE.md /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md 2>/dev/null",
-            "-rw-r--r-- 1 danielgoldberg _analyticsusers 1212 Jul 4 23:12 /Users/danielgoldberg/.tnf/handoff-current.json",
-            "-rw-r--r-- 1 danielgoldberg staff 8829 Jul 4 23:46 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md",
-            "-rw-r--r-- 1 danielgoldberg staff 30469 Jul 4 23:45 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/LIVING_STATE.md"
+            "$ ls -la <USER_HOME>/.tnf/handoff-current.json <TNF_ROOT>/docs/protocols/LIVING_STATE.md <TNF_ROOT>/docs/protocols/AGENT_STATUS_LEDGER.md 2>/dev/null",
+            "-rw-r--r-- 1 danielgoldberg _analyticsusers 1212 Jul 4 23:12 <USER_HOME>/.tnf/handoff-current.json",
+            "-rw-r--r-- 1 danielgoldberg staff 8829 Jul 4 23:46 <TNF_ROOT>/docs/protocols/AGENT_STATUS_LEDGER.md",
+            "-rw-r--r-- 1 danielgoldberg staff 30469 Jul 4 23:45 <TNF_ROOT>/docs/protocols/LIVING_STATE.md"
           ],
           "strategic": [
             "tnf-cli.md updated Dual-mode architecture, anti-protocol-trap rules",
             "The TNF CLI agent now has user-first responsiveness with dual-mode architecture (Interactive/Swarm) and follows the anti-protocol-trap rules to stay active and engaged.",
-            "$ ls -la /Users/danielgoldberg/.tnf/handoff-current.json /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/LIVING_STATE.md /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md 2>/dev/null",
-            "-rw-r--r-- 1 danielgoldberg staff 8829 Jul 4 23:46 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md",
-            "-rw-r--r-- 1 danielgoldberg staff 30469 Jul 4 23:45 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/LIVING_STATE.md",
-            "$ cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse && git log --oneline -3 && echo \"---\" && cat docs/protocols/reports/SESSION_HANDOFF_LATEST.json | python3 -c \"import sys,json; d=json.load(sys.stdin); print(f'handoff_id: {d.get(\\\"handoff_id\\\")}'); print(f'created_at: {d.get(\\\"created_at\\\")}'); print(f'head_sha: {d.get(\\\"head_sha\\\")}')\"",
-            "$ tail -30 /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/protocols/AGENT_STATUS_LEDGER.md | head -20"
+            "$ ls -la <USER_HOME>/.tnf/handoff-current.json <TNF_ROOT>/docs/protocols/LIVING_STATE.md <TNF_ROOT>/docs/protocols/AGENT_STATUS_LEDGER.md 2>/dev/null",
+            "-rw-r--r-- 1 danielgoldberg staff 8829 Jul 4 23:46 <TNF_ROOT>/docs/protocols/AGENT_STATUS_LEDGER.md",
+            "-rw-r--r-- 1 danielgoldberg staff 30469 Jul 4 23:45 <TNF_ROOT>/docs/protocols/LIVING_STATE.md",
+            "$ cd <TNF_ROOT> && git log --oneline -3 && echo \"---\" && cat docs/protocols/reports/SESSION_HANDOFF_LATEST.json | python3 -c \"import sys,json; d=json.load(sys.stdin); print(f'handoff_id: {d.get(\\\"handoff_id\\\")}'); print(f'created_at: {d.get(\\\"created_at\\\")}'); print(f'head_sha: {d.get(\\\"head_sha\\\")}')\"",
+            "$ tail -30 <TNF_ROOT>/docs/protocols/AGENT_STATUS_LEDGER.md | head -20"
           ],
           "governance": [
             "tnf-cli.md updated Dual-mode architecture, anti-protocol-trap rules",
@@ -13861,40 +13859,40 @@
             "The catalog file data/protocols/chronological-process-catalog.json doesn't exist (referenced",
             "the catalog schema is tnf/chronological-process-catalog/0.1 and there's a chronological-process-catalog.json",
             "But the path is data/protocols/chronological-process-catalog.json and that doesn't exist on disk (only the",
-            "$ grep -B2 -A3 \"protocolsDir\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/master-clock-sync-audit.test.cjs 0.1s",
+            "$ grep -B2 -A3 \"protocolsDir\" <TNF_ROOT>/scripts/protocols/master-clock-sync-audit.test.cjs 0.1s",
             "So in tests, the path is data/protocols/chronological-process-catalog.json.",
             "data/protocols/chronological-process-catalog.json but that file isn't there (it's gitignored).",
             "Let me check workflow-routing logic and autonomy protocol gaps:",
-            "$ ls /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/orchestrator/ /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/ 2>/dev/null + 1 command 0.1s",
-            "$ ls /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/ 2>/dev/null + 1 command 0.1s",
+            "$ ls <TNF_ROOT>/scripts/orchestrator/ <TNF_ROOT>/scripts/swarm/ 2>/dev/null + 1 command 0.1s",
+            "$ ls <TNF_ROOT>/scripts/swarm/ 2>/dev/null + 1 command 0.1s",
             "exec # Look specifically at the protocol scripts that have NO test - small, easy targets 0.1s",
             "twip-sign-envelope.cjs is the most contained, has a clear --in/--out/--verify API, and is critical for handoff authenticity",
             "validate-twip-signed-fixtures script in the same folder is its companion",
-            "$ grep \"twip-sign\\|hmac-sha256\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/*.test.cjs 2>/dev/null + 1 command 0.1s",
+            "$ grep \"twip-sign\\|hmac-sha256\" <TNF_ROOT>/scripts/protocols/*.test.cjs 2>/dev/null + 1 command 0.1s",
             "Let me look at how the script is called in practice to keep tests realistic:",
-            "grep -r \"twip-sign-envelope\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts 2>/dev/null | grep -v \".test.cjs\" ( 1",
-            "$ grep -r \"twip-sign-envelope\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts 2>/dev/null | grep -v \".test.cjs\" 24.9s",
+            "grep -r \"twip-sign-envelope\" <TNF_ROOT>/scripts 2>/dev/null | grep -v \".test.cjs\" ( 1",
+            "$ grep -r \"twip-sign-envelope\" <TNF_ROOT>/scripts 2>/dev/null | grep -v \".test.cjs\" 24.9s",
             "Let me write twip-sign-envelope.test.cjs:",
-            "write /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/twip-sign-envelope.test.cjs 0.8s",
+            "write <TNF_ROOT>/scripts/protocols/twip-sign-envelope.test.cjs 0.8s",
             "a/scripts/protocols/twip-sign-envelope.test.cjs",
             "b/scripts/protocols/twip-sign-envelope.test.cjs"
           ],
           "strategic": [
-            "$ grep -B2 -A3 \"protocolsDir\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/master-clock-sync-audit.test.cjs 0.1s",
-            "$ grep \"data/protocols\\|chronological\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.gitignore 0.1s",
-            "$ ls /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/orchestrator/ /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/ 2>/dev/null + 2 commands 0.3s",
-            "$ ls /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/orchestrator/ /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/ 2>/dev/null + 1 command 0.1s",
-            "$ ls /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/swarm/ 2>/dev/null + 1 command 0.1s",
-            "$ grep \"twip-sign\\|hmac-sha256\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/*.test.cjs 2>/dev/null + 1 command 0.1s",
-            "grep -r \"twip-sign-envelope\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts 2>/dev/null | grep -v \".test.cjs\" ( 1",
-            "$ grep -r \"twip-sign-envelope\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts 2>/dev/null | grep -v \".test.cjs\" 24.9s",
-            "write /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/twip-sign-envelope.test.cjs 0.8s",
-            "$ grep -E '\"test|\"scripts\":' /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/package.json 0.1s"
+            "$ grep -B2 -A3 \"protocolsDir\" <TNF_ROOT>/scripts/protocols/master-clock-sync-audit.test.cjs 0.1s",
+            "$ grep \"data/protocols\\|chronological\" <TNF_ROOT>/.gitignore 0.1s",
+            "$ ls <TNF_ROOT>/scripts/orchestrator/ <TNF_ROOT>/scripts/swarm/ 2>/dev/null + 2 commands 0.3s",
+            "$ ls <TNF_ROOT>/scripts/orchestrator/ <TNF_ROOT>/scripts/swarm/ 2>/dev/null + 1 command 0.1s",
+            "$ ls <TNF_ROOT>/scripts/swarm/ 2>/dev/null + 1 command 0.1s",
+            "$ grep \"twip-sign\\|hmac-sha256\" <TNF_ROOT>/scripts/protocols/*.test.cjs 2>/dev/null + 1 command 0.1s",
+            "grep -r \"twip-sign-envelope\" <TNF_ROOT>/scripts 2>/dev/null | grep -v \".test.cjs\" ( 1",
+            "$ grep -r \"twip-sign-envelope\" <TNF_ROOT>/scripts 2>/dev/null | grep -v \".test.cjs\" 24.9s",
+            "write <TNF_ROOT>/scripts/protocols/twip-sign-envelope.test.cjs 0.8s",
+            "$ grep -E '\"test|\"scripts\":' <TNF_ROOT>/package.json 0.1s"
           ],
           "governance": [
             "There are 36 protocol scripts in scripts…",
             "There are 36 protocol scripts in scripts/protocols/, and a chronological dispatch system with 18",
-            "$ grep -B2 -A3 \"protocolsDir\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/scripts/protocols/master-clock-sync-audit.test.cjs 0.1s",
+            "$ grep -B2 -A3 \"protocolsDir\" <TNF_ROOT>/scripts/protocols/master-clock-sync-audit.test.cjs 0.1s",
             "In production code, master-clock-sync-audit reads from",
             "Let me check workflow-routing logic and autonomy protocol gaps:",
             "exec # Look specifically at the protocol scripts that have NO test - small, easy targets 0.1s",
@@ -16120,14 +16118,14 @@
             "- Fixed /model to reload updated models.json configuration when opening the",
             "model picker (#6999 (https://github.com/earendil-works/pi/issues/6999)).",
             "I'll investigate the current state of .pi agent integration in the TNF CLI to",
-            "$ find /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse -type d",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/skill-bank/",
-            "$ ls /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/",
-            "$ ls /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tnf",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tnf",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/",
+            "$ find <TNF_ROOT> -type d",
+            "<TNF_ROOT>/.agent/skill-bank/",
+            "$ ls <TNF_ROOT>/",
+            "$ ls <TNF_ROOT>/tnf",
+            "<TNF_ROOT>/tnf",
+            "<TNF_ROOT>/packages/tnf-cli/",
             "test-vscode-integration.js",
-            "$ file /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/tnf && ls"
+            "$ file <TNF_ROOT>/tnf && ls"
           ],
           "governance": [
             "metadata to gate constrained sampling.",
@@ -18568,28 +18566,28 @@
           "strategic": [
             "Thought: Let me look at the Project Root folder - specifically the Desktop/A1-Inter-LLM-Com folder which seems to be the TNF project based on the TURN_ZERO_MANDATE reference.",
             "# List A1-Inter-LLM-Com contents",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/ 2>/dev/null",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/ 2>/dev/null | head -30",
-            "$ find /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude -name \"*.md\" -type f 2>/dev/null | head -50",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/customer-support-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/information-retrieval-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/ad-network-manager-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/funnel-economics-analyst-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/interop-protocol-qa-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/cursor-watch-learn-operator.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/content-writer-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/social-selling-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/tiktok-strategy-agent.md",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/digital-product-factory-agent.md",
+            "$ ls -la <USER_HOME>/Desktop/A1-Inter-LLM-Com/ 2>/dev/null",
+            "$ ls -la <TNF_ROOT>/ 2>/dev/null | head -30",
+            "$ find <TNF_ROOT>/.claude -name \"*.md\" -type f 2>/dev/null | head -50",
+            "<TNF_ROOT>/.claude/agents/customer-support-agent.md",
+            "<TNF_ROOT>/.claude/agents/information-retrieval-agent.md",
+            "<TNF_ROOT>/.claude/agents/ad-network-manager-agent.md",
+            "<TNF_ROOT>/.claude/agents/funnel-economics-analyst-agent.md",
+            "<TNF_ROOT>/.claude/agents/interop-protocol-qa-agent.md",
+            "<TNF_ROOT>/.claude/agents/cursor-watch-learn-operator.md",
+            "<TNF_ROOT>/.claude/agents/content-writer-agent.md",
+            "<TNF_ROOT>/.claude/agents/social-selling-agent.md",
+            "<TNF_ROOT>/.claude/agents/tiktok-strategy-agent.md",
+            "<TNF_ROOT>/.claude/agents/digital-product-factory-agent.md",
             "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/staffing-director-agent.md",
             "Loaded Desktop/A1-Inter-LLM-Com/The-New-Fuse/AGENTS.md",
             "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/scaffolds/new-tnf-agent.md",
             "Read Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/super-director.md",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/ 2>/dev/null"
+            "$ ls -la <TNF_ROOT>/.agent/ 2>/dev/null"
           ],
           "governance": [
             "- No interop-protocol-qa-agent (wrapper exists but canonical is missing)",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.claude/agents/interop-protocol-qa-agent.md",
+            "<TNF_ROOT>/.claude/agents/interop-protocol-qa-agent.md",
             "autonomy-governor LOW For policy governance of autonomous loops",
             "description: Enforces cross-harness state retention, lock/pid integrity, and snapshot consistency",
             "description: Enforces cross-harness state retention, lock/pid integrity, and snapshot consistency across TNF agent sessions.",
@@ -19149,7 +19147,7 @@
         },
         "taxonomy": {
           "procedural": [
-            "cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\" && pnpm relay:start",
+            "cd \"<TNF_ROOT>\" && pnpm relay:start",
             "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
             "Emit a fresh handoff artifact immediately after completing the next critical work unit.",
             "Use 'tnf' as the entrypoint for OpenClaw and other Claw-type agent operations.",
@@ -19157,7 +19155,7 @@
             "TURN ZERO ONBOARDING PROMPT (Copy/Paste for new agent sessions):",
             "Launch raw AI CLIs from the TNF repository root so ./docs/...",
             "or 'cat ~/.tnf/handoff-current.json' for raw JSON",
-            "danielgoldberg@Daniels-MacBook-Pro ~ % cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\" && pnpm relay:start",
+            "danielgoldberg@Daniels-MacBook-Pro ~ % cd \"<TNF_ROOT>\" && pnpm relay:start",
             "Discovery Warning: Found 3 active agent terminals.",
             "To prevent duplication, ensure you are not running \"tnf boot\" in an existing agent lane.",
             "- .agent/SYSTEM_PROMPT.md: present",
@@ -19171,15 +19169,15 @@
             "- defer-until-needed: .agent/context/agent-onboarding.md (384 words)"
           ],
           "strategic": [
-            "cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\" && pnpm relay:start",
-            "danielgoldberg@Daniels-MacBook-Pro ~ % cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse\" && pnpm relay:start",
+            "cd \"<TNF_ROOT>\" && pnpm relay:start",
+            "danielgoldberg@Daniels-MacBook-Pro ~ % cd \"<TNF_ROOT>\" && pnpm relay:start",
             "- OpenClaw is an optional integration surface routed through TNF",
-            "Cmd: danielgol /Users/danielgoldberg/.hermes/node/bin/node --require /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/tsx/dist/preflight.cjs --import file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/tsx/dist/loader.mjs /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/tnf-cli/src/cli.ts tui",
-            "> the-new-fuse@ relay:start /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
-            "> @the-new-fuse/relay-core@1.0.0 relay /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core",
-            "Error: Cannot find module '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts/dist/index.js'",
-            "path: '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts'",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core:"
+            "Cmd: danielgol <USER_HOME>/.hermes/node/bin/node --require <TNF_ROOT>/node_modules/tsx/dist/preflight.cjs --import file://<TNF_ROOT>/node_modules/tsx/dist/loader.mjs <TNF_ROOT>/packages/tnf-cli/src/cli.ts tui",
+            "> the-new-fuse@ relay:start <TNF_ROOT>",
+            "> @the-new-fuse/relay-core@1.0.0 relay <TNF_ROOT>/packages/relay-core",
+            "Error: Cannot find module '<TNF_ROOT>/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts/dist/index.js'",
+            "path: '<TNF_ROOT>/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts'",
+            "<TNF_ROOT>/packages/relay-core:"
           ],
           "governance": [
             "Protocol enforcement layer implemented for mandatory session handoff continuity.",
@@ -19193,8 +19191,8 @@
             "- agent-discovery-protocol",
             "=== OpenClaw / Claw Operator Policy ===",
             "- Audit current compatibility with: tnf compat openclaw",
-            "Error: Cannot find module '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts/dist/index.js'",
-            "path: '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts'"
+            "Error: Cannot find module '<TNF_ROOT>/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts/dist/index.js'",
+            "path: '<TNF_ROOT>/packages/relay-core/node_modules/@the-new-fuse/protocol-contracts'"
           ]
         },
         "utility_metrics": {
@@ -20057,9 +20055,7 @@
         },
         "taxonomy": {
           "procedural": [],
-          "strategic": [
-            "outside of /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
-          ],
+          "strategic": ["outside of <TNF_ROOT>"],
           "governance": ["for extending the core TNF protocol."]
         },
         "utility_metrics": {
@@ -20934,7 +20930,7 @@
           ],
           "strategic": [
             "The 8 stale tasks in pending have lanes like reliability, context, self_improvement, quality, and orchestration",
-            "$ mkdir -p /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/docs/operations/audits/deep-thinking-loop 0.1s",
+            "$ mkdir -p <TNF_ROOT>/docs/operations/audits/deep-thinking-loop 0.1s",
             "Run a comprehensive inspection cycle of the TNF platform.",
             "You think like a senior architect: you understand the system holistically, you trace issues to their source, and you propose solutions that improve the system without breaking what works.",
             "If stale tasks have non-realtime lanes (reliability, context, self_improvement, quality, orchestration), they will NEVER be promoted.",
@@ -21046,9 +21042,9 @@
             "The broker agent is a separate process"
           ],
           "strategic": [
-            "patch /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/src/services/task-scheduler.service.ts 11.8s",
-            "a//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/src/services/task-scheduler.service.ts",
-            "b//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/packages/relay-core/src/services/task-scheduler.service.ts",
+            "patch <TNF_ROOT>/packages/relay-core/src/services/task-scheduler.service.ts 11.8s",
+            "a/<TNF_ROOT>/packages/relay-core/src/services/task-scheduler.service.ts",
+            "b/<TNF_ROOT>/packages/relay-core/src/services/task-scheduler.service.ts",
             "+ 'orchestration',",
             "excluded (orchestration, reliability, quality, context, self_improvement) to be considered"
           ],
@@ -21327,7 +21323,7 @@
             "KNOWLEDGE_TREE.json parsed, root=ec520d63532b9d5d"
           ],
           "strategic": [
-            "Workspace: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+            "Workspace: <TNF_ROOT>",
             "docs/protocols/mcp-nestjs-integration.md: [CLASS:INTEL] [STATUS:PENDING]",
             "docs/protocols/twip-orchestration-extension-v0.1.md: [CLASS:INTEL] [STATUS:PENDING]",
             "Protocol: Integration Verification",
@@ -21535,7 +21531,7 @@
         "taxonomy": {
           "procedural": [
             "Audit Pass (JSON Mapping)",
-            "- /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/agent_semantic_mapping.json",
+            "- <TNF_ROOT>/agent_semantic_mapping.json",
             "- tnf-agent-taxonomy-audit",
             "reusable skill at ~/.hermes/skills/tnf-agent-taxonomy-audit/",
             "All 194 agent definition files in .agent/agents/ now have standardized semantic chain frontmatter:",
@@ -21555,7 +21551,7 @@
             "~/.hermes/skills/tnf-agent-taxonomy-audit/SKILL.md"
           ],
           "strategic": [
-            "- /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/agent_semantic_mapping.json",
+            "- <TNF_ROOT>/agent_semantic_mapping.json",
             "fulfillment: { vendor, model, tools }",
             "Unified Orchestration: 15 agents (7.7%)",
             "Switched to fallback model: minimaxai/minimax-m3 via nvidia"
@@ -21825,7 +21821,7 @@
             "tnf doctor # Run TNF diagnostics",
             "tnf clean # Remove build artifacts",
             "The CLI can execute routines like what I did, but it requires:",
-            "Proper environment setup (/Users/danielgoldberg must be the repo root)"
+            "Proper environment setup (<USER_HOME> must be the repo root)"
           ],
           "strategic": ["tnf skill-bank # Cross-LLM skill bank operations"],
           "governance": [
@@ -21924,7 +21920,7 @@
             "tnf doctor # Run TNF diagnostics",
             "tnf clean # Remove build artifacts",
             "The CLI can execute routines like what I did, but it requires:",
-            "Proper environment setup (/Users/danielgoldberg must be the repo root)"
+            "Proper environment setup (<USER_HOME> must be the repo root)"
           ],
           "strategic": ["tnf skill-bank # Cross-LLM skill bank operations"],
           "governance": [
@@ -22014,9 +22010,9 @@
           "procedural": [
             "I compiled the mandatory production setup steps into",
             "Supabase Provider Config:",
-            "Read(/Users/danielgoldberg/Desktop/A1-I...scripts/deployment/cloudbuild.yaml)",
-            "Read(/Users/danielgoldberg/Desktop/A1-I...LM-Com/The-New-Fuse/Dockerfile.api)",
-            "Edit(/Users/danielgoldberg/Desktop/A1-I...LM-Com/The-New-Fuse/Dockerfile.api)",
+            "Read(<USER_HOME>/Desktop/A1-I...scripts/deployment/cloudbuild.yaml)",
+            "Read(<USER_HOME>/Desktop/A1-I...LM-Com/The-New-Fuse/Dockerfile.api)",
+            "Edit(<USER_HOME>/Desktop/A1-I...LM-Com/The-New-Fuse/Dockerfile.api)",
             "Bash(bash ./scripts/deployment/gcp-deploy.sh)",
             "### Dockerfile & GCP Cloud Build Fix Applied",
             "GCP Cloud Build failed in step 77 of Dockerfile.api because",
@@ -22400,13 +22396,13 @@
           ],
           "strategic": [
             "of the architecture, open-source vs proprietary components, and how local",
-            "$ ls -la \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF\" 2>/dev/null |",
+            "$ ls -la \"<USER_HOME>/Desktop/A1-Inter-LLM-Com/TNF\" 2>/dev/null |",
             "Grepped \"...der|preferred.*model|cloud escalation\" in",
             "Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse",
-            "\"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/packages\"",
-            "\"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps\"",
+            "\"<TNF_ROOT>/packages\"",
+            "\"<TNF_ROOT>/apps\"",
             "...Inter-LLM-Com/TNF/The-New-Fuse/packages/tnf-cli",
-            "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse.",
+            "<TNF_ROOT>.",
             "Harness = runtime around the model (8 layers: interface, provider",
             "routing, context/compaction, sandbox, permissions, orchestration,",
             "Agent = Model + Harness",
@@ -22545,9 +22541,9 @@
             "Codify three-transport-lane model in protocols/docs",
             "model-policy.yaml allow_cloud / local",
             "Cost/prelaunch policy",
-            "cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse",
+            "cd <TNF_ROOT>",
             "the next repair lane (extension lifecycle, model-policy, full-auto",
-            "$ cd \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse\" &&",
+            "$ cd \"<TNF_ROOT>\" &&",
             "...1-Inter-LLM-Com/TNF/The-New-Fuse/docs/protocols",
             "Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/scripts",
             "P0: ~/.tnf/sub-director/model-policy.yaml",
@@ -23084,26 +23080,26 @@
             "Step 6: Repository synchronization..."
           ],
           "strategic": [
-            "Workspace: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse",
+            "Workspace: <TNF_ROOT>",
             "docs/protocols/mcp-nestjs-integration.md: [CLASS:INTEL] [STATUS:PENDING]",
             "docs/protocols/twip-orchestration-extension-v0.1.md: [CLASS:INTEL] [STATUS:PENDING]",
             "Protocol: Integration Verification",
             "creative: architecture-diagram, +21",
             "model-watchdog, +1 more",
             "tnf: TNF Free LLM Fleet, +51 more",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/tools/ 0.1s",
+            "$ ls -la <TNF_ROOT>/tools/ 0.1s",
             "$ pnpm tnf convo create --name \"TNF FUSE Development Agents\" --agents all --platform whatsapp 7.9s [exit 1]",
-            "$ find /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension -name \"manifest*\" -type f 0.1s",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/dist-v6/ 0.1s",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/dist-v6/native-host/ 0.1s",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/dist-v7/native-host/ 0.1s",
-            "$ cat \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/dist-v7/native-host/tnf-native-host.sh\" 0.1s [exit 1]",
-            "$ find /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension -name \"*.sh\" -path \"*/native-host/*\" 0.1s",
-            "$ ls -la /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/dist-v7/background/ 0.1s",
-            "$ grep -n \"chrome.commands.onCommand\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/dist-v7/background/index.js 0.1s",
-            "$ grep -n \"chrome.commands.onCommand\" /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/src/v6/background/index.ts 0.1s",
-            "$ cat << 'EOF' { \"name\": \"com.thenewfuse.native_host\", \"description\": \"Fuse Connect v7 - Controls TNF services from Chrome Extension\", \"path\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs\", \"type\": \"stdio\", \"allowed_origins\": [ \"chrome-extension://fkbcklmcikdhpggaimfhomgncneppkbj/\" ] } EOF 0.1s",
-            "$ echo '{\"action\": \"ping\"}' | /Users/danielgoldberg/.local/bin/node /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs 0.2s"
+            "$ find <TNF_ROOT>/apps/chrome-extension -name \"manifest*\" -type f 0.1s",
+            "$ ls -la <TNF_ROOT>/apps/chrome-extension/dist-v6/ 0.1s",
+            "$ ls -la <TNF_ROOT>/apps/chrome-extension/dist-v6/native-host/ 0.1s",
+            "$ ls -la <TNF_ROOT>/apps/chrome-extension/dist-v7/native-host/ 0.1s",
+            "$ cat \"<TNF_ROOT>/apps/chrome-extension/dist-v7/native-host/tnf-native-host.sh\" 0.1s [exit 1]",
+            "$ find <TNF_ROOT>/apps/chrome-extension -name \"*.sh\" -path \"*/native-host/*\" 0.1s",
+            "$ ls -la <TNF_ROOT>/apps/chrome-extension/dist-v7/background/ 0.1s",
+            "$ grep -n \"chrome.commands.onCommand\" <TNF_ROOT>/apps/chrome-extension/dist-v7/background/index.js 0.1s",
+            "$ grep -n \"chrome.commands.onCommand\" <TNF_ROOT>/apps/chrome-extension/src/v6/background/index.ts 0.1s",
+            "$ cat << 'EOF' { \"name\": \"com.thenewfuse.native_host\", \"description\": \"Fuse Connect v7 - Controls TNF services from Chrome Extension\", \"path\": \"<TNF_ROOT>/apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs\", \"type\": \"stdio\", \"allowed_origins\": [ \"chrome-extension://fkbcklmcikdhpggaimfhomgncneppkbj/\" ] } EOF 0.1s",
+            "$ echo '{\"action\": \"ping\"}' | <USER_HOME>/.local/bin/node <TNF_ROOT>/apps/chrome-extension/dist-v7/native-host/tnf-native-host.cjs 0.2s"
           ],
           "governance": [
             "Protocol enforcement layer implemented for mandatory session handoff continuity.",
@@ -23685,16 +23681,16 @@
             "Let me check the migration file and a couple more things.",
             "The migration 0015_add_federated_ids.sql exists but there's a comment saying \"",
             "- Migration 0015_add_federated_ids.sql exists in drizzle folder (not migrations folder",
-            "write /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md 0.5s",
+            "write <TNF_ROOT>/docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.md 0.5s",
             "Actual format (per `identity.ts:38`, `identity.ts:52`, bridge emit) is `TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE` (hierarchical string).",
             "+- **Remediation:** Correct line 40 to: `- canonicalEntityId: Hierarchical TNF identity `TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE` (e.g., `TNF:AGENT:TNFCORE:WORKER-01:001`)`.",
             "Column was renamed to `traits` in migration 0009 (Phase 8).",
-            "write /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.json 0.5s",
+            "write <TNF_ROOT>/docs/protocols/reports/FULL_VOCABULARY_ALIGNMENT_AUDIT_2026-08-13.json 0.5s",
             "Actual format is hierarchical string TNF:[scope:]CATEGORY:PROVIDER:NAME:INSTANCE.\",",
             "DB column renamed to traits in migration 0009.",
-            "patch /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/docs/protocols/LIVING_STATE.md 0.5s",
-            "a//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/docs/protocols/LIVING_STATE.md",
-            "b//Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/docs/protocols/LIVING_STATE.md"
+            "patch <TNF_ROOT>/docs/protocols/LIVING_STATE.md 0.5s",
+            "a/<TNF_ROOT>/docs/protocols/LIVING_STATE.md",
+            "b/<TNF_ROOT>/docs/protocols/LIVING_STATE.md"
           ],
           "governance": [
             "Title: /tnf-vocabulary-alignment-audit",
@@ -23702,7 +23698,7 @@
             "Loading skill: tnf-vocabulary-alignment-audit",
             "[IMPORTANT: The user has invoked the \"tnf-vocabulary-alignment-audit\" skill,",
             "Load any of these with skill_view(name=\"tnf/tnf-vocabulary-alignment-audit\",",
-            "/Users/danielgoldberg/.hermes/skills/tnf/tnf-vocabulary-alignment-audit/scripts/",
+            "<USER_HOME>/.hermes/skills/tnf/tnf-vocabulary-alignment-audit/scripts/",
             "The user has invoked the `tnf-vocabulary-alignment-audit` skill.",
             ", then proceed with the audit.",
             "audit on something.",
@@ -24228,7 +24224,7 @@
             "Each satellite in TNF-Extensions should be its own GitHub repo, not one",
             "third-party checkouts, then create and push a repo per app."
           ],
-          "strategic": ["/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF"],
+          "strategic": ["<USER_HOME>/Desktop/A1-Inter-LLM-Com/TNF"],
           "governance": []
         },
         "utility_metrics": {

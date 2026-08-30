@@ -2,15 +2,15 @@
 
 Core fleet ok=true at 2026-08-10T01:16:46.663Z
 - [ok] nft-identity: existing local-oss-5cf0356cd5d96efe
-- [ok] identity: already Local Sub-Director (/Users/danielgoldberg/.tnf/agent.yaml)
-- [ok] env-hints: /Users/danielgoldberg/.tnf/core-fleet.env
-- [ok] sync:local-subdirector: /Users/danielgoldberg/.tnf/local-subdirector
-- [ok] sync:master-heartbeat: /Users/danielgoldberg/.tnf/master-heartbeat
+- [ok] identity: already Local Sub-Director (<USER_HOME>/.tnf/agent.yaml)
+- [ok] env-hints: <USER_HOME>/.tnf/core-fleet.env
+- [ok] sync:local-subdirector: <USER_HOME>/.tnf/local-subdirector
+- [ok] sync:master-heartbeat: <USER_HOME>/.tnf/master-heartbeat
 - [ok] relocate:com.tnf.local-subdirector: already points at real runtime
 - [ok] relocate:com.tnf.master-heartbeat: already points at real runtime
 - [ok] redis: PONG
 - [ok] relay: local relay already healthy
-- [ok] mcp: /Users/danielgoldberg/.tnf/mcp.json
+- [ok] mcp: <USER_HOME>/.tnf/mcp.json
 - [ok] local-subdirector-service.sh: install
 - [ok] tnf-master-heartbeat-service.sh: install
 - [ok] harness-boot.sh: boot

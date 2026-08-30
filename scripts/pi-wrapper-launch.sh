@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-TNF_ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+TNF_ROOT="${TNF_ROOT:-$(pwd)}"
 ENV_FILE="${TNF_ROOT}/.env"
 WRAPPER_SCRIPT="${TNF_ROOT}/scripts/pi-redis-wrapper.cjs"
 NODE_BIN="/usr/local/bin/node"

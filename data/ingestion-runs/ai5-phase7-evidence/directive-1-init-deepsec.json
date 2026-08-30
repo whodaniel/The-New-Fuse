@@ -7,11 +7,11 @@
   "evidence": {
     "deepsecInstalled": true,
     "deepsecVersion": "2.0.12",
-    "deepsecPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.deepsec",
+    "deepsecPath": "<TNF_ROOT>/.deepsec",
     "projectRegistered": true,
     "projectConfig": {
       "projectId": "The-New-Fuse",
-      "rootPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+      "rootPath": "<TNF_ROOT>",
       "registeredAt": "2026-06-09T05:56:00Z"
     }
   },
@@ -23,7 +23,7 @@
       "pnpm deepsec scan --project-id The-New-Fuse (timeout after 463s)"
     ],
     "existingInfrastructure": {
-      "runsFolder": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.deepsec/data/The-New-Fuse/runs/",
+      "runsFolder": "<TNF_ROOT>/.deepsec/data/The-New-Fuse/runs/",
       "totalRuns": 3,
       "completedRuns": 1,
       "stuckRuns": 2

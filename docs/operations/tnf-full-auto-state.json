@@ -11,7 +11,7 @@
     "finishedAt": "2026-08-12T02:21:03.426Z",
     "durationMs": 613440,
     "ok": true,
-    "error": "post-steps soft-failed: broadcast: /Users/danielgoldberg/.hermes/node/bin/node timed out after 600s and was killed"
+    "error": "post-steps soft-failed: broadcast: <USER_HOME>/.hermes/node/bin/node timed out after 600s and was killed"
   },
   "stoppedReason": "Reconciled 2026-08-13: state claimed running, but the daemon (pid 8865) was dead and both pidfiles were stale. Last cycle finished 2026-08-12T02:21Z."
 }

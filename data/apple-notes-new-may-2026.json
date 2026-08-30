@@ -202,7 +202,7 @@
     {
       "notePk": 6221,
       "title": "# Write concordance skill SKILL.md",
-      "snippet": "$ cat > /Users/danielgoldberg/.agents/skills/concordance/SKILL.md << 'ENDOFFILE'",
+      "snippet": "$ cat > <USER_HOME>/.agents/skills/concordance/SKILL.md << 'ENDOFFILE'",
       "createdAt": null,
       "modifiedAt": "2026-05-08T19:25:28.805904Z",
       "noteRef": null

@@ -40,8 +40,8 @@
 #     know or care what secrets/env-loading the wrapped command itself needs.
 set -euo pipefail
 
-REPO_ROOT_DEFAULT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse"
-PATH="/Users/danielgoldberg/.hermes/node/bin:/Users/danielgoldberg/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+REPO_ROOT_DEFAULT="${TNF_ROOT:-$(pwd)}"
+PATH="$HOME/.hermes/node/bin:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 job_label=""
 job_class="default"
@@ -95,7 +95,7 @@ export TNF_JOB_CLASS="$job_class"
 # Primary attribution mechanism for the watchdog — see header comment for
 # why this replaced env-var introspection. Best-effort: a registry write
 # failure must never block the actual job from starting.
-registry_dir="/Users/danielgoldberg/.tnf/resource-watchdog/registry"
+registry_dir="$HOME/.tnf/resource-watchdog/registry"
 mkdir -p "$registry_dir" 2>/dev/null || true
 registry_file="$registry_dir/$(printf '%s' "$job_label" | tr -c 'A-Za-z0-9._-' '-').json"
 printf '{"jobLabel":"%s","jobClass":"%s","rootPid":%d,"registeredAt":"%s"}\n' \

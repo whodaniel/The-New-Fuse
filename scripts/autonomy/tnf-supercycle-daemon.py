@@ -27,7 +27,7 @@ import threading
 from pathlib import Path
 
 # ─── Configuration ─────────────────────────────────────────────────────────
-REPO_ROOT = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+REPO_ROOT = os.environ.get("TNF_ROOT", os.getcwd())
 TNF_CLI = f"{REPO_ROOT}/packages/tnf-cli/dist/cli.js"
 LOG_DIR = f"{REPO_ROOT}/.agent/runtime-logs"
 STATE_FILE = f"{REPO_ROOT}/.agent/supercycle-state.json"

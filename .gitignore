@@ -552,3 +552,8 @@ docs/legal/sale/*.md
 codebase_tracker.json
 codebase_index.html
 docs/operations/tnf-action-receipts.jsonl
+packages/rust-relay/target/
+.verifier/
+replace_*.py
+apps/frontend/coverage/
+apps/api/logs/

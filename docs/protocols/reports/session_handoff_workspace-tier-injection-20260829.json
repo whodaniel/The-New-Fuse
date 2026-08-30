@@ -49,7 +49,7 @@
     ]
   },
   "classification": {
-    "work_domain": "corporate",
+    "work_domain": "core",
     "artifact_destination": "oss_runtime",
     "data_residency": "product_state",
     "sensitivity": "internal"

@@ -1,8 +1,8 @@
 {
   "generatedAt": "2026-08-16T19:47:53.581870Z",
   "seedSource": "tnf-executable-intelligence-activation",
-  "manifestPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/data/ingestion-runs/ai6-new-may-2026-manifest.json",
-  "artifactDir": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/data/intelligence-artifacts",
+  "manifestPath": "<TNF_ROOT>/data/ingestion-runs/ai6-new-may-2026-manifest.json",
+  "artifactDir": "<TNF_ROOT>/data/intelligence-artifacts",
   "sourcePrefixes": ["yt-ai6-"],
   "summary": {
     "sources_seen": 0,

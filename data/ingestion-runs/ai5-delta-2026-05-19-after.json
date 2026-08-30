@@ -1,8 +1,8 @@
 {
   "asOfUtc": "2026-05-19T05:25:37.325244Z",
   "playlistId": "PLSdNsZjFbYrUocyjWmVB75W8cZbI0ZmvS",
-  "liveSnapshotPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ai-5-playlist.live-2026-05-19.json",
-  "manifestPath": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/ingestion-runs/ai5-new-may-2026-manifest.json",
+  "liveSnapshotPath": "<TNF_ROOT>/data/ai-5-playlist.live-2026-05-19.json",
+  "manifestPath": "<TNF_ROOT>/data/ingestion-runs/ai5-new-may-2026-manifest.json",
   "live_count": 35,
   "ingested_count": 35,
   "missing_in_manifest": [],

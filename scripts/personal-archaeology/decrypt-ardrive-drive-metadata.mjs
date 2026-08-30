@@ -206,7 +206,7 @@ function extractNoteBlobText(hexBlob) {
 }
 
 function collectAppleNotesCandidates(candidates) {
-  const dbPath = path.join(process.env.HOME || '/Users/danielgoldberg', 'Library', 'Group Containers', 'group.com.apple.notes', 'NoteStore.sqlite');
+  const dbPath = path.join(process.env.HOME || os.homedir(), 'Library', 'Group Containers', 'group.com.apple.notes', 'NoteStore.sqlite');
   if (!fs.existsSync(dbPath)) return 0;
   const sql = `
 SELECT

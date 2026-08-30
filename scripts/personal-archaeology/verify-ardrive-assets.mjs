@@ -5,7 +5,7 @@ import fsSync from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 
-const HOME = '/Users/danielgoldberg';
+const HOME = os.homedir();
 const COLLECTION_DIR = `${HOME}/Documents/Arweave-ArDrive-Consolidated`;
 const OUT_DIR = process.env.OUT_DIR || `${COLLECTION_DIR}/02-ardrive-exports/verification`;
 const MANIFEST_DIR = process.env.MANIFEST_DIR || `${COLLECTION_DIR}/99-reference-manifests`;

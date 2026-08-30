@@ -5,7 +5,7 @@ set -euo pipefail
 
 PLIST_NAME="com.tnf.pi-redis-wrapper"
 PLIST_PATH="$HOME/Library/LaunchAgents/${PLIST_NAME}.plist"
-TNF_ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+TNF_ROOT="${TNF_ROOT:-$(pwd)}"
 STDOUT_LOG="/tmp/pi-wrapper-stdout.log"
 STDERR_LOG="/tmp/pi-wrapper-stderr.log"
 

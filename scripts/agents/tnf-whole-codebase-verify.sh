@@ -30,7 +30,7 @@ export FORCE_COLOR=0
 export TNF_WHOLE_CODEBASE_VERIFY=1
 export TNF_SECURITY_LOCAL="${TNF_SECURITY_LOCAL:-1}"
 
-ROOT="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+ROOT="${TNF_ROOT:-$(pwd)}"
 cd "$ROOT" || exit 1
 
 RUN_ID="whole-$(date -u +%Y-%m-%dT%H-%M-%SZ)"

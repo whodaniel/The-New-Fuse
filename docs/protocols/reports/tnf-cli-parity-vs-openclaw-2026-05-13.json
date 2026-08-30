@@ -111,7 +111,7 @@
   },
   "subcommands": {
     "run": {
-      "error": "Help command failed (exit 1) for: openclaw run --help\n[plugins] [workers-bridge-v2] registered semantic_memory_search tool\n\nConfig warnings:\n- plugins.entries.googlechat: plugin not installed: googlechat \u2014 install the official external plugin with: openclaw plugins install @openclaw/googlechat\n- plugins.entries.voice-call: plugin not installed: voice-call \u2014 install the official external plugin with: openclaw plugins install @openclaw/voice-call\n- plugins.entries.stall-defense: plugin not found: stall-defense (stale config entry ignored; remove it from plugins config)\n- plugins.entries.workers-bridge: plugin not found: workers-bridge (stale config entry ignored; remove it from plugins config)\n- plugins.allow: plugin not found: stall-defense (stale config entry ignored; remove it from plugins config)\n- plugins.allow: plugin not found: workers-bridge (stale config entry ignored; remove it from plugins config)\n- plugins.allow: plugin not installed: googlechat \u2014 install the official external plugin with: openclaw plugins install @openclaw/googlechat\n[openclaw] Failed to start CLI: Error: The `openclaw run` command is unavailable because `plugins.allow` excludes \"run\". Add \"run\" to `plugins.allow` if you want that bundled plugin CLI surface.\n    at runCli (file:///Users/danielgoldberg/.nvm/versions/node/v24.12.0/lib/node_modules/openclaw/dist/cli/run-main.js:460:46)"
+      "error": "Help command failed (exit 1) for: openclaw run --help\n[plugins] [workers-bridge-v2] registered semantic_memory_search tool\n\nConfig warnings:\n- plugins.entries.googlechat: plugin not installed: googlechat \u2014 install the official external plugin with: openclaw plugins install @openclaw/googlechat\n- plugins.entries.voice-call: plugin not installed: voice-call \u2014 install the official external plugin with: openclaw plugins install @openclaw/voice-call\n- plugins.entries.stall-defense: plugin not found: stall-defense (stale config entry ignored; remove it from plugins config)\n- plugins.entries.workers-bridge: plugin not found: workers-bridge (stale config entry ignored; remove it from plugins config)\n- plugins.allow: plugin not found: stall-defense (stale config entry ignored; remove it from plugins config)\n- plugins.allow: plugin not found: workers-bridge (stale config entry ignored; remove it from plugins config)\n- plugins.allow: plugin not installed: googlechat \u2014 install the official external plugin with: openclaw plugins install @openclaw/googlechat\n[openclaw] Failed to start CLI: Error: The `openclaw run` command is unavailable because `plugins.allow` excludes \"run\". Add \"run\" to `plugins.allow` if you want that bundled plugin CLI surface.\n    at runCli (file://<USER_HOME>/.nvm/versions/node/v24.12.0/lib/node_modules/openclaw/dist/cli/run-main.js:460:46)"
     },
     "auth": {
       "missing_commands": [
@@ -177,12 +177,7 @@
         "update",
         "webhooks"
       ],
-      "extra_commands": [
-        "list",
-        "login",
-        "logout",
-        "ls"
-      ],
+      "extra_commands": ["list", "login", "logout", "ls"],
       "missing_options": [
         "--container",
         "--dev",

@@ -34,7 +34,7 @@ class RedliningValidator:
             tree = ET.parse(modified_file)
             root = tree.getroot()
 
-            # Check for w:del or w:ins tags authored by Claude
+            # Check for w:del or w:ins tags authored with the help of AI
             del_elements = root.findall(".//w:del", self.namespaces)
             ins_elements = root.findall(".//w:ins", self.namespaces)
 
@@ -215,7 +215,7 @@ class RedliningValidator:
         return None
 
     def _remove_claude_tracked_changes(self, root):
-        """Remove tracked changes authored by Claude from the XML root."""
+        """Remove tracked changes authored with the help of AI
         ins_tag = f"{{{self.namespaces['w']}}}ins"
         del_tag = f"{{{self.namespaces['w']}}}del"
         author_attr = f"{{{self.namespaces['w']}}}author"

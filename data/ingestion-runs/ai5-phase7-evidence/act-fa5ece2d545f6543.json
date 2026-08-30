@@ -11,7 +11,7 @@
       {
         "check": "pi_cli_installed",
         "result": "pass",
-        "detail": "pi CLI at /Users/danielgoldberg/.hermes/node/bin/pi \u2014 available: Command '/Users/danielgoldberg/.hermes/node/bin/pi --version 2>&1 || echo 'failed'' timed out after 10 seconds"
+        "detail": "pi CLI at <USER_HOME>/.hermes/node/bin/pi \u2014 available: Command '<USER_HOME>/.hermes/node/bin/pi --version 2>&1 || echo 'failed'' timed out after 10 seconds"
       },
       {
         "check": "pi_agent_dir_exists",
@@ -21,7 +21,7 @@
       {
         "check": "pi_extensions_exist",
         "result": "warn",
-        "detail": "Pi extension skills directory: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.pi/agent/skills"
+        "detail": "Pi extension skills directory: <TNF_ROOT>/.pi/agent/skills"
       },
       {
         "check": "pi_operational",

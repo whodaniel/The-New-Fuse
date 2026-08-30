@@ -5,7 +5,7 @@
     "coherenceAuditAt": "2026-07-24",
     "coherenceCommit": "9c7e6bd7a1",
     "branch": "fix/a2a-signature-verification",
-    "repoRoot": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse",
+    "repoRoot": "<TNF_ROOT>",
     "method": "read-only verified tree analysis + post-close-out coherence audit",
     "companionMarkdown": "docs/protocols/reports/CODEBASE_PATHWAY_MAP_2026-07-24.md",
     "verdict": "mixed",

@@ -3,7 +3,7 @@
 # Honors adaptive harness: when primary is non-Google, park instead of spam-looping.
 set -euo pipefail
 
-export PATH="/Users/danielgoldberg/.nvm/versions/node/v20.20.2/bin:/Users/danielgoldberg/.hermes/node/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
+export PATH="$HOME/.nvm/versions/node/v20.20.2/bin:$HOME/.hermes/node/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -30,9 +30,9 @@ if [[ -f "$HARNESS_ENV" ]]; then
 fi
 
 # Optional local secrets (must not override harness primary/skip flags if already set)
-if [[ -f /Users/danielgoldberg/.tnf-claude-env ]]; then
+if [[ -f $HOME/.tnf-claude-env ]]; then
   # shellcheck disable=SC1091
-  source /Users/danielgoldberg/.tnf-claude-env
+  source $HOME/.tnf-claude-env
 fi
 
 export AGENT_ID="${AGENT_ID:-tnf-gemini-redis-wrapper}"

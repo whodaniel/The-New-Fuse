@@ -34,7 +34,7 @@ REDIS_DB = int(os.environ.get("REDIS_DB", "0"))
 TNF_HOME = Path(os.environ.get("TNF_HOME", os.path.expanduser("~/.tnf")))
 PID_DIR = TNF_HOME / "pids"
 LOG_DIR = TNF_HOME / "logs"
-REPO = "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+REPO = os.environ.get("TNF_ROOT", os.getcwd())
 PYTHON = os.path.expanduser("~/.hermes/hermes-agent/venv/bin/python3")
 
 DAEMON_PID = PID_DIR / "tnf-agent-daemon.pid"

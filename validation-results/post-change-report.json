@@ -4,7 +4,7 @@
   "failed": 1,
   "warnings": 4,
   "errors": [
-    "Tests failed: Command failed: pnpm test -- --passWithNoTests\n• turbo 2.9.10\n WARNING  Unable to calculate transitive closures: Workspace 'apps/browser-control-surfaces' not found in lockfile.\n ERROR  @the-new-fuse/common#test: command (/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/packages/common) /opt/tnf-node/bin/pnpm run test --passWithNoTests exited (1)\n ERROR  run failed: command  exited (1)\n"
+    "Tests failed: Command failed: pnpm test -- --passWithNoTests\n• turbo 2.9.10\n WARNING  Unable to calculate transitive closures: Workspace 'apps/browser-control-surfaces' not found in lockfile.\n ERROR  @the-new-fuse/common#test: command (<TNF_ROOT>/packages/common) /opt/tnf-node/bin/pnpm run test --passWithNoTests exited (1)\n ERROR  run failed: command  exited (1)\n"
   ],
   "status": "FAILED",
   "preChangeComparison": {

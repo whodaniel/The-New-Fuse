@@ -16,7 +16,7 @@
       {
         "check": "pi_cli_supports_extensions",
         "result": "pass",
-        "detail": "pi CLI at /Users/danielgoldberg/.hermes/node/bin/pi \u2014 supports session management, skills, plan-mode"
+        "detail": "pi CLI at <USER_HOME>/.hermes/node/bin/pi \u2014 supports session management, skills, plan-mode"
       },
       {
         "check": "pi_tnf_integration",

@@ -2,7 +2,7 @@
   "schema": "tnf.federated-ws-channel-check.v1",
   "generatedAt": "2026-08-26T07:43:34.300Z",
   "host": "Daniels-MacBook-Pro",
-  "root": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse",
+  "root": "<TNF_ROOT>",
   "relayUrl": "ws://127.0.0.1:3007/ws",
   "runId": "fed-ws-1787730212204",
   "keepAlive": true,

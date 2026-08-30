@@ -5,7 +5,7 @@ set -euo pipefail
 
 # Pi (@earendil-works/pi-coding-agent) ships undici>=8 which needs Node 22+
 # (webidl.util.markAsUncloneable). Prefer hermes/nvm Node 22 ahead of Node 20.
-export PATH="/Users/danielgoldberg/.hermes/node/bin:/Users/danielgoldberg/.nvm/versions/node/v22.22.3/bin:/Users/danielgoldberg/.nvm/versions/node/v20.20.2/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
+export PATH="$HOME/.hermes/node/bin:$HOME/.nvm/versions/node/v22.22.3/bin:$HOME/.nvm/versions/node/v20.20.2/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -21,8 +21,8 @@ HARNESS_RESOLVER="$REPO_ROOT/scripts/runtime/resolve-harness-context.cjs"
 # Prefer an explicit Node 22 binary; fall back to PATH order above.
 NODE_BIN=""
 for candidate in \
-  "/Users/danielgoldberg/.hermes/node/bin/node" \
-  "/Users/danielgoldberg/.nvm/versions/node/v22.22.3/bin/node" \
+  "$HOME/.hermes/node/bin/node" \
+  "$HOME/.nvm/versions/node/v22.22.3/bin/node" \
   "$(command -v node || true)"; do
   if [[ -n "$candidate" && -x "$candidate" ]]; then
     major="$("$candidate" -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"

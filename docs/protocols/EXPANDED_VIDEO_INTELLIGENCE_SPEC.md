@@ -189,7 +189,7 @@ During every transcript analysis, the agent must ask:
 When a new extraction angle is identified (e.g. _Economic Token Arbitrage_,
 _Psychological Flow States for Deep Work_, _Multi-Model Verification
 Triangles_), the agent MUST log a proposed vector addition to
-[`docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md`](file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md).
+[`docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md`](file://<TNF_ROOT>/docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md).
 
 ---
 

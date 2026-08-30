@@ -4947,7 +4947,7 @@
         {
           "name": "list",
           "aliases": [],
-          "description": "",
+          "description": "List available context elements",
           "options": [],
           "commands": []
         }

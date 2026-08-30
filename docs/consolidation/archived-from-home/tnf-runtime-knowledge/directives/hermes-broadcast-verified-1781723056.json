@@ -14,12 +14,12 @@
     "verified_inbound": [
       "Long-poll received Daniel_Who message 'You are back online with telegram!'",
       "Auto-reply 'OK message received' delivered back to chat_id=7030202773",
-      "Logged to /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/data/telegram/messages.jsonl"
+      "Logged to <TNF_ROOT>/data/telegram/messages.jsonl"
     ]
   },
   "actions_taken": [
     "Identified python-telegram-bot 22.x hangs in this env (httpx async DNS issue)",
-    "Replaced with /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/telegram-mcp/bot_daemon_curl.py (stdlib urllib + urllib-only, SSL verify disabled - acceptable for fixed-public api.telegram.org)",
+    "Replaced with <TNF_ROOT>/apps/telegram-mcp/bot_daemon_curl.py (stdlib urllib + urllib-only, SSL verify disabled - acceptable for fixed-public api.telegram.org)",
     "Launcher /tmp/tg_curl_wrapper.sh (chmod 700, holds token securely)",
     "macOS Notification Center ping fired",
     "Redis PUBLISH on tnf:synaptic_bus",

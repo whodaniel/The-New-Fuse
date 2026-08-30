@@ -3,7 +3,8 @@
 `[CLASS:PRIME] [STATUS:ACTIVE] [DOC_TYPE:AUDIT_REPORT] [VISIBILITY:COLLECTIVE] [OWNER:TNF]`
 
 **Lane:** L1 Protocol/Authority · **Mode:** REPORT ONLY (no refactors)
-**Mandate:** `docs/operations/audits/FULL_ENCHILADA_HARNESS_PLATFORM_AUDIT_MANDATE_2026-08-09.md`
+**Mandate:**
+`docs/operations/audits/FULL_ENCHILADA_HARNESS_PLATFORM_AUDIT_MANDATE_2026-08-09.md`
 **Run:** 2026-08-09 · branch `fix/honest-failure-reporting` @ `8a762b98d0`
 **Surfaces:** `docs/protocols/*`, `tnf protocol gate`, `tnf state show`,
 `PROTOCOL_MAP.md`, `LIVING_STATE.md`, `AGENT_STATUS_LEDGER.md`
@@ -47,15 +48,15 @@ Protocol gate failed: node exited with code 1
 `REAL_EXIT=1`, four lines after `ALL PROTOCOLS PASSED`.
 
 **Impact.** Two grading systems print into one stream with no precedence
-declared. The green summary belongs to the *protocol checks*; the exit code
-belongs to the *gate*. Any operator or script reading the summary — or piping
+declared. The green summary belongs to the _protocol checks_; the exit code
+belongs to the _gate_. Any operator or script reading the summary — or piping
 through `tail`, which drops the real status — concludes the gate passed. This is
 the highest-leverage finding in the lane because it silently invalidates every
 other check the gate performs.
 
 **Recommended fix.** One verdict per run. Print the gate result **after** the
-summary and make the summary conditional on it, or relabel the summary
-"Protocol checks passed — gate verdict below". Owner: L1 + harness owner.
+summary and make the summary conditional on it, or relabel the summary "Protocol
+checks passed — gate verdict below". Owner: L1 + harness owner.
 
 ---
 
@@ -75,17 +76,15 @@ Handoff IDs in file      : 4
 
 `tnf state show` renders that field as a run-on paragraph:
 
-> `Current Directive: … **Handoff:** a9924b4e… **Head:** 1703dea33849
-> continuation.resume_checklist. **Project ID:** TNF-SESSION **Handoff:**
-> d9e5c9ce… **Head:** 99e5152edc43 … **Handoff:** e9278705… **Head:**
-> da185b398393 paths. **Project ID:** …`
+> `Current Directive: … **Handoff:** a9924b4e… **Head:** 1703dea33849 continuation.resume_checklist. **Project ID:** TNF-SESSION **Handoff:** d9e5c9ce… **Head:** 99e5152edc43 … **Handoff:** e9278705… **Head:** da185b398393 paths. **Project ID:** …`
 
 **Impact.** `LIVING_STATE.md` is tagged `[STATUS:SYNCHRONIZED]`, is one of the
 three files Turn Zero reads at Step 1, and is what the gate cites as the "active
 directive". It is neither synchronized nor parseable. Successive writers have
 **appended instead of replaced**, so the current directive is now sediment: an
 agent reading it cannot determine which of eleven directives is live. The
-`SYNCHRONIZED` tag is asserted by the file about itself and validated by nothing.
+`SYNCHRONIZED` tag is asserted by the file about itself and validated by
+nothing.
 
 **Impact is compounded** by P0 — Step 8 of Turn Zero passes on the mere presence
 of the `[STATUS:SYNCHRONIZED]` string, not on the state being fresh or coherent.
@@ -158,12 +157,12 @@ drift. Owner: L1.
 
 **Evidence.**
 
-| File | Status | Lines |
-| --- | --- | --- |
-| `DIRECTIVES.md` | `[STATUS:LOCKED]` | 647 |
-| `TNF_DIRECTIVES.md` | `[STATUS:ARCHIVED]` | 361 |
-| `LIVING_DIRECTIVES_CARD.md` | `[STATUS:SYNCHRONIZED]` | 82 |
-| `DIRECTIVE_CONVERSION_LEDGER.md` | `[STATUS:PENDING]` | 184 |
+| File                             | Status                  | Lines |
+| -------------------------------- | ----------------------- | ----- |
+| `DIRECTIVES.md`                  | `[STATUS:LOCKED]`       | 647   |
+| `TNF_DIRECTIVES.md`              | `[STATUS:ARCHIVED]`     | 361   |
+| `LIVING_DIRECTIVES_CARD.md`      | `[STATUS:SYNCHRONIZED]` | 82    |
+| `DIRECTIVE_CONVERSION_LEDGER.md` | `[STATUS:PENDING]`      | 184   |
 
 **Impact.** The `TNF_` prefix marks the **archived** copy while the unprefixed
 file is canonical — the opposite of the convention everywhere else in
@@ -234,17 +233,17 @@ invisible to it.
 ```
 Step 7: ASSIMILATE_CHECK...
   ~ failure-log scan [SKIPPED]
-      no .jsonl files in /Users/danielgoldberg/.hermes/cron/output — nothing to scan
+      no .jsonl files in <USER_HOME>/.hermes/cron/output — nothing to scan
 ```
 
-**Impact.** Counted as a warning, not a failure, and the run still reports
-"Turn Zero passed (… 1 step(s) skipped)". A gate step whose input path is empty
-has never run; an empty input directory is indistinguishable from a healthy one.
-Low severity today because the step is advisory, but it is the same
+**Impact.** Counted as a warning, not a failure, and the run still reports "Turn
+Zero passed (… 1 step(s) skipped)". A gate step whose input path is empty has
+never run; an empty input directory is indistinguishable from a healthy one. Low
+severity today because the step is advisory, but it is the same
 "green-over-nothing" pattern as P0.
 
-**Recommended fix.** Distinguish *no failures found* from *no input present*, and
-surface the latter as a configuration warning naming the expected producer.
+**Recommended fix.** Distinguish _no failures found_ from _no input present_,
+and surface the latter as a configuration warning naming the expected producer.
 Owner: L2.
 
 ---
@@ -263,8 +262,8 @@ cursor-marketplace/plugins/tnf-harness/skills/tnf-turn-zero-orientation/SKILL.md
 packages/claw-skills/turn-zero-validator/SKILL.md
 ```
 
-Gate reports `[turn-zero-authority] OK (ci): canonical Turn Zero authority and
-references are aligned`.
+Gate reports
+`[turn-zero-authority] OK (ci): canonical Turn Zero authority and references are aligned`.
 
 **Impact.** The machine check passes and is trustworthy. The **human** path is
 not: nothing in `TURN_ZERO_MANDATE.md`'s vicinity states that it is the one
@@ -281,30 +280,29 @@ at `TURN_ZERO_MANDATE.md`. Owner: L1.
 **1. What makes sense — keep.** The gate harness architecture (named checks,
 per-check verdicts, CI mode) is genuinely good and worth doubling down on.
 `docs/protocols/schemas/` (13 JSON schemas) is the strongest authority surface
-in the repo: machine-checkable and unambiguous. **When prose and schema disagree,
-the schema has been right every time examined.**
+in the repo: machine-checkable and unambiguous. **When prose and schema
+disagree, the schema has been right every time examined.**
 
 **2. What is missing.** Validation coverage, not validators.
 `validate-doc-tagging.cjs` scans a **hardcoded 7-file allowlist** plus
 `docs/library/` — it never inspects the other 81 protocol docs, which is exactly
 why the four `STATUS:null` PRIME protocols went unnoticed. Per
 `TNF_ARTIFACTS_LIFECYCLE_PROTOCOL` rule 5, a rule is not in force until a script
-references it *and* that script runs in CI. By that standard most of the
-tagging protocol is not in force.
+references it _and_ that script runs in CI. By that standard most of the tagging
+protocol is not in force.
 
 **3. What is confusing.** In order of operator cost: the gate's two verdicts
-(P0); `TNF_`-prefix meaning "archived" for DIRECTIVES only (P2); `SESSION_HANDOFF`
-vs `NEXT_SESSION_HANDOFF` (P2); `LIVING_STATE` claiming `SYNCHRONIZED` while
-carrying eleven directives (P1).
+(P0); `TNF_`-prefix meaning "archived" for DIRECTIVES only (P2);
+`SESSION_HANDOFF` vs `NEXT_SESSION_HANDOFF` (P2); `LIVING_STATE` claiming
+`SYNCHRONIZED` while carrying eleven directives (P1).
 
 **4. What to refactor.** Generate `PROTOCOL_MAP.md` from the directory. Make
 `LIVING_STATE`'s directive block machine-written and single-valued. Collapse the
 DIRECTIVES surfaces to one file plus generated views.
 
-**5. Best user flow (L1 slice).**
-`tnf protocol gate` → **one** verdict line → on failure, the named check and the
-exact remediation command. Today an operator must read ~120 lines and know that
-the exit code outranks the summary.
+**5. Best user flow (L1 slice).** `tnf protocol gate` → **one** verdict line →
+on failure, the named check and the exact remediation command. Today an operator
+must read ~120 lines and know that the exit code outranks the summary.
 
 ---
 
@@ -320,8 +318,8 @@ the exit code outranks the summary.
 
 All findings above are from live command output or file inspection, captured
 this run. Gate output preserved at `scratchpad/gate.log`, state output at
-`scratchpad/state.log`. Exit codes were captured directly (`REAL_EXIT=$?`) rather
-than through a pipe — piping `tnf protocol gate` through `tail` returns `0` and
-would have hidden P0 entirely.
+`scratchpad/state.log`. Exit codes were captured directly (`REAL_EXIT=$?`)
+rather than through a pipe — piping `tnf protocol gate` through `tail` returns
+`0` and would have hidden P0 entirely.
 
 No files were modified in this lane.

@@ -2,7 +2,7 @@
 
 - Generated: 2026-08-09T02:24:05.413Z
 - Verdict: CAUTION
-- Repo: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+- Repo: <TNF_ROOT>
 
 ## Findings
 
@@ -51,24 +51,23 @@
 
 ## Agent Processes
 
-- 39570 1 S 43:54 /Users/danielgoldberg/.local/bin/node
-  /Users/danielgoldberg/.tnf/local-subdirector/bin/local-subdirector-runtime.cjs
+- 39570 1 S 43:54 <USER_HOME>/.local/bin/node
+  <USER_HOME>/.tnf/local-subdirector/bin/local-subdirector-runtime.cjs
 - 90324 49415 S 03:50:56
   /Applications/Claude.app/Contents/Helpers/chrome-native-host
   chrome-extension://fcoeoabgfenejglbffodgkkbkcdhcgfn/
-- 97422 1 S 01:11:01 /Users/danielgoldberg/.local/bin/node
-  /Users/danielgoldberg/.tnf/master-heartbeat/bin/tnf-master-heartbeat-loop.cjs
-- 2075 1371 S+ 06:55:25 node /Users/danielgoldberg/.hermes/node/bin/codex
+- 97422 1 S 01:11:01 <USER_HOME>/.local/bin/node
+  <USER_HOME>/.tnf/master-heartbeat/bin/tnf-master-heartbeat-loop.cjs
+- 2075 1371 S+ 06:55:25 node <USER_HOME>/.hermes/node/bin/codex
   --dangerously-bypass-approvals-and-sandbox
 - 2076 2075 R+ 06:55:25
-  /Users/danielgoldberg/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex
+  <USER_HOME>/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex
   --dangerously-bypass-approvals-and-sandbox
 - 98043 2076 S 02:53:29
-  /Users/danielgoldberg/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex-code-mode-host
+  <USER_HOME>/.hermes/node/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex-code-mode-host
 - 61523 60837 S+ 30:33 claude
-- 79138 78479 S+ 05:31:10 /Users/danielgoldberg/.local/bin/cursor-agent
-  --use-system-ca
-  /Users/danielgoldberg/.local/share/cursor-agent/versions/2026.08.04-aaa8809/index.js
+- 79138 78479 S+ 05:31:10 <USER_HOME>/.local/bin/cursor-agent --use-system-ca
+  <USER_HOME>/.local/share/cursor-agent/versions/2026.08.04-aaa8809/index.js
 - 33030 32459 S+ 04:46:21 claude
 - 66454 65571 S+ 04:15:17 opencode
 

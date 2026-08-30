@@ -1,6 +1,6 @@
 #!/bin/bash
 # TNF Codebase Color Audit Agent - Google/Gemini
-TNF_DIR="/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse"
+TNF_DIR="${TNF_ROOT:-$(pwd)}"
 
 echo "[AGENT-2] Starting codebase color/contrast audit..."
 

@@ -16,7 +16,7 @@ branch.
 
 ### Step 1: Pre-Flight
 
-1. Ensure working directory is `/Users/danielgoldberg` (TNF root)
+1. Ensure working directory is `<USER_HOME>` (TNF root)
 2. Verify `.tnf/bin/` directory exists and is populated
 3. Clear any stale running agents first:
 

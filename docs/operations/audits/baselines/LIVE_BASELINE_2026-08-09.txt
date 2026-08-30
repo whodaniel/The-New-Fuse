@@ -95,7 +95,7 @@ Result:
 [protocol-schema-gate] OK
 === METASKILLS ===
 TNF Meta-Skills Audit
-Workspace: /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse
+Workspace: <TNF_ROOT>
 
 === Readiness ===
 - Procedures: READY
@@ -150,20 +150,20 @@ TNF Growth Audit
 ============================================================
 Time:     2026-08-10T01:22:27.886Z
 Disk:     756.7 MB free (96% used) — OK
-Snapshot: /Users/danielgoldberg/.tnf/growth-audit/last-snapshot.json
-History:  /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.agent/runtime-logs/growth-audit.jsonl
+Snapshot: <USER_HOME>/.tnf/growth-audit/last-snapshot.json
+History:  <TNF_ROOT>/.agent/runtime-logs/growth-audit.jsonl
 
 Top targets by size:
       5.0 GB  pnpm-store (+0.0% since last) [large]
-             /Users/danielgoldberg/Library/pnpm/store
+             <USER_HOME>/Library/pnpm/store
       2.1 GB  tnf-home (+1.0% since last) [large]
-             /Users/danielgoldberg/.tnf
+             <USER_HOME>/.tnf
       1.9 GB  cursor-chats (+0.7% since last) [large]
-             /Users/danielgoldberg/.cursor/chats
+             <USER_HOME>/.cursor/chats
     545.0 MB  opencode-store (+0.0% since last) [large]
-             /Users/danielgoldberg/.local/share/opencode
+             <USER_HOME>/.local/share/opencode
     267.8 MB  turbo-cache (+0.0% since last)
-             /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/The-New-Fuse/.turbo
+             <TNF_ROOT>/.turbo
 
 
 === PARITY STATUS ===

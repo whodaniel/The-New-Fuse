@@ -286,7 +286,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.agy/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.agy/skills/imported-claude-agents",
           "action": "created",
           "skillCount": 139
         }
@@ -297,7 +297,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.codex/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.codex/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 141
         }
@@ -308,7 +308,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.claude/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.claude/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 150
         }
@@ -319,7 +319,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.gemini/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.gemini/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 141
         }
@@ -330,7 +330,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.cursor/skills-cursor/imported-claude-agents",
+          "destination": "<USER_HOME>/.cursor/skills-cursor/imported-claude-agents",
           "action": "created",
           "skillCount": 139
         }
@@ -341,7 +341,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.opencode/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.opencode/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 150
         }
@@ -352,7 +352,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.kilo/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.kilo/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 150
         }
@@ -363,7 +363,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.augment/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.augment/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 141
         }
@@ -374,7 +374,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.tnf/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.tnf/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 141
         }
@@ -385,12 +385,12 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/.hermes/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.hermes/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 141
         },
         {
-          "destination": "/Users/danielgoldberg/.hermes/hermes-agent/skills/imported-claude-agents",
+          "destination": "<USER_HOME>/.hermes/hermes-agent/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 141
         }
@@ -401,7 +401,7 @@
       "status": "processed",
       "writes": [
         {
-          "destination": "/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/.agent/skills/imported-claude-agents",
+          "destination": "<TNF_ROOT>/.agent/skills/imported-claude-agents",
           "action": "synced",
           "skillCount": 139
         }
