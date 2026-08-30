@@ -557,3 +557,24 @@ with no dependency on the commit landing first. Existing entries with
   This tag allows the broker to dynamically map protocol documents to specific
   agent clusters at runtime.
 - **Authorizer:** Operator (via explicit "proceed" directive).
+
+### [2026-08-30] Lexical Forgiveness & Alias Resolution
+
+- **File:** `TNF_SYSTEM_LEXICON.md`
+- **Rationale:** Added Section 3 (Lexical Forgiveness & Alias Resolution). This
+  codifies that related colloquial terms (e.g., "team", "staff") must be
+  dynamically traced back to the foundational lexicon by the agents, preventing
+  rigid failures during real-world interactions where exact terminology is not
+  always used.
+- **Authorizer:** Operator (via explicit directive to allow related terms and
+  codify the tracing).
+
+### [2026-08-30] Synergistic Alignment Protocol Instantiation
+
+- **File:** `TNF_SYNERGISTIC_ALIGNMENT_PROTOCOL.md`
+- **Rationale:** Instantiated the protocol to codify the continuous
+  self-improvement, meta-auditing (auditing the auditors), and creative
+  brainstorming loops for skills and `/commands` as explicitly requested by the
+  Operator.
+- **Authorizer:** Operator (via explicit directive to define synergistic
+  alignment and the creative review process).

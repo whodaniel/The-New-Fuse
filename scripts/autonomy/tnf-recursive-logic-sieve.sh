@@ -97,4 +97,23 @@ echo ""
 echo "========================================================="
 echo "✅ LOGIC SIEVE CYCLE INITIATED. Swarm is iterating."
 echo "========================================================="
+
+echo ""
+echo "[4] Synergistic Anomaly Generation"
+ANOMALY_FILE="${TNF_ROOT}/data/harness/ANOMALY_PAYLOAD.md"
+echo "# 🌀 Synergistic Anomaly & Creative Challenge Payload" > "$ANOMALY_FILE"
+echo "**Generated:** $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$ANOMALY_FILE"
+echo "**Target Cluster:** SYNTHESIS (Creative Team)" >> "$ANOMALY_FILE"
+echo "" >> "$ANOMALY_FILE"
+echo "## Current Anomalies for Brainstorming:" >> "$ANOMALY_FILE"
+if [ "$SKILL_COUNT" -gt 0 ]; then
+  echo "- The Sieve scanned $SKILL_COUNT active skills. Creative Team must review the Skill Topology Overlap map for hidden redundancies or potential synergistic mergers." >> "$ANOMALY_FILE"
+else
+  echo "- No skill scan data available. The Sieve mechanism itself requires a Meta-Audit." >> "$ANOMALY_FILE"
+fi
+echo "" >> "$ANOMALY_FILE"
+echo "## Required Agent Action (Self-Prompt):" >> "$ANOMALY_FILE"
+echo "1. Critique these findings. Expand on the conceptual value or trim the dead weight." >> "$ANOMALY_FILE"
+echo "2. Brainstorm new applications for any trimmed logic." >> "$ANOMALY_FILE"
+echo "  -> Anomaly Payload generated for Creative Team."
 exit 0

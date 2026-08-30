@@ -45,8 +45,18 @@ rails of TNF.
 | :--------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------- |
 | [`TNF_GOVERNANCE_TENETS.md`](./TNF_GOVERNANCE_TENETS.md)                                       | • `DIRECTIVES.md`<br/>• `TNF_DIRECTIVES.md`<br/>• `THE_VELOCITY_INTEGRITY_BALANCE.md` | **The Constitution:** Establishes the Attribution Cornerstone, Sovereign Individual, and Directives D1 & D9 safety gates.        |
 | [`TNF_RECURSIVE_LOGICAL_FILTERING_PROTOCOL.md`](./TNF_RECURSIVE_LOGICAL_FILTERING_PROTOCOL.md) | • `PROTOCOL_MAP.md`<br/>• `TNF_ONTOLOGY_MASTER_MAP.md`                                | **The Sieve:** First principles of truth-by-subtraction, hierarchical authority filtering, and progressive autonomous narrowing. |
-| [`AUTHORITY_INTEGRATION_MAP.md`](./AUTHORITY_INTEGRATION_MAP.md)                               | • `AUTHORITY_TURNUP_RUNBOOK.md`<br/>• `agent-self-edit-protocol-v0.1.md`              | **Authority Surface Guard:** Controls permissions and edit-lock rules for core harness files (`AGENTS.md`).                      |
-| [`DACC_PROTOCOL_MASTER_MANUAL.md`](./DACC_PROTOCOL_MASTER_MANUAL.md)                           | • `DACC_POML_MCP_A2A_INTEGRATION_BLUEPRINT.md`                                        | **Deterministic Agent Communication:** Governs POML (Prompt Object Markup Language) and MCP communication boundaries.            |
+
+- [TNF_SYNERGISTIC_ALIGNMENT_PROTOCOL.md](file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/docs/protocols/TNF_SYNERGISTIC_ALIGNMENT_PROTOCOL.md):
+  Defines continuous self-improvement, meta-auditing, and the creative
+  brainstorming loop. |
+  [`AUTHORITY_INTEGRATION_MAP.md`](./AUTHORITY_INTEGRATION_MAP.md) | •
+  `AUTHORITY_TURNUP_RUNBOOK.md`<br/>• `agent-self-edit-protocol-v0.1.md` |
+  **Authority Surface Guard:** Controls permissions and edit-lock rules for core
+  harness files (`AGENTS.md`). | |
+  [`DACC_PROTOCOL_MASTER_MANUAL.md`](./DACC_PROTOCOL_MASTER_MANUAL.md) | •
+  `DACC_POML_MCP_A2A_INTEGRATION_BLUEPRINT.md` | **Deterministic Agent
+  Communication:** Governs POML (Prompt Object Markup Language) and MCP
+  communication boundaries. |
 
 ---
 

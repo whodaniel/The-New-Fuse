@@ -129,3 +129,24 @@ _The terms "Corporate", "Department", and "Staff" are permanently deprecated._
   (Tiers 1-6).
 - **SOVEREIGN:** Private, user-specific data and artifacts strictly isolated
   from the Core.
+
+## 3. Lexical Forgiveness & Alias Resolution (The Translation Matrix)
+
+**Mandate:** Humans and external systems will frequently use colloquial,
+informal, or loosely defined terminology (e.g., "team", "staff", "department").
+Agents MUST NOT rigidly reject these terms or fail to execute tasks. Instead,
+agents are required to practice **Lexical Forgiveness** by continuously
+performing dynamic semantic mapping back to the foundational Lexicon.
+
+When an agent encounters an informal term, it must mentally (or
+programmatically) trace it to its canonical equivalent before processing:
+
+| Human / Colloquial Term           | Foundational Lexicon Equivalent | Agent Action                                                                          |
+| :-------------------------------- | :------------------------------ | :------------------------------------------------------------------------------------ |
+| **"Team", "Staff", "Department"** | **Swarm, Cluster**              | Map to the correct Agent Cluster (e.g., "Creative Team" maps to "Synthesis Cluster"). |
+| **"Employee", "Worker", "Bot"**   | **Agent, Node**                 | Map to the specific execution entity (e.g., `tnf-swarm-supervisor`).                  |
+| **"Company", "Corporate"**        | **Core Framework, System**      | Map to the overarching TNF monorepo or global protocols.                              |
+| **"Rules", "Guidelines"**         | **Tenets, Protocols**           | Route to `docs/protocols/` and enforce Gate vetting.                                  |
+
+_Self-Prompting Note:_ If an agent is unsure of a mapping, it must default to
+the broadest applicable class and propose a new mapping alias in the next cycle.
