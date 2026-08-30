@@ -3,6 +3,12 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
+- **Updated: 2026-08-30T21:31:00.000Z** — feat(agent-adapters): bootstrap
+  `@the-new-fuse/agent-adapters` package
+  (`c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e`). Reconstructed TS source from dist,
+  added package.json/tsconfig/vitest config, SKILL.md, 17 vitest tests (all
+  passing), pnpm-lock.yaml updated. Agent: antigravity.
+
 - **Updated: 2026-08-30T20:04:37.113ZZ** — docs(protocols): explicit turn end
   mandate enforcement and automation
 

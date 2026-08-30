@@ -1,61 +1,39 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "a44d535c-f1ba-495e-bbcb-2455c691dffc",
-  "created_at": "2026-08-30T20:22:53.836Z",
+  "handoff_id": "c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e",
+  "created_at": "2026-08-30T21:27:00.000Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "0bcc64b06ffb4f209d7cd7c08c5391ce39e506a8",
+  "head_sha": "25bf5505f39e7840172ee0c870a604a11be7b6f8",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [],
-  "work_summary": ["Modified 26 file(s)"],
+  "project_ids": ["TNF-AGENT-ADAPTERS"],
+  "work_summary": [
+    "Bootstrapped @the-new-fuse/agent-adapters package (packages/agent-adapters/)",
+    "Reconstructed TypeScript source (src/GoogleAgentsCliAdapter.ts, src/index.ts) from compiled dist output",
+    "Added package.json, tsconfig.json, vitest.config.ts, .gitignore for the package",
+    "Wrote SKILL.md documenting adapter usage, error mapping table, CLI roadmap (items 3–7)",
+    "Wrote vitest test suite: 17 tests covering round-trip identity, error bijection, and edge cases — all passing",
+    "Ran pnpm install to register @the-new-fuse/agent-adapters in pnpm-lock.yaml",
+    "Built package clean via tsc -b"
+  ],
   "changed_paths": [
-    ".agent/skills/tnf-engineering-context/SKILL.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "apps/frontend/src/data/codebase_map.json",
-    "data/marketplace/catalog-items.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.md",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/CHALLENGE_RATIONALE_LOG.md",
-    "docs/protocols/TURN_END_MANDATE.md",
-    "docs/protocols/TURN_ZERO_MANDATE.md",
-    "docs/protocols/reports/DOC_AUDIT_INVENTORY.json",
-    "docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/SESSION_HANDOFF_RC_T5_MAIN_MERGE_20260829.json",
-    "docs/protocols/reports/session_handoff_boot-local-live-surfaces-20260829.json",
-    "docs/protocols/reports/session_handoff_cluster1-assembly-line-20260830.json",
-    "docs/protocols/reports/session_handoff_context-window-branching-20260830.json",
-    "docs/protocols/reports/session_handoff_fuse-connect-panel-close-20260830.json",
-    "docs/protocols/reports/session_handoff_generated-runtime-snapshots-20260829.json",
-    "docs/protocols/reports/session_handoff_relay-stage0-hardening-20260830.json",
-    "docs/protocols/reports/session_handoff_skill-consolidation-20260829.json",
-    "docs/protocols/reports/session_handoff_workspace-tier-injection-20260829.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "scripts/turn-end-v2.cjs",
-    "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json",
-    "data/harness/injected-context.md",
-    "data/llm-intel/",
-    "fix-broker.py",
-    "fix-broker2.js",
-    "fix-cron.py",
-    "fix-docs.py",
-    "fix-ledger.py",
-    "fix-prompts.py",
-    "fix-rationale.py",
-    "fix-turn-end.py",
-    "packages/rust-relay/"
+    "packages/agent-adapters/src/GoogleAgentsCliAdapter.ts",
+    "packages/agent-adapters/src/index.ts",
+    "packages/agent-adapters/src/__tests__/GoogleAgentsCliAdapter.test.ts",
+    "packages/agent-adapters/package.json",
+    "packages/agent-adapters/tsconfig.json",
+    "packages/agent-adapters/vitest.config.ts",
+    "packages/agent-adapters/SKILL.md",
+    "packages/agent-adapters/.gitignore",
+    "pnpm-lock.yaml"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": ""
+    "notes": "17/17 vitest tests passing. TypeScript build clean (tsc -b exit 0). pnpm install completed. No runtime dependencies added."
   },
   "continuation": {
     "owner": "operator",
@@ -63,20 +41,19 @@
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against schema",
-      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
+      "Next: implement MicroToolAdapter bridge (item 3 from opencode follow-up)",
+      "Next: implement tnf ga:invoke / ga:status / ga:map-error CLI commands (item 5)",
+      "Next: propagate skill via tnf-skill-ubiquity-propagation to .opencode/skills, .claude/skills (item 7)"
     ]
   },
   "next_actions": [
-    "Review updated LIVING_STATE.md for new active steps",
-    "[GUARDRAIL-COMPLIANT] Do not merge PR 264 until operator signoff after a green official root turbo build on a machine with >=8Gi free. (acknowledged; no merge performed; disk cleared to 8Gi; build is GREEN)",
-    "[GUARDRAIL-COMPLIANT] Keep PR 253 separate on recon/S1. Do not retarget or conflate. (branch recon/s1-cron-provision-reproducibility intact, untouched)",
-    "[GUARDRAIL-COMPLETED] Re-run official pnpm run build (cold .turbo) then root type-check/test if required by launch-train, once disk headroom exists. (DONE: disk cleared to 8Gi, cold turbo build GREEN, type-check GREEN, root tests GREEN after agent-coordination fix)",
-    "[GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json. (DONE)",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 39 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "MicroToolAdapter: wrap any MicroTool as legacy ToolHandler so mcp-server/broker surfaces serve stateless tools automatically",
+    "CLI commands: tnf ga:invoke, tnf ga:status, tnf ga:map-error — requires tnf-command-surface-gate oracle update",
+    "Live transport: wire --transport stdio|http behind adapter for real Google Agents CLI round-trip",
+    "Skill ubiquity: tnf-skill-ubiquity-propagation to land SKILL.md in all agent runtime skill dirs"
   ],
   "artifacts": {
-    "commits": ["0bcc64b06ffb4f209d7cd7c08c5391ce39e506a8"],
+    "commits": [],
     "deployment_urls": [],
     "database_migrations": []
   },
@@ -92,14 +69,14 @@
     ]
   },
   "classification": {
-    "work_domain": "unknown",
-    "artifact_destination": "unknown",
-    "data_residency": "unknown",
-    "sensitivity": "unknown"
+    "work_domain": "agency",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "bounded_working",
+    "sensitivity": "internal"
   },
   "capabilities": {
-    "required": [],
-    "staffed_by": []
+    "required": ["typescript", "vitest", "pnpm"],
+    "staffed_by": ["antigravity"]
   },
   "publication": {
     "public_runtime_affected": false,
@@ -108,64 +85,10 @@
   },
   "freshness_receipts": [
     {
-      "id": "github.dev.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:38.051Z",
-      "value": "73cea241cca190faa98a2a5ea5bfdec920faaff2"
-    },
-    {
-      "id": "github.public.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:45.037Z",
-      "value": "dcfb3f7598c148ec362678bc4ce0834b1dca0e90"
-    },
-    {
-      "id": "github.control-plane.main",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:49.582Z",
-      "value": "bf45be8893c3453f35a86509e9102fb735cdbaa8"
-    },
-    {
-      "id": "github.public.pr-queue",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:52.712Z",
-      "value": "[161]"
-    },
-    {
-      "id": "github.public.ruleset",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:54.422Z",
-      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
-    },
-    {
-      "id": "github.public.proprietary-leak",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:52:59.780Z",
-      "value": "LEAKED:packages/relay-core/src/master-clock.ts\nLEAKED:packages/relay-core/src/broker-agent.ts\nOK"
-    },
-    {
-      "id": "tnf.product-repo-map",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:00.764Z",
-      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
-    },
-    {
-      "id": "tnf.oss-app-boundary",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:01.494Z",
-      "value": "7cd0046243a9ddea5b165094b0af9ae8676c3e4f\n2026-08-13"
-    },
-    {
       "id": "git.repository.identity",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:06.916Z",
-      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=b4511fcacea76ed009a430927be7842683c89d7d\nbranch=sentinel-fix-marketplace-cmd-injection-11879217410415317362\ndirty=86"
-    },
-    {
-      "id": "runtime.services",
-      "state": "STALE",
-      "observed_at": "2026-08-26T00:53:08.906Z",
-      "value": "REDIS_UNREACHABLE\nRELAY_OK"
+      "state": "FRESH",
+      "observed_at": "2026-08-30T21:27:00.000Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=25bf5505f39e7840172ee0c870a604a11be7b6f8\nbranch=main\ndirty=true"
     }
   ]
 }

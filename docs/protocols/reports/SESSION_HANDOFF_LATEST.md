@@ -1,108 +1,69 @@
-# SESSION_HANDOFF_LATEST
+# Session Handoff: @the-new-fuse/agent-adapters Bootstrap
 
-Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-08-30T20:22:53.836Z` Handoff ID: `a44d535c-f1ba-495e-bbcb-2455c691dffc`
+**Handoff ID:** `c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e`  
+**Supersedes:** `a44d535c-f1ba-495e-bbcb-2455c691dffc`  
+**Created:** 2026-08-30T21:27:00Z  
+**Agent:** antigravity  
+**Branch:** `main` @ `25bf5505f`
 
-## Scope
+---
 
-- Repository: `whodaniel/tnf-monorepo`
-- Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `main`
-- Head SHA: `0bcc64b06ffb4f209d7cd7c08c5391ce39e506a8`
-- Sensitive Scope: `internal`
+## Work Completed
 
-## Classification
+Bootstrapped the `@the-new-fuse/agent-adapters` package from scratch,
+reconstructing the TypeScript source from the compiled `dist/` artifact left by
+opencode.
 
-- Work Domain: `unknown`
-- Artifact Destination: `unknown`
-- Data Residency: `unknown`
-- Sensitivity: `unknown`
+### Files Created
 
-## Work Summary
+| File                                                                   | Purpose                                   |
+| ---------------------------------------------------------------------- | ----------------------------------------- |
+| `packages/agent-adapters/src/GoogleAgentsCliAdapter.ts`                | Adapter source (reconstructed from dist)  |
+| `packages/agent-adapters/src/index.ts`                                 | Barrel export                             |
+| `packages/agent-adapters/src/__tests__/GoogleAgentsCliAdapter.test.ts` | 17 vitest tests                           |
+| `packages/agent-adapters/package.json`                                 | Package manifest, zero runtime deps       |
+| `packages/agent-adapters/tsconfig.json`                                | TypeScript build config                   |
+| `packages/agent-adapters/vitest.config.ts`                             | Test runner config                        |
+| `packages/agent-adapters/SKILL.md`                                     | Usage docs + roadmap                      |
+| `packages/agent-adapters/.gitignore`                                   | Excludes dist/                            |
+| `pnpm-lock.yaml`                                                       | Updated (pnpm install registered package) |
 
-- Modified 26 file(s)
+### Test Results
 
-## Changed Paths
+```
+✓ src/__tests__/GoogleAgentsCliAdapter.test.ts (17 tests) 18ms
+Test Files  1 passed (1)
+     Tests  17 passed (17)
+```
 
-- .agent/skills/tnf-engineering-context/SKILL.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
-- apps/frontend/src/data/codebase_map.json
-- data/marketplace/catalog-items.json
-- docs/operations/tnf-master-reconciliation-report-latest.json
-- docs/operations/tnf-master-reconciliation-report-latest.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/CHALLENGE_RATIONALE_LOG.md
-- docs/protocols/TURN_END_MANDATE.md
-- docs/protocols/TURN_ZERO_MANDATE.md
-- docs/protocols/reports/DOC_AUDIT_INVENTORY.json
-- docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/SESSION_HANDOFF_RC_T5_MAIN_MERGE_20260829.json
-- docs/protocols/reports/session_handoff_boot-local-live-surfaces-20260829.json
-- docs/protocols/reports/session_handoff_cluster1-assembly-line-20260830.json
-- docs/protocols/reports/session_handoff_context-window-branching-20260830.json
-- docs/protocols/reports/session_handoff_fuse-connect-panel-close-20260830.json
-- docs/protocols/reports/session_handoff_generated-runtime-snapshots-20260829.json
-- docs/protocols/reports/session_handoff_relay-stage0-hardening-20260830.json
-- docs/protocols/reports/session_handoff_skill-consolidation-20260829.json
-- docs/protocols/reports/session_handoff_workspace-tier-injection-20260829.json
-- docs/protocols/reports/twip-terminal-macro-board-latest.md
-- scripts/turn-end-v2.cjs
-- data/harness/ANOMALY_PAYLOAD.md
-- data/harness/active-sieve-manifest.json
-- data/harness/injected-context.md
-- data/llm-intel/
-- fix-broker.py
-- fix-broker2.js
-- fix-cron.py
-- fix-docs.py
-- fix-ledger.py
-- fix-prompts.py
-- fix-rationale.py
-- fix-turn-end.py
-- packages/rust-relay/
+### Build
 
-## Continuation
+`pnpm build` (tsc -b) exits cleanly. No type errors.
 
-- **Owner:** operator
-- **Priority:** medium
+---
 
-**Targets:**
+## Next Actions (Open Roadmap, items 3–7)
 
-- orchestrator
+1. **MicroToolAdapter** — wrap any `MicroTool` as legacy `ToolHandler` so
+   mcp-server/broker surfaces serve stateless tools automatically (item 3)
+2. **CLI commands** — `tnf ga:invoke`, `tnf ga:status`, `tnf ga:map-error` —
+   requires `tnf-command-surface-gate` oracle update (item 5)
+3. **Live transport** — `--transport stdio|http` behind adapter for real Google
+   Agents CLI round-trip (item 6)
+4. **Skill ubiquity** — propagate via `tnf-skill-ubiquity-propagation` to
+   `.opencode/skills`, `.claude/skills` etc. (item 7)
 
-**Resume Checklist:**
+---
 
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
-  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
-  and get live operator confirmation before running git commit/push for those,
-  do not auto-execute them
+## Resume Checklist
 
-## Next Actions
+- [ ] Implement `MicroToolAdapter` in `packages/agent-adapters/src/`
+- [ ] Add `tnf ga:*` commands to `packages/tnf-cli/src/commands/`
+- [ ] Update command-surface oracle snapshot after CLI changes
+- [ ] Wire live transport and run one end-to-end round-trip
+- [ ] Run `tnf-skill-ubiquity-propagation` to propagate SKILL.md
 
-- Review updated LIVING_STATE.md for new active steps
-- [GUARDRAIL-COMPLIANT] Do not merge PR 264 until operator signoff after a green
-  official root turbo build on a machine with >=8Gi free. (acknowledged; no
-  merge performed; disk cleared to 8Gi; build is GREEN)
-- [GUARDRAIL-COMPLIANT] Keep PR 253 separate on recon/S1. Do not retarget or
-  conflate. (branch recon/s1-cron-provision-reproducibility intact, untouched)
-- [GUARDRAIL-COMPLETED] Re-run official pnpm run build (cold .turbo) then root
-  type-check/test if required by launch-train, once disk headroom exists. (DONE:
-  disk cleared to 8Gi, cold turbo build GREEN, type-check GREEN, root tests
-  GREEN after agent-coordination fix)
-- [GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files
-  from removed tnf-rc-gate worktree). Do not commit
-  apps/frontend/src/data/codebase_map.json. (DONE)
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 39 file(s)
-  uncommitted — see
-  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
+---
 
-## Artifacts
-
-**Commits:**
-
-- 0bcc64b06ffb4f209d7cd7c08c5391ce39e506a8
+`TNF_PROTOCOL_ACK` · handoff `c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e` · agent:
+antigravity · 2026-08-30T21:31:00Z
