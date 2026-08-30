@@ -50,3 +50,6 @@ export * from './patterns/index.js';
 
 // Monitoring
 export * from './monitoring/index.js';
+
+// Context window branching (isolated subagent forks)
+export * from './context/index.js';

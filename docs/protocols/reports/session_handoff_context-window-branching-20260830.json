@@ -1,0 +1,80 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "8ba65b14-c360-41ff-8811-48cec70d56d6",
+  "created_at": "2026-08-30T16:58:07.741Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "feat/context-window-branching",
+  "head_sha": "20651e976732c66db017833f32be551b15486a9a",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Add ContextBranchManager for isolated subagent forks under packages/agent-coordination/src/context.",
+    "Export the context-branch receipt API without rewriting the already-verified manager."
+  ],
+  "changed_paths": [
+    "packages/agent-coordination/src/context/types.ts",
+    "packages/agent-coordination/src/context/ContextBranchManager.ts",
+    "packages/agent-coordination/src/context/index.ts",
+    "packages/agent-coordination/tests/unit/context-branch-manager.test.ts",
+    "packages/agent-coordination/src/index.ts",
+    "docs/protocols/reports/session_handoff_context-window-branching-20260830.json",
+    "docs/protocols/reports/session_handoff_context-window-branching-20260830.md"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Jest: context-branch-manager 10/10 pass from the shared checkout before copy."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Run packages/agent-coordination context-branch-manager tests (10/10 already green)."
+    ]
+  },
+  "next_actions": [
+    "Keep context-branch as-is; do not rewrite the manager in follow-on Cluster 1 work.",
+    "Do not merge PR 264 or retarget PR 253 as part of this landing."
+  ],
+  "artifacts": {
+    "commits": ["20651e976732c66db017833f32be551b15486a9a"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": false,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "corporate",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": ["agent-coordination"],
+    "staffed_by": ["cursor-grok"]
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "git.repository.identity",
+      "state": "CURRENT",
+      "observed_at": "2026-08-30T16:58:07.741Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=20651e976732c66db017833f32be551b15486a9a\nbranch=feat/context-window-branching\ndirty=0"
+    }
+  ]
+}
