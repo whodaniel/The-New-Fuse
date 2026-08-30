@@ -4,10 +4,28 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Phase 2: relocate claw-skills markdown packs to
-skill-content distribution + repoint symlink consumers
+**Current Directive:** Implement and Audit the Self-Evolving "Harness": Context
+Broker, Recursive Logic Sieve, Lexical Forgiveness, and Synergistic Alignment.
 
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-08-30 The Synergistic Alignment & Harness Overhaul**:
+  - **Context Broker & JIT Injection:** Built `tnf-context-broker.cjs` to
+    dynamically inject context bound to specific Clusters (e.g.,
+    `[CLUSTER_BINDING: SYNTHESIS]`).
+  - **Recursive Logic Sieve & Meta-Audit:** Registered the Logic Sieve into the
+    Swarm Master Schedule. Authored `TNF_SYNERGISTIC_ALIGNMENT_PROTOCOL.md` to
+    guarantee meta-auditing (auditing the auditor).
+  - **Creative Brainstorming Loop:** Wired the Logic Sieve to output an
+    `ANOMALY_PAYLOAD.md` that explicitly self-prompts the Synthesis Cluster
+    (Creative Team) to expand, trim, and brainstorm on overlap anomalies.
+  - **Lexical Forgiveness Matrix:** Updated `TNF_SYSTEM_LEXICON.md` to
+    explicitly map colloquial terms ("team", "staff", "department") to
+    foundational terms ("Cluster", "Swarm", "Core") to prevent rigid pipeline
+    failures.
+  - **RLHF & Data Collection Prep:** Outlined Phase 1 / Phase 2 architecture for
+    logging binary gate outcomes to Supabase, paired with DSPy and Argilla for
+    test-time verification loop training.
 
 - [✅] **2026-08-26 Antigravity CLI (AGY) Onboarding, Protocol Authority
   Alignment & Full-Auto Seal Hardening (Antigravity/Sub-Director)**:

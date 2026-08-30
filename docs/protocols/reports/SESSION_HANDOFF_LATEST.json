@@ -1,15 +1,15 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "c9cfbd3a-37f3-4bf1-a4f4-a39722d052d9",
-  "created_at": "2026-08-30T19:32:41.307Z",
+  "handoff_id": "c6d61cfd-fd9f-4522-916b-9904749291e9",
+  "created_at": "2026-08-30T19:56:25.746Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "c6545e0629e26704274c617eb1279436f49d56cb",
+  "head_sha": "0f6382d180a3e18798ba0b7a6a524abcc6dbf984",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
   "work_summary": [
-    "feat(autonomy): instantiate synergistic alignment protocol and lexical forgiveness mapping"
+    "docs(protocols): update living state and ledger for harness completion"
   ],
   "changed_paths": [
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
@@ -17,10 +17,9 @@
     "apps/frontend/src/data/codebase_map.json",
     "data/marketplace/catalog-items.json",
     "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/CHALLENGE_RATIONALE_LOG.md",
-    "docs/protocols/PROTOCOL_MAP.md",
-    "docs/protocols/TNF_SYSTEM_LEXICON.md",
+    "docs/protocols/LIVING_STATE.md",
     "docs/protocols/reports/DOC_AUDIT_INVENTORY.json",
     "docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_RC_T5_MAIN_MERGE_20260829.json",
@@ -32,12 +31,12 @@
     "docs/protocols/reports/session_handoff_relay-stage0-hardening-20260830.json",
     "docs/protocols/reports/session_handoff_skill-consolidation-20260829.json",
     "docs/protocols/reports/session_handoff_workspace-tier-injection-20260829.json",
-    "scripts/autonomy/tnf-recursive-logic-sieve.sh",
-    "docs/protocols/TNF_SYNERGISTIC_ALIGNMENT_PROTOCOL.md",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
     "data/harness/ANOMALY_PAYLOAD.md",
     "data/harness/active-sieve-manifest.json",
     "data/harness/injected-context.md",
     "fix-cron.py",
+    "fix-docs.py",
     "packages/rust-relay/"
   ],
   "verification": {
@@ -63,10 +62,10 @@
     "[GUARDRAIL-COMPLIANT] Keep PR 253 separate on recon/S1. Do not retarget or conflate. (branch recon/s1-cron-provision-reproducibility intact, untouched)",
     "[GUARDRAIL-COMPLETED] Re-run official pnpm run build (cold .turbo) then root type-check/test if required by launch-train, once disk headroom exists. (DONE: disk cleared to 8Gi, cold turbo build GREEN, type-check GREEN, root tests GREEN after agent-coordination fix)",
     "[GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json. (DONE)",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 27 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 26 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["c6545e0629e26704274c617eb1279436f49d56cb"],
+    "commits": ["0f6382d180a3e18798ba0b7a6a524abcc6dbf984"],
     "deployment_urls": [],
     "database_migrations": []
   },
