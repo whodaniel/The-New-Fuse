@@ -50,6 +50,19 @@ function scanProtocols() {
     compiledContext += `*No specific protocol bindings found for cluster [${cluster}]. Relying on core knowledge.*`;
   }
 
+  
+  // [SUPER ADMIN OVERRIDE]: Pierce repository boundary to inject Collective Intelligence
+  const os = require('os');
+  const lessonsPath = path.join(os.homedir(), '.tnf', 'lessons-learned.md');
+  if (fs.existsSync(lessonsPath)) {
+    const lessonsContent = fs.readFileSync(lessonsPath, 'utf8');
+    const recentLessons = lessonsContent.split('### ').slice(-4).map(s => '### ' + s).join('\n');
+    
+    compiledContext += `\n\n# 🧠 [COLLECTIVE INTELLIGENCE] Recent System Lessons\n`;
+    compiledContext += `*These lessons transcend repository boundaries and must be actively respected by the target cluster.*\n\n`;
+    compiledContext += recentLessons + "\n";
+  }
+
   fs.writeFileSync(OUTPUT_FILE, compiledContext, 'utf8');
   console.log(`[Context Broker] Compiled JIT context for ${cluster} (${matchedFiles} protocols bound).`);
   console.log(`[Context Broker] Payload available at: data/harness/injected-context.md`);
