@@ -1,15 +1,15 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "edd99105-7839-4e58-b335-5820624ab521",
-  "created_at": "2026-08-30T18:59:23.285Z",
+  "handoff_id": "040b0db4-8108-435f-b888-723d7cecfb68",
+  "created_at": "2026-08-30T19:06:05.096Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "d80f8222108e1570aa3918605b4fcb7faefbd394",
+  "head_sha": "d08705f326ec5085bcb74f39eaab908e57a47e0e",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
   "work_summary": [
-    "feat(logic): instantiate recursive filtering protocol and sieving engine"
+    "feat(autonomy): integrate skill auditing and edge UI state emission into logic sieve"
   ],
   "changed_paths": [
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
@@ -20,12 +20,11 @@
     "docs/operations/tnf-master-reconciliation-report-latest.json",
     "docs/operations/tnf-master-reconciliation-report-latest.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/HIERARCHICAL_SEMANTIC_SKILL_TREE.md",
     "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/PROTOCOL_MAP.md",
     "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "data/harness/active-sieve-manifest.json",
-    "docs/protocols/TNF_RECURSIVE_LOGICAL_FILTERING_PROTOCOL.md",
     "scripts/autonomy/tnf-recursive-logic-sieve.sh",
+    "data/harness/active-sieve-manifest.json",
     "packages/rust-relay/"
   ],
   "verification": {
@@ -51,10 +50,10 @@
     "[GUARDRAIL-COMPLIANT] Keep PR 253 separate on recon/S1. Do not retarget or conflate. (branch recon/s1-cron-provision-reproducibility intact, untouched)",
     "[GUARDRAIL-COMPLETED] Re-run official pnpm run build (cold .turbo) then root type-check/test if required by launch-train, once disk headroom exists. (DONE: disk cleared to 8Gi, cold turbo build GREEN, type-check GREEN, root tests GREEN after agent-coordination fix)",
     "[GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files from removed tnf-rc-gate worktree). Do not commit apps/frontend/src/data/codebase_map.json. (DONE)",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 15 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 14 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["d80f8222108e1570aa3918605b4fcb7faefbd394"],
+    "commits": ["d08705f326ec5085bcb74f39eaab908e57a47e0e"],
     "deployment_urls": [],
     "database_migrations": []
   },

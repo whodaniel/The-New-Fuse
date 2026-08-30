@@ -1,7 +1,7 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-08-30T18:59:23.285Z` Handoff ID: `edd99105-7839-4e58-b335-5820624ab521`
+`2026-08-30T19:06:05.096Z` Handoff ID: `040b0db4-8108-435f-b888-723d7cecfb68`
 
 ## Repository
 
@@ -9,7 +9,7 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - Canonical TNF source: `whodaniel/tnf-monorepo`
 - Origin: `https://github.com/whodaniel/tnf-monorepo.git`
 - Branch: `main`
-- Head SHA: `d80f8222108e1570aa3918605b4fcb7faefbd394`
+- Head SHA: `d08705f326ec5085bcb74f39eaab908e57a47e0e`
 
 ## Classification
 
@@ -25,7 +25,8 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Work Summary
 
-- feat(logic): instantiate recursive filtering protocol and sieving engine
+- feat(autonomy): integrate skill auditing and edge UI state emission into logic
+  sieve
 
 ## Next Actions
 
@@ -42,6 +43,6 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - [GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files
   from removed tnf-rc-gate worktree). Do not commit
   apps/frontend/src/data/codebase_map.json. (DONE)
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 15 file(s)
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 14 file(s)
   uncommitted — see
   docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation

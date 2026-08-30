@@ -1,5 +1,13 @@
 # 🌳 Hierarchical Semantic Skill Tree (HSST) & Traversable Capability Fabric
 
+**Status:** ACTIVE **Class:** [CLASS:PRIME] **Doc Type:**
+[DOC_TYPE:PROTOCOL_STANDARD] **Visibility:** [VISIBILITY:COLLECTIVE]
+
+> **Progressive Disclosure Mandate:** Agents must never load flat lists of
+> skills into active memory. Skills are strictly navigated via Progressive
+> Disclosure: Root Semantic Index -> Branch Index -> Leaf Execution Skill. This
+> prevents context bloat while preserving total discoverability.
+
 ## 1. The Core Flaw of the Flat "Inactive Vault" Model
 
 The legacy pattern (`skills/` vs `skills_inactive/` with `skill-management`
