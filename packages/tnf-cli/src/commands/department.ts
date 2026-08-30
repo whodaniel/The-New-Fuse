@@ -1,4 +1,6 @@
 import type { Command } from 'commander';
+import { spawnSync } from 'node:child_process';
+import * as path from 'node:path';
 import {
   formatDepartmentCard,
   loadDepartmentCatalog,
@@ -85,6 +87,19 @@ export function registerDepartmentCommands(program: Command, repoRoot: string): 
       console.log(`Routed to ${route.department.name} — ${route.reason}\n`);
       console.log(formatDepartmentCard(route.department, loadDepartmentStaffing(repoRoot)));
       console.log('');
+    });
+
+  department
+    .command('apply')
+    .description('Add department tags without rewriting existing category values (dry-run default)')
+    .option('--write', 'Write department/category fields (otherwise dry-run)')
+    .action((opts: { write?: boolean }) => {
+      const script = path.join(repoRoot, 'scripts/departments/apply-department-categories.cjs');
+      const result = spawnSync(process.execPath, [script, opts.write ? '--apply' : '--dry-run'], {
+        cwd: repoRoot,
+        stdio: 'inherit',
+      });
+      process.exitCode = result.status ?? 1;
     });
 
   return department;

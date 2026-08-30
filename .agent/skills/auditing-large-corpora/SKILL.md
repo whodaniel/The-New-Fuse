@@ -6,6 +6,7 @@ description:
   dedup keys, and repairing link rot mechanically without inventing targets.
 primary_type: diagnostic
 category: engineering/patterns
+department: ops
 risk_tier: low
 harmful_pattern_detection: false
 ---
@@ -18,15 +19,15 @@ numbers**, because every bucket is populated and every total adds up.
 
 ## A fallback in a classifier becomes a catch-all
 
-Building the TNF skill taxonomy, classification matched skill name *and* path:
+Building the TNF skill taxonomy, classification matched skill name _and_ path:
 
 ```js
-const hay = `${name} ${file}`;              // WRONG
+const hay = `${name} ${file}`; // WRONG
 for (const [domain, re] of DOMAINS) if (re.test(hay)) return domain;
 ```
 
 Every skill lives under `.agent/skills/`, so the `agent|fleet|…` pattern matched
-the *path* of essentially everything. Result: 322 of 589 skills in one bucket,
+the _path_ of essentially everything. Result: 322 of 589 skills in one bucket,
 including `2d-games`, `algolia-search`, and `azure-functions`. Restricting to a
 "meaningful path" only moved the problem — the next fallback sorted
 `multiplayer` and `yeet` into `skill-authoring`.
@@ -52,18 +53,22 @@ The same corpus contained `Burp Suite Web Application Testing` and
 separators for identity, keep a preferred spelling for display:
 
 ```js
-const dedupKey = (n) => n.toLowerCase().replace(/[\s_]+/g, '-').replace(/[^a-z0-9-]/g, '');
+const dedupKey = (n) =>
+  n
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
 ```
 
-Folding changed unique count 589 → 575 and *raised* detected divergence 60 → 72,
+Folding changed unique count 589 → 575 and _raised_ detected divergence 60 → 72,
 because case-variants with different bodies were finally compared. Better dedup
 surfaces more conflict, not less — a drop in conflicts after a dedup change is a
 signal you merged away real differences.
 
 Also sanitize parsed fields. Malformed frontmatter (`name:` and `description:`
 on one line) yielded the skill name
-`"clawhub-skill-scout description: Discover and rank ClawHub skills using"`.
-Cut at the first embedded key and cap length.
+`"clawhub-skill-scout description: Discover and rank ClawHub skills using"`. Cut
+at the first embedded key and cap length.
 
 ## Repairing link rot without inventing targets
 
@@ -79,8 +84,8 @@ Two rules that matter more than the matching:
 - **Never point a live doc at archived content.** Resolving a break to an
   archive copy looks like a repair but silently makes stale material
   authoritative — worse than leaving the break visible.
-- **Report ambiguity, never guess it.** A wrong link is worse than a known-broken
-  one.
+- **Report ambiguity, never guess it.** A wrong link is worse than a
+  known-broken one.
 
 Result: valid links 432 → 851, dangling 697 → 278, 60 docs touched, idempotent
 on a second run. The remainder are genuinely absent targets — a human call.
@@ -89,11 +94,11 @@ on a second run. The remainder are genuinely absent targets — a human call.
 
 Useful audit numbers are ratios against a stated total, not raw counts:
 
-| Measure | Value |
-| --- | --- |
+| Measure                   | Value          |
+| ------------------------- | -------------- |
 | skill corpus, full bodies | ~2,326k tokens |
-| all frontmatter | ~128k tokens |
-| Tier-0 domain manifest | ~4.8k tokens |
+| all frontmatter           | ~128k tokens   |
+| Tier-0 domain manifest    | ~4.8k tokens   |
 
 Both pre-existing tiers were too large to load, which means in practice neither
 was loaded and the network was not discoverable at all. That conclusion is only

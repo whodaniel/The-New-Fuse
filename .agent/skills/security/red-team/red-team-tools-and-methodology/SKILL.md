@@ -6,6 +6,7 @@ primary_type: operational
 secondary_tags:
   - exploratory
 category: security/red-team
+department: tech
 risk_tier: critical
 harmful_pattern_detection: true
 harmful_pattern_signals:
@@ -17,8 +18,10 @@ metadata:
   source_snapshot: .agent/skill-bank/snapshots/project-agent/red-team-tools-and-methodology-60f25476/SKILL.md
   status: permanent
 ---
-> Promoted from TNF snapshot history into permanent skill inventory.
-> Category and risk metadata added for adaptive routing and harmful-pattern recognition.
+
+> Promoted from TNF snapshot history into permanent skill inventory. Category
+> and risk metadata added for adaptive routing and harmful-pattern recognition.
+
 # Red Team Tools and Methodology
 
 ## Purpose

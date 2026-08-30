@@ -9,6 +9,7 @@ description: >-
   classification, TNF-native codification, and regression verification.
 primary_type: protocol
 category: engineering/assimilation
+department: tech
 risk_tier: low
 harmful_pattern_detection: false
 ---
@@ -59,11 +60,11 @@ Do NOT re-invent a capability merely because the provider names it differently.
 ### 3. Build the gap matrix
 
 | external capability | TNF surface | gap | extend-vs-new | retained output class |
-| --- | --- | --- | --- | --- |
+| ------------------- | ----------- | --- | ------------- | --------------------- |
 
-Mark each as `covered`, `extend existing silo`, `new`, or `unresolved`.
-Creating a new abstraction requires a one-line justification for why the
-existing TNF surface cannot own the responsibility.
+Mark each as `covered`, `extend existing silo`, `new`, or `unresolved`. Creating
+a new abstraction requires a one-line justification for why the existing TNF
+surface cannot own the responsibility.
 
 ### 4. Codify the capability TNF-native
 
@@ -77,10 +78,11 @@ knowledge belongs in skills.
 Every assimilated output must route to the existing TNF plane that owns its
 semantics:
 
-- **Reusable read-mostly artifact** (skill/prompt/rule/template/agent definition)
-  → `TNF_AGENT_RESOURCE_CONVERGENCE` / Agent Resource Fabric.
+- **Reusable read-mostly artifact** (skill/prompt/rule/template/agent
+  definition) → `TNF_AGENT_RESOURCE_CONVERGENCE` / Agent Resource Fabric.
 - **Provider execution or host binding** → existing provider-failover + host
-  injection/adapter authorities. Do not create `.agent/assimilation-routes.json`.
+  injection/adapter authorities. Do not create
+  `.agent/assimilation-routes.json`.
 - **Stateful history, trajectory, or learned memory** → TNF memory/compaction
   and freshness layer; never static-file dedupe opaque databases.
 - **User-owned durable profile/context** → user-context storage mandate.
@@ -89,8 +91,8 @@ semantics:
 - **TNF-native capability/code** → existing package/service/protocol/skill that
   owns the responsibility.
 
-This classification is the bridge between *assimilation* and *resource
-convergence*: assimilation decides what TNF should retain; the Resource Fabric
+This classification is the bridge between _assimilation_ and _resource
+convergence_: assimilation decides what TNF should retain; the Resource Fabric
 stores/distributes eligible reusable bytes without changing their authority.
 
 ### 6. Propagate without multiplying copies
@@ -134,12 +136,12 @@ test until it has run.
   skill, memory, and host authorities.
 - **Same bytes ≠ same semantics or trust.** Resource Fabric dedupe does not
   decide whether a capability should be assimilated.
-- **Runtime tools ≠ CLI commands.** Tool additions do not change command
-  surface unless `.command()`/`.option()` changes.
+- **Runtime tools ≠ CLI commands.** Tool additions do not change command surface
+  unless `.command()`/`.option()` changes.
 - **Skill ubiquity is an adapter, not a second resource authority.** Prefer one
   governed source with verified host edges over independent full copies.
-- **Concurrent-agent drift:** refresh current code/PR/workstream ownership before
-  overlapping edits and re-verify after concurrent commits.
+- **Concurrent-agent drift:** refresh current code/PR/workstream ownership
+  before overlapping edits and re-verify after concurrent commits.
 - **Honest reporting:** if a gap is partial or a host adapter is unverified, say
   so. Never claim a capability assimilated or a resource redirected when only
   planned.

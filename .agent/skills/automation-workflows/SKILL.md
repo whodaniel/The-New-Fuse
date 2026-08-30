@@ -1,18 +1,33 @@
 ---
 name: automation-workflows
-description: Design and implement automation workflows to save time and scale operations as a solopreneur. Use when identifying repetitive tasks to automate, building workflows across tools, setting up triggers and actions, or optimizing existing automations. Covers automation opportunity identification, workflow design, tool selection (Zapier, Make, n8n), testing, and maintenance. Trigger on "automate", "automation", "workflow automation", "save time", "reduce manual work", "automate my business", "no-code automation".
+category: engineering-practice
+department: tech
+description:
+  Design and implement automation workflows to save time and scale operations as
+  a solopreneur. Use when identifying repetitive tasks to automate, building
+  workflows across tools, setting up triggers and actions, or optimizing
+  existing automations. Covers automation opportunity identification, workflow
+  design, tool selection (Zapier, Make, n8n), testing, and maintenance. Trigger
+  on "automate", "automation", "workflow automation", "save time", "reduce
+  manual work", "automate my business", "no-code automation".
 ---
 
 # Automation Workflows
 
 ## Overview
-As a solopreneur, your time is your most valuable asset. Automation lets you scale without hiring. The goal is simple: automate anything you do more than twice a week that doesn't require creative thinking. This playbook shows you how to identify automation opportunities, design workflows, and implement them without writing code.
+
+As a solopreneur, your time is your most valuable asset. Automation lets you
+scale without hiring. The goal is simple: automate anything you do more than
+twice a week that doesn't require creative thinking. This playbook shows you how
+to identify automation opportunities, design workflows, and implement them
+without writing code.
 
 ---
 
 ## Step 1: Identify What to Automate
 
-Not every task should be automated. Start by finding the highest-value opportunities.
+Not every task should be automated. Start by finding the highest-value
+opportunities.
 
 **Automation audit (spend 1 hour on this):**
 
@@ -23,20 +38,24 @@ Not every task should be automated. Start by finding the highest-value opportuni
    - Whether it's repetitive or requires judgment
 
 3. Calculate time cost per task:
+
    ```
    Time Cost = (Minutes per task × Frequency per month) / 60
    ```
+
    Example: 15 min task done 20x/month = 5 hours/month
 
 4. Sort by time cost (highest to lowest)
 
 **Good candidates for automation:**
+
 - Repetitive (same steps every time)
 - Rule-based (no complex judgment calls)
 - High-frequency (daily or weekly)
 - Time-consuming (takes 10+ minutes)
 
 **Examples:**
+
 - ✅ Sending weekly reports to clients (same format, same schedule)
 - ✅ Creating invoices after payment
 - ✅ Adding new leads to CRM from form submissions
@@ -45,6 +64,7 @@ Not every task should be automated. Start by finding the highest-value opportuni
 - ❌ Writing custom proposals for clients (requires creativity)
 
 **Low-hanging fruit checklist (start here):**
+
 - [ ] Email notifications for form submissions
 - [ ] Auto-save form responses to spreadsheet
 - [ ] Schedule social posts in advance
@@ -59,20 +79,22 @@ Three main options for no-code automation. Pick based on complexity and budget.
 
 **Tool comparison:**
 
-| Tool | Best For | Pricing | Learning Curve | Power Level |
-|---|---|---|---|---|
-| **Zapier** | Simple, 2-3 step workflows | $20-50/month | Easy | Low-Medium |
-| **Make (Integromat)** | Visual, multi-step workflows | $9-30/month | Medium | Medium-High |
-| **n8n** | Complex, developer-friendly, self-hosted | Free (self-hosted) or $20/month | Medium-Hard | High |
+| Tool                  | Best For                                 | Pricing                         | Learning Curve | Power Level |
+| --------------------- | ---------------------------------------- | ------------------------------- | -------------- | ----------- |
+| **Zapier**            | Simple, 2-3 step workflows               | $20-50/month                    | Easy           | Low-Medium  |
+| **Make (Integromat)** | Visual, multi-step workflows             | $9-30/month                     | Medium         | Medium-High |
+| **n8n**               | Complex, developer-friendly, self-hosted | Free (self-hosted) or $20/month | Medium-Hard    | High        |
 
 **Selection guide:**
+
 - Budget < $20/month → Try Zapier free tier or n8n self-hosted
 - Need visual workflow builder → Make
 - Simple 2-step workflows → Zapier
 - Complex workflows with branching logic → Make or n8n
 - Want full control and customization → n8n
 
-**Recommendation for solopreneurs:** Start with Zapier (easiest to learn). Graduate to Make or n8n when you hit Zapier's limits.
+**Recommendation for solopreneurs:** Start with Zapier (easiest to learn).
+Graduate to Make or n8n when you hit Zapier's limits.
 
 ---
 
@@ -99,6 +121,7 @@ ERROR HANDLING: What happens if something fails?
 ```
 
 **Example workflow (lead capture → CRM → email):**
+
 ```
 TRIGGER: New form submission on website
 
@@ -114,6 +137,7 @@ ERROR HANDLING: If Step 1 fails, send email alert to me
 ```
 
 **Design principles:**
+
 - Keep it simple — start with 2-3 steps, add complexity later
 - Test each step individually before chaining them together
 - Add delays between actions if needed (some APIs are slow)
@@ -126,6 +150,7 @@ ERROR HANDLING: If Step 1 fails, send email alert to me
 Now implement it in your chosen tool.
 
 **Build workflow (Zapier example):**
+
 1. **Choose trigger app** (e.g., Google Forms, Typeform, website form)
 2. **Connect your account** (authenticate via OAuth)
 3. **Test trigger** (submit a test form to make sure data comes through)
@@ -136,6 +161,7 @@ Now implement it in your chosen tool.
 8. **Turn on workflow** (Zapier calls this "turn on Zap")
 
 **Testing checklist:**
+
 - [ ] Submit test data through the trigger
 - [ ] Verify each action executes correctly
 - [ ] Check that data maps to the right fields
@@ -144,38 +170,47 @@ Now implement it in your chosen tool.
 
 **Common issues and fixes:**
 
-| Issue | Cause | Fix |
-|---|---|---|
-| Workflow doesn't trigger | Trigger conditions too narrow | Check filter settings, broaden criteria |
-| Action fails | API rate limit or permissions | Add delay between actions, re-authenticate |
-| Data missing or incorrect | Field mapping wrong | Double-check which fields are mapped |
-| Workflow runs multiple times | Duplicate triggers | De-duplicate based on unique ID |
+| Issue                        | Cause                         | Fix                                        |
+| ---------------------------- | ----------------------------- | ------------------------------------------ |
+| Workflow doesn't trigger     | Trigger conditions too narrow | Check filter settings, broaden criteria    |
+| Action fails                 | API rate limit or permissions | Add delay between actions, re-authenticate |
+| Data missing or incorrect    | Field mapping wrong           | Double-check which fields are mapped       |
+| Workflow runs multiple times | Duplicate triggers            | De-duplicate based on unique ID            |
 
-**Rule:** Test with real data before relying on an automation. Don't discover bugs when a real customer is involved.
+**Rule:** Test with real data before relying on an automation. Don't discover
+bugs when a real customer is involved.
 
 ---
 
 ## Step 5: Monitor and Maintain Automations
 
-Automations aren't set-it-and-forget-it. They break. Tools change. APIs update. You need a maintenance plan.
+Automations aren't set-it-and-forget-it. They break. Tools change. APIs update.
+You need a maintenance plan.
 
 **Weekly check (5 min):**
+
 - Scan workflow logs for errors (most tools show a log of runs + failures)
 - Address any failures immediately
 
 **Monthly audit (15 min):**
+
 - Review all active workflows
 - Check: Is this still being used? Is it still saving time?
-- Disable or delete unused workflows (they clutter your dashboard and can cause confusion)
+- Disable or delete unused workflows (they clutter your dashboard and can cause
+  confusion)
 - Update any workflows that depend on tools you've switched away from
 
 **Where to store workflow documentation:**
+
 - Create a simple doc (Notion, Google Doc) for each workflow
-- Include: What it does, when it runs, what apps it connects, how to troubleshoot
+- Include: What it does, when it runs, what apps it connects, how to
+  troubleshoot
 - If you have 10+ workflows, this doc will save you hours when something breaks
 
 **Error handling setup:**
-- Route all error notifications to one place (Slack channel, email inbox, or task manager)
+
+- Route all error notifications to one place (Slack channel, email inbox, or
+  task manager)
 - Set up: "If any workflow fails, send a message to [your error channel]"
 - Review errors weekly and fix root causes
 
@@ -186,6 +221,7 @@ Automations aren't set-it-and-forget-it. They break. Tools change. APIs update. 
 Once you've automated the basics, consider these higher-leverage workflows:
 
 ### Client onboarding automation
+
 ```
 TRIGGER: New client signs contract (via DocuSign, HelloSign)
 ACTIONS:
@@ -198,6 +234,7 @@ ACTIONS:
 ```
 
 ### Content distribution automation
+
 ```
 TRIGGER: New blog post published on website (via RSS or webhook)
 ACTIONS:
@@ -209,6 +246,7 @@ ACTIONS:
 ```
 
 ### Customer health monitoring
+
 ```
 TRIGGER: Every Monday at 9am (scheduled trigger)
 ACTIONS:
@@ -220,6 +258,7 @@ ACTIONS:
 ```
 
 ### Invoice and payment tracking
+
 ```
 TRIGGER: Payment received (Stripe webhook)
 ACTIONS:
@@ -237,6 +276,7 @@ ACTIONS:
 Not every automation is worth the time investment. Calculate ROI to prioritize.
 
 **ROI formula:**
+
 ```
 Time Saved per Month (hours) = (Minutes per task / 60) × Frequency per month
 Cost = (Setup time in hours × $50/hour) + Tool cost per month
@@ -247,6 +287,7 @@ If payback period > 6 months → Probably not worth it (unless it unlocks other 
 ```
 
 **Example:**
+
 ```
 Task: Manually copying form submissions to CRM (15 min, 20x/month = 5 hours/month saved)
 Setup time: 1 hour
@@ -254,14 +295,22 @@ Tool cost: $20/month (Zapier)
 Payback: ($50 setup cost) / ($250/month value saved) = 0.2 months → Absolutely worth it
 ```
 
-**Rule:** Focus on automations with payback < 3 months. Those are your highest-leverage investments.
+**Rule:** Focus on automations with payback < 3 months. Those are your
+highest-leverage investments.
 
 ---
 
 ## Automation Mistakes to Avoid
-- **Automating before optimizing.** Don't automate a bad process. Fix the process first, then automate it.
-- **Over-automating.** Not everything needs to be automated. If a task is rare or requires judgment, do it manually.
-- **No error handling.** If an automation breaks and you don't know, it causes silent failures. Always set up error alerts.
-- **Not testing thoroughly.** A broken automation is worse than no automation — it creates incorrect data or missed tasks.
-- **Building too complex too fast.** Start with simple 2-3 step workflows. Add complexity only when the simple version works perfectly.
-- **Not documenting workflows.** Future you will forget how this works. Write it down.
+
+- **Automating before optimizing.** Don't automate a bad process. Fix the
+  process first, then automate it.
+- **Over-automating.** Not everything needs to be automated. If a task is rare
+  or requires judgment, do it manually.
+- **No error handling.** If an automation breaks and you don't know, it causes
+  silent failures. Always set up error alerts.
+- **Not testing thoroughly.** A broken automation is worse than no automation —
+  it creates incorrect data or missed tasks.
+- **Building too complex too fast.** Start with simple 2-3 step workflows. Add
+  complexity only when the simple version works perfectly.
+- **Not documenting workflows.** Future you will forget how this works. Write it
+  down.

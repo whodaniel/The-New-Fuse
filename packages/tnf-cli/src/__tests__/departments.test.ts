@@ -4,9 +4,11 @@
  * Run: pnpm exec tsx src/__tests__/departments.test.ts
  */
 import assert from 'node:assert/strict';
+import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { buildTnfAgentOrientation } from '../agent-orientation.js';
 import {
   loadDepartmentCatalog,
   loadDepartmentStaffing,
@@ -50,5 +52,25 @@ describe('corporate departments', () => {
       (s) => s.name === 'tnf-engineering-context'
     );
     assert.equal(engineeringContext?.category, 'tnf-platform');
+  });
+
+  it('injects department, remember, host-profile, and scout orientation', () => {
+    const text = buildTnfAgentOrientation(repoRoot);
+    assert.match(text, /Departments \(operator-facing\)/);
+    assert.match(text, /remember this/);
+    assert.match(text, /Host prompt files/);
+    assert.match(text, /Scout missions/);
+  });
+
+  it('maps enlisted hosts to the files they actually inject', () => {
+    const catalog = JSON.parse(
+      fs.readFileSync(path.join(repoRoot, 'data/harness/host-prompt-profiles.json'), 'utf8')
+    ) as { hosts?: Array<{ id: string; expected_files?: string[] }> };
+    const ids = (catalog.hosts || []).map((h) => h.id);
+    for (const id of ['hermes', 'codex', 'claude-code', 'cursor', 'openclaw', 'pi']) {
+      assert.ok(ids.includes(id), `missing host profile ${id}`);
+    }
+    const pi = catalog.hosts?.find((h) => h.id === 'pi');
+    assert.ok(pi?.expected_files?.includes('~/.pi/agent/AGENTS.md'));
   });
 });

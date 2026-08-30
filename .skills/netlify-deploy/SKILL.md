@@ -1,15 +1,22 @@
 ---
 name: netlify-deploy
-description: Deploy web projects to Netlify using the Netlify CLI (`npx netlify`). Use when the user asks to deploy, host, publish, or link a site/repo on Netlify, including preview and production deploys.
+category: build-release
+department: tech
+description:
+  Deploy web projects to Netlify using the Netlify CLI (`npx netlify`). Use when
+  the user asks to deploy, host, publish, or link a site/repo on Netlify,
+  including preview and production deploys.
 ---
 
 # Netlify Deployment Skill
 
-Deploy web projects to Netlify using the Netlify CLI with intelligent detection of project configuration and deployment context.
+Deploy web projects to Netlify using the Netlify CLI with intelligent detection
+of project configuration and deployment context.
 
 ## Overview
 
 This skill automates Netlify deployments by:
+
 - Verifying Netlify CLI authentication
 - Detecting project configuration and framework
 - Linking to existing sites or creating new ones
@@ -20,7 +27,8 @@ This skill automates Netlify deployments by:
 - **Netlify CLI**: Installed via npx (no global install required)
 - **Authentication**: Netlify account with active login session
 - **Project**: Valid web project in current directory
-- When sandboxing blocks the deployment network calls, rerun with `sandbox_permissions=require_escalated`.
+- When sandboxing blocks the deployment network calls, rerun with
+  `sandbox_permissions=require_escalated`.
 - The deployment might take a few minutes. Use appropriate timeout values.
 
 ## Authentication Pattern
@@ -32,7 +40,9 @@ The skill uses the **pre-authenticated Netlify CLI** approach:
 3. Fail gracefully if authentication cannot be established
 
 Authentication uses either:
-- **Browser-based OAuth** (primary): `netlify login` opens browser for authentication
+
+- **Browser-based OAuth** (primary): `netlify login` opens browser for
+  authentication
 - **API Key** (alternative): Set `NETLIFY_AUTH_TOKEN` environment variable
 
 ## Workflow
@@ -46,6 +56,7 @@ npx netlify status
 ```
 
 **Expected output patterns**:
+
 - ✅ Authenticated: Shows logged-in user email and site link status
 - ❌ Not authenticated: "Not logged into any site" or authentication error
 
@@ -55,7 +66,8 @@ npx netlify status
 npx netlify login
 ```
 
-This opens a browser window for OAuth authentication. Wait for user to complete login, then verify with `netlify status` again.
+This opens a browser window for OAuth authentication. Wait for user to complete
+login, then verify with `netlify status` again.
 
 **Alternative: API Key authentication**
 
@@ -65,11 +77,13 @@ If browser authentication isn't available, users can set:
 export NETLIFY_AUTH_TOKEN=your_token_here
 ```
 
-Tokens can be generated at: https://app.netlify.com/user/applications#personal-access-tokens
+Tokens can be generated at:
+https://app.netlify.com/user/applications#personal-access-tokens
 
 ### 2. Detect Site Link Status
 
 From `netlify status` output, determine:
+
 - **Linked**: Site already connected to Netlify (shows site name/URL)
 - **Not linked**: Need to link or create site
 
@@ -98,6 +112,7 @@ npx netlify init
 ```
 
 This guides user through:
+
 1. Choosing team/account
 2. Setting site name
 3. Configuring build settings
@@ -136,6 +151,7 @@ npx netlify deploy --prod
 This deploys to the live production URL.
 
 **Deployment process**:
+
 1. CLI detects build settings (from netlify.toml or prompts user)
 2. Builds the project locally
 3. Uploads built assets to Netlify
@@ -144,6 +160,7 @@ This deploys to the live production URL.
 ### 6. Report Results
 
 After deployment, report to user:
+
 - **Deploy URL**: Unique URL for this deployment
 - **Site URL**: Production URL (if production deploy)
 - **Deploy logs**: Link to Netlify dashboard for logs
@@ -151,16 +168,20 @@ After deployment, report to user:
 
 ## Handling netlify.toml
 
-If a `netlify.toml` file exists, the CLI uses it automatically. If not, the CLI will prompt for:
+If a `netlify.toml` file exists, the CLI uses it automatically. If not, the CLI
+will prompt for:
+
 - **Build command**: e.g., `npm run build`, `next build`
 - **Publish directory**: e.g., `dist`, `build`, `.next`
 
 Common framework defaults:
+
 - **Next.js**: build command `npm run build`, publish `.next`
 - **React (Vite)**: build command `npm run build`, publish `dist`
 - **Static HTML**: no build command, publish current directory
 
-The skill should detect framework from `package.json` if possible and suggest appropriate settings.
+The skill should detect framework from `package.json` if possible and suggest
+appropriate settings.
 
 ## Example Full Workflow
 
@@ -193,26 +214,25 @@ npx netlify deploy --prod
 
 Common issues and solutions:
 
-**"Not logged in"**
-→ Run `npx netlify login`
+**"Not logged in"** → Run `npx netlify login`
 
-**"No site linked"**
-→ Run `npx netlify link` or `npx netlify init`
+**"No site linked"** → Run `npx netlify link` or `npx netlify init`
 
-**"Build failed"**
-→ Check build command and publish directory in netlify.toml or CLI prompts
-→ Verify dependencies are installed
-→ Review build logs for specific errors
+**"Build failed"** → Check build command and publish directory in netlify.toml
+or CLI prompts → Verify dependencies are installed → Review build logs for
+specific errors
 
-**"Publish directory not found"**
-→ Verify build command ran successfully
-→ Check publish directory path is correct
+**"Publish directory not found"** → Verify build command ran successfully →
+Check publish directory path is correct
 
 ## Troubleshooting
 
 ### Escalated Network Access
 
-If deployment fails due to network issues (timeouts, DNS errors, connection resets), rerun the deploy with escalated permissions (use `sandbox_permissions=require_escalated`). The deploy requires escalated network access when sandbox networking blocks outbound requests.
+If deployment fails due to network issues (timeouts, DNS errors, connection
+resets), rerun the deploy with escalated permissions (use
+`sandbox_permissions=require_escalated`). The deploy requires escalated network
+access when sandbox networking blocks outbound requests.
 
 Example guidance to the user:
 
@@ -238,7 +258,8 @@ For secrets and configuration:
 ## Reference
 
 - Netlify CLI Docs: https://docs.netlify.com/cli/get-started/
-- netlify.toml Reference: https://docs.netlify.com/configure-builds/file-based-configuration/
+- netlify.toml Reference:
+  https://docs.netlify.com/configure-builds/file-based-configuration/
 
 ## Bundled References (Load As Needed)
 

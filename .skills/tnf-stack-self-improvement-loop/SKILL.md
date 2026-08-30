@@ -1,6 +1,13 @@
 ---
 name: tnf-stack-self-improvement-loop
-description: Construct, verify, run, and continuously improve the TNF full-stack reliability loop with deterministic build checks, deep link and semantic route audits, auth pathway validation, logging artifacts, architecture diagram generation, specialist-agent audit coverage, and iterative skill refinement. Use when Codex must harden or operate TNF as an ongoing self-improving system.
+category: tnf-platform
+department: tech
+description:
+  Construct, verify, run, and continuously improve the TNF full-stack
+  reliability loop with deterministic build checks, deep link and semantic route
+  audits, auth pathway validation, logging artifacts, architecture diagram
+  generation, specialist-agent audit coverage, and iterative skill refinement.
+  Use when Codex must harden or operate TNF as an ongoing self-improving system.
 ---
 
 # TNF Stack Self-Improvement Loop
@@ -8,6 +15,7 @@ description: Construct, verify, run, and continuously improve the TNF full-stack
 Run this skill for end-to-end TNF reliability operations.
 
 ## Core Workflow
+
 1. Build the target stack.
 2. Run deterministic audits (links, semantic routes, auth paths).
 3. Generate architecture artifacts (Mermaid, optional graph export).
@@ -18,6 +26,7 @@ Run this skill for end-to-end TNF reliability operations.
 8. Update skill references when new failure patterns emerge.
 
 ## Execution Commands
+
 Run from TNF repo root.
 
 Canonical CLI path:
@@ -53,6 +62,7 @@ bash /Users/<owner>/.codex/skills/tnf-stack-self-improvement-loop/scripts/refine
 ```
 
 ## Required Outputs
+
 - `apps/frontend/docs/audits/live-link-crawl.json`
 - `apps/frontend/docs/audits/all-routes-semantic-audit.json`
 - `apps/frontend/docs/audits/auth-path-audit.json`
@@ -61,13 +71,17 @@ bash /Users/<owner>/.codex/skills/tnf-stack-self-improvement-loop/scripts/refine
 - `docs/operations/tnf-self-improvement-cycle.md`
 
 ## Guardrails
+
 - Prefer additive compatibility fixes before disruptive rewrites.
 - Require audit evidence before declaring “fixed”.
-- Keep path-compatibility checks for `/api/*` and `/v1/*` until callers are fully migrated.
+- Keep path-compatibility checks for `/api/*` and `/v1/*` until callers are
+  fully migrated.
 - Update audit expectations whenever endpoint contracts intentionally change.
 
 ## Specialist Agent Coverage
+
 See [references/agent-audit-matrix.md](references/agent-audit-matrix.md).
 
 ## Refinement and Skill Evolution
+
 See [references/refinement-protocol.md](references/refinement-protocol.md).

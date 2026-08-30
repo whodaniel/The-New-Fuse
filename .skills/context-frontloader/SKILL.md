@@ -1,5 +1,7 @@
 ---
 name: context-frontloader
+category: skill-authoring
+department: tech
 version: '1.0.0'
 description: |
   TNF Context Frontloading System - Inspired by Ralph Wiggum Technique.
@@ -35,20 +37,25 @@ auto-activate:
 
 Frontloading in TNF has two layers:
 
-1. `StatusBanner`: human-readable, safe summary (no secrets), shown at session start.
-2. `ContextPack`: richer machine-readable context used by agents; stored on disk and loaded on demand.
+1. `StatusBanner`: human-readable, safe summary (no secrets), shown at session
+   start.
+2. `ContextPack`: richer machine-readable context used by agents; stored on disk
+   and loaded on demand.
 
 ### Canonical Runtime Artifacts (Observed)
 
 - `~/.tnf/handoff-current.json`: cached packet input for the banner.
 - `~/.tnf/tnf-status`: prints the `TNF SYSTEM STATUS` banner.
 - `~/.zshrc`: interactive shell hook that runs the banner once per session.
-- `~/.tnf-claude-env`: Claude wrapper/env interception. This is not the banner, and must not be conflated with it.
+- `~/.tnf-claude-env`: Claude wrapper/env interception. This is not the banner,
+  and must not be conflated with it.
 
 ### Why Frontloading Goes Missing
 
-- `~/.zshrc` only runs for interactive shells. Many tool-run shells are non-interactive and will not show the banner.
-- Some OpenClaw surfaces do not source shell init files; they need explicit OpenClaw hook integration.
+- `~/.zshrc` only runs for interactive shells. Many tool-run shells are
+  non-interactive and will not show the banner.
+- Some OpenClaw surfaces do not source shell init files; they need explicit
+  OpenClaw hook integration.
 - Multiple hooks can compete (afterthought scripts, legacy hooks) and drift.
 
 ### Verify and Fix (Idempotent)
@@ -61,7 +68,8 @@ Notes:
 - Hooks must be "soft": never break shell startup if cache is missing.
 - Never print env vars or tokens in the banner path.
 
-See `frontload-contract.md`, `frontload-terminal.md`, and `frontload-openclaw.md`.
+See `frontload-contract.md`, `frontload-terminal.md`, and
+`frontload-openclaw.md`.
 
 ## The Problem
 

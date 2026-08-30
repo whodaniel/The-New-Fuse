@@ -82,6 +82,7 @@ const TARGETS = [
   // Fresh-session injection verified at the wire level (issue #165 receipts).
   { id: 'zcode', runtime: 'ZCode', scope: 'global', contextFile: path.join(HOME, '.zcode', 'AGENTS.md'), dirHint: path.join(HOME, '.zcode') },
   { id: 'cursor', runtime: 'Cursor', scope: 'project', contextFile: path.join(HOME, '.cursor', 'AGENTS.md'), dirHint: path.join(HOME, '.cursor') },
+  { id: 'pi', runtime: 'Pi', scope: 'global', contextFile: path.join(HOME, '.pi', 'agent', 'AGENTS.md'), dirHint: path.join(HOME, '.pi') },
 ];
 
 function parseArgs(argv) {

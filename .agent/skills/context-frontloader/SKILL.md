@@ -1,5 +1,7 @@
 ---
 name: context-frontloader
+category: skill-authoring
+department: tech
 version: '1.0.0'
 description: |
   TNF Context Frontloading System - Inspired by Ralph Wiggum Technique.

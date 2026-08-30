@@ -1,5 +1,7 @@
 ---
 name: TNF Extension Bridge Standard Operating Procedure
+category: tnf-platform
+department: tech
 description:
   Standard procedure for creating and maintaining supplementary bridge
   extensions for TNF

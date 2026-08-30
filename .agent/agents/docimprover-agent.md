@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -18,9 +19,9 @@ name: DocImprover-Agent
 description: Agent focused on documentation improvements and hygiene for TNF
 version: 1.0.0
 tags:
-- docs
-- documentation
-- worker
+  - docs
+  - documentation
+  - worker
 author: The New Fuse
 platform: darwin
 type: agent
@@ -30,7 +31,8 @@ type: agent
 
 ## Overview
 
-DocImprover-Agent is a specialized agent for improving documentation across the TNF ecosystem. It focuses on docs hygiene, completeness, and consistency.
+DocImprover-Agent is a specialized agent for improving documentation across the
+TNF ecosystem. It focuses on docs hygiene, completeness, and consistency.
 
 ## Capabilities
 

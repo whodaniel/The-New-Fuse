@@ -1,5 +1,7 @@
 ---
 name: openclaw-universal-knowledge
+category: tnf-platform
+department: tech
 description:
   Universal OpenClaw knowledge skill for TNF agents. Use when working on
   OpenClaw/PicoClaw architecture, gateway, providers/models, skills authoring,

@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,15 +16,16 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: DataAgent
-description: Agent focused on database operations, migrations, queries, and data analysis
+description:
+  Agent focused on database operations, migrations, queries, and data analysis
   for TNF
 version: 1.0.0
 tags:
-- data
-- database
-- postgres
-- migrations
-- worker
+  - data
+  - database
+  - postgres
+  - migrations
+  - worker
 author: The New Fuse
 platform: darwin
 type: agent

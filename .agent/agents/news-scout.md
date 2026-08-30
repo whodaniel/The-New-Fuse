@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -17,6 +18,7 @@ traits:
 name: News Scout
 description: null
 ---
+
 # AI News Scout Agent
 
 ## Identity

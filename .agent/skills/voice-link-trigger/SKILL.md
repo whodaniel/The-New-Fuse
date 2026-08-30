@@ -1,5 +1,7 @@
 ---
 name: voice-link-trigger
+category: media-content
+department: marketing
 description:
   Ensures consistent two-way voice interaction. Use this skill to trigger a
   mandatory audio overview at the end of every turn using the 'ai_say' wrapper.

@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,14 +16,15 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: ResearchAgent
-description: Agent focused on web research, competitive analysis, and market intelligence
+description:
+  Agent focused on web research, competitive analysis, and market intelligence
   for TNF
 version: 1.0.0
 tags:
-- research
-- intelligence
-- competitive
-- worker
+  - research
+  - intelligence
+  - competitive
+  - worker
 author: The New Fuse
 platform: darwin
 type: agent

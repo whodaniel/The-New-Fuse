@@ -1,5 +1,6 @@
 ---
 name: stitch-direct
+department: tech
 description:
   Programmatically interact with the Google Stitch MCP server via direct
   JSON-RPC over stdio. Use when high-level design tools fail or when precise

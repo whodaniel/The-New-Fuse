@@ -1,5 +1,7 @@
 ---
 name: tnf-frontload-protocols
+category: tnf-platform
+department: tech
 description:
   TNF frontloading system design and operations. Use when an agent must build,
   verify, repair, or explain the frontload banner and context refresh for

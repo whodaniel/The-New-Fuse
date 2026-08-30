@@ -121,5 +121,8 @@ trajectory/failure source. There is no universal requirement to scan
 - `docs/core/FRONTLOAD_MANIFEST.md`
 - `docs/protocols/HARNESS_CONFIG.md`
 - `data/harness/harness-config.json`
+- `data/harness/host-prompt-profiles.json`
+- `tnf harness host-profiles` /
+  `node scripts/harness/host-prompt-profiles.cjs --verify`
 - `docs/product/TNF_PRODUCT_BOUNDARY.md`
 - `docs/REPO_SEPARATION.md`

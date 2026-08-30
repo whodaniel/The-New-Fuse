@@ -1,33 +1,40 @@
 ---
 name: slack
-description: Use when you need to control Slack from Clawdbot via the slack tool, including reacting to messages or pinning/unpinning items in Slack channels or DMs.
+category: tooling-integration
+department: tech
+description:
+  Use when you need to control Slack from Clawdbot via the slack tool, including
+  reacting to messages or pinning/unpinning items in Slack channels or DMs.
 ---
 
 # Slack Actions
 
 ## Overview
 
-Use `slack` to react, manage pins, send/edit/delete messages, and fetch member info. The tool uses the bot token configured for Clawdbot.
+Use `slack` to react, manage pins, send/edit/delete messages, and fetch member
+info. The tool uses the bot token configured for Clawdbot.
 
 ## Inputs to collect
 
 - `channelId` and `messageId` (Slack message timestamp, e.g. `1712023032.1234`).
 - For reactions, an `emoji` (Unicode or `:name:`).
-- For message sends, a `to` target (`channel:<id>` or `user:<id>`) and `content`.
+- For message sends, a `to` target (`channel:<id>` or `user:<id>`) and
+  `content`.
 
-Message context lines include `slack message id` and `channel` fields you can reuse directly.
+Message context lines include `slack message id` and `channel` fields you can
+reuse directly.
 
 ## Actions
 
 ### Action groups
 
-| Action group | Default | Notes |
-| --- | --- | --- |
-| reactions | enabled | React + list reactions |
-| messages | enabled | Read/send/edit/delete |
-| pins | enabled | Pin/unpin/list |
-| memberInfo | enabled | Member info |
-| emojiList | enabled | Custom emoji list |
+| Action group | Default | Notes                  |
+| ------------ | ------- | ---------------------- |
+| reactions    | enabled | React + list reactions |
+| messages     | enabled | Read/send/edit/delete  |
+| pins         | enabled | Pin/unpin/list         |
+| memberInfo   | enabled | Member info            |
+| emojiList    | enabled | Custom emoji list      |
 
 ### React to a message
 

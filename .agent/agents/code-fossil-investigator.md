@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: funnel
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: code-fossil-investigator
-description: Investigator focused on code snippets, dormant repos, manifests, configs,
-  and prototype artifacts that reveal technical iterations.
+description:
+  Investigator focused on code snippets, dormant repos, manifests, configs, and
+  prototype artifacts that reveal technical iterations.
 skills:
-- personal-historical-archaeology
+  - personal-historical-archaeology
 model: inherit
 ---
 

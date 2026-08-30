@@ -1,5 +1,6 @@
 ---
 category: Unified Orchestration
+department: ops
 domain: ops
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: timeline-synthesis-investigator
-description: Investigator focused on clustering evidence into eras, pivots, and timeline-ready
-  narrative without collapsing evidence tiers.
+description:
+  Investigator focused on clustering evidence into eras, pivots, and
+  timeline-ready narrative without collapsing evidence tiers.
 skills:
-- personal-historical-archaeology
+  - personal-historical-archaeology
 model: inherit
 ---
 

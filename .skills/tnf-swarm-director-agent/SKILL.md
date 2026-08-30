@@ -1,5 +1,7 @@
 ---
 name: tnf-staffing-director-agent
+category: tnf-platform
+department: hr
 description:
   Operate TNF staffing architecture by auditing role coverage, discovering
   unowned operational niches, and proposing new agent+skill role packages with

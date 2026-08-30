@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: ops
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,16 +16,18 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: tnf-fleet-health-probe
-description: Periodic GET on every TNF-managed service endpoint (GCP/Cloudflare/Supabase).
-  Replaces legacy OpenClaw agents `com.openclaw.picoclaw-fleet` and `com.openclaw.mesh-health`.
-  Reads endpoint list from a config file — never hardcodes Railway (Railway is deprecated).
-  Alerts via native Telegram bus using credentials sourced at runtime from .env.tnf-telegram.
+description:
+  Periodic GET on every TNF-managed service endpoint (GCP/Cloudflare/Supabase).
+  Replaces legacy OpenClaw agents `com.openclaw.picoclaw-fleet` and
+  `com.openclaw.mesh-health`. Reads endpoint list from a config file — never
+  hardcodes Railway (Railway is deprecated). Alerts via native Telegram bus
+  using credentials sourced at runtime from .env.tnf-telegram.
 tags:
-- health
-- fleet
-- probe
-- tnf-native
-- native-cron
+  - health
+  - fleet
+  - probe
+  - tnf-native
+  - native-cron
 schedule: every 15 minutes (system cron)
 supervisor: false
 depends_on: []

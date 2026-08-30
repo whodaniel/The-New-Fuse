@@ -7,6 +7,7 @@ description:
   reach production.
 primary_type: diagnostic
 category: engineering/patterns
+department: design
 risk_tier: high
 harmful_pattern_detection: true
 harmful_pattern_signals:
@@ -26,8 +27,8 @@ defect nobody had noticed.
 TNF minted browser-side agent IDs as `5000 + (hash % 10000)` — 10,000 values.
 That feels roomy next to ~200 agents. It is not.
 
-Expected collisions ≈ **n² / 2N**. At n=194, N=10,000: ~1.9 expected, and
-P(at least one) ≈ 90%. Measured against the real roster: **two collisions**.
+Expected collisions ≈ **n² / 2N**. At n=194, N=10,000: ~1.9 expected, and P(at
+least one) ≈ 90%. Measured against the real roster: **two collisions**.
 
 ```
 ID#:4gV  <-  brand-outreach-agent || temporal-agent-reclassifier
@@ -49,8 +50,8 @@ Rules of thumb:
 
 ## Keep provisional IDs distinguishable from authoritative ones
 
-The deeper bug was not the space size — it was that a *hashed local placeholder*
-was indistinguishable from a *sequential registry-assigned identifier*. Both
+The deeper bug was not the space size — it was that a _hashed local placeholder_
+was indistinguishable from a _sequential registry-assigned identifier_. Both
 rendered as `ID#:<Base58>`.
 
 The spec named exactly one source of truth (`FederatedIdentityService`,
@@ -104,8 +105,8 @@ Then publish, per name, the path it **resolves to**. Deterministic resolution
 plus a visible winner beats deduplication: the variants stay available, and the
 ambiguity is gone.
 
-Before deduplicating anything, ask whether the copies are *redundant* or
-*variant*. Deleting a vendor variant loses content; declaring precedence does
+Before deduplicating anything, ask whether the copies are _redundant_ or
+_variant_. Deleting a vendor variant loses content; declaring precedence does
 not.
 
 ## Triage before counting
@@ -114,8 +115,8 @@ A raw divergence count conflates defects with expected drift. TNF's 72 "diverged
 skills" split into 50 real conflicts, 21 stale snapshots awaiting a promotion
 sweep, and 0 snapshot-only. Only the first group is actionable.
 
-Hash the **body**, not the whole file — frontmatter legitimately differs per root
-(a promoted copy gains `category`, `risk_tier`), and counting that as content
-divergence reports conflicts that are actually correct promotions.
+Hash the **body**, not the whole file — frontmatter legitimately differs per
+root (a promoted copy gains `category`, `risk_tier`), and counting that as
+content divergence reports conflicts that are actually correct promotions.
 
 See also [[reconciling-layered-specs]], [[auditing-large-corpora]].

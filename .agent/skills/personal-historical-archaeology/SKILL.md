@@ -1,5 +1,7 @@
 ---
 name: personal-historical-archaeology
+category: knowledge-intake
+department: ops
 description:
   Reconstruct personal and project timelines from repos, documents, exported
   notes, screenshots, videos, and other local artifacts while preserving

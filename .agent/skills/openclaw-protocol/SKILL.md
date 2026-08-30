@@ -1,5 +1,7 @@
 ---
 name: openclaw-protocol
+category: tnf-platform
+department: tech
 description:
   Guide for using the OpenClaw protocol CLI tool (v2026.2.15). Use when you need
   to send cross-channel messages (WhatsApp, Telegram), manage agents, control

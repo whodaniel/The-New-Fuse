@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,14 +16,15 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: DevOpsAgent
-description: Agent focused on DevOps, CI/CD, deployment automation, and infrastructure
-  for TNF
+description:
+  Agent focused on DevOps, CI/CD, deployment automation, and infrastructure for
+  TNF
 version: 1.0.0
 tags:
-- devops
-- ci-cd
-- infrastructure
-- worker
+  - devops
+  - ci-cd
+  - infrastructure
+  - worker
 author: The New Fuse
 platform: darwin
 type: agent

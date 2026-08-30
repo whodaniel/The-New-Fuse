@@ -1,5 +1,7 @@
 ---
 name: tnf-directives
+category: tnf-platform
+department: tech
 description: >
   Crawl the canonical TNF directive sources, synthesize/update the single
   authoritative DIRECTIVES.md and the one-page LIVING_DIRECTIVES_CARD.md, and

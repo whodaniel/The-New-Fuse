@@ -1,5 +1,7 @@
 ---
 name: TNF Relay Silent Failure Fix
+category: tnf-platform
+department: tech
 description:
   Permanent procedure for fixing the invisible WebSocket failure where the
   extension hangs forever without showing the start button

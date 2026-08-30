@@ -52,13 +52,16 @@ the same as host injection. Verify:
 node scripts/harness/verify-harness-completeness.cjs --provision
 ```
 
-| Layer concern                            | Entry point                                                  |
-| ---------------------------------------- | ------------------------------------------------------------ |
-| Permissions outside the model            | `scripts/harness/permission-berm.cjs`                        |
-| Dynamic memory retain/recall             | `scripts/harness/memory-layer.cjs` (≠ `docs/core/MEMORY.md`) |
-| Trajectories / compaction records        | `scripts/harness/trajectory.cjs`, `compaction-record.cjs`    |
-| Sandbox materialization (D11)            | `scripts/harness/materialize-sandbox-profile.cjs`            |
-| Resource governance (CPU/memory/process) | `docs/protocols/TNF_RESOURCE_GOVERNANCE_MANDATE.md`          |
+| Layer concern                            | Entry point                                                                                  |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Permissions outside the model            | `scripts/harness/permission-berm.cjs`                                                        |
+| Dynamic memory retain/recall             | `tnf remember retain\|recall` / `scripts/harness/memory-layer.cjs` (≠ `docs/core/MEMORY.md`) |
+| Operator departments (HR/Marketing/…)    | `tnf department list\|show\|route\|apply` — `docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`  |
+| Host prompt-file map                     | `tnf harness host-profiles` — `data/harness/host-prompt-profiles.json`                       |
+| Ecosystem scout staffing                 | `tnf scout staff\|status` — assigned to `tnf-cli-agent`                                      |
+| Trajectories / compaction records        | `scripts/harness/trajectory.cjs`, `compaction-record.cjs`                                    |
+| Sandbox materialization (D11)            | `scripts/harness/materialize-sandbox-profile.cjs`                                            |
+| Resource governance (CPU/memory/process) | `docs/protocols/TNF_RESOURCE_GOVERNANCE_MANDATE.md`                                          |
 
 ### Resource Governance is a first-tier concern
 

@@ -7,6 +7,7 @@ description:
   apart from complementary scope.
 primary_type: diagnostic
 category: engineering/governance
+department: tech
 risk_tier: medium
 harmful_pattern_detection: false
 ---
@@ -21,8 +22,8 @@ the implementation. They drift. This is how to decide which one is right.
 
 The load-bearing rule, learned the hard way on 2026-08-09.
 
-`TNF_FEDERATED_TAG_SYNERGY_SPEC.md` (UFTE) described `mcid` as a *"Base58 Merkle
-Entity Hash."* Reading prose as canonical, that looked authoritative — it was a
+`TNF_FEDERATED_TAG_SYNERGY_SPEC.md` (UFTE) described `mcid` as a _"Base58 Merkle
+Entity Hash."_ Reading prose as canonical, that looked authoritative — it was a
 recent `[CLASS:PRIME]` spec. It was wrong. `mcid` is the **Master Cumulative
 ID**: `tnf-master-cumulative-id.schema.json` requires `spec`/`id`/`scope`/
 `lineage`, the code implements exactly that envelope, and Phase 9 states its
@@ -41,7 +42,7 @@ Precedence when layers disagree:
 3. **Prose protocol** — intent and rationale, most prone to drift
 4. **Reports / audits** — point-in-time; check the date before trusting
 
-Prose is still where the *why* lives. Read it for rationale, not for field
+Prose is still where the _why_ lives. Read it for rationale, not for field
 names.
 
 ## Same name ≠ same concept; different name ≠ different concept

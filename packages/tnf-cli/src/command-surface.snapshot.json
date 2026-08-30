@@ -367,7 +367,7 @@
         {
           "name": "run",
           "aliases": [],
-          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool.",
+          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_retain, memory_recall, department_route, mcp_list_tools, mcp_call_tool.",
           "options": [
             {
               "flags": "--cwd <path>",
@@ -1750,6 +1750,62 @@
       ]
     },
     {
+      "name": "department",
+      "aliases": ["dept"],
+      "description": "Route TNF CLI work through operator-facing departments (HR, Marketing, Design, Legal, Tech, …)",
+      "options": [],
+      "commands": [
+        {
+          "name": "apply",
+          "aliases": [],
+          "description": "Add department tags without rewriting existing category values (dry-run default)",
+          "options": [
+            {
+              "flags": "--write",
+              "description": "Write department/category fields (otherwise dry-run)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "list",
+          "aliases": [],
+          "description": "List operator-facing departments and their clusters",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "route",
+          "aliases": [],
+          "description": "Resolve an operator utterance to a department",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "show",
+          "aliases": [],
+          "description": "Show one department card",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "doctor",
       "aliases": [],
       "description": "Run TNF diagnostics",
@@ -2885,6 +2941,22 @@
           "commands": []
         },
         {
+          "name": "host-profiles",
+          "aliases": [],
+          "description": "Show which prompt files each enlisted host is expected to inject",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "JSON output"
+            },
+            {
+              "flags": "--verify",
+              "description": "Print enlisted/absent table (default)"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "inspect",
           "aliases": [],
           "description": "Inspect harness health: protocol, agents, and live agent loop",
@@ -2974,6 +3046,22 @@
             {
               "flags": "--out <path>",
               "description": "Output .sb path"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "scout-staff",
+          "aliases": [],
+          "description": "Assign due scout tasks to tnf-cli-agent (brief by default)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "JSON output"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max tasks in the brief"
             }
           ],
           "commands": []
@@ -5043,6 +5131,62 @@
       ]
     },
     {
+      "name": "remember",
+      "aliases": [],
+      "description": "Retain or recall operator memory (harness layer + ~/.tnf/memory/notes.jsonl)",
+      "options": [],
+      "commands": [
+        {
+          "name": "recall",
+          "aliases": [],
+          "description": "Recall retained memory matching a query",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max results"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "retain",
+          "aliases": [],
+          "description": "Save a durable fact the operator asked TNF to remember",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--scope <scope>",
+              "description": "global | project | session"
+            },
+            {
+              "flags": "--tags <list>",
+              "description": "Comma-separated tags"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show harness memory status",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "remote",
       "aliases": [],
       "description": "Enable remote connection for real-time session relay",
@@ -5149,6 +5293,66 @@
         }
       ],
       "commands": []
+    },
+    {
+      "name": "scout",
+      "aliases": [],
+      "description": "Ecosystem scout queue and tnf-cli-agent mission staffing",
+      "options": [],
+      "commands": [
+        {
+          "name": "host-profiles",
+          "aliases": [],
+          "description": "Show which prompt files each enlisted host is expected to inject",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "queue",
+          "aliases": [],
+          "description": "Rebuild the local stale-aware scout queue (no paid inference)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "staff",
+          "aliases": [],
+          "description": "Assign due scout tasks to tnf-cli-agent (brief by default)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max tasks in the brief"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show the current scout mission brief",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
     },
     {
       "name": "scripts",

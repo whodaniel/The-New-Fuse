@@ -163,7 +163,7 @@ export function formatDepartmentOrientation(repoRoot: string): string {
       ...lines,
       '',
       '- List: `tnf department list`  Show: `tnf department show <id>`  Route: `tnf department route "<text>"`',
-      '- Slash: `/department`, `/hr`, `/marketing`, `/design`, `/legal`, `/tech`',
+      '- Slash: `/department`, `/hr`, `/marketing`, `/design`, `/legal`, `/tech`, `/finance`, `/product`, `/ops`',
     ].join('\n');
   } catch {
     return [

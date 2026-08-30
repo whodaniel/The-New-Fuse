@@ -1,5 +1,7 @@
 ---
 name: openclaw-sherpa
+category: tnf-platform
+department: tech
 description:
   Act as an expert guide (Sherpa) for onboarding, configuring, and optimizing
   the OpenClaw protocol. Use when users need interactive guidance to set up

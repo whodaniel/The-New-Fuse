@@ -1,5 +1,7 @@
 ---
 name: tnf-harness-integrity-auditor
+category: tnf-platform
+department: tech
 description:
   Automated pre-flight quality gate auditor for TNF harness framework
   compliance. Verifies Turn Zero mandate adherence, local runtime environment

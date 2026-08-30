@@ -1,5 +1,6 @@
 ---
 name: dola-seed-failure-mode
+department: tech
 description:
   Verified failure pattern for bytedance dola seed model. This model lies
   consistently about task completion.

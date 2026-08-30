@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,15 +16,15 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: MobileAgent
-description: Agent focused on mobile development (React Native, iOS, Android) for
-  TNF
+description:
+  Agent focused on mobile development (React Native, iOS, Android) for TNF
 version: 1.0.0
 tags:
-- mobile
-- react-native
-- ios
-- android
-- worker
+  - mobile
+  - react-native
+  - ios
+  - android
+  - worker
 author: The New Fuse
 platform: darwin
 type: agent

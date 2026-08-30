@@ -80,8 +80,9 @@ tnf harness supply-chain
 tnf harness host-compaction record --host cursor
 tnf harness cycle --skip-live-loop
 
-# Global host frontload pointers (Codex/Gemini/Hermes/…)
+# Global host frontload pointers (Codex/Gemini/Hermes/Pi/…)
 node scripts/install-agent-frontload.cjs --verify
+tnf harness host-profiles
 ```
 
 ---

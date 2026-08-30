@@ -1,6 +1,6 @@
 {
   "schema": "tnf.corporate.department-staffing.v1",
-  "updated_at": "2026-08-30T21:28:19.622Z",
+  "updated_at": "2026-08-30T22:59:45.524Z",
   "policy": {
     "progressive_injection": "Department listings are names only. Do not dump SKILL.md or agent prompt bodies. Traverse: tnf department show → skill-bank-query → load one SKILL.md.",
     "category_immutability": "Existing category values are never rewritten.",
@@ -6277,10 +6277,10 @@
   "stats": {
     "agents": 196,
     "skills": 873,
-    "agent_files_patched": 0,
-    "skill_files_patched": 0,
-    "skill_category_filled": 0,
+    "agent_files_patched": 196,
+    "skill_files_patched": 326,
+    "skill_category_filled": 200,
     "vendor_skills_indexed_only": 533,
-    "existing_category_preserved": 463
+    "existing_category_preserved": 263
   }
 }

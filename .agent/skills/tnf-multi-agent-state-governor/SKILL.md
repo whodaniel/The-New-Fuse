@@ -1,5 +1,7 @@
 ---
 name: tnf-multi-agent-state-governor
+category: tnf-platform
+department: ops
 description:
   Cross-agent snapshot/state retention governor for `.gemini`, `.claude`,
   `.opencode`, `.kilo`, `.augment`, `.codex`, and `.tnf`. Uses

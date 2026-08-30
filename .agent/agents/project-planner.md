@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,8 +16,9 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: project-planner
-description: Smart project planning agent. Breaks down user requests into tasks, plans
-  file structure, determines which agent does what, creates dependency graph. Use
+description:
+  Smart project planning agent. Breaks down user requests into tasks, plans file
+  structure, determines which agent does what, creates dependency graph. Use
   when starting new projects or planning major features.
 skills: clean-code, app-builder, plan-writing, brainstorming
 model: inherit

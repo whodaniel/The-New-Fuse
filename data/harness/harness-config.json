@@ -85,6 +85,8 @@
         "docs/protocols/HARNESS_HOST_COMPACTION.md",
         "scripts/harness/compaction-record.cjs",
         "scripts/harness/host-compaction-adapter.cjs",
+        "data/harness/host-prompt-profiles.json",
+        "scripts/harness/host-prompt-profiles.cjs",
         "data/harness/compaction/",
         "data/harness/host-compaction/"
       ],
@@ -197,6 +199,16 @@
       "mechanism": "global Hermes identity (via install-agent-frontload)",
       "required": false
     },
+    "pi_agents_md": {
+      "path": "~/.pi/agent/AGENTS.md",
+      "mechanism": "global Pi identity (via install-agent-frontload)",
+      "required": false
+    },
+    "host_prompt_profiles": {
+      "path": "data/harness/host-prompt-profiles.json",
+      "mechanism": "machine-readable map of enlisted host prompt files; verify with tnf harness host-profiles. Missing files for an unenlisted host are advisory.",
+      "required": true
+    },
     "zcode_agents_md": {
       "path": "~/.zcode/AGENTS.md",
       "mechanism": "ZCode (dev.zcode.app) user-scope instruction file, injected first in every session with workspace AGENTS.md loaded later; managed fenced pointer via install-agent-frontload; first materialization requires --include-unverified because a fresh ZCode install never creates the file",
@@ -237,6 +249,7 @@
       "node scripts/harness/verify-onboarding-routes.cjs",
       "node scripts/harness/verify-harness-completeness.cjs",
       "node scripts/install-agent-frontload.cjs --verify",
+      "node scripts/harness/host-prompt-profiles.cjs --verify",
       "node scripts/harness/provision-injection-surfaces.cjs --verify",
       "pnpm run tnf:onboard -- --full-harness --task \"<task>\""
     ]

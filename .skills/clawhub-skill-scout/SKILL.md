@@ -1,6 +1,10 @@
 ---
 name: clawhub-skill-scout
-description: Discover and rank ClawHub skills using live API data, with safe filtering and install-ready output.
+category: tnf-platform
+department: tech
+description:
+  Discover and rank ClawHub skills using live API data, with safe filtering and
+  install-ready output.
 metadata:
   short-description: Find top ClawHub skills quickly
 ---
@@ -9,7 +13,8 @@ metadata:
 
 ## Purpose
 
-Discover high-signal ClawHub skills from live registry data, rank them by a chosen metric, and return install-ready recommendations.
+Discover high-signal ClawHub skills from live registry data, rank them by a
+chosen metric, and return install-ready recommendations.
 
 ## Pre-Flight Checklist
 
@@ -53,7 +58,8 @@ Optional follow-up: compare alternatives
    - `python3 scripts/install_shortlist.py --sort downloads --non-suspicious true --limit 5`
    - CloudRuntime CLI execution (project env):  
      `cloud_runtime run -p <project-id> -e <environment> -s <service> python3 scripts/install_shortlist.py --sort downloads --non-suspicious true --limit 5`
-   - Open pages directly: `python3 scripts/install_shortlist.py --open --limit 3`
+   - Open pages directly:
+     `python3 scripts/install_shortlist.py --open --limit 3`
    - Print install commands from your CLI template:
      `python3 scripts/install_shortlist.py --install-template 'openclaw skills add {owner_slug}' --limit 3`
    - Built-in ClawHub installer preset (recommended):
@@ -67,7 +73,8 @@ Optional follow-up: compare alternatives
 4. Surface top candidates with:
    - Name, slug, downloads, stars, installs, latest version, summary.
 5. Provide install command pattern:
-   - Use `install_shortlist.py` with `--install-template` to match the user's CLI.
+   - Use `install_shortlist.py` with `--install-template` to match the user's
+     CLI.
    - The script resolves owner handles and produces `<owner>/<slug>` safely.
 
 ## Common Mistakes to Avoid
@@ -98,5 +105,6 @@ Expected:
 
 ## Integration with TNF
 
-- Use this skill whenever users ask for "best skills", "top downloaded skills", "safe skills", or "find skill for X" against ClawHub.
+- Use this skill whenever users ask for "best skills", "top downloaded skills",
+  "safe skills", or "find skill for X" against ClawHub.
 - Pair with installation workflows after shortlist generation.

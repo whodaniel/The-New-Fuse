@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,13 +16,14 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: SecurityAgent
-description: Agent focused on security auditing, penetration testing, and vulnerability
+description:
+  Agent focused on security auditing, penetration testing, and vulnerability
   assessment for TNF
 version: 1.0.0
 tags:
-- security
-- auditing
-- worker
+  - security
+  - auditing
+  - worker
 author: The New Fuse
 platform: darwin
 type: agent

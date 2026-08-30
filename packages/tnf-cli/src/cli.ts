@@ -11,6 +11,7 @@ import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage, RedisAgentClient } from './RedisAgentClient.js';
+import { buildTnfAgentOrientation } from './agent-orientation.js';
 import { printProtocolAgentRosterSafe } from './boot/agent-roster.js';
 import {
   createBootPipeline,
@@ -42,6 +43,7 @@ import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerRememberCommands } from './commands/remember.js';
+import { registerScoutCommands } from './commands/scout.js';
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
@@ -8979,6 +8981,27 @@ harness
     process.exitCode = runHarnessScript('scripts/harness/materialize-sandbox-profile.cjs', args);
   });
 
+harness
+  .command('host-profiles')
+  .description('Show which prompt files each enlisted host is expected to inject')
+  .option('--json', 'JSON output')
+  .option('--verify', 'Print enlisted/absent table (default)')
+  .action((options: { json?: boolean; verify?: boolean }) => {
+    const args = options.json ? ['--json'] : ['--verify'];
+    process.exitCode = runHarnessScript('scripts/harness/host-prompt-profiles.cjs', args);
+  });
+
+harness
+  .command('scout-staff')
+  .description('Assign due scout tasks to tnf-cli-agent (brief by default)')
+  .option('--json', 'JSON output')
+  .option('--limit <n>', 'Max tasks in the brief', '8')
+  .action((options: { json?: boolean; limit?: string }) => {
+    const args = [`--limit=${options.limit || '8'}`];
+    if (options.json) args.push('--json');
+    process.exitCode = runHarnessScript('scripts/scouting/staff-scout-missions.cjs', args);
+  });
+
 program
   .command('turn-end')
   .description('Run Turn End protocol: update LIVING_STATE and SESSION_HANDOFF artifacts')
@@ -9977,9 +10000,13 @@ program
   .action(async (query: string[], options: { task?: string; taskFile?: string }) => {
     try {
       const systemPromptPath = path.join(repoRoot, '.agent/SYSTEM_PROMPT.md');
-      const systemPrompt = fs.existsSync(systemPromptPath)
-        ? fs.readFileSync(systemPromptPath, 'utf8')
-        : 'You are the TNF Orchestrator agent.';
+      const { buildTnfAgentOrientation } = await import('./agent-orientation.js');
+      const systemPrompt = [
+        fs.existsSync(systemPromptPath)
+          ? fs.readFileSync(systemPromptPath, 'utf8')
+          : 'You are the TNF Orchestrator agent.',
+        buildTnfAgentOrientation(repoRoot),
+      ].join('\n\n');
 
       // Resolve the initial message using the SAME precedence engine as
       // `tnf agents run` so `cat prompt.md | tnf chat` works out of the box.
@@ -19706,6 +19733,7 @@ registerAgentStateQuotaEcosystemCommands(program, repoRoot);
 registerStaffingCommands(program);
 registerDepartmentCommands(program, repoRoot);
 registerRememberCommands(program, repoRoot);
+registerScoutCommands(program, repoRoot);
 registerFleetCommands(program);
 // Free NVIDIA / LLM catalog inspector + active-model switcher. Reads from
 // data/providers/catalog.json + data/providers/nvidia-models.json (single
@@ -20053,6 +20081,8 @@ function loadTnfInteractiveContextPack(): string {
     '- If the operator names a file (for example `Main.tsx`), read it directly under `apps/frontend/src/`.',
     '- If command output is unavailable, say so and ask the operator — do not repeat searches.',
     '- Finish one task completely (write + verify) before starting another discovery loop.',
+    '',
+    buildTnfAgentOrientation(repoRoot),
   ].join('\n');
 }
 

@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,17 +16,18 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: thenewfuse-frontend-tester
-description: Continuous frontend/API health probe of thenewfuse.com. Replaces the
-  legacy OpenClaw launchd agent `com.openclaw.tnf-continuous-test`. Runs every 5 minutes;
-  no LLM required.
+description:
+  Continuous frontend/API health probe of thenewfuse.com. Replaces the legacy
+  OpenClaw launchd agent `com.openclaw.tnf-continuous-test`. Runs every 5
+  minutes; no LLM required.
 tags:
-- tester
-- frontend
-- api
-- health
-- fleet
-- thenewfuse
-- native-cron
+  - tester
+  - frontend
+  - api
+  - health
+  - fleet
+  - thenewfuse
+  - native-cron
 schedule: every 5 minutes (system cron)
 supervisor: false
 depends_on: []

@@ -3,6 +3,12 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
+- **Updated: 2026-08-30T23:10:00.000Z** — Full
+  department/remember/scout/host-profile implementation: `department:` applied
+  on 196 agents + 326 TNF skills; `tnf harness host-profiles` + Pi installer
+  map; scout missions staffed to `tnf-cli-agent`; chronological catalog now
+  includes `tenant-knowledge-scout-sprint`.
+
 - **Updated: 2026-08-30T21:38:49.292ZZ** — Operator departments are first-class
   CLI lanes (HR Marketing Design Legal Tech Finance Product Ops)
 

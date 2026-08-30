@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,12 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: explorer-agent
-description: Advanced codebase discovery, deep architectural analysis, and proactive
-  research agent. The eyes and ears of the framework. Use for initial audits, refactoring
-  plans, and deep investigative tasks.
-skills: clean-code, architecture, plan-writing, brainstorming, systematic-debugging
+description:
+  Advanced codebase discovery, deep architectural analysis, and proactive
+  research agent. The eyes and ears of the framework. Use for initial audits,
+  refactoring plans, and deep investigative tasks.
+skills:
+  clean-code, architecture, plan-writing, brainstorming, systematic-debugging
 model: inherit
 ---
 

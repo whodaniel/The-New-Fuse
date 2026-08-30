@@ -131,6 +131,16 @@ Do not dump agent or skill bodies. Progressive injection: department show →
 `skill-bank-query` → one `SKILL.md` / agent file when invoking it. Persist facts
 with `tnf remember retain`, not chat acknowledgement.
 
+When the task is host onboarding or "what file does this agent load":
+
+- `data/harness/host-prompt-profiles.json`
+- `node scripts/harness/host-prompt-profiles.cjs --verify`
+
+When ecosystem research is due:
+
+- `tnf scout status` / `.agent/runtime-state/scout-mission-latest.md`
+- `docs/operations/CONTINUOUS_ECOSYSTEM_SCOUTING.md`
+
 ### Engineering route
 
 For nontrivial TNF engineering/architecture/debugging/implementation/review,

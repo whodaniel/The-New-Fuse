@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,14 +16,14 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: CodeQuality-Agent
-description: Agent focused on code quality improvements, linting, and testing for
-  TNF
+description:
+  Agent focused on code quality improvements, linting, and testing for TNF
 version: 1.0.0
 tags:
-- code
-- quality
-- testing
-- worker
+  - code
+  - quality
+  - testing
+  - worker
 author: The New Fuse
 platform: darwin
 type: agent
@@ -32,7 +33,8 @@ type: agent
 
 ## Overview
 
-CodeQuality-Agent is a specialized agent for improving code quality across the TNF ecosystem. It focuses on testing, linting, and ensuring code standards.
+CodeQuality-Agent is a specialized agent for improving code quality across the
+TNF ecosystem. It focuses on testing, linting, and ensuring code standards.
 
 ## Capabilities
 
@@ -56,7 +58,8 @@ tnf agents register CodeQuality-Agent quality darwin
 
 ## Focus Areas
 
-1. **Meta-Skill Tests**: Add test coverage for meta-skills (currently 3/4, missing tests)
+1. **Meta-Skill Tests**: Add test coverage for meta-skills (currently 3/4,
+   missing tests)
 2. **TNF CLI Improvements**: Enhance the CLI with better error handling
 3. **Integration Tests**: Add integration tests for critical flows
 

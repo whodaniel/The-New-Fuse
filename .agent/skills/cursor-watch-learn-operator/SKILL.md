@@ -1,5 +1,6 @@
 ---
 name: 'cursor-watch-learn-operator'
+department: tech
 description:
   'Run and validate cursor watch-and-learn capture sessions that correlate
   1-second screenshots with cursor events, enforce rolling screenshot deletion,
@@ -10,8 +11,8 @@ description:
 # Cursor Watch Learn Operator
 
 Use this skill to execute repeatable capture cycles in
-`/Users/<owner>/tools/cursor-watch-learn` and report what happened in
-plain language with supporting metrics.
+`/Users/<owner>/tools/cursor-watch-learn` and report what happened in plain
+language with supporting metrics.
 
 ## Run A Live Cycle
 

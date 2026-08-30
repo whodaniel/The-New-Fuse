@@ -1,5 +1,7 @@
 ---
 name: tnf-self-evolution-protocol
+category: tnf-platform
+department: tech
 description:
   Codifies how the TNF swarm mutates its own doctrine, code, and retention
   policy under D26 (four-tier authority gate) and D27 (Self-Evolution Mandate).

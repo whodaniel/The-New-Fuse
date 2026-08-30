@@ -1,6 +1,13 @@
 ---
 name: tnf-live-session-coordination
-description: "Use when coordinating multiple live TNF/Codex sessions, polling active terminal windows, checking whether another agent is already working an edge, establishing lane splits, or handling A2A coordination incidents. Prefer shared thread context and repo artifacts over raw TTY writes; treat terminal injection as an emergency fallback only."
+category: tnf-platform
+department: tech
+description:
+  'Use when coordinating multiple live TNF/Codex sessions, polling active
+  terminal windows, checking whether another agent is already working an edge,
+  establishing lane splits, or handling A2A coordination incidents. Prefer
+  shared thread context and repo artifacts over raw TTY writes; treat terminal
+  injection as an emergency fallback only.'
 ---
 
 # TNF Live Session Coordination
@@ -49,8 +56,7 @@ Operational success has higher authority than speculative diagnosis.
 Do not disable, reroute, or replace a live coordination path when the path is
 currently succeeding on the exact target under test.
 
-Treat the path as successful when the current target shows all of the
-following:
+Treat the path as successful when the current target shows all of the following:
 
 1. the intended target identity is deterministic,
 2. the target emits the expected acknowledgment or status signal,
@@ -70,11 +76,10 @@ service is unhealthy.
 
 ## Evidence-First Prompt Correction
 
-Prompt text, stale lane notes, and self-description do not outrank live
-observed work or live observed success.
+Prompt text, stale lane notes, and self-description do not outrank live observed
+work or live observed success.
 
-If current metadata plus read-only evidence contradict a session's claimed
-lane:
+If current metadata plus read-only evidence contradict a session's claimed lane:
 
 1. correct the lane classification immediately in the durable artifact,
 2. treat the corrected durable artifact as authoritative for the current run,
@@ -234,8 +239,8 @@ Do not assume these are safe on a live Codex tab:
 
 ### Emergency Fallback Only
 
-Raw TTY or direct UI injection knowledge is still important as operator
-fallback knowledge. Use it only when:
+Raw TTY or direct UI injection knowledge is still important as operator fallback
+knowledge. Use it only when:
 
 1. the user explicitly wants terminal-level intervention,
 2. shared-thread and repo-artifact coordination are insufficient,
@@ -287,8 +292,7 @@ rather than relying on implicit handoffs.
 
 If `orchestrator-agent` is invoked as part of that flow, treat it as a temporal
 actor invocation that should emit a presence/beacon event into the local
-Sub-Director continuity path and then into the wider TNF actor-recognition
-path.
+Sub-Director continuity path and then into the wider TNF actor-recognition path.
 
 That invocation should also register the coordinating actor into:
 
@@ -392,7 +396,9 @@ Read [orchestrator-presence.md](./references/orchestrator-presence.md) when:
 2. you need beacon destinations or lease semantics,
 3. you need the Proto Director Orchestrator framing.
 
-Read [terminal-coordination-prompt-block.md](./references/terminal-coordination-prompt-block.md) when:
+Read
+[terminal-coordination-prompt-block.md](./references/terminal-coordination-prompt-block.md)
+when:
 
 1. another terminal-based agent needs an explicit polling/coordination prompt,
 2. you want a copy-paste TNF operator block for conflict detection,

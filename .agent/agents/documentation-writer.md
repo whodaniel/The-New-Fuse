@@ -1,5 +1,6 @@
 ---
 category: Journaling
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,8 +16,10 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: documentation-writer
-description: Expert in technical documentation. Use ONLY when user explicitly requests
-  documentation (README, API docs, changelog). DO NOT auto-invoke during normal development.
+description:
+  Expert in technical documentation. Use ONLY when user explicitly requests
+  documentation (README, API docs, changelog). DO NOT auto-invoke during normal
+  development.
 skills: clean-code, documentation-templates
 model: inherit
 ---

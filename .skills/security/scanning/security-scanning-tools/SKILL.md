@@ -6,6 +6,7 @@ primary_type: diagnostic
 secondary_tags:
   - deterministic
 category: security/scanning
+department: tech
 risk_tier: high
 harmful_pattern_detection: true
 harmful_pattern_signals:
@@ -17,8 +18,10 @@ metadata:
   source_snapshot: .agent/skill-bank/snapshots/project-agent/security-scanning-tools-fb487cf3/SKILL.md
   status: permanent
 ---
-> Promoted from TNF snapshot history into permanent skill inventory.
-> Category and risk metadata added for adaptive routing and harmful-pattern recognition.
+
+> Promoted from TNF snapshot history into permanent skill inventory. Category
+> and risk metadata added for adaptive routing and harmful-pattern recognition.
+
 # Security Scanning Tools
 
 ## Purpose

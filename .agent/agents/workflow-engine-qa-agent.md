@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,18 +16,19 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: workflow-engine-qa-agent
-description: Specialized QA agent that tests the TNF workflow engine and workflow
+description:
+  Specialized QA agent that tests the TNF workflow engine and workflow
   components — DAG execution, step retries, and conditional branching.
 version: 1.1.0
 tags:
-- qa
-- workflow
-- dag
-- engine
+  - qa
+  - workflow
+  - dag
+  - engine
 capabilities:
-- workflow_execution
-- dag_verification
-- step_retry_trace
+  - workflow_execution
+  - dag_verification
+  - step_retry_trace
 displayName: TNF Workflow Engine QA
 agentType: testing
 ---

@@ -1,5 +1,6 @@
 ---
 category: Governance
+department: ops
 domain: meta
 visibility: collective
 dacc_role: director

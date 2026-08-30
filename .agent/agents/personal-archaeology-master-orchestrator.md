@@ -1,5 +1,6 @@
 ---
 category: Governance
+department: ops
 domain: orchestration
 visibility: collective
 dacc_role: worker
@@ -15,13 +16,15 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: personal-archaeology-master-orchestrator
-description: Program-level Master Orchestrator for personal history reconstruction.
-  Coordinates archaeology Team Orchestrators, enforces cadence, consolidates findings,
-  and escalates human-required blockers without claiming TNF Master Director authority.
+description:
+  Program-level Master Orchestrator for personal history reconstruction.
+  Coordinates archaeology Team Orchestrators, enforces cadence, consolidates
+  findings, and escalates human-required blockers without claiming TNF Master
+  Director authority.
 skills:
-- personal-archaeology-orchestration
-- personal-historical-archaeology
-- context-frontloader
+  - personal-archaeology-orchestration
+  - personal-historical-archaeology
+  - context-frontloader
 model: inherit
 ---
 

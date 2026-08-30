@@ -1,11 +1,18 @@
 ---
 name: hermes-state-snapshot-governor
-description: Audit, consolidate, and safely prune Hermes `~/.hermes/state-snapshots` using a strict inspect-act-verify loop. Use when Hermes snapshot storage is large, when stale snapshots must be identified from real DB/file state, or when retention pruning is requested without losing rollback anchors.
+category: tnf-platform
+department: tech
+description:
+  Audit, consolidate, and safely prune Hermes `~/.hermes/state-snapshots` using
+  a strict inspect-act-verify loop. Use when Hermes snapshot storage is large,
+  when stale snapshots must be identified from real DB/file state, or when
+  retention pruning is requested without losing rollback anchors.
 ---
 
 # Hermes State Snapshot Governor
 
-Use this skill to manage Hermes snapshot retention with deterministic verification.
+Use this skill to manage Hermes snapshot retention with deterministic
+verification.
 
 ## Workflow Contract
 

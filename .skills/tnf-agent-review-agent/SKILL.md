@@ -1,5 +1,7 @@
 ---
 name: tnf-staff-review-agent
+category: tnf-platform
+department: tech
 description:
   Perform periodic TNF StaffOps work reviews across recent reports and runtime
   state, then publish prioritized improvement recommendations with concrete

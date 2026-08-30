@@ -1,7 +1,7 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-08-30T21:38:47.956Z` Handoff ID: `b31dab82-3f94-40d0-9e73-8dc39a894e44`
+`2026-08-30T23:10:00.000Z` Handoff ID: `e8c4a1f2-7b3d-4c9e-91aa-2f6d0b8e4c11`
 
 ## Repository
 
@@ -9,7 +9,8 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - Canonical TNF source: `whodaniel/tnf-monorepo`
 - Origin: `https://github.com/whodaniel/tnf-monorepo.git`
 - Branch: `main`
-- Head SHA: `231c52cc1ee08f66c532b1b13676cf22c046a9cc`
+- Head SHA: `63bdacdab65016b7a9be51fbdb83728a9002c9ed` (last pushed). Working
+  tree has the full implementation on top of that commit.
 
 ## Classification
 
@@ -20,26 +21,34 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Capabilities
 
-- Required: departments, memory, docs, cli
+- Required: departments, memory, scout-staffing, host-prompt-profiles, cli
 - Staffed by: cursor
 
 ## Work Summary
 
-- Operator departments are first-class CLI lanes (HR Marketing Design Legal Tech
-  Finance Product Ops)
-- Remember-this persists via tnf remember retain not chat acknowledgement
-- Additive department tags on TNF-owned agents/skills without rewriting category
-- Docs updated and Turn End receipt written
+- Department tags applied: 196 agents, 326 TNF-owned skills; existing `category`
+  values preserved; 533 vendor skills indexed only
+- Interactive/`tnf agents run` inject `buildTnfAgentOrientation` (departments,
+  remember, host profiles, scout brief)
+- LLM tools: `memory_retain`, `memory_recall`, `department_route`
+- Host prompt catalog includes Pi (`~/.pi/agent/AGENTS.md`); installer TARGETS
+  now manage Pi
+- `tnf harness host-profiles` / `tnf scout *` / `tnf department apply` wired;
+  command-surface snapshot refreshed (518 paths)
+- Scout missions staffed to `tnf-cli-agent` (brief only unless
+  `TNF_SCOUT_RUN_AGENT=1`)
+- Chronological catalog now matches registry for `tenant-knowledge-scout-sprint`
+  and `tnf-recursive-logic-sieve`
 
 ## Next Actions
 
-- Rebuild `@the-new-fuse/tnf-cli` and refresh
-  `packages/tnf-cli/src/command-surface.snapshot.json`
-- Optional: regenerate `.agent/SKILL_MANIFEST.md` after TNF-owned skill category
-  backfill
-- Public `The-New-Fuse` PR 161 remains open (publication sync not a feature PR)
-- Prior leftover (agent-adapters): MicroToolAdapter +
-  `tnf ga:invoke/status/map-error` + skill ubiquity
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): uncommitted
-  department/remember/docs work — see
-  `docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation`
+- Commit/push only if the operator asks. Do not use `git commit --no-verify`.
+  Authority edits (`AGENTS.md`, `HARNESS_CONFIG.md`) need
+  `TNF_AUTHORITY_EDIT_CONFIRM=1`
+- Optional: `node scripts/setup/provision-local-cron.cjs` so the 4h scout job
+  actually lands in crontab
+- Pre-existing crontab drift remains: several crontab process-ids are not in the
+  registry (watchdog, staff-role-call, orchestrator-pulse, continuous-qa,
+  daily-priority, nightly-maintenance, memory-freshness)
+- Absent/advisory hosts: command-code, droid, jules
+- Public `The-New-Fuse` PR 161 remains open (publication sync, not this feature)

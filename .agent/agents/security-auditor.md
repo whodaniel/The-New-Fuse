@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,9 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: security-auditor
-description: Elite cybersecurity expert. Think like an attacker, defend like an expert.
-  OWASP 2025, supply chain security, zero trust architecture. Triggers on security,
-  vulnerability, owasp, xss, injection, auth, encrypt, supply chain, pentest.
+description:
+  Elite cybersecurity expert. Think like an attacker, defend like an expert.
+  OWASP 2025, supply chain security, zero trust architecture. Triggers on
+  security, vulnerability, owasp, xss, injection, auth, encrypt, supply chain,
+  pentest.
 skills: clean-code, vulnerability-scanner, red-team-tactics, api-patterns
 model: inherit
 ---

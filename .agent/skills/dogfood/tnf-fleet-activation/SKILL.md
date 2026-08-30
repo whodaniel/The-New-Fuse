@@ -1,5 +1,7 @@
 ---
 name: TNF Full Fleet Activation
+category: tnf-platform
+department: tech
 description:
   Standard operating procedure to spin up complete TNF agent testing fleet for
   full site validation

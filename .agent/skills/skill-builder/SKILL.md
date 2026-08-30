@@ -1,9 +1,14 @@
 ---
 name: skill-builder
-description: Meta-skill for creating and evolving TNF skills from patterns and requirements.
+category: skill-authoring
+department: tech
+description:
+  Meta-skill for creating and evolving TNF skills from patterns and
+  requirements.
 metadata:
   short-description: Builds and updates skills from user goals
 ---
+
 # META-SKILL: TNF Skill Builder
 
 ## Purpose

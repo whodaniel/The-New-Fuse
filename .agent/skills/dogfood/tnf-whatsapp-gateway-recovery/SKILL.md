@@ -1,5 +1,7 @@
 ---
 name: TNF WhatsApp Gateway Recovery
+category: tnf-platform
+department: tech
 description:
   Permanent proven procedure for recovering the broken WhatsApp MCP gateway
   after migration or session corruption

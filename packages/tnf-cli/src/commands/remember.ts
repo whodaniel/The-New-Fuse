@@ -97,6 +97,40 @@ export function retainOperatorMemory(
   };
 }
 
+export function recallOperatorMemory(
+  repoRoot: string,
+  query: string,
+  limit = 5
+): { ok: boolean; engine: string; query: string; stdout: string; error?: string } {
+  const harness = runHarnessMemory(repoRoot, [
+    'recall',
+    '--query',
+    query,
+    '--limit',
+    String(limit),
+    '--json',
+  ]);
+  const dest = notesPath();
+  const fileHits: string[] = [];
+  if (fs.existsSync(dest)) {
+    const q = query.toLowerCase();
+    for (const line of fs.readFileSync(dest, 'utf8').split('\n').reverse()) {
+      if (!line) continue;
+      if (!q || line.toLowerCase().includes(q)) {
+        fileHits.push(line);
+        if (fileHits.length >= limit) break;
+      }
+    }
+  }
+  return {
+    ok: harness.ok || fileHits.length > 0,
+    engine: harness.ok ? 'harness+file' : 'file',
+    query,
+    stdout: harness.stdout || JSON.stringify({ ok: true, engine: 'file', results: fileHits }),
+    error: harness.ok ? undefined : harness.stderr || undefined,
+  };
+}
+
 export function registerRememberCommands(program: Command, repoRoot: string): Command {
   const remember = getOrCreateCommand(
     program,

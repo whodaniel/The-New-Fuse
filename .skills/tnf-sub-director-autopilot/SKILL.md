@@ -1,5 +1,7 @@
 ---
 name: tnf-sub-director-autopilot
+category: tnf-platform
+department: tech
 description:
   Use when operating as the Local Sub-Director or hardening Sub-Director
   autonomy. Enforces deterministic startup checks, owner verification, heartbeat

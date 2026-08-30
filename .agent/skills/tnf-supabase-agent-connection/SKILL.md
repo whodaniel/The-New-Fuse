@@ -1,5 +1,7 @@
 ---
 name: tnf-supabase-agent-connection
+category: tnf-platform
+department: tech
 description:
   Use when an agent needs to understand, verify, repair, or claim Supabase
   access through TNF. Covers Codex Supabase MCP OAuth, TNF Supabase client
@@ -51,8 +53,8 @@ Keep these separate:
    Record the command/tool name and result in the handoff. Do not use writes as
    a connection proof.
 
-5. For app/data-plane work, require `dataPlaneReady=true` in the report or verify
-   the specific service command that will run. Do not print key values.
+5. For app/data-plane work, require `dataPlaneReady=true` in the report or
+   verify the specific service command that will run. Do not print key values.
 
 ## Required Evidence Before Claiming Success
 

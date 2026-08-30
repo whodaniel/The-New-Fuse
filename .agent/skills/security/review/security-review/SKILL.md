@@ -6,6 +6,7 @@ primary_type: governance
 secondary_tags:
   - exploratory
 category: security/review
+department: tech
 risk_tier: medium
 harmful_pattern_detection: true
 harmful_pattern_signals:
@@ -17,8 +18,10 @@ metadata:
   source_snapshot: .agent/skill-bank/snapshots/project-agent/security-review-ebfd124f/SKILL.md
   status: permanent
 ---
-> Promoted from TNF snapshot history into permanent skill inventory.
-> Category and risk metadata added for adaptive routing and harmful-pattern recognition.
+
+> Promoted from TNF snapshot history into permanent skill inventory. Category
+> and risk metadata added for adaptive routing and harmful-pattern recognition.
+
 # Security Review Skill
 
 This skill ensures all code follows security best practices and identifies

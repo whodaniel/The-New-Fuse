@@ -144,6 +144,32 @@ tnf remember recall "<query>"
 
 Promote standing consensus into `docs/core/MEMORY.md` during Turn End.
 
+## Host prompt files
+
+Different hosts inject different files (Hermes `SOUL.md`, Codex `AGENTS.md`,
+Claude SessionStart hook). Do not invent a second Stage A list.
+
+```bash
+tnf harness host-profiles
+tnf scout host-profiles
+node scripts/harness/host-prompt-profiles.cjs --verify
+```
+
+Catalog: `data/harness/host-prompt-profiles.json`.
+
+## Scout missions
+
+Do not automatically crawl every agent platform on an interactive turn.
+When a scout brief is staffed for `tnf-cli-agent`, work one named due task.
+
+```bash
+tnf scout queue
+tnf scout staff
+tnf scout status
+```
+
+Live agent run is opt-in: `TNF_SCOUT_RUN_AGENT=1 tnf scout staff`.
+
 ## Completion / Handoff
 
 Before declaring significant work complete, report or persist:
