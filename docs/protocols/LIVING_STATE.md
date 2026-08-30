@@ -275,6 +275,8 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-30T18:14:48.033Z New script(s) created: probe.cjs, rc-matrix.sh,
 - [✅] 2026-08-30T18:44:31.300Z New script(s) created: agentic-ontology-audit.sh
 - [✅] 2026-08-30T18:59:23.279Z New script(s) created:
+- [✅] 2026-08-30T19:21:11.827Z New script(s) created: tnf-context-broker.cjs
+
   tnf-recursive-logic-sieve.sh
 
   run-phase-b-only.sh, run-phase-b-wait.sh, run-phase-b.sh, run-rc-gate.sh

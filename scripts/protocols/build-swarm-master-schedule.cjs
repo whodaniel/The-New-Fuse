@@ -127,7 +127,7 @@ function buildInterrelationships(scheduleRows) {
 
 function buildMarkdown(calendar) {
   const lines = [];
-  lines.push('# TNF Staff Master Calendar and Master Schedule');
+  lines.push('# TNF Swarm Master Schedule and Master Schedule');
   lines.push('');
   lines.push(`Generated: ${calendar.generatedAt}`);
   lines.push('');
@@ -194,12 +194,12 @@ function main() {
     'master-clock-sync',
     'master-clock-sync-latest.json'
   );
-  const outputJsonPath = path.join(repoRoot, 'data', 'protocols', 'tnf-staff-master-calendar.json');
+  const outputJsonPath = path.join(repoRoot, 'data', 'protocols', 'tnf-swarm-master-schedule.json');
   const outputMdPath = path.join(
     repoRoot,
     'docs',
     'operations',
-    'TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md'
+    'TNF_SWARM_MASTER_SCHEDULE.md'
   );
 
   const registry = readJson(registryPath, { categories: [], jobs: [] });

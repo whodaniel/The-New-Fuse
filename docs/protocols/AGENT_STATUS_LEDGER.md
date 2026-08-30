@@ -1,4 +1,6 @@
-Updated: 2026-08-30T15:21:09-04:00 — Implement Dynamic Context Broker Updated:
+Updated: 2026-08-30T15:27:50-04:00 — Ensure Logic Sieve is actively registered
+in Master Loop and align remaining Staff scripts to Swarm. Updated:
+2026-08-30T15:21:09-04:00 — Implement Dynamic Context Broker Updated:
 2026-08-30T15:17:58-04:00 — Execute Semantic Cohesion Sweep (V3 - Fix Handoff
 Gate) Updated: 2026-08-30T15:16:51-04:00 — Ensure Locked Doc Compliance for
 Lexicon Overhaul Updated: 2026-08-30T15:16:04-04:00 — Execute Semantic Cohesion
