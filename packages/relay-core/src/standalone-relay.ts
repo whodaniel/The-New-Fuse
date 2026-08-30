@@ -1318,32 +1318,7 @@ export class TNFRelayServer extends EventEmitter {
           }
         }
 
-        if (to === 'broadcast') {
-          if (channel) {
-            // Broadcast to channel members
-            const ch = this.ensureChannelExists(channel, {
-              createdBy: agentId || 'unknown',
-              description: 'Auto-created from relay message traffic',
-            });
-            if (ch) {
-              ch.members.forEach((memberId) => {
-                const memberWs = this.sockets.get(memberId);
-                if (memberWs && memberWs.readyState === WebSocket.OPEN) {
-                  this.send(memberWs, {
-                    type: 'CHANNEL_MESSAGE',
-                    payload: msg,
-                  });
-                }
-              });
-            }
-          } else {
-            // Broadcast to all
-            this.broadcast({
-              type: 'MESSAGE_RECEIVE',
-              payload: msg,
-            });
-          }
-        } else if (to) {
+        if (to && to !== 'broadcast') {
           // Direct message
           const targetWs = this.sockets.get(to);
           if (targetWs && targetWs.readyState === WebSocket.OPEN) {
@@ -1352,6 +1327,27 @@ export class TNFRelayServer extends EventEmitter {
               payload: msg,
             });
           }
+        } else if (channel) {
+          // Channel-scoped post. `to: 'broadcast'` and an omitted `to` are the
+          // same intent — everyone in the room. Only the explicit 'broadcast'
+          // form used to deliver, so a post that named a channel and left `to`
+          // unset was emitted and persisted but sent to nobody.
+          const ch = this.ensureChannelExists(channel, {
+            createdBy: agentId || 'unknown',
+            description: 'Auto-created from relay message traffic',
+          });
+          if (ch) {
+            this.broadcastToChannel(ch.id, {
+              type: 'CHANNEL_MESSAGE',
+              payload: msg,
+            });
+          }
+        } else if (to === 'broadcast') {
+          // Broadcast to all
+          this.broadcast({
+            type: 'MESSAGE_RECEIVE',
+            payload: msg,
+          });
         }
         break;
       }
@@ -2018,15 +2014,18 @@ export class TNFRelayServer extends EventEmitter {
   }
 
   private broadcastToChannel(channelId: string, message: ProtocolMessage): void {
-    const channel = this.channels.get(channelId);
+    // Resolve rather than exact-match: callers address rooms by id ('green')
+    // and by display name ('Green') interchangeably, and an unresolved id here
+    // is a silent no-delivery.
+    const channel = this.resolveChannel(channelId);
     if (!channel) {
       return;
     }
 
     channel.members.forEach((memberId) => {
       const socket = this.sockets.get(memberId);
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify(message));
+      if (socket) {
+        this.send(socket, message);
       }
     });
   }

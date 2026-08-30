@@ -5,13 +5,15 @@ restored for Gate 3 compliance; reclassify on next vetting pass.
 
 # Agent Status Ledger
 
-Updated: **2026-08-16T22:56:00-04:00** — Google AI & Antigravity Personal
-Intelligence Platform, CLI Command Suite & Cloud Sync Integration
-(`b66700ba-745b-42fb-842b-2d8573fdb91a`). Updated: **2026-08-11T13:50:00.000Z**
-— validators + Claude/Pi/Codex peer parity on `fix/validators-peer-parity` (mean
-83%, Claude/Codex 100%, Pi 98%). Updated: **2026-08-11T13:48:54.685Z** — handoff
-`bb2f8da0-7e85-4cc9-969d-46c67f9887e8` (`e31dafec20b2`).
-`a535d786-f022-44ba-85d8-2e28923cc16d` (`2d75390d0df3`).
+Updated: **2026-08-30T14:04:00-04:00** — Sovereign Distillation, Hierarchical
+Skill Tree, and Automated Storage Retention Protocols
+(`3155f586-c8fc-44cb-8b79-20245bca0447`). Updated: **2026-08-16T22:56:00-04:00**
+— Google AI & Antigravity Personal Intelligence Platform, CLI Command Suite &
+Cloud Sync Integration (`b66700ba-745b-42fb-842b-2d8573fdb91a`). Updated:
+**2026-08-11T13:50:00.000Z** — validators + Claude/Pi/Codex peer parity on
+`fix/validators-peer-parity` (mean 83%, Claude/Codex 100%, Pi 98%). Updated:
+**2026-08-11T13:48:54.685Z** — handoff `bb2f8da0-7e85-4cc9-969d-46c67f9887e8`
+(`e31dafec20b2`). `a535d786-f022-44ba-85d8-2e28923cc16d` (`2d75390d0df3`).
 `cfbe965f-c10f-4ee0-9afa-d88b2904e90d` (`585f72e35f5e`).
 `b1e88931-7ddf-492d-a097-36efb9bd4628` (`585f72e35f5e`).
 `e741e4bc-030b-41fe-8200-e53a3050c429` (`585f72e35f5e`).
@@ -71,7 +73,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-29T22:06:08.623Z** — handoff `14e23d83-c540-4152-bdf9-1bd554112c4e` (`5e7e2c894feb`).
+Updated: **2026-08-29T22:06:08.623Z** — handoff
+`14e23d83-c540-4152-bdf9-1bd554112c4e` (`5e7e2c894feb`).
 `4283b14d-8b02-4347-adc8-d5f26a4b01fd` (`26be2886c104`).
 `e85d971f-770d-4cfe-98f6-4cd46280f557` (`f328e16919f8`).
 `883a32da-4f06-48ed-8efc-9013f70c7bfe` (`e169723bd328`).
@@ -265,10 +268,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers |
-| **P0**   | Phase 3: generalize jules-skill MCP tool surface to remote-coding-agent delegation |
+| Priority | Action                                                                                                               |
+| -------- | -------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers               |
+| **P0**   | Phase 3: generalize jules-skill MCP tool surface to remote-coding-agent delegation                                   |
 | **P0**   | Phase 4: move feature-tracker/feature-suggestions UI assets to TNF-Extensions (backend keeps native feedback module) |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
@@ -281,17 +284,17 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 ## Green Federation (Channel Green)
 
-| Component             | Identity                               | Status                               |
-| --------------------- | -------------------------------------- | ------------------------------------ |
-| BROKER-Green          | `TNF:LOCAL:AGENT:TNF:BROKER_GREEN:001` | Running (verified)                   |
-| Browser Agent         | `browser-*` + `ID#:` (deterministic)   | Extension background WS bridge       |
+| Component               | Identity                                      | Status                                                                                       |
+| ----------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| BROKER-Green            | `TNF:LOCAL:AGENT:TNF:BROKER_GREEN:001`        | Running (verified)                                                                           |
+| Browser Agent           | `browser-*` + `ID#:` (deterministic)          | Extension background WS bridge                                                               |
 | Browser control surface | `TNF:LOCAL:AGENT:BROWSER-CONTROL-SURFACE:001` | Federation relay client (`apps/browser-control-surfaces`); not a staffed `.agent` definition |
-| Claude tab            | `page-agent-*` + `ID#:`                | On Green when tab synced             |
-| ChatGPT tab           | `page-agent-*` + `ID#:`                | On Green; inbound confirmed          |
-| Gemini tab            | `page-agent-*` + `ID#:`                | On Green                             |
-| GLM tab (`chat.z.ai`) | `page-agent-*` + `ID#:`                | On Green; passive capture in dist-v7 |
-| Gemini compute        | `tnf-gemini-redis-wrapper`             | Running (verify with `pgrep`)        |
-| Relay                 | `ws://127.0.0.1:3007/ws`               | OK                                   |
+| Claude tab              | `page-agent-*` + `ID#:`                       | On Green when tab synced                                                                     |
+| ChatGPT tab             | `page-agent-*` + `ID#:`                       | On Green; inbound confirmed                                                                  |
+| Gemini tab              | `page-agent-*` + `ID#:`                       | On Green                                                                                     |
+| GLM tab (`chat.z.ai`)   | `page-agent-*` + `ID#:`                       | On Green; passive capture in dist-v7                                                         |
+| Gemini compute          | `tnf-gemini-redis-wrapper`                    | Running (verify with `pgrep`)                                                                |
+| Relay                   | `ws://127.0.0.1:3007/ws`                      | OK                                                                                           |
 
 ## Federated ID Coverage (2026-06-20)
 
@@ -1486,4 +1489,5 @@ clean | ✅ COMPLETE |
 | 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (4283b14d-8b02-4347-adc8-d5f26a4b01fd) | ✅ HANDOFF_READY |
 
-| 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST (14e23d83-c540-4152-bdf9-1bd554112c4e) | ✅ HANDOFF_READY |
+| 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(14e23d83-c540-4152-bdf9-1bd554112c4e) | ✅ HANDOFF_READY |

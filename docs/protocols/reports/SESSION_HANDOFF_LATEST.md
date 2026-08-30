@@ -1,75 +1,33 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-08-29T04:47:37.724Z` Handoff ID: `4283b14d-8b02-4347-adc8-d5f26a4b01fd`
+`2026-08-30T18:04:03.539Z` Handoff ID: `3155f586-c8fc-44cb-8b79-20245bca0447`
 
-## Scope
+## Repository
 
-- Repository: `whodaniel/tnf-monorepo`
-- Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `main`
-- Head SHA: `da228970707df206e1bd91c70e8e369872625516`
-- Sensitive Scope: `internal`
+- Actual: `whodaniel/tnf-monorepo`
+- Canonical TNF source: `whodaniel/tnf-monorepo`
+- Origin: `https://github.com/whodaniel/tnf-monorepo.git`
+- Branch: `feat/relay-stage0-hardening`
+- Head SHA: `20651e976732c66db017833f32be551b15486a9a`
 
 ## Classification
 
-- Work Domain: `unknown`
-- Artifact Destination: `unknown`
-- Data Residency: `unknown`
+- Work domain: `unknown`
+- Artifact destination: `unknown`
+- Data residency: `unknown`
 - Sensitivity: `unknown`
+
+## Capabilities
+
+- Required: (not recorded)
+- Staffed by: (not recorded)
 
 ## Work Summary
 
-- T6 on integration/rc-t5-candidate-20260829: frozen-lockfile --prefer-offline
-  install exit 0 (lockfile up to date; dist-bin warnings until scoped build).
-- Type-check VERIFIED exit 0 for packages/mcp-core, packages/agent,
-  packages/tnf-cli (tsBuildInfo on RAM disk).
-- mcp-core Jest VERIFIED exit 0: 31/31 suites, 716 passed + 6 load-gated skips =
-  722 total, no force-exit, no MaxListeners. Agent Jest VERIFIED exit 0: 3/3
-  suites, 15/15. LocalSubdirectorAuthorityService tests passed.
-  install-agent-frontload.test.cjs 6/6. WorktreeService 38/38.
-- CLI smoke VERIFIED via tsx: tnf --version 1.0.0; tnf subdirector --help lists
-  drain/cycle/autonomy.
-- Scoped tsc build VERIFIED exit 0 for mcp-core, agent, tnf-cli (dist present).
-  Official root turbo build NOT VERIFIED: aborted after ENOSPC (2.6Gi to 51Mi)
-  during concurrent The-New-Fuse full-auto turbo; not rerun.
-- OSS app-boundary gate failed (missing TNF-Extensions satellites on this
-  machine) — environment/layout, not an RC source regression. Runtime-boundary
-  and command-surface gates passed. SESSION_HANDOFF_LATEST was stale WIP text
-  until this emit.
-
-## Changed Paths
-
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- packages/agent-coordination/src/queues/task-queue-manager.ts
-- packages/agent-coordination/tests/recovery-manager.test.ts
-- packages/agent-coordination/tests/redis-coordinator.test.ts
-
-## Verification
-
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
-- supabase_rls_audit: `na`
-
-## Continuation
-
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
-- Priority: `high`
-
-### Resume Checklist
-
-- Confirm PR 264 remains Draft targeting main at the published SHA.
-- If official T6 build is still required, reclaim or add >=8Gi then run pnpm run
-  build from a clean isolated worktree at the published SHA.
-- Do not reopen Minimatch. Do not mix thinkingmachines/inkling or federation P0
-  into this PR.
-- Leave uncommitted gemini-browser-skill JS dirty files and .tnf-recovery
-  untracked.
+- feat(governance): codify sovereign distillation
+- hierarchical skill tree
+- and automated storage retention protocols
 
 ## Next Actions
 
@@ -85,3 +43,6 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - [GUARDRAIL-COMPLIANT] Preserve .tnf-recovery/tnf-rc-gate-scripts (probe files
   from removed tnf-rc-gate worktree). Do not commit
   apps/frontend/src/data/codebase_map.json. (DONE)
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 60 file(s)
+  uncommitted — see
+  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation

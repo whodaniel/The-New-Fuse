@@ -57,9 +57,7 @@
   "taskRoutes": [
     {
       "when": "nontrivial TNF engineering, architecture, debugging, implementation, or review",
-      "load": [
-        ".agent/skills/tnf-engineering-context/SKILL.md"
-      ]
+      "load": [".agent/skills/tnf-engineering-context/SKILL.md"]
     },
     {
       "when": "multiple agents or overlapping durable sources are involved",
@@ -70,9 +68,7 @@
     },
     {
       "when": "source library freshness, packaging, Drive distribution, or supersession is involved",
-      "load": [
-        ".agent/skills/tnf-source-library-refresh/SKILL.md"
-      ]
+      "load": [".agent/skills/tnf-source-library-refresh/SKILL.md"]
     },
     {
       "when": "assimilation, parodying an external agent, self-evolution capability intake, provider capability comparison, or turning an external agent feature into TNF-native capability is involved",
@@ -99,6 +95,17 @@
         ".agent/skills/tnf-user-context-storage/SKILL.md"
       ],
       "rule": "If these paths are absent on the current branch, locate and reconcile the active canonical PR/workstream before inventing a competing provider model."
+    },
+    {
+      "when": "video intelligence processing, actionable intelligence extraction, multi-persona combinatorics, non-destructive pruning, or hierarchical semantic skill tree traversal is involved",
+      "load": [
+        "docs/protocols/SOVEREIGN_DISTILLATION_AND_DUAL_TRACK_PROTOCOL.md",
+        "docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md",
+        "docs/protocols/NON_DESTRUCTIVE_PRUNING_PROTOCOL.md",
+        "docs/protocols/HIERARCHICAL_SEMANTIC_SKILL_TREE.md",
+        "docs/protocols/THE_VELOCITY_INTEGRITY_BALANCE.md"
+      ],
+      "rule": "Process incoming video/audio transcripts across the 7 Actionable Modalities, execute non-destructive pruning by offloading core digests to cloud ledgers and compressing raw media to cold storage, and navigate skills via the Hierarchical Semantic Skill Tree."
     }
   ],
   "crossAgentRules": {
