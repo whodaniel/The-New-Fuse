@@ -114,7 +114,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-31T05:22:07.449Z** — handoff
+Updated: **2026-08-31T05:24:03.543Z** — handoff
+`d1c92e44-a836-4a3e-839f-a8a1d45228c0` (`901c2d2f098d`).
 `10b05184-48da-4c36-8607-120e738c0593` (`055c6d0e4301`).
 `ad3371f2-6d3c-4632-8b81-bef643c73838` (`055c6d0e4301`).
 `14e23d83-c540-4152-bdf9-1bd554112c4e` (`5e7e2c894feb`).
@@ -311,9 +312,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                 |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **P0**   | Commit swarm busy-lifecycle increment (agent-swarm-orchestration.service + controller + spec + scripts/agents/onboard-cli-platform.cjs) which remains unstaged after the concurrent workstream's reset |
+| Priority | Action                                                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Tier 2 roadmap: telemetry feedback into routing, verification-before-completion flag, lexical forgiveness in agents match |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1538,3 +1539,6 @@ clean | ✅ COMPLETE |
 
 | 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (10b05184-48da-4c36-8607-120e738c0593) | ✅ HANDOFF_READY |
+
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d1c92e44-a836-4a3e-839f-a8a1d45228c0) | ✅ HANDOFF_READY |

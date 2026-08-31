@@ -4,10 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Commit swarm busy-lifecycle increment
-(agent-swarm-orchestration.service + controller + spec +
-scripts/agents/onboard-cli-platform.cjs) which remains unstaged after the
-concurrent workstream's reset
+**Current Directive:** Tier 2 roadmap: telemetry feedback into routing,
+verification-before-completion flag, lexical forgiveness in agents match
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1153,6 +1151,11 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-31T05:24:06.952Z handoff `d1c92e44-a836-4a3e-839f-a8a1d45228c0` head
+  `901c2d2f098d` project `TNF-SESSION` — Tier 2 roadmap: telemetry feedback into
+  routing, verification-before-completion flag, lexical forgiveness in agents
+  match
 
 - 2026-08-31T05:22:39.510Z handoff `10b05184-48da-4c36-8607-120e738c0593` head
   `055c6d0e4301` project `TNF-SESSION` — Commit swarm busy-lifecycle increment

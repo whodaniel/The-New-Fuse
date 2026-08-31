@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { DatabaseService } from '@the-new-fuse/database';
 
 export interface SwarmConfiguration {
@@ -86,18 +86,31 @@ export interface SwarmStatus {
 }
 
 @Injectable()
-export class AgentSwarmOrchestrationService {
+export class AgentSwarmOrchestrationService implements OnModuleDestroy {
   private readonly logger = new Logger(AgentSwarmOrchestrationService.name);
   private swarmConfigurations = new Map<string, SwarmConfiguration>();
   private activeAgents = new Map<string, SwarmAgent[]>();
   private activeExecutions = new Map<string, SwarmExecution[]>();
   private taskQueue = new Map<string, SwarmTask[]>();
 
+  /** Heartbeat monitor tuning (non-readonly so tests can shorten intervals). */
+  protected heartbeatIntervalMs = 30000;
+  protected heartbeatTimeoutMs = 60000;
+  private heartbeatTimer?: NodeJS.Timeout;
+
   constructor(
     private readonly db: DatabaseService,
     private readonly eventEmitter: EventEmitter2
   ) {
     this.initializeHeartbeatMonitoring();
+  }
+
+  /** Stop the heartbeat interval when the Nest module tears down. */
+  onModuleDestroy(): void {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = undefined;
+    }
   }
 
   /**
@@ -202,7 +215,7 @@ export class AgentSwarmOrchestrationService {
     // Complete any active executions gracefully
     const activeExecutions = this.activeExecutions.get(agencyId) || [];
     for (const execution of activeExecutions) {
-      await this.terminateExecution(execution.id, 'swarm_disabled');
+      await this.failExecution(execution.id, 'swarm_disabled');
     }
 
     // Remove agency from all maps
@@ -241,6 +254,9 @@ export class AgentSwarmOrchestrationService {
       ...agent,
       lastHeartbeat: new Date(),
     };
+    // Normalize the caller-supplied status against the declared load so the
+    // busy/active lifecycle below always starts from a coherent state.
+    this.recomputeAgentStatus(swarmAgent);
 
     const agents = this.activeAgents.get(agencyId) || [];
     agents.push(swarmAgent);
@@ -301,7 +317,8 @@ export class AgentSwarmOrchestrationService {
     const executions = this.activeExecutions.get(agencyId) || [];
     const tasks = this.taskQueue.get(agencyId) || [];
 
-    const activeAgents = agents.filter((a) => a.status === 'active');
+    // Online = idle-active or busy; only offline/error agents are excluded.
+    const onlineAgents = agents.filter((a) => a.status === 'active' || a.status === 'busy');
     const recentTasks = tasks.filter(
       (t) => t.createdAt.getTime() > Date.now() - 24 * 60 * 60 * 1000 // Last 24 hours
     );
@@ -325,7 +342,7 @@ export class AgentSwarmOrchestrationService {
       isSwarmEnabled: this.swarmConfigurations.has(agencyId),
       activeExecutions: executions.filter((e) => e.status === 'executing').length,
       totalProviders: agents.length,
-      activeProviders: activeAgents.length,
+      activeProviders: onlineAgents.length,
       availableCategories: [...new Set(agents.flatMap((a) => a.capabilities))],
       recentActivity: {
         totalRequests: recentTasks.length,
@@ -335,7 +352,7 @@ export class AgentSwarmOrchestrationService {
       },
       healthMetrics: {
         overallHealth: this.calculateOverallHealth(agencyId),
-        agentConnectivity: agents.length > 0 ? activeAgents.length / agents.length : 0,
+        agentConnectivity: agents.length > 0 ? onlineAgents.length / agents.length : 0,
         systemLoad: this.calculateSystemLoad(agencyId),
         errorRate: recentTasks.length > 0 ? failedTasks.length / recentTasks.length : 0,
       },
@@ -391,7 +408,9 @@ export class AgentSwarmOrchestrationService {
     return agents
       .filter(
         (agent) =>
-          agent.status === 'active' &&
+          // Selection is capacity-based: idle ('active') and partially loaded
+          // ('busy' but below maxLoad) agents may take work; offline/error may not.
+          (agent.status === 'active' || agent.status === 'busy') &&
           agent.currentLoad < agent.maxLoad &&
           task.requirements.some((req) => agent.capabilities.includes(req))
       )
@@ -412,7 +431,9 @@ export class AgentSwarmOrchestrationService {
     // Simulate updating load
     agents.forEach((agent) => {
       agent.currentLoad += 1;
-      // agent.status = 'busy'; // Consider logic for when to mark as busy
+      // Mark 'busy' once the agent reaches capacity; agents with remaining
+      // capacity stay 'active' and remain selectable for additional work.
+      this.recomputeAgentStatus(agent);
     });
 
     const execution: SwarmExecution = {
@@ -463,66 +484,199 @@ export class AgentSwarmOrchestrationService {
     // We no longer auto-complete via timer because that fabricates successful outcomes.
   }
 
-  private async completeExecution(executionId: string, agencyId: string): Promise<void> {
-    const executions = this.activeExecutions.get(agencyId);
-    const execution = executions?.find((e) => e.id === executionId);
-    if (execution) {
-      execution.status = 'completed';
-      execution.metrics.endTime = new Date();
-
-      // Release agents
-      execution.participatingAgents.forEach((agent) => {
-        if (agent.currentLoad > 0) agent.currentLoad -= 1;
-        agent.status = 'active';
-      });
-
-      const tasks = this.taskQueue.get(agencyId);
-      const task = tasks?.find((t) => t.id === execution.taskId);
-      if (task) {
-        task.status = 'completed';
-        task.completedAt = new Date();
-      }
-
-      this.eventEmitter.emit('execution.completed', {
-        execution,
-        timestamp: new Date(),
-      });
-    }
+  /**
+   * List executions for an agency (read-only view for APIs and diagnostics).
+   */
+  listExecutions(agencyId: string): SwarmExecution[] {
+    return this.activeExecutions.get(agencyId) || [];
   }
 
   /**
-   * Terminate an execution
+   * Lifecycle driver: mark an execution completed.
+   *
+   * Downstream executors call this (directly, or by emitting the imperative
+   * `execution.complete` event) when real work finishes. Releases the
+   * participating agents (recomputing busy/active from remaining load) and
+   * marks the parent task completed. Returns false when the execution is
+   * unknown.
    */
-  private async terminateExecution(executionId: string, reason: string): Promise<void> {
-    for (const [, executions] of this.activeExecutions.entries()) {
-      const execution = executions.find((e) => e.id === executionId);
-      if (execution) {
-        execution.status = 'failed';
-        execution.metrics.endTime = new Date();
+  async completeExecution(executionId: string, agencyId?: string): Promise<boolean> {
+    const located = this.locateExecution(executionId, agencyId);
+    if (!located) return false;
+    const { execution, agencyId: resolvedAgencyId } = located;
 
-        execution.participatingAgents.forEach((agent) => {
-          if (agent.currentLoad > 0) agent.currentLoad -= 1;
-        });
+    execution.status = 'completed';
+    execution.metrics.endTime = new Date();
 
-        this.eventEmitter.emit('execution.terminated', {
-          execution,
-          reason,
-          timestamp: new Date(),
-        });
+    // Release agents
+    execution.participatingAgents.forEach((agent) => {
+      if (agent.currentLoad > 0) agent.currentLoad -= 1;
+      // Recompute from remaining load: agents still at capacity stay 'busy',
+      // agents with freed capacity return to 'active'.
+      this.recomputeAgentStatus(agent);
+    });
 
-        this.logger.log(`Execution ${executionId} terminated: ${reason}`);
-        break;
-      }
+    const tasks = this.taskQueue.get(resolvedAgencyId);
+    const task = tasks?.find((t) => t.id === execution.taskId);
+    if (task) {
+      task.status = 'completed';
+      task.completedAt = new Date();
+      task.progress = 100;
     }
+
+    this.eventEmitter.emit('execution.completed', {
+      execution,
+      timestamp: new Date(),
+    });
+    this.logger.log(`Execution ${executionId} completed`);
+    return true;
+  }
+
+  /**
+   * Lifecycle driver: mark an execution failed/terminated.
+   *
+   * Releases the participating agents (recomputing busy/active from remaining
+   * load), marks the parent task failed with the reason, and emits the
+   * `execution.terminated` outcome event. Returns false when unknown.
+   */
+  async failExecution(executionId: string, reason: string, agencyId?: string): Promise<boolean> {
+    const located = this.locateExecution(executionId, agencyId);
+    if (!located) return false;
+    const { execution } = located;
+
+    execution.status = 'failed';
+    execution.metrics.endTime = new Date();
+
+    execution.participatingAgents.forEach((agent) => {
+      if (agent.currentLoad > 0) agent.currentLoad -= 1;
+      // Recompute from remaining load so terminated work does not leave
+      // agents stuck in 'busy'.
+      this.recomputeAgentStatus(agent);
+    });
+
+    const tasks = this.taskQueue.get(located.agencyId);
+    const task = tasks?.find((t) => t.id === execution.taskId);
+    if (task) {
+      task.status = 'failed';
+      task.completedAt = new Date();
+      task.errors = [...(task.errors || []), reason];
+    }
+
+    this.eventEmitter.emit('execution.terminated', {
+      execution,
+      reason,
+      timestamp: new Date(),
+    });
+
+    this.logger.log(`Execution ${executionId} terminated: ${reason}`);
+    return true;
+  }
+
+  /**
+   * Event-contract drivers. Imperative verbs (`execution.complete` /
+   * `execution.fail`) come IN from executors; the service owns the
+   * past-tense outcome events (`execution.completed` /
+   * `execution.terminated`). Distinct names prevent self-loops.
+   */
+  @OnEvent('execution.complete')
+  protected async onExecutionComplete(payload: {
+    executionId: string;
+    agencyId?: string;
+  }): Promise<void> {
+    await this.completeExecution(payload?.executionId, payload?.agencyId);
+  }
+
+  @OnEvent('execution.fail')
+  protected async onExecutionFail(payload: {
+    executionId: string;
+    agencyId?: string;
+    reason?: string;
+  }): Promise<void> {
+    await this.failExecution(
+      payload?.executionId,
+      payload?.reason || 'unspecified',
+      payload?.agencyId
+    );
+  }
+
+  /**
+   * Find an execution by id, optionally scoped to one agency; otherwise scan
+   * every agency.
+   */
+  private locateExecution(
+    executionId: string,
+    agencyId?: string
+  ): { execution: SwarmExecution; agencyId: string } | null {
+    if (agencyId) {
+      const execution = this.activeExecutions.get(agencyId)?.find((e) => e.id === executionId);
+      return execution ? { execution, agencyId } : null;
+    }
+    for (const [agId, executions] of this.activeExecutions.entries()) {
+      const execution = executions.find((e) => e.id === executionId);
+      if (execution) return { execution, agencyId: agId };
+    }
+    return null;
+  }
+
+  /**
+   * Record a liveness heartbeat for a swarm agent. Keeps `lastHeartbeat`
+   * fresh so the heartbeat monitor does not mark the agent offline, and
+   * revives agents that previously went 'offline'/'error' once heartbeats
+   * resume (status is then recomputed from current load).
+   */
+  async recordHeartbeat(agencyId: string, agentId: string): Promise<boolean> {
+    const agents = this.activeAgents.get(agencyId) || [];
+    const agent = agents.find((a) => a.id === agentId);
+    if (!agent) return false;
+
+    agent.lastHeartbeat = new Date();
+    if (agent.status === 'offline' || agent.status === 'error') {
+      agent.status = 'active';
+      this.recomputeAgentStatus(agent);
+    }
+
+    this.eventEmitter.emit('agent.heartbeat', {
+      agencyId,
+      agentId,
+      timestamp: agent.lastHeartbeat,
+    });
+    return true;
+  }
+
+  /**
+   * Recompute an agent's online status from its current load.
+   *
+   * 'busy' means at capacity (currentLoad >= maxLoad); 'active' means online
+   * with spare capacity. 'offline' and 'error' are owned by the heartbeat
+   * monitor and explicit failure paths and are never overwritten here.
+   * Emits `agent.status.changed` on every actual transition for observability.
+   */
+  private recomputeAgentStatus(agent: SwarmAgent): void {
+    if (agent.status === 'offline' || agent.status === 'error') return;
+
+    const next: SwarmAgent['status'] = agent.currentLoad >= agent.maxLoad ? 'busy' : 'active';
+    if (agent.status === next) return;
+
+    const previous = agent.status;
+    agent.status = next;
+    this.eventEmitter.emit('agent.status.changed', {
+      agencyId: agent.agencyId,
+      agentId: agent.id,
+      previous,
+      status: next,
+      currentLoad: agent.currentLoad,
+      maxLoad: agent.maxLoad,
+      timestamp: new Date(),
+    });
   }
 
   /**
    * Initialize heartbeat monitoring for agents
    */
   private initializeHeartbeatMonitoring(): void {
-    setInterval(() => {
+    this.heartbeatTimer = setInterval(() => {
       this.monitorAgentHeartbeats();
-    }, 30000); // Check every 30 seconds
+    }, this.heartbeatIntervalMs);
     this.logger.log('Heartbeat monitoring initialized');
   }
 
@@ -531,7 +685,7 @@ export class AgentSwarmOrchestrationService {
    */
   private monitorAgentHeartbeats(): void {
     const now = new Date();
-    const heartbeatTimeout = 60000; // 60 seconds
+    const heartbeatTimeout = this.heartbeatTimeoutMs;
 
     for (const [agencyId, agents] of this.activeAgents.entries()) {
       for (const agent of agents) {
@@ -556,8 +710,10 @@ export class AgentSwarmOrchestrationService {
     const agents = this.activeAgents.get(agencyId) || [];
     if (agents.length === 0) return 'poor';
 
-    const activeAgents = agents.filter((a) => a.status === 'active');
-    const connectivity = activeAgents.length / agents.length;
+    // Connectivity measures liveness (active + busy), not idleness — a fully
+    // utilized healthy swarm must not read as disconnected.
+    const onlineAgents = agents.filter((a) => a.status === 'active' || a.status === 'busy');
+    const connectivity = onlineAgents.length / agents.length;
     const systemLoad = this.calculateSystemLoad(agencyId);
 
     if (connectivity > 0.9 && systemLoad < 0.7) return 'excellent';
