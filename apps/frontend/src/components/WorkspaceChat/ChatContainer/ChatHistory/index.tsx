@@ -7,7 +7,7 @@ import { WorkspaceData } from '@/types/workspace';
 import paths from '@/utils/paths';
 import { ArrowDown } from '@phosphor-icons/react';
 import debounce from 'lodash.debounce';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ManageWorkspace, { useManageWorkspaceModal } from '../../../Modals/ManageWorkspace';
 import Chartable from './Chartable';
@@ -90,15 +90,19 @@ export default function ChatHistory({
     lastScrollTopRef.current = scrollTop;
   };
 
-  const debouncedScroll = debounce(handleScroll, 100);
+  const debouncedScroll = useMemo(() => debounce(handleScroll, 100), []);
 
   useEffect(() => {
     const chatHistoryElement = chatHistoryRef.current;
     if (chatHistoryElement) {
       chatHistoryElement.addEventListener('scroll', debouncedScroll as any);
-      return () => chatHistoryElement.removeEventListener('scroll', debouncedScroll as any);
+      return () => {
+        chatHistoryElement.removeEventListener('scroll', debouncedScroll as any);
+        debouncedScroll.cancel();
+      };
     }
-  }, []);
+    return () => debouncedScroll.cancel();
+  }, [debouncedScroll]);
 
   const scrollToBottom = (smooth = false) => {
     if (chatHistoryRef.current) {

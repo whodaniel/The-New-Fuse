@@ -23,3 +23,7 @@
 ## 2024-05-24 - [Fix TS5107 Deprecation and Database Schema Builds]
 **Learning:** Fixing TypeScript `moduleResolution: node10` deprecation in older packages by using `bundler` and `ESNext` requires updating `jest.config` to use `ts-jest/presets/default-esm` and mapping `.js` extensions.
 **Action:** Updated `core-vector-db` tsconfig and package.json to resolve build and test failures.
+
+## 2026-03-05 - lodash.debounce React Anti-Pattern
+**Learning:** Using `lodash.debounce` directly inline in a component's render body (e.g. `const watch = debounce(...)`) completely breaks the debounce mechanism. The component creates a brand new debounced function every render, meaning multiple keystrokes will trigger multiple independent timers instead of cancelling previous ones, causing huge performance issues and excessive callback firing.
+**Action:** Always wrap `lodash.debounce` in `useMemo` with an empty dependency array. To prevent stale closures of reactive state (like `promptInput`), use `useRef` updated via `useEffect` to capture the latest values and reference them inside the memoized debounced function. Always call `.cancel()` on unmount to prevent leaks.
