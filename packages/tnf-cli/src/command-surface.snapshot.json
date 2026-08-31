@@ -313,6 +313,38 @@
           ]
         },
         {
+          "name": "match",
+          "aliases": [],
+          "description": "Capability broker: rank agent specs by requested capabilities, joined with live registry state",
+          "options": [
+            {
+              "flags": "--include-offline",
+              "description": "Keep registered-but-offline candidates (default: dropped)"
+            },
+            {
+              "flags": "--json",
+              "description": "Emit machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max candidates to show"
+            },
+            {
+              "flags": "--platform <platform>",
+              "description": "Restrict to candidates whose live row matches this platform"
+            },
+            {
+              "flags": "--require-capacity",
+              "description": "Only candidates that are live and not busy (declared capacity respected)"
+            },
+            {
+              "flags": "-c, --capabilities <list>",
+              "description": "Comma-separated capability tokens to match"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "orchestrate",
           "aliases": [],
           "description": "Alias for `tnf orchestrate`",
@@ -417,6 +449,30 @@
           "aliases": [],
           "description": "Alias for `tnf send`",
           "options": [
+            {
+              "flags": "--await-ack [seconds]",
+              "description": "Wait for a delivery ack (bus contract v1)"
+            },
+            {
+              "flags": "--force",
+              "description": "Send even when the recipient is unknown"
+            },
+            {
+              "flags": "--idempotency-key <key>",
+              "description": "Dedup key for receiving agents (bus contract v1)"
+            },
+            {
+              "flags": "--json",
+              "description": "Emit the dispatch decision as JSON"
+            },
+            {
+              "flags": "--require-capacity",
+              "description": "Refuse delivery when the target declares itself busy (bus contract v1)"
+            },
+            {
+              "flags": "--require-live",
+              "description": "Refuse delivery when the target is not heartbeating"
+            },
             {
               "flags": "-n, --name <name>",
               "description": "Sender name"
@@ -1801,6 +1857,44 @@
               "description": "Machine-readable JSON"
             }
           ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "dlq",
+      "aliases": [],
+      "description": "Dead-letter queue for unconfirmed bus frames (bus contract v1)",
+      "options": [],
+      "commands": [
+        {
+          "name": "clear",
+          "aliases": [],
+          "description": "Drop all dead-lettered frames",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "list",
+          "aliases": [],
+          "description": "List dead-lettered frames (newest first)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max entries to show"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "replay",
+          "aliases": [],
+          "description": "Re-publish one dead-lettered frame to its original channel",
+          "options": [],
           "commands": []
         }
       ]
@@ -5543,12 +5637,24 @@
       "description": "Send a single message (verifies the recipient exists and is heartbeating)",
       "options": [
         {
+          "flags": "--await-ack [seconds]",
+          "description": "Wait for a delivery ack from a live subscriber (bus contract v1). Unconfirmed pure-PUBLISH frames are dead-lettered to tnf:dlq. Optional value = timeout seconds (default 10). OPT-IN: without this flag send stays fire-and-forget."
+        },
+        {
           "flags": "--force",
           "description": "Send even when the recipient is unknown (records the id verbatim)"
         },
         {
+          "flags": "--idempotency-key <key>",
+          "description": "Dedup key: receiving agents skip frames whose key was already processed (24h receipt window)."
+        },
+        {
           "flags": "--json",
           "description": "Emit the dispatch decision as JSON"
+        },
+        {
+          "flags": "--require-capacity",
+          "description": "Refuse to send to an agent that declares itself busy or at max load (bus contract v1). Complements --require-live."
         },
         {
           "flags": "--require-live",

@@ -1,21 +1,55 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "e8c4a1f2-7b3d-4c9e-91aa-2f6d0b8e4c11",
-  "created_at": "2026-08-30T23:17:27.249Z",
+  "handoff_id": "10b05184-48da-4c36-8607-120e738c0593",
+  "created_at": "2026-08-31T05:22:07.449Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "63bdacdab65016b7a9be51fbdb83728a9002c9ed",
+  "head_sha": "055c6d0e4301994e05fdf4693ec6a64a010e1c78",
   "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "public",
-  "project_ids": [],
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Department tags applied on 196 agents and 326 TNF-owned skills without rewriting category",
-    "Interactive and agents-run inject department/remember/host-profile/scout orientation",
-    "LLM tools memory_retain, memory_recall, department_route are live",
-    "Host prompt catalog and installer now include Pi; tnf harness host-profiles works",
-    "Scout missions staffed to tnf-cli-agent; chronological catalog includes tenant-knowledge-scout-sprint"
+    "Bus contract v1 on the TNF agent bus: correlationId/idempotencyKey frames, sendWithAck + receiver auto-ack on tnf:ack, per-frame dedup receipts (24h TTL), DLQ (tnf:dlq channel + durable LIST) with tnf dlq list/clear/replay, capacity vocabulary (busy status + currentLoad/maxLoad in registry/heartbeats), --require-capacity dispatch gate (exit 4, opt-in), tnf agents match capability broker joining spec frontmatter with live roster, AGENT_BUS_CONTRACT.md protocol doc",
+    "Fixed pre-existing delivery bug: tnf send addressed pub/sub frames by raw --to string while daemons psubscribe by full agent id - direct PUBLISH delivery was silently dead, masked by the durable worker-inbox lane"
   ],
   "changed_paths": [
+    "docs/protocols/AGENT_BUS_CONTRACT.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "packages/tnf-cli/src/RedisAgentClient.ts",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "packages/tnf-cli/src/commands/agents-match.ts",
+    "packages/tnf-cli/src/orchestration.ts",
+    "packages/tnf-cli/src/services/DispatchGuard.test.ts",
+    "packages/tnf-cli/src/services/DispatchGuard.ts",
+    "apps/api/src/modules/agency-hub/controllers/swarm.controller.ts",
+    "apps/api/src/modules/agency-hub/services/agent-swarm-orchestration.service.ts",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "apps/frontend/src/data/codebase_map.json",
+    "apps/relay-server/src/mcp-server.mjs",
+    "data/llm-provider-status.json",
+    "data/marketplace/catalog-items.json",
+    "data/protocols/system-processes.json",
+    "docs/operations/TNF_SWARM_MASTER_SCHEDULE.md",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "docs/protocols/AGENT_WHO_IS_WHO.md",
+    "docs/protocols/CHALLENGE_RATIONALE_LOG.md",
+    "docs/protocols/DIRECTIVES.md",
+    "docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "docs/protocols/twip-operator-runbook.md",
+    "docs/tnf-tmux-setup-guide.md",
+    "scripts/lib/tnf-terminal-attention.cjs",
+    "scripts/protocols/check-operator-terminal-inviolability.cjs",
+    "scripts/runtime/launch-agent-wrapper.sh",
+    "scripts/runtime/terminal-heartbeat-cron.sh",
+    "scripts/runtime/terminal-heartbeat-pulse.cjs",
+    "scripts/start-agent-network.sh",
     ".agent/SKILL_MANIFEST.md",
     ".agent/SYSTEM_PROMPT.md",
     ".agent/agents/ab-testing-optimizer-agent.md",
@@ -548,16 +582,11 @@
     "docs/operations/CONTINUOUS_ECOSYSTEM_SCOUTING.md",
     "docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md",
     "docs/protocols/ADAPTABLE_HOST_VERIFICATION.md",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/HARNESS_CONFIG.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "package.json",
     "packages/tnf-cli/package.json",
     "packages/tnf-cli/src/__tests__/departments.test.ts",
     "packages/tnf-cli/src/agent-orientation.ts",
-    "packages/tnf-cli/src/cli.ts",
-    "packages/tnf-cli/src/command-surface.snapshot.json",
     "packages/tnf-cli/src/commands/agents-run.ts",
     "packages/tnf-cli/src/commands/department.ts",
     "packages/tnf-cli/src/commands/remember.ts",
@@ -571,37 +600,43 @@
     "scripts/harness/verify-harness-completeness.cjs",
     "scripts/install-agent-frontload.cjs",
     "scripts/scouting/staff-scout-missions.cjs",
-    "scripts/swarm/knowledge-scout-complete.cjs"
+    "scripts/swarm/knowledge-scout-complete.cjs",
+    "apps/api/src/modules/agency-hub/services/agent-swarm-orchestration.service.spec.ts",
+    "data/harness/ANOMALY_PAYLOAD.md",
+    "data/harness/active-sieve-manifest.json",
+    "data/harness/injected-context.md",
+    "data/llm-intel/",
+    "docs/operations/TNF_TMUX_MULTIPLEXER_CONVENTION_PLAN.md",
+    "docs/protocols/challenge-rationales/2026-08-30-d24-tmux-send-keys.md",
+    "packages/tnf-cli/src/commands/tmux.ts",
+    "scripts/agents/onboard-cli-platform.cjs",
+    "scripts/lib/tnf-tmux-inject.cjs",
+    "scripts/lib/tnf-tmux-inject.test.cjs",
+    "scripts/runtime/tnf-tmux.cjs",
+    "scripts/runtime/tnf-tmux.test.cjs"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Department tags applied; host-prompt catalog includes Pi; scout staffed to tnf-cli-agent; command-surface rebuilt from isolated cli.ts (507 paths). Unrelated tmux/swarm/marketplace work left unstaged."
+    "notes": "Auto-verify 2026-08-31T05:22:39.052Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
-    "owner": "operator",
-    "targets": ["orchestrator"],
-    "priority": "medium",
+    "owner": "pi-coding-agent",
+    "targets": ["tnf-orchestrator", "story-architect"],
+    "priority": "high",
     "resume_checklist": [
-      "Read docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md",
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Do not commit unless the operator asks. Do not use git commit --no-verify.",
-      "If committing a multi-receipt pack: TNF_HANDOFF_ALLOW_MULTI_RECEIPT=1 plus a matching Super Admin token"
+      "Re-run surface gate after any concurrent cli.ts rebuild: npx tsx packages/tnf-cli/src/command-surface.test.ts",
+      "Re-run dispatch tests: npx tsx packages/tnf-cli/src/services/DispatchGuard.test.ts (45 checks)",
+      "E2E probes: tnf send --to <live-agent> --await-ack, tnf dlq list, tnf agents match --capabilities"
     ]
   },
   "next_actions": [
-    "Commit/push only if the operator asks. Authority files need TNF_AUTHORITY_EDIT_CONFIRM=1. Do not use git commit --no-verify.",
-    "Optional: node scripts/setup/provision-local-cron.cjs so tenant-knowledge-scout-sprint lands in crontab",
-    "Pre-existing crontab drift: several process-ids are scheduled but not in the registry",
-    "Absent/advisory hosts: command-code, droid, jules",
-    "Public The-New-Fuse PR 161 remains open (publication sync not a feature PR)"
+    "Commit swarm busy-lifecycle increment (agent-swarm-orchestration.service + controller + spec + scripts/agents/onboard-cli-platform.cjs) which remains unstaged after the concurrent workstream's reset"
   ],
   "artifacts": {
-    "commits": ["63bdacdab65016b7a9be51fbdb83728a9002c9ed"],
-    "deployment_urls": [],
-    "database_migrations": []
+    "commits": ["055c6d0e4301994e05fdf4693ec6a64a010e1c78"]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -615,18 +650,18 @@
     ]
   },
   "classification": {
-    "work_domain": "core",
-    "artifact_destination": "oss_runtime",
-    "data_residency": "product_state",
-    "sensitivity": "public"
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
   },
   "capabilities": {
-    "required": ["departments", "memory", "docs", "cli"],
-    "staffed_by": ["cursor"]
+    "required": [],
+    "staffed_by": []
   },
   "publication": {
-    "public_runtime_affected": true,
-    "control_plane_affected": true,
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
     "satellites": []
   },
   "freshness_receipts": [

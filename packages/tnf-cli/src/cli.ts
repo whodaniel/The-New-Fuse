@@ -24,6 +24,7 @@ import {
 import { assertNoDuplicateCommands } from './commands/_registry.js';
 import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
+import { registerAgentsMatchCommand } from './commands/agents-match.js';
 import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
@@ -15036,12 +15037,43 @@ agents
   .argument('<message>', 'Message to send')
   .option('-t, --to <agentId>', 'Recipient agent ID')
   .option('-n, --name <name>', 'Sender name')
-  .action(async (message: string, options: { to?: string; name?: string } = {}) => {
-    const args = ['send', message];
-    if (options.to) args.push('--to', options.to);
-    if (options.name) args.push('--name', options.name);
-    await runSelfCliWithExit(args);
-  });
+  .option('--require-live', 'Refuse delivery when the target is not heartbeating')
+  .option(
+    '--require-capacity',
+    'Refuse delivery when the target declares itself busy (bus contract v1)'
+  )
+  .option('--await-ack [seconds]', 'Wait for a delivery ack (bus contract v1)')
+  .option('--idempotency-key <key>', 'Dedup key for receiving agents (bus contract v1)')
+  .option('--force', 'Send even when the recipient is unknown')
+  .option('--json', 'Emit the dispatch decision as JSON')
+  .action(
+    async (
+      message: string,
+      options: {
+        to?: string;
+        name?: string;
+        requireLive?: boolean;
+        requireCapacity?: boolean;
+        awaitAck?: string | boolean;
+        idempotencyKey?: string;
+        force?: boolean;
+        json?: boolean;
+      } = {}
+    ) => {
+      const args = ['send', message];
+      if (options.to) args.push('--to', options.to);
+      if (options.name) args.push('--name', options.name);
+      if (options.requireLive) args.push('--require-live');
+      if (options.requireCapacity) args.push('--require-capacity');
+      if (options.awaitAck !== undefined) {
+        args.push(options.awaitAck === true ? '--await-ack' : `--await-ack=${options.awaitAck}`);
+      }
+      if (options.idempotencyKey) args.push('--idempotency-key', options.idempotencyKey);
+      if (options.force) args.push('--force');
+      if (options.json) args.push('--json');
+      await runSelfCliWithExit(args);
+    }
+  );
 agents
   .command('orchestrate')
   .description('Alias for `tnf orchestrate`')
@@ -15721,6 +15753,18 @@ program
     '--require-live',
     'Refuse to send to an agent whose heartbeat is stale. Use in cron/full-auto, where queuing to a dead worker looks identical to progress.'
   )
+  .option(
+    '--require-capacity',
+    'Refuse to send to an agent that declares itself busy or at max load (bus contract v1). Complements --require-live.'
+  )
+  .option(
+    '--await-ack [seconds]',
+    'Wait for a delivery ack from a live subscriber (bus contract v1). Unconfirmed pure-PUBLISH frames are dead-lettered to tnf:dlq. Optional value = timeout seconds (default 10). OPT-IN: without this flag send stays fire-and-forget.'
+  )
+  .option(
+    '--idempotency-key <key>',
+    'Dedup key: receiving agents skip frames whose key was already processed (24h receipt window).'
+  )
   .option('--force', 'Send even when the recipient is unknown (records the id verbatim)')
   .option('--json', 'Emit the dispatch decision as JSON')
   .action(async (message, options) => {
@@ -15735,12 +15779,19 @@ program
       // verify, do not assume.
       const roster = await client.listAgents();
       const resolution = resolveRecipient(options.to, roster);
-      const decision = decideDispatch(resolution, { requireLive: options.requireLive });
+      const decision = decideDispatch(resolution, {
+        requireLive: options.requireLive,
+        requireCapacity: options.requireCapacity,
+      });
 
       if (options.json) {
         console.log(
           JSON.stringify(
-            { to: options.to ?? null, decision: decision.level, ...decision.resolution },
+            {
+              to: options.to ?? null,
+              decision: decision.level,
+              ...decision.resolution,
+            },
             null,
             2
           )
@@ -15750,6 +15801,15 @@ program
       if (!decision.proceed && !options.force) {
         if (!options.json) {
           console.error(chalk.red(`✖ Not sent — ${decision.resolution.summary}`));
+          if (
+            options.requireCapacity &&
+            decision.resolution.capacity?.busy &&
+            decision.exitCode === 4
+          ) {
+            console.error(
+              chalk.dim(`  Capacity: ${decision.resolution.capacity.summary} (override: --force)`)
+            );
+          }
           if (decision.resolution.suggestions.length > 0) {
             console.error(chalk.dim('  Did you mean:'));
             for (const id of decision.resolution.suggestions) {
@@ -15766,7 +15826,40 @@ program
         return;
       }
 
-      await client.send(message, { to: options.to ? { agentId: options.to } : undefined });
+      // Address by the RESOLVED registry id, not the raw --to string: the
+      // recipient's psubscribe pattern is tnf:direct:*:<fullAgentId>. Sending
+      // to the raw name published to a channel nobody subscribed (v0 masked
+      // this because the durable worker-inbox lane uses the resolved id).
+      const resolvedTo = decision.resolution.agentId || options.to;
+      // Bus contract v1: --await-ack swaps fire-and-forget publish for
+      // correlationId + tnf:ack wait. Unconfirmed PURE-PUBLISH frames land in
+      // the DLQ; when a durable worker-inbox LPUSH also happened below, the
+      // ack timeout is reported as queued-durable, not lost.
+      let ackResult: {
+        correlationId: string;
+        delivered: boolean;
+        ackFrom?: string;
+        duplicateAck?: boolean;
+      } | null = null;
+      if (options.awaitAck) {
+        const seconds = Math.max(
+          1,
+          typeof options.awaitAck === 'string' ? parseInt(options.awaitAck, 10) || 10 : 10
+        );
+        ackResult = await client.sendWithAck(
+          message,
+          {
+            to: resolvedTo ? { agentId: resolvedTo } : undefined,
+            idempotencyKey: options.idempotencyKey,
+          },
+          seconds * 1000
+        );
+      } else {
+        await client.send(message, {
+          to: resolvedTo ? { agentId: resolvedTo } : undefined,
+          idempotencyKey: options.idempotencyKey,
+        });
+      }
 
       let workerQueue: { queueKey: string; envelopeId: string } | null = null;
       if (
@@ -15821,6 +15914,37 @@ program
         } else {
           console.log(chalk.green(`📤 Sent — ${decision.resolution.summary}`));
         }
+
+        // Bus contract v1 reporting — always last, so the durable-lane
+        // outcome above is never shadowed by the ack outcome.
+        if (ackResult) {
+          if (ackResult.delivered) {
+            console.log(
+              chalk.green(
+                `📬 Acknowledged by ${ackResult.ackFrom}` +
+                  (ackResult.duplicateAck ? ' (duplicate — receiver deduped it)' : '') +
+                  ` · corr ${ackResult.correlationId}`
+              )
+            );
+          } else if (workerQueue) {
+            console.log(
+              chalk.yellow(
+                `📬 No live ack (corr ${ackResult.correlationId}) — but the durable worker inbox holds it.`
+              )
+            );
+          } else {
+            console.log(
+              chalk.red(
+                `☠ Unacknowledged (corr ${ackResult.correlationId}) — dead-lettered to tnf:dlq. Inspect: tnf dlq list`
+              )
+            );
+            process.exitCode = 5;
+          }
+        }
+      } else if (ackResult && !ackResult.delivered && !workerQueue) {
+        // JSON mode: surface the DLQ outcome via exit code only; the decision
+        // JSON was already printed and must not be double-printed.
+        process.exitCode = 5;
       }
 
       // Wait a bit for responses
@@ -15844,9 +15968,104 @@ program
     }
   });
 
-// ============================================================================
-// ENHANCED ORCHESTRATION COMMANDS
-// ============================================================================
+// ---------------------------------------------------------------------------
+// Bus contract v1 — dead-letter queue administration.
+// Frames that were published but never acked by a live subscriber (with no
+// durable worker-inbox lane to fall back on) land on `tnf:dlq`. These
+// commands are the recovery surface: list, clear, replay.
+// ---------------------------------------------------------------------------
+const dlqCommand = program
+  .command('dlq')
+  .description('Dead-letter queue for unconfirmed bus frames (bus contract v1)');
+
+dlqCommand
+  .command('list')
+  .description('List dead-lettered frames (newest first)')
+  .option('--limit <n>', 'Max entries to show', '20')
+  .option('--json', 'Emit JSON')
+  .action(async (options: { limit?: string; json?: boolean } = {}) => {
+    const RedisAgentClient = await loadRedisAgentClient();
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const entries = await client.listDlq(Math.max(1, parseInt(options.limit || '20', 10) || 20));
+      if (options.json) {
+        console.log(JSON.stringify({ count: entries.length, entries }, null, 2));
+        return;
+      }
+      if (entries.length === 0) {
+        console.log('Dead-letter queue is empty.');
+        return;
+      }
+      console.log(`Dead-letter queue — ${entries.length} entr(y/ies), newest first:\n`);
+      for (const e of entries) {
+        console.log(
+          `  ${chalk.red(e.id || '?')}  ${chalk.dim(e.deadAt || '')}  ${e.reason || '?'}`
+        );
+        console.log(
+          `    channel: ${e.channel || '?'}   to: ${e.to?.agentId || 'broadcast'}${
+            e.frame?.correlationId ? `   corr: ${e.frame.correlationId}` : ''
+          }`
+        );
+        const preview = String(e.frame?.content || '').slice(0, 120);
+        if (preview)
+          console.log(
+            `    frame: ${preview}${String(e.frame?.content || '').length > 120 ? '…' : ''}`
+          );
+      }
+      console.log(chalk.dim('\n  replay: tnf dlq replay <entryId>   ·   clear: tnf dlq clear'));
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) logRedisUnavailable('tnf dlq list');
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exitCode = 1;
+    } finally {
+      await client.cleanup();
+    }
+  });
+
+dlqCommand
+  .command('clear')
+  .description('Drop all dead-lettered frames')
+  .action(async () => {
+    const RedisAgentClient = await loadRedisAgentClient();
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const removed = await client.clearDlq();
+      console.log(chalk.green(`✔ Cleared ${removed} dead-lettered frame(s).`));
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) logRedisUnavailable('tnf dlq clear');
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exitCode = 1;
+    } finally {
+      await client.cleanup();
+    }
+  });
+
+dlqCommand
+  .command('replay')
+  .description('Re-publish one dead-lettered frame to its original channel')
+  .argument('<entryId>', 'Dead-letter entry id (from tnf dlq list)')
+  .action(async (entryId: string) => {
+    const RedisAgentClient = await loadRedisAgentClient();
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const ok = await client.replayDlqEntry(entryId);
+      if (ok) {
+        console.log(chalk.green(`↩ Replayed ${entryId} to its original channel.`));
+      } else {
+        console.error(chalk.red(`Entry not found: ${entryId}`));
+        process.exitCode = 3;
+      }
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) logRedisUnavailable('tnf dlq replay');
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exitCode = 1;
+    } finally {
+      await client.cleanup();
+    }
+  });
 
 program
   .command('orchestrate')
@@ -19719,6 +19938,10 @@ registerChannelCommands(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
 registerAgentsRunCommand(program);
 registerAgentsSpecsCommand(program, repoRoot);
+// Capability broker (bus contract v1): `tnf agents match` joins spec
+// frontmatter with live registry state. Registered on the existing `agents`
+// group so the surface stays `tnf agents match`, not a new top-level family.
+registerAgentsMatchCommand(agents, repoRoot);
 registerStatusCommand(program, repoRoot);
 // `doctor` and `config` are already owned by cli.ts above. These modules nest
 // under the incumbent (`doctor health`, `config resolved`) via registerOrNest

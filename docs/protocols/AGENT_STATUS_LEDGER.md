@@ -114,7 +114,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-29T22:06:08.623Z** — handoff
+Updated: **2026-08-31T05:22:07.449Z** — handoff
+`10b05184-48da-4c36-8607-120e738c0593` (`055c6d0e4301`).
+`ad3371f2-6d3c-4632-8b81-bef643c73838` (`055c6d0e4301`).
 `14e23d83-c540-4152-bdf9-1bd554112c4e` (`5e7e2c894feb`).
 `4283b14d-8b02-4347-adc8-d5f26a4b01fd` (`26be2886c104`).
 `e85d971f-770d-4cfe-98f6-4cd46280f557` (`f328e16919f8`).
@@ -309,11 +311,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                               |
-| -------- | -------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Phase 2: relocate claw-skills markdown packs to skill-content distribution + repoint symlink consumers               |
-| **P0**   | Phase 3: generalize jules-skill MCP tool surface to remote-coding-agent delegation                                   |
-| **P0**   | Phase 4: move feature-tracker/feature-suggestions UI assets to TNF-Extensions (backend keeps native feedback module) |
+| Priority | Action                                                                                                                                                                                                 |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **P0**   | Commit swarm busy-lifecycle increment (agent-swarm-orchestration.service + controller + spec + scripts/agents/onboard-cli-platform.cjs) which remains unstaged after the concurrent workstream's reset |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1532,3 +1532,9 @@ clean | ✅ COMPLETE |
 
 | 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (14e23d83-c540-4152-bdf9-1bd554112c4e) | ✅ HANDOFF_READY |
+
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ad3371f2-6d3c-4632-8b81-bef643c73838) | ✅ HANDOFF_READY |
+
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(10b05184-48da-4c36-8607-120e738c0593) | ✅ HANDOFF_READY |

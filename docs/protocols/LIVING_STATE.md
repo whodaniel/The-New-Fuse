@@ -4,8 +4,10 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Implement and Audit the Self-Evolving "Harness": Context
-Broker, Recursive Logic Sieve, Lexical Forgiveness, and Synergistic Alignment.
+**Current Directive:** Commit swarm busy-lifecycle increment
+(agent-swarm-orchestration.service + controller + spec +
+scripts/agents/onboard-cli-platform.cjs) which remains unstaged after the
+concurrent workstream's reset
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1151,6 +1153,18 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-08-31T05:22:39.510Z handoff `10b05184-48da-4c36-8607-120e738c0593` head
+  `055c6d0e4301` project `TNF-SESSION` — Commit swarm busy-lifecycle increment
+  (agent-swarm-orchestration.service + controller + spec +
+  scripts/agents/onboard-cli-platform.cjs) which remains unstaged after the
+  concurrent workstream's reset
+
+- 2026-08-31T05:18:26.742Z handoff `ad3371f2-6d3c-4632-8b81-bef643c73838` head
+  `055c6d0e4301` project `TNF-SESSION` — Commit swarm busy-lifecycle increment
+  (agent-swarm-orchestration.service + controller + spec +
+  scripts/agents/onboard-cli-platform.cjs) which remains unstaged after the
+  concurrent workstream's reset
 
 - 2026-08-29T22:08:28.315Z handoff `14e23d83-c540-4152-bdf9-1bd554112c4e` head
   `5e7e2c894feb` project `TNF-SESSION` — Phase 2: relocate claw-skills markdown
