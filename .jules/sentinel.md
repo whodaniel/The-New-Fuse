@@ -60,3 +60,9 @@ or session-related context.
 ## 2026-08-24 - [Command Injection] **Vulnerability:** [Command injection via input.command parameter in triggerResearchCrawl allowing arbitrary shell execution] **Learning:** [It existed because input.command string was passed unsanitized into a shell spawn call via spawn('sh', ['-lc', command])] **Prevention:** [Never pass unsanitized user input into a shell context. Disallow user overriding of system-defined commands or properly escape/sanitize them.]
 
 ## 2026-08-24 - [Command Injection] **Vulnerability:** [Command injection via input.command parameter in triggerResearchCrawl allowing arbitrary shell execution] **Learning:** [It existed because input.command string was passed unsanitized into a shell spawn call via spawn('sh', ['-lc', command])] **Prevention:** [Never pass unsanitized user input into a shell context. Disallow user overriding of system-defined commands or properly escape/sanitize them.]
+
+## 2025-02-13 - Insecure Random Number Generation for A2A IDs
+
+**Vulnerability:** The IDs for messages and conversations in `@the-new-fuse/a2a-core` (`generateMessageId` and `generateConversationId` in `a2a.service.ts`) were generated using `Math.random().toString(36)`.
+**Learning:** `Math.random()` is not a cryptographically secure pseudorandom number generator (CSPRNG), leading to predictable identifier values. These predictable values could potentially allow an attacker to spoof or hijack messages across the A2A network.
+**Prevention:** Standardize on cryptographically secure values using `node:crypto` (e.g., `crypto.randomBytes()`) or `crypto.randomUUID()` for all system identifiers, especially in cross-agent communication protocols.

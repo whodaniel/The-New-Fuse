@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { A2ASignatureWrapper } from './signature-wrapper.js';
 import { PointerResolverService } from './pointer-resolver.service.js';
 import { ConfigService } from '@nestjs/config';
@@ -679,11 +680,11 @@ export class A2AService implements OnModuleInit, OnModuleDestroy {
   }
 
   private generateMessageId(): string {
-    return `a2a_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `a2a_${Date.now()}_${crypto.randomBytes(5).toString('hex')}`;
   }
 
   private generateConversationId(): string {
-    return `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `conv_${Date.now()}_${crypto.randomBytes(5).toString('hex')}`;
   }
 
   private setupMessageProcessing(): void {
