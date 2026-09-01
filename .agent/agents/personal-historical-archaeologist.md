@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: orchestration
 visibility: collective
 dacc_role: worker
@@ -15,13 +16,15 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: personal-historical-archaeologist
-description: Reconstructs personal and project history from repos, notes, media, and
-  local evidence stores with strict privacy filtering. Specialist investigator/synthesizer
-  role within the archaeology fleet, not a Master Orchestrator or Master Director.
+description:
+  Reconstructs personal and project history from repos, notes, media, and local
+  evidence stores with strict privacy filtering. Specialist
+  investigator/synthesizer role within the archaeology fleet, not a Master
+  Orchestrator or Master Director.
 skills:
-- personal-historical-archaeology
-- context-frontloader
-- skill-builder
+  - personal-historical-archaeology
+  - context-frontloader
+  - skill-builder
 model: inherit
 ---
 

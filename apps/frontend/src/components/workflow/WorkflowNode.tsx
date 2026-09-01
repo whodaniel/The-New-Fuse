@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui';
-import { useWorkflow } from '@/contexts/WorkflowContext';
+import { useWorkflow } from '@the-new-fuse/workflow-builder';
 import { MoreHorizontal, Play, Settings, Trash2 } from 'lucide-react';
 import React, { useCallback } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';

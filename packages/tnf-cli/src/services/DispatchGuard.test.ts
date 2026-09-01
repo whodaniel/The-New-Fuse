@@ -187,5 +187,80 @@ const liveDecision = decideDispatch(live);
 check('live proceeds cleanly', liveDecision.proceed && liveDecision.exitCode === 0);
 check('broadcast proceeds cleanly', decideDispatch(broadcast).proceed === true);
 
+console.log('\ndispatch — capacity (bus contract v1)');
+
+const BUSY_ROSTER: RegisteredAgent[] = [
+  {
+    agentId: 'agent_busy_1',
+    name: 'busy-agent',
+    role: 'worker',
+    lastSeen: ago(5_000),
+    status: 'busy',
+  },
+  {
+    agentId: 'agent_loaded_1',
+    name: 'loaded-agent',
+    role: 'worker',
+    lastSeen: ago(5_000),
+    status: 'active',
+    currentLoad: 2,
+    maxLoad: 2,
+  },
+  {
+    agentId: 'agent_free_1',
+    name: 'free-agent',
+    role: 'worker',
+    lastSeen: ago(5_000),
+    status: 'active',
+    currentLoad: 0,
+    maxLoad: 2,
+  },
+  {
+    agentId: 'agent_legacy_1',
+    name: 'legacy-agent',
+    role: 'worker',
+    lastSeen: ago(5_000),
+  },
+];
+
+const busyRes = resolveRecipient('agent_busy_1', BUSY_ROSTER, opts);
+check('declared-busy row reports busy capacity', busyRes.capacity?.busy === true);
+check('capacity summary says declared busy', busyRes.capacity?.summary === 'declared busy');
+
+const loadedRes = resolveRecipient('agent_loaded_1', BUSY_ROSTER, opts);
+check('load-at-max row reports busy even when status active', loadedRes.capacity?.busy === true);
+check('load-at-max summary shows the counter', loadedRes.capacity?.summary === 'at capacity (2/2)');
+
+const freeRes = resolveRecipient('agent_free_1', BUSY_ROSTER, opts);
+check('spare-capacity row is not busy', freeRes.capacity?.busy === false);
+check(
+  'spare-capacity summary shows the counter',
+  freeRes.capacity?.summary === 'spare capacity (0/2)'
+);
+
+const legacyRes = resolveRecipient('agent_legacy_1', BUSY_ROSTER, opts);
+check('legacy row declares nothing', legacyRes.capacity?.declared === false);
+check('legacy row is not busy (backward compatible)', legacyRes.capacity?.busy === false);
+
+const busyRefusal = decideDispatch(busyRes, { requireCapacity: true });
+check('--require-capacity refuses a busy recipient', busyRefusal.proceed === false);
+check('--require-capacity exits 4 for automation', busyRefusal.exitCode === 4);
+check('--require-capacity is an error', busyRefusal.level === 'error');
+
+const loadedRefusal = decideDispatch(loadedRes, { requireCapacity: true });
+check('--require-capacity refuses a load-saturated recipient', loadedRefusal.proceed === false);
+
+const freePass = decideDispatch(freeRes, { requireCapacity: true });
+check('--require-capacity passes a recipient with spare capacity', freePass.proceed === true);
+
+const legacyPass = decideDispatch(legacyRes, { requireCapacity: true });
+check(
+  '--require-capacity passes an undeclared recipient (backward compatible)',
+  legacyPass.proceed === true
+);
+
+const busyDefault = decideDispatch(busyRes);
+check('busy queues fine without the gate (opt-in semantics)', busyDefault.proceed === true);
+
 console.log(`\ndispatch: ${pass} passed, ${fail} failed\n`);
 if (fail > 0) process.exit(1);

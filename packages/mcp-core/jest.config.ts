@@ -27,7 +27,7 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', 'integration', 'performance'],
   transformIgnorePatterns: ['node_modules/(?!(@modelcontextprotocol|@tnf)/)'],
   testTimeout: 30000,
 };

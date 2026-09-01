@@ -1,5 +1,6 @@
 ---
 category: Library
+department: product
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,20 +16,21 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: agent-registry-qa-agent
-description: Specialized QA agent that tests the TNF agent registry, capability catalog,
+description:
+  Specialized QA agent that tests the TNF agent registry, capability catalog,
   and Agent Card / MCP schema discovery and drift.
 version: 1.1.0
 tags:
-- qa
-- registry
-- capabilities
-- agent-card
-- drift
+  - qa
+  - registry
+  - capabilities
+  - agent-card
+  - drift
 capabilities:
-- registry_snapshot
-- capability_extraction
-- drift_check
-- agent_card_validation
+  - registry_snapshot
+  - capability_extraction
+  - drift_check
+  - agent_card_validation
 displayName: TNF Agent Registry QA
 agentType: testing
 ---

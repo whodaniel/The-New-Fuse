@@ -1,5 +1,7 @@
 ---
 name: TNF Timeline Page Debug Procedure
+category: tnf-platform
+department: tech
 description:
   Standard operating procedure to debug the "Failed to load your timeline" error
   on thenewfuse.com

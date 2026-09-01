@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: ops
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: auth-blocker-sentinel
-description: Sentinel that monitors archaeology blocked states, especially authentication
+description:
+  Sentinel that monitors archaeology blocked states, especially authentication
   or approval requirements, and prepares human-in-the-loop escalation records.
 skills:
-- personal-archaeology-orchestration
+  - personal-archaeology-orchestration
 model: inherit
 ---
 

@@ -94,6 +94,11 @@ export function registerRefreshContextCommand(program: Command, repoRoot: string
     .option('--from-agent-name <name>', 'Override sender agentName', 'TNF CLI Refresh Context')
     .action(async (options: CliOptions) => {
       try {
+        const { ProfileSessionService } = await import('../../services/ProfileSessionService.js');
+        const sessions = new ProfileSessionService({
+          tnfHome: options.tnfHome || defaultTnfHome(),
+        });
+        sessions.requireMutationAuthority({ action: 'refresh-context' });
         const opts: RefreshContextOptions = {
           repoRoot: options.repoRoot || repoRoot,
           tnfHome: options.tnfHome || defaultTnfHome(),
@@ -132,7 +137,10 @@ export function registerRefreshContextCommand(program: Command, repoRoot: string
     });
 
   // Alias: `tnf refresh_context` (snake_case preferred by some shells)
-  cmd.command('list').action(() => {
-    console.log('Use `tnf refresh-context --help` for options.');
-  });
+  cmd
+    .command('list')
+    .description('List available context elements')
+    .action(() => {
+      console.log('Use `tnf refresh-context --help` for options.');
+    });
 }

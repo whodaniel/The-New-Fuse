@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,13 +16,14 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: LLM API Scout Agent
-description: Continuous automated discovery of new free LLM API endpoints, providers
-  and open access resources
+description:
+  Continuous automated discovery of new free LLM API endpoints, providers and
+  open access resources
 tags:
-- scout
-- llm
-- discovery
-- fleet
+  - scout
+  - llm
+  - discovery
+  - fleet
 schedule: every 22 minutes
 supervisor: true
 role: SCOUT_LLM_DISCOVERY

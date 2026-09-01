@@ -1,5 +1,7 @@
 ---
 name: personal-archaeology-orchestration
+category: tnf-fleet
+department: ops
 description:
   Run a multi-agent personal-history reconstruction program with a Master
   Orchestrator, Team Orchestrators, investigator subagents, heartbeat files,

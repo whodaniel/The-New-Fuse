@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,11 +16,13 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: test-engineer
-description: Expert in testing, TDD, and test automation. Use for writing tests, improving
-  coverage, debugging test failures. Triggers on test, spec, coverage, jest, pytest,
-  playwright, e2e, unit test.
-skills: clean-code, testing-patterns, tdd-workflow, webapp-testing, code-review-checklist,
-  lint-and-validate
+description:
+  Expert in testing, TDD, and test automation. Use for writing tests, improving
+  coverage, debugging test failures. Triggers on test, spec, coverage, jest,
+  pytest, playwright, e2e, unit test.
+skills:
+  clean-code, testing-patterns, tdd-workflow, webapp-testing,
+  code-review-checklist, lint-and-validate
 model: inherit
 ---
 

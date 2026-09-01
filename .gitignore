@@ -399,6 +399,9 @@ reports/
 !docs/protocols/reports/TNF_VIRTUAL_LIBRARY_SURFACE_AUDIT.md
 apps/external/h17-webpilot/profile/
 apps/external/hardware/lightpanda
+output/playwright/
+tmp/telegram-build/
+packages/relay-core/native/envelope-validator/target/
 
 # Large data files
 data/transcript*.json
@@ -549,3 +552,8 @@ docs/legal/sale/*.md
 codebase_tracker.json
 codebase_index.html
 docs/operations/tnf-action-receipts.jsonl
+packages/rust-relay/target/
+.verifier/
+replace_*.py
+apps/frontend/coverage/
+apps/api/logs/

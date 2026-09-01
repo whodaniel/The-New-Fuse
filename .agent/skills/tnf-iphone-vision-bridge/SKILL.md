@@ -4,6 +4,7 @@ description:
   Native macOS iPhone mirroring via QuickTime USB for AI vision access. Zero
   Homebrew / no uxplay required.
 category: vision
+department: tech
 ---
 
 # TNF iPhone Vision Bridge Skill

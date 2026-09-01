@@ -19,6 +19,6 @@ jobs:
       - name: Enforce integration train promotion policy
         run: |
           node scripts/protocols/validate-release-train.cjs \
-            --allowed-head-prefixes=integration/,hotfix/ \
+            --allowed-head-prefixes=integration/,hotfix/,sync/ \
             --train-ref=origin/integration/main \
             --allow-missing-train=true

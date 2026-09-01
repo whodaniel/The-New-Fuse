@@ -3,6 +3,7 @@ import {
   getAuthTokenCandidates as sessionTokenCandidates,
   silentRefreshAccessToken,
 } from '@/services/authSession';
+import { API_BASE } from '@/config/api';
 import {
   isRateLimitBlocked,
   noteRateLimitResponse,
@@ -23,6 +24,42 @@ export function getStoredAuthToken(): string | null {
  */
 export async function getAuthTokenCandidates(): Promise<string[]> {
   return sessionTokenCandidates();
+}
+
+/**
+ * Resolve a potentially relative /api/... URL to the configured canonical API base.
+ *
+ * Problem: `authFetch('/api/billing/membership/me')` is correct in development (Vite
+ * dev server proxies /api → localhost API) but broken in production where the
+ * Cloudflare Pages /api proxy is non-functional. In production, requests must be
+ * sent to the absolute VITE_API_URL configured in api-base.ts.
+ *
+ * Solution: if the input is a plain string that starts with /api, we rewrite it to
+ * `${API_BASE}${rest}` where:
+ *   - In dev:  API_BASE = '/api' → result is '/api/foo'              (unchanged, Vite proxies it)
+ *   - In prod: API_BASE = 'https://api.thenewfuse.com/api' → absolute URL, bypasses CF proxy
+ *
+ * Inputs that are already absolute URLs, URL objects, or don't start with /api are
+ * passed through unchanged — this function is intentionally narrow in scope.
+ */
+export function resolveApiUrl(input: RequestInfo | URL): RequestInfo | URL {
+  if (typeof input !== 'string') return input;
+
+  // Already absolute — nothing to do
+  if (input.startsWith('http://') || input.startsWith('https://')) return input;
+
+  // Only rewrite paths that start with exactly /api followed by / or ? or end-of-string
+  const afterPrefix = input.slice('/api'.length);
+  if (
+    !input.startsWith('/api') ||
+    (afterPrefix.length > 0 && afterPrefix[0] !== '/' && afterPrefix[0] !== '?')
+  ) {
+    return input;
+  }
+
+  // API_BASE already ends with /api (e.g. '/api' or 'https://…/api')
+  // Strip the leading /api from the input to avoid doubling it
+  return `${API_BASE}${afterPrefix}`;
 }
 
 export async function buildAuthHeaders(
@@ -61,6 +98,12 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
     );
   }
 
+  // Transparently rewrite relative /api/... paths to the canonical absolute API origin.
+  // This is the single authoritative resolution point so every caller — including the
+  // ~70 existing callsites that pass bare /api/... strings — becomes production-safe
+  // without needing per-callsite changes.
+  const resolvedInput = resolveApiUrl(input);
+
   const headers = await buildAuthHeaders(init?.headers);
   const tokenCandidates = await getAuthTokenCandidates();
   const authOptions = tokenCandidates.length > 0 ? tokenCandidates : [null];
@@ -75,7 +118,7 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
       delete attemptHeaders.Authorization;
     }
 
-    const response = await fetch(input, {
+    const response = await fetch(resolvedInput, {
       ...init,
       headers: attemptHeaders,
       credentials: init?.credentials ?? 'include',
@@ -97,7 +140,7 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
       const refreshed = await silentRefreshAccessToken();
       if (refreshed) {
         const retryHeaders = { ...attemptHeaders, Authorization: `Bearer ${refreshed}` };
-        const retryResponse = await fetch(input, {
+        const retryResponse = await fetch(resolvedInput, {
           ...init,
           headers: retryHeaders,
           credentials: init?.credentials ?? 'include',
@@ -113,7 +156,8 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
   }
 
   return (
-    lastResponse ?? fetch(input, { ...init, headers, credentials: init?.credentials ?? 'include' })
+    lastResponse ??
+    fetch(resolvedInput, { ...init, headers, credentials: init?.credentials ?? 'include' })
   );
 }
 

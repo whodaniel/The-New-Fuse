@@ -18,13 +18,19 @@ export interface AgentInfo {
     | 'bridge'
     | string;
   platform: 'antigravity' | 'gemini' | 'claude' | 'jules' | 'vscode' | 'browser' | string;
-  status: 'active' | 'idle' | 'offline';
+  status: 'active' | 'busy' | 'idle' | 'offline';
   capabilities: string[];
   registeredAt: string;
   lastSeen: string;
   isOnline?: boolean;
   daccRole?: string;
   directorTier?: 'super' | 'sub' | 'local';
+  /**
+   * Bus contract v1 capacity fields. `busy` = at capacity. Set via
+   * markBusy() or automatically when a directly-addressed task frame arrives.
+   */
+  currentLoad?: number;
+  maxLoad?: number;
 }
 
 export interface AgentMessage {
@@ -53,13 +59,23 @@ export interface AgentMessage {
     | 'award'
     | 'task'
     | 'event'
-    | 'query';
+    | 'query'
+    /** Bus contract v1: delivery acknowledgement (tnf:ack channel). */
+    | 'ack';
   content: string;
   payload?: any;
   conversationId?: string;
   replyTo?: string;
   expectsResponse?: boolean;
   metadata?: any;
+  /**
+   * Bus contract v1 (docs/protocols/AGENT_BUS_CONTRACT.md):
+   * correlationId links a frame to its ack on `tnf:ack`;
+   * idempotencyKey makes receiving agents skip duplicate deliveries
+   * (24h receipt window, one receipt set per agent).
+   */
+  correlationId?: string;
+  idempotencyKey?: string;
 }
 
 export const CONFIG = {
@@ -77,8 +93,13 @@ export const CONFIG = {
     broker: 'tnf:broker',
     heartbeat: 'tnf:heartbeat',
     directPrefix: 'tnf:direct',
+    /** Bus contract v1: delivery acknowledgements and dead-letter frames. */
+    ack: 'tnf:ack',
+    dlq: 'tnf:dlq',
   },
   heartbeatInterval: 30000, // 30 seconds
+  /** Bus contract v1: how long a receiving agent remembers a frame id. */
+  dedupTtlSec: 86400,
 };
 
 export class RedisAgentClient {
@@ -349,6 +370,8 @@ export class RedisAgentClient {
       replyTo: options.replyTo,
       expectsResponse: options.expectsResponse,
       metadata: options.metadata,
+      correlationId: options.correlationId,
+      idempotencyKey: options.idempotencyKey,
     };
 
     const directAgentId = options.to?.agentId;
@@ -429,7 +452,7 @@ export class RedisAgentClient {
     this.currentConversation = conversationId;
   }
 
-  private handleIncomingMessage(channel: string, messageStr: string) {
+  private async handleIncomingMessage(channel: string, messageStr: string) {
     try {
       const rawMessage = JSON.parse(messageStr);
       const message = this.normalizeIncomingMessage(rawMessage);
@@ -439,6 +462,17 @@ export class RedisAgentClient {
         return;
       }
 
+      // ---- Bus contract v1: dedup → ack → capacity → dispatch ----
+      const duplicate = await this.registerFrameReceipt(message);
+      if (duplicate) {
+        // Re-ack so a retrying sender still gets its confirmation, but never
+        // re-dispatch a duplicate payload to handlers.
+        await this.autoAck(message, true);
+        return;
+      }
+      await this.autoAck(message, false);
+      this.applyCapacityOnTask(message);
+
       const handlers = this.messageHandlers.get(message.type) || [];
       handlers.forEach((handler) => handler(message, channel));
 
@@ -447,6 +481,313 @@ export class RedisAgentClient {
     } catch (error: any) {
       console.error('Error parsing message:', error.message);
     }
+  }
+
+  /**
+   * Bus contract v1: idempotent frame receipt.
+   *
+   * Records this agent's receipt of ONE frame (keyed by idempotencyKey, else
+   * correlationId, else the frame id) with a 24h TTL, one Redis key per frame
+   * (`tnf:seen:<agentId>:<frameKey>`). Returns true when the frame was
+   * ALREADY processed — a duplicate delivery (sender retry, or the same id
+   * re-delivered). Never throws: dedup must not break delivery.
+   */
+  private async registerFrameReceipt(message: AgentMessage): Promise<boolean> {
+    const frameKey = message.idempotencyKey || message.correlationId || message.id;
+    if (!frameKey || !this.agentInfo || !(this.publisher instanceof Redis)) return false;
+    try {
+      const res = await this.publisher.set(
+        `tnf:seen:${this.agentInfo.id}:${frameKey}`,
+        '1',
+        'EX',
+        CONFIG.dedupTtlSec,
+        'NX'
+      );
+      return res === null; // NX failed → we have seen this frame before
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Bus contract v1: acknowledge any frame that asked for one.
+   *
+   * Frames carrying a correlationId are acked on `tnf:ack` the moment they
+   * are received (and re-acked when a duplicate arrives), so senders using
+   * `sendWithAck` / `tnf send --await-ack` can distinguish "published into
+   * the void" from "received by a live subscriber".
+   */
+  private async autoAck(message: AgentMessage, duplicate: boolean): Promise<void> {
+    if (!message.correlationId || message.type === 'ack') return;
+    if (!this.agentInfo || !this.publisher) return;
+    try {
+      // The duplicate flag is only meaningful when the sender declared an
+      // idempotencyKey — bare frame-id dedup (same frame id seen twice) is an
+      // internal safety net and must not read as "your retry was deduped".
+      await this.publishAck(message.correlationId, message.from?.agentId, {
+        duplicate: duplicate && Boolean(message.idempotencyKey),
+        ackFor: message.id,
+      });
+    } catch {
+      // Acking is best-effort; never break the receive path.
+    }
+  }
+
+  /**
+   * Publish a delivery acknowledgement onto `tnf:ack`.
+   */
+  async publishAck(
+    correlationId: string,
+    toAgentId?: string,
+    extra: Record<string, unknown> = {}
+  ): Promise<void> {
+    if (!this.agentInfo || !this.publisher) return;
+    const ack = {
+      id: uuidv4(),
+      timestamp: new Date().toISOString(),
+      type: 'ack',
+      from: {
+        agentId: this.agentInfo.id,
+        agentName: this.agentInfo.name,
+        role: this.agentInfo.role,
+        platform: this.agentInfo.platform,
+      },
+      to: toAgentId ? { agentId: toAgentId } : undefined,
+      correlationId,
+      content: `ack ${correlationId}`,
+      ...extra,
+    };
+    const payload = JSON.stringify(ack);
+    if (this.upstash) {
+      await this.upstash.publish(CONFIG.channels.ack, payload);
+    } else if (this.publisher) {
+      await this.publisher.publish(CONFIG.channels.ack, payload);
+    }
+  }
+
+  /**
+   * Bus contract v1: a directly-addressed task frame marks this agent busy.
+   * Broadcast tasks do not (every subscriber would saturate). Lifecycle-aware
+   * daemons release with markBusy(false); the next heartbeat publishes the
+   * transition either way.
+   */
+  private applyCapacityOnTask(message: AgentMessage): void {
+    if (!this.agentInfo || message.type !== 'task') return;
+    if (message.to?.agentId !== this.agentInfo.id) return;
+    const maxLoad = this.agentInfo.maxLoad ?? 1;
+    const currentLoad = this.agentInfo.currentLoad ?? 0;
+    if (currentLoad >= maxLoad) return; // already saturated; handlers decide
+    this.agentInfo.currentLoad = currentLoad + 1;
+    void this.persistAgentInfo();
+  }
+
+  /**
+   * Explicit capacity control for lifecycle-aware daemons: declare busy (or
+   * release), optionally setting the load counters. Persists immediately so
+   * the roster and `--require-capacity` gates see it without waiting for the
+   * next heartbeat tick.
+   */
+  async markBusy(busy: boolean, load?: { current?: number; max?: number }): Promise<void> {
+    if (!this.agentInfo) return;
+    if (load?.max !== undefined) this.agentInfo.maxLoad = load.max;
+    if (load?.current !== undefined) this.agentInfo.currentLoad = load.current;
+    if (busy && this.agentInfo.maxLoad === undefined) this.agentInfo.maxLoad = 1;
+    if (busy && this.agentInfo.currentLoad === undefined) this.agentInfo.currentLoad = 1;
+    const currentLoad = this.agentInfo.currentLoad ?? 0;
+    const maxLoad = this.agentInfo.maxLoad ?? 1;
+    this.agentInfo.status = busy || currentLoad >= maxLoad ? 'busy' : 'active';
+    await this.persistAgentInfo();
+  }
+
+  /** Write the current AgentInfo to the registry and publish one heartbeat. */
+  private async persistAgentInfo(): Promise<void> {
+    if (!this.agentInfo || (!this.publisher && !this.upstash)) return;
+    this.agentInfo.lastSeen = new Date().toISOString();
+    const agentData = JSON.stringify(this.agentInfo);
+    const heartbeatData = JSON.stringify({
+      agentId: this.agentInfo.id,
+      agentName: this.agentInfo.name,
+      status: this.agentInfo.status,
+      currentLoad: this.agentInfo.currentLoad,
+      maxLoad: this.agentInfo.maxLoad,
+      timestamp: this.agentInfo.lastSeen,
+    });
+    if (this.upstash) {
+      await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: agentData });
+      await this.upstash.publish(CONFIG.channels.heartbeat, heartbeatData);
+    } else if (this.publisher) {
+      await this.publisher.hset('tnf:agent-registry', this.agentInfo.id, agentData);
+      await this.publisher.publish(CONFIG.channels.heartbeat, heartbeatData);
+    }
+  }
+
+  /**
+   * Bus contract v1: send with end-to-end delivery acknowledgement.
+   *
+   * Publishes the frame with a correlationId, then waits up to ackTimeoutMs
+   * for a matching ack on `tnf:ack` from a live subscriber. Unconfirmed
+   * frames are dead-lettered (tnf:dlq pub/sub + durable `tnf:dlq` LIST) so
+   * the failure is observable instead of silent — but NOTE: a worker-role
+   * recipient also has a durable LPUSH inbox; callers must report that lane
+   * as queued-durable, not lost.
+   */
+  async sendWithAck(
+    content: string,
+    options: any = {},
+    ackTimeoutMs = 10000
+  ): Promise<{
+    correlationId: string;
+    delivered: boolean;
+    ackFrom?: string;
+    duplicateAck?: boolean;
+  }> {
+    if (!this.agentInfo || (!this.publisher && !this.upstash)) {
+      throw new Error('Agent not registered or publisher not initialized');
+    }
+    const correlationId =
+      options.correlationId || `corr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+    // Subscribe before publishing so a fast ack cannot slip past us.
+    if (this.subscriber instanceof Redis) {
+      await this.subscriber.subscribe(CONFIG.channels.ack);
+    }
+
+    let ackFrom: string | undefined;
+    let duplicateAck = false;
+    let timer: NodeJS.Timeout;
+    const ackPromise = new Promise<void>((resolve) => {
+      const handler = (message: AgentMessage) => {
+        if (message.correlationId !== correlationId) return;
+        ackFrom = message.from?.agentId;
+        duplicateAck = Boolean((message as any).duplicate);
+        clearTimeout(timer);
+        resolve();
+      };
+      this.onMessage('ack', handler);
+      timer = setTimeout(() => {
+        const list = this.messageHandlers.get('ack');
+        if (list) {
+          const idx = list.indexOf(handler);
+          if (idx >= 0) list.splice(idx, 1);
+        }
+        resolve();
+      }, ackTimeoutMs);
+    });
+
+    await this.send(content, { ...options, correlationId });
+    await ackPromise;
+
+    const delivered = ackFrom !== undefined;
+    if (!delivered) {
+      await this.deadLetter(options, content, 'ack-timeout', ackTimeoutMs);
+    }
+    return { correlationId, delivered, ackFrom, duplicateAck };
+  }
+
+  /**
+   * Bus contract v1: dead-letter an unconfirmed frame. Written BOTH to the
+   * `tnf:dlq` pub/sub channel (live notice) and the `tnf:dlq` LIST (durable
+   * store that `tnf dlq list` drains). Never throws — dead-lettering must not
+   * be able to break the caller that just failed to deliver.
+   */
+  async deadLetter(
+    sendOptions: any,
+    content: string,
+    reason: string,
+    timeoutMs?: number
+  ): Promise<void> {
+    try {
+      const entry = {
+        id: `dlq_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        deadAt: new Date().toISOString(),
+        reason,
+        timeoutMs,
+        channel: sendOptions?.to?.agentId
+          ? `${CONFIG.channels.directPrefix}:${this.agentInfo?.id ?? 'unknown'}:${sendOptions.to.agentId}`
+          : sendOptions?.channel || CONFIG.channels.conversations,
+        to: sendOptions?.to ?? null,
+        frame: {
+          type: sendOptions?.type || 'message',
+          content,
+          correlationId: sendOptions?.correlationId,
+          idempotencyKey: sendOptions?.idempotencyKey,
+        },
+      };
+      const payload = JSON.stringify(entry);
+      if (this.upstash) {
+        await this.upstash.lpush(CONFIG.channels.dlq, payload);
+        await this.upstash.publish(CONFIG.channels.dlq, payload);
+      } else if (this.publisher) {
+        await this.publisher.lpush(CONFIG.channels.dlq, payload);
+        await this.publisher.publish(CONFIG.channels.dlq, payload);
+      }
+    } catch {
+      // Never throw from dead-lettering.
+    }
+  }
+
+  /** Read the durable dead-letter list (newest first). */
+  async listDlq(limit = 20): Promise<any[]> {
+    let entries: string[] = [];
+    if (this.upstash) {
+      entries = (await this.upstash.lrange(CONFIG.channels.dlq, 0, limit - 1)) || [];
+    } else if (this.publisher) {
+      entries = await this.publisher.lrange(CONFIG.channels.dlq, 0, limit - 1);
+    }
+    return entries.map((e) => {
+      try {
+        return JSON.parse(e);
+      } catch {
+        return { raw: e };
+      }
+    });
+  }
+
+  /** Drop the entire dead-letter list; returns how many entries were removed. */
+  async clearDlq(): Promise<number> {
+    let len = 0;
+    if (this.upstash) {
+      len = (await this.upstash.llen(CONFIG.channels.dlq)) || 0;
+      await this.upstash.del(CONFIG.channels.dlq);
+    } else if (this.publisher) {
+      len = await this.publisher.llen(CONFIG.channels.dlq);
+      await this.publisher.del(CONFIG.channels.dlq);
+    }
+    return len;
+  }
+
+  /** Re-publish one dead-lettered frame to its original channel, then remove it. */
+  async replayDlqEntry(id: string): Promise<boolean> {
+    let rawEntries: string[] = [];
+    if (this.upstash) {
+      rawEntries = (await this.upstash.lrange(CONFIG.channels.dlq, 0, -1)) || [];
+    } else if (this.publisher) {
+      rawEntries = await this.publisher.lrange(CONFIG.channels.dlq, 0, -1);
+    }
+    for (const raw of rawEntries) {
+      let entry: any;
+      try {
+        entry = JSON.parse(raw);
+      } catch {
+        continue;
+      }
+      if (entry?.id !== id) continue;
+      const channel = entry.channel || CONFIG.channels.conversations;
+      const frame = JSON.stringify({
+        ...(entry.frame || {}),
+        replayedFrom: entry.id,
+        replayedAt: new Date().toISOString(),
+      });
+      if (this.upstash) {
+        await this.upstash.publish(channel, frame);
+        await this.upstash.lrem(CONFIG.channels.dlq, 1, raw);
+      } else if (this.publisher) {
+        await this.publisher.publish(channel, frame);
+        await this.publisher.lrem(CONFIG.channels.dlq, 1, raw);
+      }
+      return true;
+    }
+    return false;
   }
 
   private normalizeIncomingMessage(rawMessage: any): AgentMessage | null {
@@ -512,6 +853,8 @@ export class RedisAgentClient {
         rawMessage.context?.workflowId ||
         rawMessage.conversationId,
       replyTo: rawMessage.context?.parentMessageId || rawMessage.replyTo,
+      correlationId: rawMessage.correlationId,
+      idempotencyKey: rawMessage.idempotencyKey,
       expectsResponse:
         rawMessage.type === 'task' ||
         rawMessage.type === 'query' ||
@@ -580,22 +923,10 @@ export class RedisAgentClient {
   private startHeartbeat() {
     this.heartbeatTimer = setInterval(async () => {
       if (this.agentInfo && (this.publisher || this.upstash)) {
-        this.agentInfo.lastSeen = new Date().toISOString();
-
-        const agentData = JSON.stringify(this.agentInfo);
-        const heartbeatData = JSON.stringify({
-          agentId: this.agentInfo.id,
-          agentName: this.agentInfo.name,
-          timestamp: this.agentInfo.lastSeen,
-        });
-
-        if (this.upstash) {
-          await this.upstash.hset('tnf:agent-registry', { [this.agentInfo.id]: agentData });
-          await this.upstash.publish(CONFIG.channels.heartbeat, heartbeatData);
-        } else if (this.publisher) {
-          await this.publisher.hset('tnf:agent-registry', this.agentInfo.id, agentData);
-          await this.publisher.publish(CONFIG.channels.heartbeat, heartbeatData);
-        }
+        // Bus contract v1: heartbeats now carry status + capacity so the
+        // roster and --require-capacity gates see transitions without having
+        // to re-read the registry.
+        await this.persistAgentInfo();
       }
     }, CONFIG.heartbeatInterval);
   }

@@ -1,10 +1,11 @@
 ---
 category: Engineering
+department: tech
 domain:
-- analysis
-- visualization
-- orchestration
-- system-architecture
+  - analysis
+  - visualization
+  - orchestration
+  - system-architecture
 visibility: collective
 dacc_role: worker
 worker_action: '[to be determined from capabilities]'
@@ -19,19 +20,20 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: agent-relationship-grapher
-description: MUST BE USED to graph and analyze relationships between agents in the
-  ecosystem. Maps agent hierarchies, collaboration patterns, temporal role changes,
-  and orchestration networks. Creates comprehensive visualizations of agent interactions,
-  dependencies, and evolutionary structures.
+description:
+  MUST BE USED to graph and analyze relationships between agents in the
+  ecosystem. Maps agent hierarchies, collaboration patterns, temporal role
+  changes, and orchestration networks. Creates comprehensive visualizations of
+  agent interactions, dependencies, and evolutionary structures.
 capabilities:
-- agent-relationship-mapping
-- hierarchy-visualization
-- collaboration-pattern-analysis
-- temporal-role-tracking
-- agent-network-graphing
-- dependency-visualization
-- orchestration-flow-mapping
-- evolutionary-analysis
+  - agent-relationship-mapping
+  - hierarchy-visualization
+  - collaboration-pattern-analysis
+  - temporal-role-tracking
+  - agent-network-graphing
+  - dependency-visualization
+  - orchestration-flow-mapping
+  - evolutionary-analysis
 color: Cyan
 agent_type: internal
 complexity: expert

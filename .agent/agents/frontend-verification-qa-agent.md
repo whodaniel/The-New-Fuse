@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,20 +16,21 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: frontend-verification-qa-agent
-description: Specialized QA agent that tests the TNF frontend via Playwright — page
-  load, critical user journeys, and DOM assertions.
+description:
+  Specialized QA agent that tests the TNF frontend via Playwright — page load,
+  critical user journeys, and DOM assertions.
 version: 1.1.0
 tags:
-- qa
-- frontend
-- playwright
-- e2e
-- ui
+  - qa
+  - frontend
+  - playwright
+  - e2e
+  - ui
 capabilities:
-- playwright_run
-- dom_assertion
-- journey_trace
-- visual_fallback
+  - playwright_run
+  - dom_assertion
+  - journey_trace
+  - visual_fallback
 displayName: TNF Frontend Verification QA
 agentType: testing
 ---

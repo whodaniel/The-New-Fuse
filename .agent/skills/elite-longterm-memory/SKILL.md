@@ -1,12 +1,45 @@
 ---
 name: elite-longterm-memory
+category: knowledge-intake
+department: ops
 version: 1.2.3
-description: "Ultimate AI agent memory system for Cursor, Claude, ChatGPT & Copilot. WAL protocol + vector search + git-notes + cloud backup. Never lose context again. Vibe-coding ready."
+description:
+  'Ultimate AI agent memory system for Cursor, Claude, ChatGPT & Copilot. WAL
+  protocol + vector search + git-notes + cloud backup. Never lose context again.
+  Vibe-coding ready.'
 author: NextFrontierBuilds
-keywords: [memory, ai-agent, ai-coding, long-term-memory, vector-search, lancedb, git-notes, wal, persistent-context, claude, claude-code, gpt, chatgpt, cursor, copilot, github-copilot, openclaw, moltbot, vibe-coding, agentic, ai-tools, developer-tools, devtools, typescript, llm, automation]
+keywords:
+  [
+    memory,
+    ai-agent,
+    ai-coding,
+    long-term-memory,
+    vector-search,
+    lancedb,
+    git-notes,
+    wal,
+    persistent-context,
+    claude,
+    claude-code,
+    gpt,
+    chatgpt,
+    cursor,
+    copilot,
+    github-copilot,
+    openclaw,
+    moltbot,
+    vibe-coding,
+    agentic,
+    ai-tools,
+    developer-tools,
+    devtools,
+    typescript,
+    llm,
+    automation,
+  ]
 metadata:
   openclaw:
-    emoji: "🧠"
+    emoji: '🧠'
     requires:
       env:
         - OPENAI_API_KEY
@@ -16,7 +49,8 @@ metadata:
 
 # Elite Longterm Memory 🧠
 
-**The ultimate memory system for AI agents.** Combines 6 proven approaches into one bulletproof architecture.
+**The ultimate memory system for AI agents.** Combines 6 proven approaches into
+one bulletproof architecture.
 
 Never lose context. Never forget decisions. Never repeat mistakes.
 
@@ -56,6 +90,7 @@ Never lose context. Never forget decisions. Never repeat mistakes.
 ## The 5 Memory Layers
 
 ### Layer 1: HOT RAM (SESSION-STATE.md)
+
 **From: bulletproof-memory**
 
 Active working memory that survives compaction. Write-Ahead Log protocol.
@@ -64,20 +99,24 @@ Active working memory that survives compaction. Write-Ahead Log protocol.
 # SESSION-STATE.md — Active Working Memory
 
 ## Current Task
+
 [What we're working on RIGHT NOW]
 
 ## Key Context
+
 - User preference: ...
 - Decision made: ...
 - Blocker: ...
 
 ## Pending Actions
+
 - [ ] ...
 ```
 
 **Rule:** Write BEFORE responding. Triggered by user input, not agent memory.
 
 ### Layer 2: WARM STORE (LanceDB Vectors)
+
 **From: lancedb-memory**
 
 Semantic search across all memories. Auto-recall injects relevant context.
@@ -91,6 +130,7 @@ memory_store text="User prefers dark mode" category="preference" importance=0.9
 ```
 
 ### Layer 3: COLD STORE (Git-Notes Knowledge Graph)
+
 **From: git-notes-memory**
 
 Structured decisions, learnings, and context. Branch-aware.
@@ -104,6 +144,7 @@ python3 memory.py -p $DIR get "frontend"
 ```
 
 ### Layer 4: CURATED ARCHIVE (MEMORY.md + daily/)
+
 **From: OpenClaw native**
 
 Human-readable long-term memory. Daily logs + distilled wisdom.
@@ -118,6 +159,7 @@ workspace/
 ```
 
 ### Layer 5: CLOUD BACKUP (SuperMemory) — Optional
+
 **From: supermemory**
 
 Cross-device sync. Chat with your knowledge base.
@@ -129,6 +171,7 @@ supermemory search "what did we decide about..."
 ```
 
 ### Layer 6: AUTO-EXTRACTION (Mem0) — Recommended
+
 **NEW: Automatic fact extraction**
 
 Mem0 automatically extracts facts from conversations. 80% token reduction.
@@ -143,13 +186,14 @@ const { MemoryClient } = require('mem0ai');
 const client = new MemoryClient({ apiKey: process.env.MEM0_API_KEY });
 
 // Conversations auto-extract facts
-await client.add(messages, { user_id: "user123" });
+await client.add(messages, { user_id: 'user123' });
 
 // Retrieve relevant memories
-const memories = await client.search(query, { user_id: "user123" });
+const memories = await client.search(query, { user_id: 'user123' });
 ```
 
 Benefits:
+
 - Auto-extracts preferences, decisions, facts
 - Deduplicates and updates existing memories
 - 80% reduction in tokens vs raw history
@@ -238,21 +282,25 @@ export SUPERMEMORY_API_KEY="your-key"
 ## Agent Instructions
 
 ### On Session Start
+
 1. Read SESSION-STATE.md — this is your hot context
 2. Run `memory_search` for relevant prior context
 3. Check memory/YYYY-MM-DD.md for recent activity
 
 ### During Conversation
+
 1. **User gives concrete detail?** → Write to SESSION-STATE.md BEFORE responding
 2. **Important decision made?** → Store in Git-Notes (SILENTLY)
 3. **Preference expressed?** → `memory_store` with importance=0.9
 
 ### On Session End
+
 1. Update SESSION-STATE.md with final state
 2. Move significant items to MEMORY.md if worth keeping long-term
 3. Create/update daily log in memory/YYYY-MM-DD.md
 
 ### Memory Hygiene (Weekly)
+
 1. Review SESSION-STATE.md — archive completed tasks
 2. Check LanceDB for junk: `memory_recall query="*" limit=50`
 3. Clear irrelevant vectors: `memory_forget id=<id>`
@@ -262,14 +310,15 @@ export SUPERMEMORY_API_KEY="your-key"
 
 **Write-Ahead Log:** Write state BEFORE responding, not after.
 
-| Trigger | Action |
-|---------|--------|
+| Trigger                | Action                                   |
+| ---------------------- | ---------------------------------------- |
 | User states preference | Write to SESSION-STATE.md → then respond |
-| User makes decision | Write to SESSION-STATE.md → then respond |
-| User gives deadline | Write to SESSION-STATE.md → then respond |
-| User corrects you | Write to SESSION-STATE.md → then respond |
+| User makes decision    | Write to SESSION-STATE.md → then respond |
+| User gives deadline    | Write to SESSION-STATE.md → then respond |
+| User corrects you      | Write to SESSION-STATE.md → then respond |
 
-**Why?** If you respond first and crash/compact before saving, context is lost. WAL ensures durability.
+**Why?** If you respond first and crash/compact before saving, context is lost.
+WAL ensures durability.
 
 ## Example Workflow
 
@@ -306,13 +355,13 @@ ls -la memory/
 
 Understanding the root causes helps you fix them:
 
-| Failure Mode | Cause | Fix |
-|--------------|-------|-----|
-| Forgets everything | `memory_search` disabled | Enable + add OpenAI key |
-| Files not loaded | Agent skips reading memory | Add to AGENTS.md rules |
-| Facts not captured | No auto-extraction | Use Mem0 or manual logging |
-| Sub-agents isolated | Don't inherit context | Pass context in task prompt |
-| Repeats mistakes | Lessons not logged | Write to memory/lessons.md |
+| Failure Mode        | Cause                      | Fix                         |
+| ------------------- | -------------------------- | --------------------------- |
+| Forgets everything  | `memory_search` disabled   | Enable + add OpenAI key     |
+| Files not loaded    | Agent skips reading memory | Add to AGENTS.md rules      |
+| Facts not captured  | No auto-extraction         | Use Mem0 or manual logging  |
+| Sub-agents isolated | Don't inherit context      | Pass context in task prompt |
+| Repeats mistakes    | Lessons not logged         | Write to memory/lessons.md  |
 
 ## Solutions (Ranked by Effort)
 
@@ -324,7 +373,7 @@ If you have an OpenAI key, enable semantic search:
 openclaw configure --section web
 ```
 
-This enables vector search over MEMORY.md + memory/*.md files.
+This enables vector search over MEMORY.md + memory/\*.md files.
 
 ### 2. Recommended: Mem0 Integration
 
@@ -340,12 +389,13 @@ const { MemoryClient } = require('mem0ai');
 const client = new MemoryClient({ apiKey: process.env.MEM0_API_KEY });
 
 // Auto-extract and store
-await client.add([
-  { role: "user", content: "I prefer Tailwind over vanilla CSS" }
-], { user_id: "ty" });
+await client.add(
+  [{ role: 'user', content: 'I prefer Tailwind over vanilla CSS' }],
+  { user_id: 'ty' }
+);
 
 // Retrieve relevant memories
-const memories = await client.search("CSS preferences", { user_id: "ty" });
+const memories = await client.search('CSS preferences', { user_id: 'ty' });
 ```
 
 ### 3. Better File Structure (No Dependencies)
@@ -368,31 +418,29 @@ Keep MEMORY.md as a summary (<5KB), link to detailed files.
 
 ## Immediate Fixes Checklist
 
-| Problem | Fix |
-|---------|-----|
-| Forgets preferences | Add `## Preferences` section to MEMORY.md |
-| Repeats mistakes | Log every mistake to `memory/lessons.md` |
-| Sub-agents lack context | Include key context in spawn task prompt |
-| Forgets recent work | Strict daily file discipline |
-| Memory search not working | Check `OPENAI_API_KEY` is set |
+| Problem                   | Fix                                       |
+| ------------------------- | ----------------------------------------- |
+| Forgets preferences       | Add `## Preferences` section to MEMORY.md |
+| Repeats mistakes          | Log every mistake to `memory/lessons.md`  |
+| Sub-agents lack context   | Include key context in spawn task prompt  |
+| Forgets recent work       | Strict daily file discipline              |
+| Memory search not working | Check `OPENAI_API_KEY` is set             |
 
 ## Troubleshooting
 
-**Agent keeps forgetting mid-conversation:**
-→ SESSION-STATE.md not being updated. Check WAL protocol.
+**Agent keeps forgetting mid-conversation:** → SESSION-STATE.md not being
+updated. Check WAL protocol.
 
-**Irrelevant memories injected:**
-→ Disable autoCapture, increase minImportance threshold.
+**Irrelevant memories injected:** → Disable autoCapture, increase minImportance
+threshold.
 
-**Memory too large, slow recall:**
-→ Run hygiene: clear old vectors, archive daily logs.
+**Memory too large, slow recall:** → Run hygiene: clear old vectors, archive
+daily logs.
 
-**Git-Notes not persisting:**
-→ Run `git notes push` to sync with remote.
+**Git-Notes not persisting:** → Run `git notes push` to sync with remote.
 
-**memory_search returns nothing:**
-→ Check OpenAI API key: `echo $OPENAI_API_KEY`
-→ Verify memorySearch enabled in openclaw.json
+**memory_search returns nothing:** → Check OpenAI API key:
+`echo $OPENAI_API_KEY` → Verify memorySearch enabled in openclaw.json
 
 ---
 
@@ -406,4 +454,5 @@ Keep MEMORY.md as a summary (<5KB), link to detailed files.
 
 ---
 
-*Built by [@NextXFrontier](https://x.com/NextXFrontier) — Part of the Next Frontier AI toolkit*
+_Built by [@NextXFrontier](https://x.com/NextXFrontier) — Part of the Next
+Frontier AI toolkit_

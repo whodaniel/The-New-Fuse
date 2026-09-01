@@ -91,7 +91,7 @@ export async function verifyGateDecision(gate: string, context: {
   }
 }
 
-export function withCorrelation(chain: string[]): { correlationId: string; causationId: string } {
+export function withCorrelation(chain: string[]): { correlationId: string; causationId: string | undefined } {
   return {
     correlationId: chain[chain.length - 1],
     causationId: chain.length > 1 ? chain[chain.length - 2] : undefined

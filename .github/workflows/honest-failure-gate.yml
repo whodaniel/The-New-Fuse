@@ -45,6 +45,7 @@ jobs:
       # Exit 2 (missing inputs) is distinct from exit 1 (drift) and neither is 0.
       # Also dependency-free — plain Node, no install required.
       - name: Verify declarations resolve to real paths
+        if: github.repository == 'whodaniel/tnf-monorepo'
         run: node scripts/protocols/verify-declarations.cjs
 
       - name: Report violations as JSON

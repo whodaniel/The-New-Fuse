@@ -98,7 +98,9 @@ tnf slash run /workflow release-triage
 Built-in standard commands include `/help`, `/clear`, `/compact`, `/cost`,
 `/exit`, `/quit`, `/review`, and `/apply`. TNF operational shortcuts include
 `/commands`, `/status`, `/doctor`, `/agents`, `/sessions`, `/models`, `/config`,
-`/mcp`, `/skills`, `/agent`, `/skill`, `/workflow`, and `/mcp-server`.
+`/mcp`, `/skills`, `/agent`, `/skill`, `/workflow`, `/mcp-server`,
+`/department`, `/hr`, `/marketing`, `/design`, `/legal`, `/tech`, and
+`/remember`.
 
 The creation shortcuts scaffold files in the caller project:
 
@@ -163,6 +165,12 @@ tnf traits list
 tnf paths
 tnf menu
 tnf menu --full
+tnf department list
+tnf department show legal
+tnf department route "ask HR about onboarding"
+tnf remember retain "durable operator fact"
+tnf remember recall "departments"
+tnf remember status
 ```
 
 ### Core operations

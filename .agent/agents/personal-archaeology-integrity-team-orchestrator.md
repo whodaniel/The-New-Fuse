@@ -1,5 +1,6 @@
 ---
 category: Unified Orchestration
+department: ops
 domain: orchestration
 visibility: collective
 dacc_role: worker
@@ -15,11 +16,12 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: personal-archaeology-integrity-team-orchestrator
-description: Team Orchestrator for privacy filtering, blocked-state management, and
-  human escalation hygiene across the archaeology fleet.
+description:
+  Team Orchestrator for privacy filtering, blocked-state management, and human
+  escalation hygiene across the archaeology fleet.
 skills:
-- personal-archaeology-orchestration
-- personal-historical-archaeology
+  - personal-archaeology-orchestration
+  - personal-historical-archaeology
 model: inherit
 ---
 

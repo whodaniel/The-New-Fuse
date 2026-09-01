@@ -37,15 +37,29 @@ Optional MCP wrappers may front this store later; the CLI is the SOT.
 
 ## 3. Commands
 
+Operator-facing retain/recall (preferred when a human says "remember this"):
+
 ```bash
+tnf remember retain "durable operator fact"
+tnf remember recall "redis"
+tnf remember status
+```
+
+Harness-layer equivalents:
+
+```bash
+tnf harness memory retain --text "..." --tags operator,remember --scope project
+tnf harness memory recall --query "redis" --limit 5
 node scripts/harness/memory-layer.cjs retain --text "..." --tags harness,redis --scope project
 node scripts/harness/memory-layer.cjs recall --query "redis launchd" --limit 5
 node scripts/harness/memory-layer.cjs pin --id <entryId>
 node scripts/harness/memory-layer.cjs status
 ```
 
-Store path: `data/harness/memory/entries.jsonl`  
-Receipts: `data/harness/receipts/memory-*.json`
+Stores: `data/harness/memory/entries.jsonl` (harness) and
+`~/.tnf/memory/notes.jsonl` (file fallback).  
+Receipts: `data/harness/receipts/memory-*.json`  
+SOP: `docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`
 
 ---
 

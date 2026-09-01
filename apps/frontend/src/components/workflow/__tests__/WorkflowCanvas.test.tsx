@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { WorkflowCanvas } from '../WorkflowCanvas';
-import { WorkflowProvider } from '@/contexts/WorkflowContext';
+import { WorkflowCanvas, WorkflowProvider } from '@the-new-fuse/workflow-builder';
 import { ReactFlowProvider } from 'reactflow';
 
 // Mock the toast notifications

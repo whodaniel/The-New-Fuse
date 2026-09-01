@@ -1,7 +1,11 @@
 ---
 name: TNF Feedback Integration Pipeline
+category: tnf-platform
+department: tech
 slug: tnf-feedback-pipeline
-description: Integrated feedback pathway for beta developers to report issues and suggestions into TNF development workflow
+description:
+  Integrated feedback pathway for beta developers to report issues and
+  suggestions into TNF development workflow
 version: 1.0.0
 author: TNF Agentic Network
 created: 2026-05-03
@@ -15,6 +19,7 @@ priority: P0
 ## Purpose
 
 Create a closed-loop development system where:
+
 - Beta developers can report issues/suggestions
 - Feedback routes to tasks
 - Tasks link to commits
@@ -26,18 +31,22 @@ Create a closed-loop development system where:
 ## Existing Infrastructure to Leverage
 
 ### Task System
+
 - **Location**: `packages/database/src/drizzle/schema/tasks.ts`
 - **Statuses**: backlog | in_progress | review | done
 
 ### Kanban (Feature Suggestions)
+
 - **Location**: `docs/migration/kanban-board.md`
 - **Columns**: Suggestions | In Development | Completed
 
 ### Agent Poll Jobs
+
 - **Location**: `.tnf/poll-jobs/`
 - **Self-improvement loop** exists
 
 ### DevLog Location
+
 - **Location**: `packages/agent/src/skill-bank/compiled/`
 
 ---
@@ -46,7 +55,7 @@ Create a closed-loop development system where:
 
 ```typescript
 interface Feedback {
-  id: string;                    // UUID
+  id: string; // UUID
   type: 'bug' | 'feature' | 'ux' | 'other';
   source: 'user' | 'internal' | 'beta';
   message: string;
@@ -64,7 +73,7 @@ interface Feedback {
     linked_commits?: string[];
     linked_task_id?: string;
   };
-  created_at: string;           // ISO datetime
+  created_at: string; // ISO datetime
   updated_at: string;
 }
 ```
@@ -75,12 +84,12 @@ interface Feedback {
 
 ### 1. Feedback Entry Points
 
-| Method | Implementation |
-|--------|----------------|
-| **Internal (Devs)** | `.tnf/bin/feedback-submit.cjs` script |
-| **Web Widget** | FAB button calling `POST /api/feedback` |
-| **Slack** | `/tnf feedback` command |
-| **GitHub Issues** | Issue templates auto-linking |
+| Method              | Implementation                          |
+| ------------------- | --------------------------------------- |
+| **Internal (Devs)** | `.tnf/bin/feedback-submit.cjs` script   |
+| **Web Widget**      | FAB button calling `POST /api/feedback` |
+| **Slack**           | `/tnf feedback` command                 |
+| **GitHub Issues**   | Issue templates auto-linking            |
 
 ### 2. API Endpoint
 
@@ -136,8 +145,8 @@ Each devlog should include:
 
 ```yaml
 devlog:
-  version: "1.2.0"
-  date: "2026-05-03"
+  version: '1.2.0'
+  date: '2026-05-03'
   release_feedback:
     bugs_fixed: [ids...]
     features_added: [ids...]
@@ -192,13 +201,11 @@ const FeedbackWidget = () => {
   const submitFeedback = async (feedback) => {
     await fetch('/api/feedback', {
       method: 'POST',
-      body: JSON.stringify({ ...feedback, source: 'beta' })
+      body: JSON.stringify({ ...feedback, source: 'beta' }),
     });
   };
 
-  return (
-    <FAB onClick={() => setIsOpen(true)}>Feedback</FAB>
-  );
+  return <FAB onClick={() => setIsOpen(true)}>Feedback</FAB>;
 };
 ```
 
@@ -222,27 +229,27 @@ tnf feedback list --status new
 
 ## Implementation Priority
 
-| Step | Priority | Effort |
-|------|----------|--------|
-| 1. Feedback API endpoint | P0 | Low |
-| 2. Database schema update | P0 | Medium |
-| 3. Feedback → task routing | P0 | Medium |
-| 4. DevLog with feedback section | P1 | Low |
-| 5. tnf CLI feedback commands | P1 | Low |
-| 6. Web widget (FAB) | P2 | Medium |
-| Slack integration | P2 | Medium |
+| Step                            | Priority | Effort |
+| ------------------------------- | -------- | ------ |
+| 1. Feedback API endpoint        | P0       | Low    |
+| 2. Database schema update       | P0       | Medium |
+| 3. Feedback → task routing      | P0       | Medium |
+| 4. DevLog with feedback section | P1       | Low    |
+| 5. tnf CLI feedback commands    | P1       | Low    |
+| 6. Web widget (FAB)             | P2       | Medium |
+| Slack integration               | P2       | Medium |
 
 ---
 
 ## Files to Create/Update
 
-| File | Action |
-|------|--------|
-| `.tnf/bin/feedback-submit.cjs` | Create - CLI feedback entry |
-| `.tnf/api/feedback.ts` | Create - API handler |
-| `packages/database/src/schema/feedback.ts` | Create - DB schema |
-| `packages/agent/src/skills/devlog-agent.skill.md` | Update - Include feedback |
-| `.github/workflows/feedback.yml` | Create - CI integration |
+| File                                              | Action                      |
+| ------------------------------------------------- | --------------------------- |
+| `.tnf/bin/feedback-submit.cjs`                    | Create - CLI feedback entry |
+| `.tnf/api/feedback.ts`                            | Create - API handler        |
+| `packages/database/src/schema/feedback.ts`        | Create - DB schema          |
+| `packages/agent/src/skills/devlog-agent.skill.md` | Update - Include feedback   |
+| `.github/workflows/feedback.yml`                  | Create - CI integration     |
 
 ---
 

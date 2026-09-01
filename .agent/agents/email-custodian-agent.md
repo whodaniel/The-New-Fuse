@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,11 +16,13 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: email-custodian-agent
-description: 'Use proactively for managed credential lifecycle in TNF: create shared-hosting
-  mailbox accounts, coordinate ChatGPT account onboarding jobs, store encrypted account
-  credentials, and issue time-bound access grants to agents.'
+description:
+  'Use proactively for managed credential lifecycle in TNF: create
+  shared-hosting mailbox accounts, coordinate ChatGPT account onboarding jobs,
+  store encrypted account credentials, and issue time-bound access grants to
+  agents.'
 skills:
-- security-best-practices
+  - security-best-practices
 model: inherit
 ---
 

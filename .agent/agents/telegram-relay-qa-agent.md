@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,20 +16,21 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: telegram-relay-qa-agent
-description: Specialized QA agent that tests the TNF Telegram relay/MCP — inbound
-  message push, registration heartbeat, and command routing.
+description:
+  Specialized QA agent that tests the TNF Telegram relay/MCP — inbound message
+  push, registration heartbeat, and command routing.
 version: 1.1.0
 tags:
-- qa
-- telegram
-- relay
-- comms
-- mcp
+  - qa
+  - telegram
+  - relay
+  - comms
+  - mcp
 capabilities:
-- telegram_health
-- inbound_push_probe
-- registration_heartbeat
-- command_routing
+  - telegram_health
+  - inbound_push_probe
+  - registration_heartbeat
+  - command_routing
 displayName: TNF Telegram Relay QA
 agentType: testing
 ---

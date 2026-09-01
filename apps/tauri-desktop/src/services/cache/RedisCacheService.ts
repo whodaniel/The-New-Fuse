@@ -4,7 +4,7 @@
  * Addresses: ResourceExhausted worker total request limit issues
  */
 
-import type { Redis } from 'ioredis';
+import type { ChainableCommander, Redis, RedisOptions } from 'ioredis';
 
 interface CacheConfig {
   host: string;
@@ -43,22 +43,22 @@ class RedisCacheService {
     try {
       const IORedis = await import('ioredis');
 
-      const redisUrl = this.config.password
-        ? `rediss://${this.config.password}@${this.config.host}:${this.config.port}`
-        : `redis://${this.config.host}:${this.config.port}`;
-
-      this.client = new IORedis.default(redisUrl, {
+      const options: RedisOptions = {
+        host: this.config.host,
+        port: this.config.port,
+        password: this.config.password,
         tls: this.config.tls ? {} : undefined,
-        sentinel: this.config.sentinel
-          ? {
-              name: 'tnf-sentinel',
-              sentinels: this.config.sentinel.nodes.map((node) => ({
-                host: node.split(':')[0],
-                port: parseInt(node.split(':')[1] || '26379', 10),
-              })),
-            }
-          : undefined,
-      });
+        lazyConnect: true,
+      };
+      if (this.config.sentinel) {
+        options.name = this.config.sentinel.master;
+        options.sentinels = this.config.sentinel.nodes.map((node) => ({
+          host: node.split(':')[0],
+          port: parseInt(node.split(':')[1] || '26379', 10),
+        }));
+      }
+
+      this.client = new IORedis.default(options);
 
       await this.client.connect();
       this.ready = true;
@@ -127,7 +127,11 @@ class RedisCacheService {
         key,
       };
 
-      await this.client.setex(`tnf:${key}`, Math.floor(ttl / 1000), JSON.stringify(entry));
+      if (ttl > 0) {
+        await this.client.setex(`tnf:${key}`, Math.max(1, Math.floor(ttl / 1000)), JSON.stringify(entry));
+      } else {
+        await this.client.set(`tnf:${key}`, JSON.stringify(entry));
+      }
       return true;
     } catch (error) {
       console.error(`[RedisCache] Set error for key ${key}:`, error);
@@ -172,7 +176,7 @@ class RedisCacheService {
           try {
             const parsed: CacheEntry = JSON.parse(entry);
             const now = Date.now();
-            if (now > parsed.createdAt + parsed.ttl) {
+            if (parsed.ttl > 0 && now > parsed.createdAt + parsed.ttl) {
               expiredKeys.push(key);
             }
           } catch {
@@ -221,18 +225,17 @@ class RedisCacheService {
   /**
    * Pipeline multiple operations for atomic execution
    */
-  async pipeline<T>(operations: () => T[]): Promise<T[]> {
+  async pipeline(
+    operations: Array<(pipeline: ChainableCommander) => void>
+  ): Promise<Array<[error: Error | null, result: unknown]>> {
     if (!this.isReady() || !this.client) {
       return [];
     }
 
     try {
       const pipeline = this.client.multi();
-      const results = operations.map((op) => {
-        pipeline.addCommand(op);
-        return pipeline;
-      });
-      return await pipeline.exec();
+      for (const operation of operations) operation(pipeline);
+      return (await pipeline.exec()) ?? [];
     } catch (error) {
       console.error(`[RedisCache] Pipeline error:`, error);
       return [];

@@ -6,6 +6,7 @@ primary_type: construction
 secondary_tags:
   - exploratory
 category: data/visualization
+department: tech
 risk_tier: low
 harmful_pattern_detection: false
 harmful_pattern_signals:
@@ -16,8 +17,10 @@ metadata:
   source_snapshot: .agent/skill-bank/snapshots/project-agent/d3-viz-4b1f820c/SKILL.md
   status: permanent
 ---
-> Promoted from TNF snapshot history into permanent skill inventory.
-> Category and risk metadata added for adaptive routing and harmful-pattern recognition.
+
+> Promoted from TNF snapshot history into permanent skill inventory. Category
+> and risk metadata added for adaptive routing and harmful-pattern recognition.
+
 # D3.js Visualisation
 
 ## Overview

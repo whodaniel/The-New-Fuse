@@ -5,6 +5,12 @@
  * busy pastes coalesce into one queued next message instead of being lost or
  * shredding across later prompts. Idle waits use the same coalescer so a
  * multiline paste at ❯ becomes one user message.
+ *
+ * Commit policy (via prompt-paste-coalesce):
+ *   - Typed single-line Enter commits immediately (no paste debounce tax).
+ *   - Multiline paste bursts join after a short quiet window.
+ *   - Commit is held while `rl.line` still has uncommitted text so the last
+ *     paste line is not severed from the message.
  */
 
 import type readline from 'readline';
@@ -31,15 +37,29 @@ export interface TuiInputCollector {
   hasIdlePending(): boolean;
   /** Write prompt and wait for one coalesced idle commit. */
   waitForIdleCommit(prompt: string): Promise<string>;
-  /** Drain busy coalesce buffer (flush pending debounce). Null if empty. */
+  /** Drain busy coalesce buffer (flush pending). Null if empty. */
   takeBusyQueue(): string | null;
   dispose(): void;
 }
 
+function readlineBufferDirty(rl: readline.Interface): boolean {
+  return Boolean(String((rl as { line?: string }).line || '').length);
+}
+
 export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInputCollector {
   const debounceMs = opts.debounceMs ?? PROMPT_PASTE_DEBOUNCE_MS;
-  const idleCoalescer: PromptPasteCoalescer = createPromptPasteCoalescer({ debounceMs });
-  const busyCoalescer: PromptPasteCoalescer = createPromptPasteCoalescer({ debounceMs });
+  const shouldHold = () => readlineBufferDirty(opts.rl);
+
+  const idleCoalescer: PromptPasteCoalescer = createPromptPasteCoalescer({
+    debounceMs,
+    shouldHold,
+  });
+  // Busy mode only parks fragments for takeBusyQueue(); no waiters, so debounce
+  // never fires. shouldHold is irrelevant until flush — still pass for symmetry
+  // if flush is later changed to wait.
+  const busyCoalescer: PromptPasteCoalescer = createPromptPasteCoalescer({
+    debounceMs,
+  });
 
   let mode: TuiInputCollectorMode = 'idle';
   let idleWaiter: {
@@ -49,18 +69,12 @@ export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInpu
   let idleCommitListening = false;
   let stallTimer: ReturnType<typeof setTimeout> | null = null;
   let disposed = false;
-  let busyCommitted: string | null = null;
 
   const clearStall = () => {
     if (stallTimer) {
       clearTimeout(stallTimer);
       stallTimer = null;
     }
-  };
-
-  const appendBusyCommit = (text: string) => {
-    if (!text.trim()) return;
-    busyCommitted = busyCommitted ? `${busyCommitted}\n${text}` : text;
   };
 
   const resolveIdle = (text: string) => {
@@ -96,8 +110,10 @@ export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInpu
       return;
     }
 
-    idleCoalescer.pushFragment(line);
+    // Attach the idle waiter before push so a lone empty Enter can settle
+    // immediately (pushFragment only resolves when a waiter already exists).
     if (idleWaiter) listenForIdleCommit();
+    idleCoalescer.pushFragment(line);
   };
 
   opts.rl.on('line', onLine);
@@ -142,10 +158,7 @@ export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInpu
 
     takeBusyQueue() {
       const flushed = busyCoalescer.flushNow();
-      if (flushed) appendBusyCommit(flushed);
-      const out = busyCommitted;
-      busyCommitted = null;
-      return out && out.trim() ? out : null;
+      return flushed && flushed.trim() ? flushed : null;
     },
 
     dispose() {

@@ -6,12 +6,10 @@ import type {
 } from './cost-policy.js';
 
 /**
- * Public observations/contracts retained for compatibility.
- *
- * Founder-IP boundary: the hosted TNF route-selection algorithm, provider
- * economics, entitlement/budget composition and optimization weights are
- * proprietary orchestration intelligence. This public module performs only
- * objective compatibility filtering plus a deterministic local-first fallback.
+ * Provider hard-limit protection is deliberately separate from tenant budget.
+ * A tenant may have money remaining while the provider account is still unsafe
+ * to use because an account-level cap, concurrency guard, or billing ceiling is
+ * not configured.
  */
 export interface ProviderHardLimitSnapshot {
   provider: ProviderRouteEstimate['provider'];
@@ -53,11 +51,6 @@ const ISOLATION_RANK: Record<NonNullable<ProviderRouteEstimate['isolation']>, nu
   vm: 4,
 };
 
-/**
- * Objective compatibility is part of the public contract: an independent
- * implementation can determine whether a route satisfies declared durability,
- * latency and isolation requirements without learning hosted policy.
- */
 export function isRouteCompatible(
   request: MeteredExecutionRequest,
   route: ProviderRouteEstimate
@@ -85,12 +78,9 @@ export function isRouteCompatible(
 }
 
 /**
- * Deterministic public/local fallback.
- *
- * The fallback deliberately does NOT rank by price, quota, latency beyond hard
- * compatibility, entitlement, provider economics, reliability or learned
- * quality. Local routes are surfaced first; remaining compatible routes receive
- * a stable identifier order only so callers can display/inspect them.
+ * Route preference is economic but not purely numeric:
+ * local first, then included/free quota, then the least-expensive metered route.
+ * Stable tie-breakers keep decisions deterministic for auditing and tests.
  */
 export function rankCompatibleRoutes(
   request: MeteredExecutionRequest,
@@ -100,20 +90,19 @@ export function rankCompatibleRoutes(
     .filter((route) => isRouteCompatible(request, route))
     .slice()
     .sort((a, b) => {
-      const aLocal = a.provider === 'local' ? 0 : 1;
-      const bLocal = b.provider === 'local' ? 0 : 1;
-      if (aLocal !== bLocal) return aLocal - bLocal;
+      const aClass = a.provider === 'local' ? 0 : a.freeOrIncludedQuota ? 1 : 2;
+      const bClass = b.provider === 'local' ? 0 : b.freeOrIncludedQuota ? 1 : 2;
+      if (aClass !== bClass) return aClass - bClass;
+      if (a.estimatedCostUsd !== b.estimatedCostUsd) {
+        return a.estimatedCostUsd - b.estimatedCostUsd;
+      }
+      if ((a.estimatedLatencyMs ?? Number.POSITIVE_INFINITY) !== (b.estimatedLatencyMs ?? Number.POSITIVE_INFINITY)) {
+        return (a.estimatedLatencyMs ?? Number.POSITIVE_INFINITY) - (b.estimatedLatencyMs ?? Number.POSITIVE_INFINITY);
+      }
       return `${a.provider}:${a.route}`.localeCompare(`${b.provider}:${b.route}`);
     });
 }
 
-/**
- * Public compatibility fallback for legacy callers.
- *
- * Local execution can be allowed from public compatibility data. Any non-local
- * economic/entitlement/provider decision is deferred to a configured policy
- * authority (hosted TNF or another operator-supplied implementation).
- */
 export function evaluateRoutePolicy(
   context: RouteSelectionContext,
   compatibleRoutes: ProviderRouteEstimate[]
@@ -128,14 +117,68 @@ export function evaluateRoutePolicy(
   if (selected.provider === 'local') {
     return {
       decision: 'allow-local',
-      reason: 'public-local-compatible-route-available',
+      reason: 'local-compatible-route-available',
+      selectedRoute: selected,
+    };
+  }
+
+  if (selected.freeOrIncludedQuota && selected.estimatedCostUsd <= 0) {
+    return {
+      decision: 'allow-free',
+      reason: 'included-or-free-compatible-route-available',
+      selectedRoute: selected,
+    };
+  }
+
+  if (!context.entitlement.entitled) {
+    return {
+      decision: 'deny',
+      reason: context.entitlement.reason || 'capability-not-entitled',
+      selectedRoute: selected,
+    };
+  }
+
+  if (
+    context.entitlement.allowedCapabilities?.length &&
+    !context.entitlement.allowedCapabilities.includes(context.request.capability)
+  ) {
+    return {
+      decision: 'deny',
+      reason: 'capability-not-in-entitlement-scope',
+      selectedRoute: selected,
+    };
+  }
+
+  if (!context.budget) {
+    return {
+      decision: 'deny',
+      reason: 'metered-route-has-no-budget-snapshot',
+      selectedRoute: selected,
+    };
+  }
+
+  if (selected.estimatedCostUsd > context.budget.remainingUsd) {
+    return {
+      decision: 'defer',
+      reason: 'tenant-budget-insufficient',
+      selectedRoute: selected,
+    };
+  }
+
+  const hardLimit = context.providerHardLimits?.find(
+    (item) => item.provider === selected.provider
+  );
+  if (!hardLimit?.protected) {
+    return {
+      decision: 'deny',
+      reason: hardLimit?.reason || 'provider-hard-limit-protection-missing',
       selectedRoute: selected,
     };
   }
 
   return {
-    decision: 'defer',
-    reason: 'hosted-or-operator-route-policy-required',
+    decision: 'allow-metered',
+    reason: 'entitled-budgeted-and-provider-protected',
     selectedRoute: selected,
   };
 }

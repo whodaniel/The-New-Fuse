@@ -1,5 +1,7 @@
 ---
 name: tnf-live-fleet-cohesion
+category: tnf-platform
+department: tech
 description:
   Use when acting as TNF Local Subdirector to poll active agents, reconcile
   concurrent work, repair Redis/master-heartbeat liveness, or respond to

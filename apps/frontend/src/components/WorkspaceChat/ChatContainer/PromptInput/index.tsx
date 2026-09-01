@@ -2,7 +2,7 @@
 import useTextSize from '@/hooks/useTextSize';
 import { PaperPlaneRight } from '@phosphor-icons/react';
 import debounce from 'lodash.debounce';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { PASTE_ATTACHMENT_EVENT } from '../DnDWrapper';
 import AvailableAgentsButton, { AvailableAgents, useAvailableAgents } from './AgentMenu';
@@ -45,10 +45,26 @@ export default function PromptInput({
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
-  const [_, setFocused] = useState<boolean>(false);
+  const [, setFocused] = useState<boolean>(false);
   const undoStack = useRef<EditState[]>([]);
   const redoStack = useRef<EditState[]>([]);
   const { textSizeClass } = useTextSize();
+
+  // Store refs for values used inside debounced callbacks to prevent stale closures
+  const promptInputRef = useRef<string>(promptInput);
+  useEffect(() => {
+    promptInputRef.current = promptInput;
+  }, [promptInput]);
+
+  const showSlashCommandRef = useRef<boolean>(showSlashCommand);
+  useEffect(() => {
+    showSlashCommandRef.current = showSlashCommand;
+  }, [showSlashCommand]);
+
+  const showAgentsRef = useRef<boolean>(showAgents);
+  useEffect(() => {
+    showAgentsRef.current = showAgents;
+  }, [showAgents]);
 
   // Track if component is mounted to prevent state updates after unmount
   const isMountedRef = useRef<boolean>(true);
@@ -93,35 +109,41 @@ export default function PromptInput({
     return () => input.current?.removeEventListener('keypress', handleKeypress);
   }, [handleSubmit]);
 
-  function saveCurrentState(adjustment = 0) {
+  const debouncedSaveState = useMemo(() => debounce((adjustment = 0) => {
     if (!textareaRef.current) return;
     if (undoStack.current.length >= MAX_EDIT_STACK_SIZE) undoStack.current.shift();
     undoStack.current.push({
-      value: promptInput,
+      value: promptInputRef.current,
       cursorPositionStart: textareaRef.current.selectionStart + adjustment,
       cursorPositionEnd: textareaRef.current.selectionEnd + adjustment,
     });
-  }
-  const debouncedSaveState = debounce(saveCurrentState, 250);
+  }, 250), []);
 
   function handleSubmit() {
     setFocused(false);
     submit(new React.FormEvent(formRef.current));
   }
 
-  function checkForSlash(e: React.ChangeEvent<HTMLTextAreaElement>) {
+  const watchForSlash = useMemo(() => debounce((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const input = e.target.value;
     if (input === '/') setShowSlashCommand(true);
-    if (showSlashCommand) setShowSlashCommand(false);
-  }
-  const watchForSlash = debounce(checkForSlash, 300);
+    if (showSlashCommandRef.current) setShowSlashCommand(false);
+  }, 300), []);
 
-  function checkForAt(e: React.ChangeEvent<HTMLTextAreaElement>) {
+  const watchForAt = useMemo(() => debounce((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const input = e.target.value;
     if (input === '@') setShowAgents(true);
-    if (showAgents) setShowAgents(false);
-  }
-  const watchForAt = debounce(checkForAt, 300);
+    if (showAgentsRef.current) setShowAgents(false);
+  }, 300), []);
+
+  // Cleanup debounced functions on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSaveState.cancel();
+      watchForSlash.cancel();
+      watchForAt.cancel();
+    };
+  }, [debouncedSaveState, watchForSlash, watchForAt]);
 
   function captureEnterOrUndo(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.keyCode === 13 && !event.shiftKey) {
@@ -282,7 +304,13 @@ export default function PromptInput({
                 onChange={handleChange}
                 onKeyDown={captureEnterOrUndo}
                 onPaste={(e) => {
-                  saveCurrentState();
+                  if (!textareaRef.current) return;
+                  if (undoStack.current.length >= MAX_EDIT_STACK_SIZE) undoStack.current.shift();
+                  undoStack.current.push({
+                    value: promptInputRef.current,
+                    cursorPositionStart: textareaRef.current.selectionStart,
+                    cursorPositionEnd: textareaRef.current.selectionEnd,
+                  });
                   handlePasteEvent(e);
                 }}
                 required={true}

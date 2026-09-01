@@ -1,5 +1,7 @@
 ---
 name: crawl4ai
+category: browser-automation
+department: tech
 description:
   Use for read-only public URL extraction into LLM-optimized Fit Markdown.
   Prefer this over browser automation when the task is to read or scrape a page

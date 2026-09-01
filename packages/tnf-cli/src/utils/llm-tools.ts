@@ -245,11 +245,28 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
     },
   },
   {
+    name: 'memory_retain',
+    category: 'observability',
+    defaultEnabled: true,
+    description:
+      'Persist a durable operator fact when they say "remember this". Writes the harness memory layer and ~/.tnf/memory/notes.jsonl. Chat acknowledgement is not memory.',
+    parameters: {
+      type: 'object',
+      properties: {
+        text: { type: 'string', description: 'The fact to retain.' },
+        tags: { type: 'string', description: 'Optional comma-separated tags.' },
+        scope: { type: 'string', description: 'global | project | session. Default project.' },
+      },
+      required: ['text'],
+      additionalProperties: false,
+    },
+  },
+  {
     name: 'memory_recall',
     category: 'observability',
     defaultEnabled: true,
     description:
-      'Read durable notes saved to the agent memory provider (Hermes / Redis / holistic) that match a query. Use this to remember decisions made in earlier sessions.',
+      'Read durable notes saved to the agent memory provider (Hermes / Redis / holistic / tnf remember) that match a query. Use this to remember decisions made in earlier sessions.',
     parameters: {
       type: 'object',
       properties: {
@@ -257,6 +274,21 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
         limit: { type: 'integer', description: 'Default 10.' },
       },
       required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'department_route',
+    category: 'agent',
+    defaultEnabled: true,
+    description:
+      'Resolve an operator utterance to a named department (HR, Marketing, Design, Legal, Tech, Finance, Product, Ops) and return the names-only staffing card. Do not dump skill bodies.',
+    parameters: {
+      type: 'object',
+      properties: {
+        utterance: { type: 'string', description: 'Text that names or implies a department.' },
+      },
+      required: ['utterance'],
       additionalProperties: false,
     },
   },

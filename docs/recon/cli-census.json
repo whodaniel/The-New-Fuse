@@ -1,0 +1,2320 @@
+{
+  "spec": "tnf-monorepo/cli-census/0.1",
+  "generated": "2026-08-27",
+  "repository": "whodaniel/tnf-monorepo (local worktree, 3 commits ahead of origin/main)",
+  "methodology_summary": "See docs/recon/cli-census.md for full methodology. Section A = packages/tnf-cli command tree (130 top-level groups / 396 leaf commands / 488 total nodes, from the git-verified-fresh command-surface.snapshot.json oracle). Section B = root package.json scripts (427), grouped by namespace prefix into ~60 rows. Section C = the 20 authoritative scheduled system-framework processes in data/protocols/system-processes.json. Section D = 17 standalone cron/launchd service-control scripts reachable by NEITHER a tnf-cli command NOR a root package.json script. Section E = aggregate stats for the 1339 non-root workspace package.json scripts (not enumerated individually).",
+  "sectionA_tnfCli": [
+    {
+      "g": "voice",
+      "leaves": 21,
+      "intent": "Voice Bridge daemon control + speech-to-text injection into terminal/app targets",
+      "mutation": "local-mutation",
+      "notes": "status/protocol-status/target-show are read-only; activate/up/down/listen/pause/resume/relay/mic-toggle/target-set/response-audio-* start or reconfigure the local Voice Bridge daemon and injection anchor. `voice target pick` injects transcribed text into whatever app/window has focus after a delay -- no confirmation step visible in the command surface.",
+      "owner": "human at terminal, or scripts/runtime/voice-bridge-service.sh (launchd label com.tnf.voice-bridge-server) as the actual daemon; tnf voice is a control client",
+      "evidence": "`voice status` reads local server state; no persisted receipt found for target-anchor changes or injected text -- evidence gap",
+      "verified": false
+    },
+    {
+      "g": "harness",
+      "leaves": 18,
+      "intent": "TNF terminal harness lifecycle: boot/pause/resume/provision the local agent harness",
+      "mutation": "local-mutation",
+      "notes": "boot/cycle/loop/pause/resume/provision/staff/sandbox/host-compaction start processes or write state (permission berm/seatbelt profiles, compaction records, pause flags); berm/completeness/context/inspect/supply-chain/fleet-status/clients/trajectory(list mode) are read-only.",
+      "owner": "human/agent CLI; also invoked from the boot chain (scripts/boot-tnf.sh -> start-agent-network.sh, see packages/tnf-cli/src/boot/pipeline.ts)",
+      "evidence": "writes to ~/.tnf harness state dirs by convention; not individually verified per subcommand",
+      "verified": false
+    },
+    {
+      "g": "agents",
+      "leaves": 14,
+      "intent": "Agent-focused operations: classify personas, run/live-manage the agent daemon, bank governance",
+      "mutation": "local-mutation",
+      "notes": "agents live start/once/watch starts a persistent daemon; agents run starts an autonomous loop with bash/write_file/browser_interact tools -- HIGH-risk pass-through, mutation class of what it actually does is unbounded; agents prune-stale is destructive (kills/removes Redis swarm worker registrations); agents bank reconcile writes agent-bank files; classify/list/who/convo-alias/orchestrate-alias/register-alias/send-alias are read-only or delegate to their aliased command.",
+      "owner": "human/agent CLI",
+      "evidence": "agents live status reads daemon/bus health; no evidence artifact found for what an `agents run` loop actually did beyond its own transcript",
+      "verified": false
+    },
+    {
+      "g": "mcp",
+      "leaves": 14,
+      "intent": "Manage MCP (Model Context Protocol) server registrations, auth, and tool invocation",
+      "mutation": "local-mutation",
+      "notes": "add/auth/codex-login/disable/enable/sync/logout write local MCP config or credential state; call invokes an arbitrary tool on a configured MCP server (mutation class = whatever that tool does, i.e. remote-mutation is possible); debug/health/list/tools/supabase-agent-check are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "mcp health / mcp list read live config; no verified receipt for `mcp call` side effects",
+      "verified": false
+    },
+    {
+      "g": "authority",
+      "leaves": 12,
+      "intent": "Agent authority elevation review, trust-root/isolation setup, ENCRYPTION_KEY rotation, OS account management",
+      "mutation": "destructive",
+      "notes": "authority account creates/removes an OS-level tnf-agent user account (requires sudo); encrypt-rotate migrates DATABASE_URL-backed encryption keys (decrypt-old -> encrypt-new); relaunch-workers kills and restarts operator-uid worker processes. approve/deny/confirm-isolation/provision-keys are local-mutation; list/show/status/workers/review are read-only or interactive-only.",
+      "owner": "human operator (sudo-gated for account)",
+      "evidence": "no confirmation/dry-run flag visible on encrypt-rotate or account in the command surface; treat as high-consequence, low-visible-evidence",
+      "verified": false
+    },
+    {
+      "g": "compat",
+      "leaves": 11,
+      "intent": "OpenClaw compatibility adapter -- mirrors OpenClaw config/cron surface through TNF",
+      "mutation": "local-mutation",
+      "notes": "compat openclaw cleanup/config-set/config-unset/cron-disable/cron-enable/cron-schedule/sync mutate the OTHER harness (OpenClaw)'s live config or cron state via TNF as a proxy; config/cron/instances/inventory are read-only.",
+      "owner": "human/agent CLI, targets a co-installed OpenClaw runtime on the same machine",
+      "evidence": "not verified; depends on OpenClaw's own state files",
+      "verified": false
+    },
+    {
+      "g": "debug",
+      "leaves": 10,
+      "intent": "Diagnostics: show config/paths/agent info, ripgrep/LSP/filesystem debugging helpers",
+      "mutation": "read-only",
+      "notes": "all subcommands print information; debug snapshot is ambiguous by name alone (could write a snapshot file) -- not verified.",
+      "owner": "human/agent CLI",
+      "evidence": "stdout only; no receipt files expected or needed for a read-only surface",
+      "verified": false
+    },
+    {
+      "g": "full-auto",
+      "leaves": 8,
+      "intent": "Unattended TNF automation loop (the flagship autonomous cycle referenced in cron-jobs/launchd docs)",
+      "mutation": "local-mutation",
+      "notes": "daemon start/stop control a detached background process; once/start run real unattended cycles (self-improvement + optional orchestration broadcast) and persist state/logs; provision installs command+skill artifacts into every detected agent runtime; contend status and status are read-only.",
+      "owner": "human/agent CLI and self-installed cron/launchd (per user memory: \"one cycle runs ~35 min, use 60+ min interval\")",
+      "evidence": "persists cycle state/logs per its own description -- best-evidenced group in the CLI surface if that persisted state is actually read back (not independently verified here)",
+      "verified": false
+    },
+    {
+      "g": "jules",
+      "leaves": 8,
+      "intent": "Google Jules coding-agent automation: loop, PR merge, follow-up supervisor",
+      "mutation": "remote-mutation",
+      "notes": "merge-open merges open GitHub PRs -- a real external-repo write; cron-install installs a local cron job; loop/supervisor/supervisor-start run local daemons; supervisor-status is read-only.",
+      "owner": "human/agent CLI; cron (jules:cron:install wires scripts/install-jules-cron.sh)",
+      "evidence": "GitHub PR merge is independently checkable via GitHub PR history/timeline; local loop state not verified",
+      "verified": false
+    },
+    {
+      "g": "protocol",
+      "leaves": 8,
+      "intent": "Validate TNF framework protocols (Turn Zero, handoff, schemas) and harness boundaries",
+      "mutation": "read-only",
+      "notes": "gate/validate/turn-zero/schemas/local-runtime/health are check-only gates (exit code signals pass/fail); directives manages a ledger (local-mutation, writes); sync writes living-state status (local-mutation).",
+      "owner": "human/agent CLI; also pre-push git hooks per root package.json (validate:turn-zero-authority etc.)",
+      "evidence": "gate commands are exactly the kind of check this codebase has a documented history of silently exit-0ing without doing the underlying work (see docs/protocols/reports/silent-failure-audit-2026-08-05.md, cited directly in scripts/protocols/verify-declarations.cjs) -- treat PASS output with caution unless cross-checked against the artifact it claims to validate",
+      "verified": false
+    },
+    {
+      "g": "skill-bank",
+      "leaves": 8,
+      "intent": "Cross-LLM skill bank sync/ingest/query (renamed from `tnf skills`)",
+      "mutation": "local-mutation",
+      "notes": "sync/ingest write the skill-bank index; retry-pending re-attempts failed ingests; supervisor/supervisor-start/supervisor-stop control a background daemon; query is read-only.",
+      "owner": "human/agent CLI; also root script skills:bank:sync / skills:bank:supervisor",
+      "evidence": "writes .agent/skill-bank/skills-index.json (see root script skills:bank:status which reads that file back) -- one of the few groups with a directly checkable evidence file",
+      "verified": false
+    },
+    {
+      "g": "browser",
+      "leaves": 7,
+      "intent": "Drive a real browser session via agent-browser (open/click/fill/navigate/etc.)",
+      "mutation": "unknown",
+      "notes": "browser exec / legacy-exec run an arbitrary browser operation -- mutation class is whatever the operation does (could submit forms, navigate to arbitrary URLs, i.e. remote-mutation); start/stop/legacy-start/legacy-stop control the browser process; profiles is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "none found beyond the operation's own return value",
+      "verified": false
+    },
+    {
+      "g": "plugins",
+      "leaves": 7,
+      "intent": "Install/enable/disable/update TNF extensions and skills",
+      "mutation": "local-mutation",
+      "notes": "install accepts a local directory OR a Git URL (remote fetch); remove/update/disable/enable mutate local plugin state; list/status are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified whether install/update write a receipt beyond the installed files themselves",
+      "verified": false
+    },
+    {
+      "g": "story",
+      "leaves": 7,
+      "intent": "Story Architect: draft/capture narrative content into a database-backed session",
+      "mutation": "local-mutation",
+      "notes": "create/capture/draft write to the Story Architect DB; doctor verifies auth/DB access (read-only); active/list/timeline are read-only.",
+      "owner": "human at terminal (interactive drafting)",
+      "evidence": "DB-backed, presumably queryable; not independently verified",
+      "verified": false
+    },
+    {
+      "g": "agent",
+      "leaves": 6,
+      "intent": "Manage agents (singular form): create, quotas, state snapshots",
+      "mutation": "local-mutation",
+      "notes": "create writes a new agent record; list/quotas/state/state-history/status are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "notes",
+      "leaves": 6,
+      "intent": "TNF note-taking workspace",
+      "mutation": "local-mutation",
+      "notes": "create/daily write note files; get/list/search/status are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "catalog",
+      "leaves": 5,
+      "intent": "Inspect the free NVIDIA/LLM model catalog and switch the active model",
+      "mutation": "local-mutation",
+      "notes": "set writes .env.models (confirmed by its own description text); refresh re-fetches /v1/models live from a provider (remote read, not a write); list/categories/show are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": ".env.models is a directly checkable artifact for `catalog set`",
+      "verified": false
+    },
+    {
+      "g": "config",
+      "leaves": 5,
+      "intent": "Manage TNF configuration (kilo.jsonc parity)",
+      "mutation": "local-mutation",
+      "notes": "set writes tnf.jsonc; get/paths/resolved/show are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "tnf.jsonc is directly checkable",
+      "verified": false
+    },
+    {
+      "g": "google-ai",
+      "leaves": 5,
+      "intent": "Google Gemini/Antigravity session sync and inspection",
+      "mutation": "local-mutation",
+      "notes": "sync writes TNF session stores from an external local Antigravity DB; resume can trigger agent resumption (process launch); list/status/view are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "marketplace",
+      "leaves": 5,
+      "intent": "Marketplace asset catalog: crawl/curate/seed/list items",
+      "mutation": "remote-mutation",
+      "notes": "seed writes to $DATABASE_URL (explicit in description); curate triggers a research crawl that discovers+curates new items (writes); list/stats/crawl-status are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "DB rows are the evidence trail if $DATABASE_URL is queryable; not independently verified here",
+      "verified": false
+    },
+    {
+      "g": "parity",
+      "leaves": 5,
+      "intent": "Cross-agent CLI feature-parity audit against reference agents (Hermes, Kilo, etc.)",
+      "mutation": "local-mutation",
+      "notes": "audit writes the parity ledger; sync-goals creates tracked goals for gaps; agents/gaps/status are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "ledger file is a checkable artifact",
+      "verified": false
+    },
+    {
+      "g": "profile",
+      "leaves": 5,
+      "intent": "Manage local TNF user profiles/sessions",
+      "mutation": "local-mutation",
+      "notes": "login/logout/switch mutate session state; list/whoami are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "project",
+      "leaves": 5,
+      "intent": "Project-level tnf.jsonc / .tnf/ scaffolding",
+      "mutation": "local-mutation",
+      "notes": "create/init scaffold files; agents/commands/show are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "scaffolded files are directly checkable",
+      "verified": false
+    },
+    {
+      "g": "self-improvement",
+      "leaves": 5,
+      "intent": "Deterministic TNF self-improvement loop: build, audits, scorecard, architecture map",
+      "mutation": "local-mutation",
+      "notes": "run executes the full loop and writes many artifacts (build output, audit reports, scorecard, mermaid map); log/mermaid/scorecard write individual artifacts; status is read-only.",
+      "owner": "human/agent CLI; also root script self_improvement scripts and cron (see tnf-llm-ranking-optimizer etc. for the sibling loops)",
+      "evidence": "scorecard/artifact files are the intended evidence trail -- worth cross-checking that `run` actually regenerates them vs. reporting success on stale ones (this is exactly the failure shape docs/protocols/reports/silent-failure-audit-2026-08-05.md documents elsewhere)",
+      "verified": false
+    },
+    {
+      "g": "bridge",
+      "leaves": 4,
+      "intent": "Control the TNF A2A bridge (inter-runtime bus translator)",
+      "mutation": "local-mutation",
+      "notes": "start/stop control the bridge process; test runs an integration self-test (spawns work); status is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "extension",
+      "leaves": 4,
+      "intent": "Manage TNF extensions (Chrome/VSCode/Tauri)",
+      "mutation": "local-mutation",
+      "notes": "install builds and installs locally (remote-mutation possible if source is a Git URL); list/status/user-list are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "fleet",
+      "leaves": 4,
+      "intent": "TNF harness fleet + terminal window management, including prompt injection into terminal windows by AppleScript ID",
+      "mutation": "local-mutation",
+      "notes": "establish endows the Local Sub-Director and provisions Redis/harness/workers/launchd (system-level, writes launchd jobs); prompt injects text into a target terminal window with a simulated hardware Return keypress -- this is exactly the injection mechanism flagged by the tnf-autonomy-safety-audit skill and the user's \"terminal heartbeat injection\" memory note; core-status/inventory are read-only.",
+      "owner": "human/agent CLI; fleet establish is also the target of root script tnf:fleet:establish (cron/manual)",
+      "evidence": "fleet core-status reads the latest establish receipt (so `establish` DOES leave a checkable artifact) -- one of the better-evidenced groups",
+      "verified": false
+    },
+    {
+      "g": "forge",
+      "leaves": 4,
+      "intent": "LLVM-powered JIT compilation / native-code benchmarking",
+      "mutation": "local-mutation",
+      "notes": "test-gateway/test-math/test-python compile and run native code locally (low blast-radius, local execution only); status is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "handoff",
+      "leaves": 4,
+      "intent": "Session handoff artifact generation/validation for TNF continuity",
+      "mutation": "local-mutation",
+      "notes": "generate/refresh write SESSION_HANDOFF_LATEST.json + markdown mirror; validate/show are read-only.",
+      "owner": "human/agent CLI; also root scripts handoff:emit / handoff:pre-push (git hook)",
+      "evidence": "SESSION_HANDOFF_LATEST.json is directly checkable -- per user memory (\"Handoff emit overwrites the directive\") this file is load-bearing and has known footguns",
+      "verified": false
+    },
+    {
+      "g": "hooks",
+      "leaves": 4,
+      "intent": "HookChain operations: inspect logs, dry-run/replay a hook decision",
+      "mutation": "local-mutation",
+      "notes": "replay queues a deterministic replay record; test dry-runs a HookChain against a fixture (minimal write); logs/explain are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "permission",
+      "leaves": 4,
+      "intent": "Manage bash/read/external_directory permission rules",
+      "mutation": "local-mutation",
+      "notes": "add/remove mutate permission rules -- security-relevant surface; list/check are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified; this is a security-relevant group worth follow-up (who can call `permission add` and is it gated?)",
+      "verified": false
+    },
+    {
+      "g": "reports",
+      "leaves": 4,
+      "intent": "Report lifecycle management: rotation, metadata, trending",
+      "mutation": "destructive",
+      "notes": "prune explicitly deletes old reports (description: \"Prune old reports and regenerate the rolling summary\"); status/summary/trends are read-only.",
+      "owner": "human/agent CLI; also root script reports:lifecycle",
+      "evidence": "rolling summary is regenerated after prune, so the artifact itself is the evidence -- but the deleted reports are gone, i.e. destructive is correctly classified, not merely local-mutation",
+      "verified": false
+    },
+    {
+      "g": "slack",
+      "leaves": 4,
+      "intent": "TNF Slack bot integration",
+      "mutation": "remote-mutation",
+      "notes": "send posts a real message via the Slack bot (external API write); start/stop control the local bot process; status is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "Slack message delivery is externally checkable (in the Slack channel itself); not independently verified here",
+      "verified": false
+    },
+    {
+      "g": "staffing",
+      "leaves": 4,
+      "intent": "TNF staffing coverage analysis and gap detection",
+      "mutation": "local-mutation",
+      "notes": "propose/report/plan generate and write artifacts for review; scan is read-only.",
+      "owner": "human/agent CLI; also root scripts tnf:staffing:cycle / tnf:staff-review:cycle and cron job tnf-staffing-director-cycle (data/protocols/system-processes.json)",
+      "evidence": "staffing report/plan files are the checkable artifact",
+      "verified": false
+    },
+    {
+      "g": "telegram",
+      "leaves": 4,
+      "intent": "TNF Telegram bot integration",
+      "mutation": "remote-mutation",
+      "notes": "send posts a real message via the Telegram bot; start/stop control the local listener process; status is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "message delivery externally checkable in Telegram; not independently verified here",
+      "verified": false
+    },
+    {
+      "g": "whatsapp",
+      "leaves": 4,
+      "intent": "TNF WhatsApp Cloud API integration",
+      "mutation": "remote-mutation",
+      "notes": "send posts a real message via the WhatsApp Cloud API; start/stop control the local webhook listener; status is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "message delivery externally checkable in WhatsApp; not independently verified here",
+      "verified": false
+    },
+    {
+      "g": "worktree",
+      "leaves": 4,
+      "intent": "Manage isolated git worktrees for TNF sessions",
+      "mutation": "local-mutation",
+      "notes": "create makes a worktree+branch; remove is destructive (deletes worktree+branch; description confirms it \"refuses to discard work without --force\", implying --force overrides that guard); list/status are read-only.",
+      "owner": "human/agent CLI; this is the same mechanism this census-writing session itself runs inside",
+      "evidence": "git worktree list / git branch are directly checkable",
+      "verified": true
+    },
+    {
+      "g": "ai",
+      "leaves": 3,
+      "intent": "Generic AI launcher: interactive chat / model listing / session start",
+      "mutation": "local-mutation",
+      "notes": "chat/start launch an interactive session; models is read-only.",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "alive",
+      "leaves": 3,
+      "intent": "Activate the persistent TNF stack (daemon + heartbeat sentinel)",
+      "mutation": "local-mutation",
+      "notes": "up/down control persistent local processes; status is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "assimilate",
+      "leaves": 3,
+      "intent": "Route/integrate external AI CLIs and SDKs into TNF",
+      "mutation": "local-mutation",
+      "notes": "link writes to the routing table; run passes a command through an external provider (pass-through, mutation class of the forwarded command); scan runs discovery (writes weights/patterns).",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "auth",
+      "leaves": 3,
+      "intent": "Manage local credentials for configured providers",
+      "mutation": "local-mutation",
+      "notes": "login/logout write/remove local credential store entries (verified: packages/tnf-cli/src/cli.ts:16646-16707, AuthService); list is read-only.",
+      "owner": "human at terminal",
+      "evidence": "local credential store file (AuthService-backed); not located/opened in this pass",
+      "verified": true
+    },
+    {
+      "g": "feedback",
+      "leaves": 3,
+      "intent": "Beta developer feedback submission/tracking",
+      "mutation": "local-mutation",
+      "notes": "submit writes a feedback record; list/status are read-only.",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "goals",
+      "leaves": 3,
+      "intent": "Strategic goals/roadmap tracking",
+      "mutation": "local-mutation",
+      "notes": "create writes a goal record; list/stats are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "heartbeat",
+      "leaves": 3,
+      "intent": "Self-wake heartbeat watchdog over the persistent stack",
+      "mutation": "local-mutation",
+      "notes": "install installs a cron entry (every 5 min per description); remove uninstalls it; run executes one check in foreground. This is an autonomy/injection-adjacent surface (see .agent skill tnf-autonomy-safety-audit).",
+      "owner": "cron (self-installed by `heartbeat install`)",
+      "evidence": "not verified whether the installed cron entry is later confirmed present/healthy anywhere besides `heartbeat run` exit code",
+      "verified": false
+    },
+    {
+      "g": "library",
+      "leaves": 3,
+      "intent": "Virtual Library consolidation/audit/mirror-sync",
+      "mutation": "local-mutation",
+      "notes": "sync mirrors the canonical Virtual Library repo into TNF (dry-run by default, so a real run mutates); audit generates a surface map/report (writes); status is read-only.",
+      "owner": "human/agent CLI; also root scripts tnf:library:audit / tnf:library:sync",
+      "evidence": "generated report/mirror files are checkable",
+      "verified": false
+    },
+    {
+      "g": "master-clock",
+      "leaves": 3,
+      "intent": "Master clock control, provider-routed (local default, CloudRuntime fallback)",
+      "mutation": "local-mutation",
+      "notes": "start starts the clock (locally or via a remote provider adapter -> remote-mutation in that mode); logs/status are read-only.",
+      "owner": "human/agent CLI; also root scripts master-clock / master-clock:dev",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "memory",
+      "leaves": 3,
+      "intent": "Memory provider / cross-agent brain-transcript compaction",
+      "mutation": "local-mutation",
+      "notes": "compact prunes and distills raw multi-agent brain transcripts (Gemini/Claude/Codex) -- potentially destructive if pruning discards the only copy of raw transcripts, not confirmed; audit-drift is read-only (audits congruence, verifies attribution); list is read-only (verified: packages/tnf-cli/src/cli.ts:19809-19822, MemoryProviderService).",
+      "owner": "human/agent CLI",
+      "evidence": "list reads live provider config; compact/audit-drift artifacts not located",
+      "verified": true
+    },
+    {
+      "g": "pi-package",
+      "leaves": 3,
+      "intent": ".pi-style package installer under ~/.pi/agent/packages/",
+      "mutation": "destructive",
+      "notes": "install fetches from npm:/git:/https:// or a local path (remote-mutation for network sources) and bundles into the local package dir; uninstall does a path-validated `fs.rmSync(recursive:true, force:true)` (verified: packages/tnf-cli/src/cli.ts:6596-6616); list is read-only.",
+      "owner": "human at terminal",
+      "evidence": "\"✓ Removed <path>\" printed on success; no separate receipt file -- stdout is the only signal",
+      "verified": true
+    },
+    {
+      "g": "prompt-template",
+      "leaves": 3,
+      "intent": "Discover/expand Markdown prompt templates",
+      "mutation": "read-only",
+      "notes": "list/show/expand all read and print; no writes.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a (read-only)",
+      "verified": false
+    },
+    {
+      "g": "registry",
+      "leaves": 3,
+      "intent": "Agent registry source-of-truth build/check/reconcile",
+      "mutation": "local-mutation",
+      "notes": "build writes the registry snapshot; reconcile reconciles TNF and Claude agent-bank files (writes); check is read-only.",
+      "owner": "human/agent CLI; also root scripts agents:registry:build / agents:registry:refresh-hybrid and cron installer agents:registry:cron:install",
+      "evidence": "registry snapshot file is checkable",
+      "verified": false
+    },
+    {
+      "g": "slash",
+      "leaves": 3,
+      "intent": "List/inspect/run TNF slash commands",
+      "mutation": "unknown",
+      "notes": "run resolves AND EXECUTES a slash command -- pass-through, mutation class equals whatever that slash command does; list/show are read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "depends entirely on the invoked slash command",
+      "verified": false
+    },
+    {
+      "g": "spark",
+      "leaves": 3,
+      "intent": "Optional Gemini Spark / Workspace MCP adapter",
+      "mutation": "read-only",
+      "notes": "Despite the verb names, delegate/sync/status all print guidance/config -- description explicitly says sync is \"guidance: map... to deployer-configured Workspace MCP\", not an actual sync action.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a (read-only)",
+      "verified": false
+    },
+    {
+      "g": "theme",
+      "leaves": 3,
+      "intent": "List/inspect/validate TUI color-token themes",
+      "mutation": "read-only",
+      "notes": "validate performs a schema check only, no write.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "zero-turn",
+      "leaves": 3,
+      "intent": "TNF zero-turn autonomous boot -- indefinite autonomous operation with zero manual turns",
+      "mutation": "local-mutation",
+      "notes": "boot starts an indefinite autonomous loop; stop halts it; status is read-only. Highest-autonomy-implication group by name; worth prioritizing in any authority-tracing follow-up.",
+      "owner": "human/agent CLI at boot time, then self-perpetuating",
+      "evidence": "status presumably reads persisted loop state; not verified",
+      "verified": false
+    },
+    {
+      "g": "channels",
+      "leaves": 2,
+      "intent": "Inspect Slack/WhatsApp channel configuration",
+      "mutation": "read-only",
+      "notes": "path/status both read.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "db",
+      "leaves": 2,
+      "intent": "Interactive sqlite3 shell / arbitrary query, plus JSON->SQLite migration",
+      "mutation": "unknown",
+      "notes": "The bare `db` command itself opens an interactive sqlite3 shell OR runs an arbitrary passed-in query -- mutation class is caller-determined (a write-query makes this local-mutation or destructive); migrate merges JSON data into SQLite (local-mutation, described as additive/\"merges\"); path is read-only.",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "ecosystem",
+      "leaves": 2,
+      "intent": "Authenticated ecosystem orientation / task-scoped hydration snapshots",
+      "mutation": "read-only",
+      "notes": "orient/show both produce snapshots.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "mirror",
+      "leaves": 2,
+      "intent": "iPhone mirroring + AI vision bridge",
+      "mutation": "local-mutation",
+      "notes": "setup installs system dependencies (UxPlay, Python libs); start starts the mirroring server.",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "provider",
+      "leaves": 2,
+      "intent": "Inspect built-in model providers",
+      "mutation": "read-only",
+      "notes": "list/show both read (add/remove explicitly deferred per description).",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "relay",
+      "leaves": 2,
+      "intent": "Relay-core service control/monitoring",
+      "mutation": "local-mutation",
+      "notes": "start starts the relay-core service; monitor watches channels (read-only foreground watch).",
+      "owner": "human/agent CLI; also root scripts relay / relay:start / relay:monitor and launchd via scripts/runtime/relay-service.sh (label com.thenewfuse.relay)",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "scripts",
+      "leaves": 2,
+      "intent": "Discover and run repo scripts / root package scripts through the unified CLI",
+      "mutation": "unknown",
+      "notes": "run is a generic executor for any discovered script or root package script -- mutation class equals whatever that target script does. This is a pass-through amplifier: every entry in Section B/D below is also reachable through `tnf scripts run <name>`.",
+      "owner": "human/agent CLI",
+      "evidence": "depends entirely on the invoked script",
+      "verified": false
+    },
+    {
+      "g": "session",
+      "leaves": 2,
+      "intent": "Manage sessions",
+      "mutation": "destructive",
+      "notes": "delete removes a session; list is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "skill",
+      "leaves": 2,
+      "intent": "Inspect the Agent-Skills discovery surface",
+      "mutation": "read-only",
+      "notes": "list/show both read.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "subdirector",
+      "leaves": 2,
+      "intent": "Local Subdirector (tnf-cli-agent) control-plane cycle/drain",
+      "mutation": "local-mutation",
+      "notes": "cycle runs the cron cycle wrapper (sync+drain+log, writes); drain drains review/direct/specialty queues and acks the watchdog (writes).",
+      "owner": "cron (root script wires this through scripts/runtime/local-subdirector-service.sh, launchd label com.tnf.local-subdirector, found NOT wired via root package.json -- see Section D)",
+      "evidence": "writes to $HOME/.tnf/local-subdirector/{logs,state}; presence of those files is the checkable evidence",
+      "verified": true
+    },
+    {
+      "g": "super-cycle",
+      "leaves": 2,
+      "intent": "Super-cycle event signaling, provider-routed",
+      "mutation": "local-mutation",
+      "notes": "event sends a register/heartbeat/unregister event (remote-mutation if provider-routed to CloudRuntime); status is read-only.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "workspace",
+      "leaves": 2,
+      "intent": "Monorepo package reconnect/availability probing",
+      "mutation": "read-only",
+      "notes": "probe/status both read.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "acp",
+      "leaves": 1,
+      "intent": "Start an ACP (Agent Client Protocol) server; `acp grok` runs Grok as an ACP external agent",
+      "mutation": "local-mutation",
+      "notes": "starts a listening server process.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "agents-specs",
+      "leaves": 1,
+      "intent": "List agent spec files in .agent/agents/",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "agy",
+      "leaves": 1,
+      "intent": "Pass through to the Antigravity Agent CLI",
+      "mutation": "unknown",
+      "notes": "pure pass-through; mutation class of whatever is forwarded.",
+      "owner": "human/agent CLI",
+      "evidence": "depends on forwarded command",
+      "verified": false
+    },
+    {
+      "g": "autonomy",
+      "leaves": 1,
+      "intent": "Print autonomy health rollup (healthy|degraded|critical)",
+      "mutation": "read-only",
+      "notes": "non-zero exit on critical when fail-closed.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "boot",
+      "leaves": 1,
+      "intent": "Master entry point to boot the entire TNF stack",
+      "mutation": "local-mutation",
+      "notes": "starts multiple local processes/services.",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "browser-control",
+      "leaves": 1,
+      "intent": "Serve standalone HTML browser control + federation node panel",
+      "mutation": "local-mutation",
+      "notes": "starts a local server.",
+      "owner": "human/agent CLI; also root script tnf:browser-control",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "capabilities",
+      "leaves": 1,
+      "intent": "Aggregate JSON manifest of all .pi-parity surfaces",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "chat",
+      "leaves": 1,
+      "intent": "Interactive chat session with the TNF Orchestrator (Gemini OAuth)",
+      "mutation": "local-mutation",
+      "notes": "likely writes conversation/session state; primarily interactive.",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "claude",
+      "leaves": 1,
+      "intent": "Pass through to the Claude Code CLI with TNF harness MCP routing",
+      "mutation": "unknown",
+      "notes": "pure pass-through.",
+      "owner": "human at terminal",
+      "evidence": "depends on forwarded command",
+      "verified": false
+    },
+    {
+      "g": "claw",
+      "leaves": 1,
+      "intent": "Alias for `tnf openclaw`",
+      "mutation": "unknown",
+      "notes": "pass-through alias.",
+      "owner": "human at terminal",
+      "evidence": "depends on forwarded command",
+      "verified": false
+    },
+    {
+      "g": "clean",
+      "leaves": 1,
+      "intent": "Remove build artifacts (dist, .next, generated .d.ts/.js.map), Vite caches, stray *.log files",
+      "mutation": "destructive",
+      "notes": "explicit deletion across the repo.",
+      "owner": "human at terminal",
+      "evidence": "files are gone -- verify only by absence",
+      "verified": false
+    },
+    {
+      "g": "commands",
+      "leaves": 1,
+      "intent": "Search the flat command index the palette uses (every CLI path + Markdown commands/agents/skills)",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "completion",
+      "leaves": 1,
+      "intent": "Generate a shell completion script",
+      "mutation": "read-only",
+      "notes": "prints to stdout.",
+      "owner": "human at terminal",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "convo",
+      "leaves": 1,
+      "intent": "Manage conversations",
+      "mutation": "unknown",
+      "notes": "description is a bare noun-phrase; behavior not determinable without reading source.",
+      "owner": "human/agent CLI",
+      "evidence": "could not determine",
+      "verified": false
+    },
+    {
+      "g": "cursor",
+      "leaves": 1,
+      "intent": "Pass through to the Cursor CLI with TNF harness MCP routing",
+      "mutation": "unknown",
+      "notes": "pure pass-through.",
+      "owner": "human at terminal",
+      "evidence": "depends on forwarded command",
+      "verified": false
+    },
+    {
+      "g": "export",
+      "leaves": 1,
+      "intent": "Export session data as JSON",
+      "mutation": "read-only",
+      "notes": "no destination path in description; assumed stdout.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a unless it writes a file (not verified)",
+      "verified": false
+    },
+    {
+      "g": "find",
+      "leaves": 1,
+      "intent": "Search file contents across the monorepo (ripgrep, falls back to grep)",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "forefront",
+      "leaves": 1,
+      "intent": "Bring TNF to the operator forefront: harness, relay, local UI, browser control",
+      "mutation": "local-mutation",
+      "notes": "starts multiple local processes.",
+      "owner": "human at terminal; also root script tnf:forefront",
+      "evidence": "forefront status reads the latest boot receipt (checkable)",
+      "verified": false
+    },
+    {
+      "g": "gateway",
+      "leaves": 1,
+      "intent": "Start the TNF gateway service (persistent LLM-powered relay)",
+      "mutation": "local-mutation",
+      "notes": "starts a listening service.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "gemini",
+      "leaves": 1,
+      "intent": "DEPRECATED pass-through to the Gemini CLI (use `tnf agy`)",
+      "mutation": "unknown",
+      "notes": "pure pass-through.",
+      "owner": "human at terminal",
+      "evidence": "depends on forwarded command",
+      "verified": false
+    },
+    {
+      "g": "growth-audit",
+      "leaves": 1,
+      "intent": "Inventory AI/runtime data growth paths (Hermes, TNF, Cursor, caches); diff vs last snapshot",
+      "mutation": "local-mutation",
+      "notes": "writes a snapshot/diff artifact.",
+      "owner": "human/agent CLI; also root script ops:growth-audit",
+      "evidence": "snapshot file is checkable",
+      "verified": false
+    },
+    {
+      "g": "halt",
+      "leaves": 1,
+      "intent": "Gracefully stop TNF background services started by boot-tnf.sh",
+      "mutation": "local-mutation",
+      "notes": "SIGTERM (or SIGKILL with --force) processes named in .tmp/*.pid, via scripts/stop-tnf.cjs (verified: packages/tnf-cli/src/commands/halt.ts:16-44).",
+      "owner": "human/agent CLI",
+      "evidence": "exit code of scripts/stop-tnf.cjs passed straight through; no separate receipt file observed in halt.ts itself",
+      "verified": true
+    },
+    {
+      "g": "hermes",
+      "leaves": 1,
+      "intent": "Pass through to the Hermes Agent CLI",
+      "mutation": "unknown",
+      "notes": "pure pass-through.",
+      "owner": "human at terminal",
+      "evidence": "depends on forwarded command",
+      "verified": false
+    },
+    {
+      "g": "import",
+      "leaves": 1,
+      "intent": "Import session data from a JSON file or URL",
+      "mutation": "local-mutation",
+      "notes": "remote-mutation in effect if given a URL (fetches external data); writes local session store either way.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "kanban",
+      "leaves": 1,
+      "intent": "Show kanban board status",
+      "mutation": "read-only",
+      "notes": "backed by KanbanService (verified: packages/tnf-cli/src/cli.ts:19796-19807); only a `status` leaf is registered despite the group description mentioning \"operations\".",
+      "owner": "human/agent CLI",
+      "evidence": "reads live board state via KanbanService",
+      "verified": true
+    },
+    {
+      "g": "list",
+      "leaves": 1,
+      "intent": "List all registered agents",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "local-ui",
+      "leaves": 1,
+      "intent": "Boot TNF local UI (web shell or Tauri desktop) with harness + relay",
+      "mutation": "local-mutation",
+      "notes": "starts local processes.",
+      "owner": "human at terminal; also root scripts tnf:local-ui / tnf:local-ui:web / tnf:local-ui:tauri",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "logs",
+      "leaves": 1,
+      "intent": "Tail recent log lines (Hermes parity)",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "mapreduce",
+      "leaves": 1,
+      "intent": "Run a Map-Reduce agent coordination workflow",
+      "mutation": "local-mutation",
+      "notes": "orchestrates multiple agents; mutation class of the aggregate work is unbounded.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "menu",
+      "leaves": 1,
+      "intent": "Show an organized TNF command menu",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human at terminal",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "models",
+      "leaves": 1,
+      "intent": "List all available models",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "onboard",
+      "leaves": 1,
+      "intent": "Run TNF frontload onboarding",
+      "mutation": "local-mutation",
+      "notes": "writes onboarding/session state.",
+      "owner": "human at terminal (also invoked implicitly by cli.ts main() preflight unless skipped via env var)",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "openclaw",
+      "leaves": 1,
+      "intent": "Pass through to an optionally-installed OpenClaw CLI",
+      "mutation": "unknown",
+      "notes": "pure pass-through.",
+      "owner": "human at terminal",
+      "evidence": "depends on forwarded command",
+      "verified": false
+    },
+    {
+      "g": "orchestrate",
+      "leaves": 1,
+      "intent": "Run an agent orchestration workflow from a natural-language goal or legacy workflow name",
+      "mutation": "unknown",
+      "notes": "mutation class of the orchestrated work is unbounded / goal-dependent.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "paths",
+      "leaves": 1,
+      "intent": "List all command paths in the TNF CLI",
+      "mutation": "read-only",
+      "notes": "this is the closest built-in analog to this census's Section A.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "pi",
+      "leaves": 1,
+      "intent": "Pass through to the Pi CLI with TNF harness MCP routing",
+      "mutation": "unknown",
+      "notes": "pure pass-through.",
+      "owner": "human at terminal",
+      "evidence": "depends on forwarded command",
+      "verified": false
+    },
+    {
+      "g": "ports",
+      "leaves": 1,
+      "intent": "Inspect and manage TNF development ports",
+      "mutation": "unknown",
+      "notes": "argument-dependent single command (root package.json calls it as `tnf -- ports conflicts --auto-resolve` and `tnf -- ports preflight --strict`, i.e. subverbs are positional args, not Commander subcommands, so they don't show as separate leaves in the snapshot). Plain status is read-only; --auto-resolve kills processes holding conflicting ports (local-mutation/destructive).",
+      "owner": "human/agent CLI; also root scripts start/predev (which run `ports preflight --strict` and `ports conflicts --auto-resolve` on every `pnpm dev`/`pnpm start`)",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "register",
+      "leaves": 1,
+      "intent": "Register and listen as an agent",
+      "mutation": "local-mutation",
+      "notes": "writes to the agent registry/Redis bus.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "remote",
+      "leaves": 1,
+      "intent": "Enable remote connection for real-time session relay",
+      "mutation": "local-mutation",
+      "notes": "exposes/enables a remote-access surface -- security-relevant.",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "run",
+      "leaves": 1,
+      "intent": "Execute any root package script through the unified TNF CLI",
+      "mutation": "unknown",
+      "notes": "generic executor; mutation class equals whatever root package.json script is named. Every Section B entry below is reachable this way too.",
+      "owner": "human/agent CLI",
+      "evidence": "depends entirely on the invoked script",
+      "verified": false
+    },
+    {
+      "g": "sdk",
+      "leaves": 1,
+      "intent": ".pi SDK parity surface -- report package versions",
+      "mutation": "read-only",
+      "notes": "info-only; RPC binding deferred per description.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "send",
+      "leaves": 1,
+      "intent": "Send a single message (verifies recipient exists and is heartbeating)",
+      "mutation": "local-mutation",
+      "notes": "internal TNF bus message, not an external channel send (those are slack/telegram/whatsapp send, classified separately as remote-mutation).",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "serve",
+      "leaves": 1,
+      "intent": "Start a headless tnf server",
+      "mutation": "local-mutation",
+      "notes": "starts a listening process.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "services",
+      "leaves": 1,
+      "intent": "Health of TNF launchd services -- crash loops, failures, plists present-but-not-loaded",
+      "mutation": "read-only",
+      "notes": "this is a genuinely valuable diagnostic given the documented history of silently-dead launchd jobs.",
+      "owner": "human/agent CLI",
+      "evidence": "n/a (its output IS the evidence-gathering tool for other groups)",
+      "verified": false
+    },
+    {
+      "g": "splash",
+      "leaves": 1,
+      "intent": "Render the TNF branded splash only",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human at terminal",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "state",
+      "leaves": 1,
+      "intent": "Inspect canonical TNF living state / ledger / handoff / runtime snapshot",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "stats",
+      "leaves": 1,
+      "intent": "Show token usage and cost statistics",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "status",
+      "leaves": 1,
+      "intent": "Quick health summary of the TNF stack (Hermes parity)",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "sync",
+      "leaves": 1,
+      "intent": "Audit TNF CLI <-> Hermes top-level surface parity",
+      "mutation": "local-mutation",
+      "notes": "writes ~/.tnf/cli-sync/latest-report.json (confirmed by description); registered directly in cli.ts near the bottom (packages/tnf-cli/src/cli.ts:19749-19761), guarded against double-registration.",
+      "owner": "human/agent CLI",
+      "evidence": "~/.tnf/cli-sync/latest-report.json is directly checkable",
+      "verified": true
+    },
+    {
+      "g": "tree",
+      "leaves": 1,
+      "intent": "Print the monorepo apps/ and packages/ directories as a tree",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "tui",
+      "leaves": 1,
+      "intent": "Launch the TNF TUI agent -- always-on interactive LLM session",
+      "mutation": "local-mutation",
+      "notes": "starts an interactive process; peer-parity with claude/cursor/hermes/codex entry flags.",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "turn-end",
+      "leaves": 1,
+      "intent": "Run Turn End protocol: update LIVING_STATE and SESSION_HANDOFF artifacts",
+      "mutation": "local-mutation",
+      "notes": "writes canonical state files.",
+      "owner": "human/agent CLI",
+      "evidence": "LIVING_STATE / SESSION_HANDOFF files are checkable",
+      "verified": false
+    },
+    {
+      "g": "types",
+      "leaves": 1,
+      "intent": "Command namespace and script type inventory",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "uninstall",
+      "leaves": 1,
+      "intent": "Uninstall tnf and remove all related files",
+      "mutation": "destructive",
+      "notes": "delegates to UpgradeService.uninstall() with no visible confirmation prompt at the CLI layer (verified: packages/tnf-cli/src/cli.ts:18251-18266).",
+      "owner": "human at terminal",
+      "evidence": "success/failure message only; no separate receipt file observed",
+      "verified": true
+    },
+    {
+      "g": "upgrade",
+      "leaves": 1,
+      "intent": "Upgrade tnf to the latest or a specific version",
+      "mutation": "remote-mutation",
+      "notes": "fetches a new version (remote) and overwrites the local install (destructive to the prior install).",
+      "owner": "human at terminal",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "version",
+      "leaves": 1,
+      "intent": "Print TNF CLI version",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "webhook",
+      "leaves": 1,
+      "intent": "List all configured webhooks",
+      "mutation": "read-only",
+      "notes": "backed by WebhookService (verified: packages/tnf-cli/src/cli.ts:19781-19794); only a `list` leaf is registered despite the group description \"Webhook management\" implying more.",
+      "owner": "human/agent CLI",
+      "evidence": "reads live webhook config via WebhookService",
+      "verified": true
+    },
+    {
+      "g": "cron",
+      "leaves": 1,
+      "intent": "List all scheduled jobs (TNF-internal CronService view)",
+      "mutation": "read-only",
+      "notes": "backed by CronService (verified: packages/tnf-cli/src/cli.ts:19703-19716); note this is a DIFFERENT surface from data/protocols/system-processes.json (Section C) -- not verified whether CronService reflects the real OS crontab/launchd or an internal-only record.",
+      "owner": "human/agent CLI",
+      "evidence": "reads CronService state; not verified against actual crontab",
+      "verified": true
+    },
+    {
+      "g": "doctor",
+      "leaves": 1,
+      "intent": "Run TNF diagnostics (`doctor health` runs deeper checks, Hermes parity)",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "federation",
+      "leaves": 1,
+      "intent": "`federation tap`: run a command and mirror its output to a federation channel as intent frames",
+      "mutation": "local-mutation",
+      "notes": "broadcasts/writes the wrapped command's output to a federation channel.",
+      "owner": "human/agent CLI (commands/federation-tap.ts:7)",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "metaskills",
+      "leaves": 1,
+      "intent": "`metaskills audit`: audit meta-skills and scaffolding readiness",
+      "mutation": "read-only",
+      "notes": "may write an audit artifact (not confirmed); also root script tnf:metaskills:audit.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified",
+      "verified": false
+    },
+    {
+      "g": "refresh-context",
+      "leaves": 1,
+      "intent": "Reinject TNF runtime context (protocols + agent tree) into all onboarded agents via the TNF bus",
+      "mutation": "local-mutation",
+      "notes": "broadcasts/pushes context to every onboarded agent over the bus -- a real fan-out mutation, not merely local to the caller.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified whether receiving agents confirm receipt",
+      "verified": false
+    },
+    {
+      "g": "tools",
+      "leaves": 1,
+      "intent": "`tools list`: list all discovered tools/toolsets",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    },
+    {
+      "g": "traits",
+      "leaves": 1,
+      "intent": "`traits list`: list TNF traits for agents and command families",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human/agent CLI",
+      "evidence": "n/a",
+      "verified": false
+    }
+  ],
+  "sectionB_rootPackageScripts": [
+    {
+      "g": "tnf:llm",
+      "count": 11,
+      "intent": "LLM arena intel collection, ranking optimization, fleet-cycle apply, dashboard/report/surface viewing",
+      "mutation": "local-mutation",
+      "notes": "collect/optimize/apply-rankings/fleet-cycle write ranking data and apply model choices; dashboard/report/surface just `open`/`cat` existing files (read-only); tnf:llm:fleet-cycle and tnf:llm:subjects run with TNF_LLM_VERIFY_APPLY=1, i.e. they are explicitly gated to actually apply, not just simulate.",
+      "owner": "cron: tnf-llm-arena-intel-collector / tnf-llm-ranking-optimizer / tnf-llm-verified-fleet-cycle are all in the authoritative system-processes.json catalog (Section C)",
+      "evidence": "data/llm-intel/ranking-report-latest.md and dashboard.html are checkable outputs; sync-hermes has an external target (Hermes) not verified here"
+    },
+    {
+      "g": "tnf:journey / tnf:timeline",
+      "count": 11,
+      "intent": "Personal-archaeology / development-journey evidence extraction and GitHub history narrative generation",
+      "mutation": "local-mutation",
+      "notes": "extract/generate/sync/init/pulse/master-loop/investigator-pulse/digest/blocker-watch all write journey artifacts; --include-default-local-roots variants read from outside the repo (home directory scanning).",
+      "owner": "human/agent CLI",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf:start",
+      "count": 8,
+      "intent": "Start Redis + a specific AI provider wrapper (codex/claude/gemini/cursor/pi)",
+      "mutation": "local-mutation",
+      "notes": "`docker-compose up -d redis && node scripts/tnf-start-ai.cjs <provider>` -- starts local containers/processes.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf:aivi",
+      "count": 6,
+      "intent": "Chrome-extension AI-vision-inventory backend install/start/dev/status/docs-index, store-pack verify/list-assets",
+      "mutation": "local-mutation",
+      "notes": "delegates into apps/chrome-extension package scripts; install/start mutate local env, status/docs-index/verify/list-assets are read-only.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf:harness",
+      "count": 6,
+      "intent": "Boot harness, check status/completeness/supply-chain, uninstall harness cron jobs",
+      "mutation": "local-mutation",
+      "notes": "boot/completeness:provision/supply-chain write state; status/completeness(no --provision) are read-only; tnf:harness:uninstall runs 3 service uninstallers (relay-monitor, terminal-heartbeat-cron, tnf-director-cron) -- a real multi-service teardown.",
+      "owner": "human at terminal, or cron/launchd for the services it tears down",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf:semantic",
+      "count": 5,
+      "intent": "Build/recount/graph/report the semantic-graph concordance and open its dashboard",
+      "mutation": "local-mutation",
+      "notes": "build_all.py variants write to concordance_results/; :open just opens the HTML file (read-only, macOS `open`).",
+      "owner": "human at terminal",
+      "evidence": "concordance_results/index.html is the checkable output"
+    },
+    {
+      "g": "tnf:local",
+      "count": 5,
+      "intent": "Install/start/status/restart/stop TNF local launchd services",
+      "mutation": "local-mutation",
+      "notes": "delegates to scripts/runtime/tnf-local-launchd-services.sh <verb> -- installs/controls real launchd jobs; status is read-only.",
+      "owner": "human at terminal (installer); launchd thereafter",
+      "evidence": "launchd job presence is externally checkable (launchctl list)"
+    },
+    {
+      "g": "tnf:intel",
+      "count": 5,
+      "intent": "Ingest/activate/batch-ingest/dispatch intelligence tasks from Python scripts",
+      "mutation": "local-mutation",
+      "notes": "all write to a task/intelligence queue; dispatch:reconcile reconciles the queue.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf:local-ui",
+      "count": 4,
+      "intent": "Boot local UI (web/Tauri) and build the Tauri desktop app",
+      "mutation": "local-mutation",
+      "notes": "build compiles the Tauri app (apps/tauri-desktop); web/tauri boot local processes.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf:live",
+      "count": 3,
+      "intent": "Live agent-work-check: read, write, or JSON-emit",
+      "mutation": "local-mutation",
+      "notes": ":write mode writes a report; plain/:json are read-only checks.",
+      "owner": "human at terminal; also referenced by scripts/protocols/verify-declarations.cjs family",
+      "evidence": "docs/protocols/reports/LIVE_AGENT_WORK_CHECK_LATEST.{md,json} are checkable outputs (already present in this checkout)"
+    },
+    {
+      "g": "tnf:staffops",
+      "count": 3,
+      "intent": "Install/status/uninstall the staffops cron schedule sync",
+      "mutation": "local-mutation",
+      "notes": "install/uninstall mutate cron; status is read-only.",
+      "owner": "human at terminal (installer); cron thereafter",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf:parity / tnf:install / tnf:store / tnf:ws / tnf:fleet / tnf:forefront / tnf:library",
+      "count": 14,
+      "intent": "Parity audit (soft/strict); install the tnf CLI globally or from local; chrome-extension store-pack verify; federated WS channel check; core federated fleet establish; forefront boot status; virtual-library audit/sync",
+      "mutation": "local-mutation",
+      "notes": "tnf:fleet:establish and tnf:install are the highest-blast-radius members (installs the CLI system-wide / establishes Redis+harness+launchd fleet); :dry variants are read-only.",
+      "owner": "human at terminal",
+      "evidence": "tnf:fleet:establish:dry / non-dry both target the same fleet-establish receipt read by `tnf fleet core-status`"
+    },
+    {
+      "g": "tnf:onboard / tnf:browser-control / tnf:doctor / tnf:frontload:verify / tnf:orchestration:audit / tnf:audit:synergy / tnf:metaskills:audit / tnf:mcp:generate / tnf:tauri:dmg / tnf:dont-die:run / tnf:staffing:cycle / tnf:staff-review:cycle",
+      "count": 12,
+      "intent": "Single-purpose top-level TNF ops: onboarding, doctor diagnostics, frontload state verify, orchestration/synergy/metaskills audits, MCP client generation, DMG packaging, dont-die supervisor run, staffing/staff-review cycles",
+      "mutation": "local-mutation",
+      "notes": "doctor/frontload:verify/audits are read-only checks that also tend to write their own report artifact; mcp:generate and tauri:dmg produce build artifacts; dont-die:run and staffing/staff-review:cycle are cron-driven (staffing/staff-review cycles are literally in the system-processes.json catalog, Section C).",
+      "owner": "mixed: human at terminal for onboard/doctor/dmg; cron for dont-die:run, staffing:cycle, staff-review:cycle",
+      "evidence": "staffing/staff-review cycles have --json output; not independently verified whether anything reads it back"
+    },
+    {
+      "g": "framework-consciousness",
+      "count": 10,
+      "intent": "Run numbered \"phases\" of a self-evolving framework loop, plus init/evolve/guardrail-check/baseline-update",
+      "mutation": "local-mutation",
+      "notes": "guardrails checks against data/framework-consciousness-baseline.json (read-only unless :baseline:update, which overwrites the baseline file); phase2-6/run-phases/evolve execute and presumably write state.",
+      "owner": "human at terminal or an orchestrator loop (not verified which)",
+      "evidence": "baseline file is checkable; individual phase outputs not verified"
+    },
+    {
+      "g": "openclaw:cloud / openclaw:ops / openclaw:oauth",
+      "count": 6,
+      "intent": "Sync Codex/OAuth credentials to OpenClaw cloud tenants, run OpenClaw ops safely, set federation gate mode",
+      "mutation": "remote-mutation",
+      "notes": "these sync credentials/config to REMOTE OpenClaw cloud instances (per the sibling cloud_runtime:* group and user memory on the \"4-Node Mesh\") -- real cross-machine state changes, not local-only.",
+      "owner": "human at terminal",
+      "evidence": "not verified; would need to check the target instances directly"
+    },
+    {
+      "g": "cloud_runtime",
+      "count": 7,
+      "intent": "Sync routing/chain vars and verify adaptive routing against cloud runtime instances; set federation gate mode; check/relay to Zeroclaw",
+      "mutation": "remote-mutation",
+      "notes": "sync-*-vars and set-federation-gate-mode explicitly push config to remote cloud instances; verify-adaptive-routing is a remote read/check.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "ops",
+      "count": 6,
+      "intent": "Wire local env, growth audit, disk retention, hermes-state retention, seed control-plane, sync-to-supabase",
+      "mutation": "local-mutation",
+      "notes": "wire-env/seed-control-plane write local files; disk-retention and hermes:retention are DELETION/pruning operations by name (destructive) -- not independently verified how aggressive; sync-supabase is remote-mutation (writes to a hosted Supabase project); growth-audit is read-only (report).",
+      "owner": "human at terminal, or cron for retention jobs (not confirmed against system-processes.json, which does not list ops:disk-retention or ops:hermes:retention by that name)",
+      "evidence": "growth-audit produces a diffable snapshot; retention scripts not verified for a deletion log"
+    },
+    {
+      "g": "db",
+      "count": 6,
+      "intent": "Drizzle ORM generate/migrate/push/pull/studio/check against $DATABASE_URL",
+      "mutation": "remote-mutation",
+      "notes": "push/migrate directly alter a real (possibly remote/hosted) Postgres schema -- among the highest-consequence entries in the entire root script surface if $DATABASE_URL points at production; pull reads remote schema into local files (still a local write, remote read); studio opens a local UI; check is read-only.",
+      "owner": "human at terminal",
+      "evidence": "no dry-run/confirmation gate visible in the script definitions themselves; Drizzle's own migration history table is the closest thing to a receipt, not verified here"
+    },
+    {
+      "g": "jules",
+      "count": 15,
+      "intent": "Jules autonomous coding-agent loop, PR auto-merge, follow-up supervisor lifecycle, zero-token framework",
+      "mutation": "remote-mutation",
+      "notes": "jules:merge-open merges real GitHub PRs; loop/supervisor*/framework:* run local daemons and write local framework state; cron:install wires a real cron entry (scripts/install-jules-cron.sh).",
+      "owner": "human at terminal (install/start), then cron/supervisor daemon thereafter",
+      "evidence": "GitHub PR merge history is externally checkable"
+    },
+    {
+      "g": "skills",
+      "count": 15,
+      "intent": "Skill-bank sync/ingest/query/retry, supervisor lifecycle, governance-check, manifest build, codex-disclosure-guard, divergence triage",
+      "mutation": "local-mutation",
+      "notes": "sync/ingest/retry-pending/manifest write index files; governance:check/:warn and codex:guard are read-only gates (codex:guard:apply mutates -- rewrites files to fix disclosure issues).",
+      "owner": "human at terminal, or supervisor daemon (skills:bank:supervisor:start)",
+      "evidence": ".agent/skill-bank/skills-index.json is directly checkable (skills:bank:status reads it back and prints generatedAt/totals -- one of the few root scripts with a built-in self-check)"
+    },
+    {
+      "g": "factory",
+      "count": 12,
+      "intent": "Factory boot/supervisor loop, impetus capture/loop/status, blue/website swarm seeding, supercycle flywheel, release-seed",
+      "mutation": "local-mutation",
+      "notes": "boot/supervisor/supercycle run continuous local orchestrator loops; impetus:capture/once/loop write to a capture queue; seed scripts write swarm task files; :once and SUPERVISOR_ONCE=true variants bound a single cycle for testing.",
+      "owner": "human at terminal, or a persistent supervisor process once started",
+      "evidence": "not verified"
+    },
+    {
+      "g": "agents",
+      "count": 12,
+      "intent": "Agent registry build/check/import/refresh-hybrid, cron lifecycle, cloud_runtime auto-import, bank package/reconcile",
+      "mutation": "local-mutation",
+      "notes": "build/import/refresh-hybrid/package/reconcile write registry/bank files; check is read-only; cron:install/uninstall mutate cron; cloud_runtime auto-import pulls from a remote cloud runtime (remote-mutation in effect, writes locally from a remote source).",
+      "owner": "human at terminal (install), cron thereafter (agents:registry:cron:run is the cron-invoked entrypoint)",
+      "evidence": "data/agent-registry/registry_summary.json is a checkable artifact"
+    },
+    {
+      "g": "swarm",
+      "count": 10,
+      "intent": "Roll-call, sim-bidder, project-planner, llm-test flywheel, provider test, cloud-runtime setup/supercycle",
+      "mutation": "local-mutation",
+      "notes": "setup/setup:cloud_runtime write remote cloud runtime config (remote-mutation); supercycle:live/:cloud_runtime run against a live cloud target (remote-mutation); roll-call/sim-bidder/planner/llm-test/provider:test are local simulation/testing (local-mutation, write local state, do not appear to touch external systems except provider:test which calls real LLM provider APIs -- remote read/mutation depending on the call).",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "audit",
+      "count": 8,
+      "intent": "Route audit, journey-integrity audit(+strict), keyword-mentions map, doc-hygiene, pnpm security audit, circular-dependency check (madge), clean-scripts audit",
+      "mutation": "read-only",
+      "notes": "all are check/report generators; several (route-audit, journey-integrity-audit, keyword-mentions-map) write their report as a side effect, which is local-mutation in the narrow sense of \"writes a file\" but does not mutate anything the report is ABOUT.",
+      "owner": "human at terminal, or CI (not verified given GitHub Actions is billing-blocked per user memory)",
+      "evidence": "individual report files, not enumerated here"
+    },
+    {
+      "g": "graph",
+      "count": 8,
+      "intent": "agent-relationship-graph Makefile targets: subgraphs/analytics/neo4j/temporal/alerts/html, plus viz publish/dashboard-metrics",
+      "mutation": "local-mutation",
+      "notes": "graph:neo4j likely writes to a Neo4j database (remote-mutation if that DB is not local); graph:all also runs viz:graph:publish, which -- per its name -- may publish generated artifacts somewhere externally visible; not verified where \"publish\" targets.",
+      "owner": "human at terminal",
+      "evidence": "not verified; \"publish\" target unconfirmed"
+    },
+    {
+      "g": "dev",
+      "count": 7,
+      "intent": "Start dev servers via turbo (all/filtered/api/gateway/frontend/backend), low-memory variant",
+      "mutation": "local-mutation",
+      "notes": "long-running local dev processes; predev (see below) runs port-preflight first.",
+      "owner": "human at terminal",
+      "evidence": "n/a (interactive dev loop)"
+    },
+    {
+      "g": "qa",
+      "count": 7,
+      "intent": "Autonomous QA swarm loop, plus install/start/stop/restart/status/uninstall of the qa-loop-service (cron/launchd)",
+      "mutation": "local-mutation",
+      "notes": "install/start/stop/restart/uninstall mutate a real launchd/cron-controlled service; status/loop-run write QA results locally, do not touch external systems.",
+      "owner": "human at terminal (installer); launchd/cron thereafter",
+      "evidence": "not verified"
+    },
+    {
+      "g": "searxng",
+      "count": 6,
+      "intent": "Docker-compose up/down/logs/health for the local SearXNG search instance",
+      "mutation": "local-mutation",
+      "notes": "up/down/stop start or stop local containers; logs is read-only tail; health is a read-only curl.",
+      "owner": "human at terminal",
+      "evidence": "`docker compose ps` / health curl are checkable"
+    },
+    {
+      "g": "handoff / ownership / conflict / gitlink",
+      "count": 12,
+      "intent": "Session-handoff emit/pre-push gate, packet-lifecycle sweep, ownership-ledger emit, change-tier classify, gitlink reachability verify",
+      "mutation": "local-mutation",
+      "notes": "these are the git-hook-invoked protocol gates (handoff:pre-push, ownership:ledger:emit:ci, conflict:tier:ci, gitlink:reachability:verify:ci) -- per user memory (\"Handoff emit overwrites the directive\"), handoff:emit has a documented footgun where the first next-action becomes the LIVING_STATE Current Directive.",
+      "owner": "git pre-push hook (local) and CI (:ci variants, though CI is billing-blocked per user memory, so :ci invocation may not actually be running anywhere right now)",
+      "evidence": "emitted artifacts (SESSION_HANDOFF_LATEST.json, CHANGE_OWNERSHIP.jsonl) are checkable"
+    },
+    {
+      "g": "validate:* (protocol/session/turn-zero/etc.)",
+      "count": 18,
+      "intent": "Protocol/schema/session-handoff/build/release-train/doc-tagging/locked-doc-ledger/federation-gate/twip/master-clock/dont-die validation gates",
+      "mutation": "read-only",
+      "notes": "exit-code gates; validate:locked-doc-ledger:ci and a few others may write a report as a side effect. Per docs/protocols/reports/silent-failure-audit-2026-08-05.md (cited directly from scripts/protocols/verify-declarations.cjs), this exact class of gate has a documented history of passing by finding nothing rather than because nothing was wrong -- treat green output here with the same skepticism the codebase's own audit applies to itself.",
+      "owner": "git hooks (pre-push) and CI (billing-blocked, so effectively human-invoked only right now)",
+      "evidence": "no evidence beyond exit code for most; a few write reports"
+    },
+    {
+      "g": "build:*",
+      "count": 28,
+      "intent": "turbo-orchestrated build across all/filtered packages, memory-optimized/staged/low-memory variants, production/cloud_runtime builds, analyze/recommend/benchmark/cleanup memory tooling",
+      "mutation": "local-mutation",
+      "notes": "writes dist/ build artifacts across the monorepo; build:analyze-memory/build:recommend-strategy/build:benchmark are read-only (print info, no build); build:cleanup explicitly frees memory/cache (local-mutation, not destructive to source).",
+      "owner": "human at terminal, or turbo cache",
+      "evidence": "dist/ output presence; this worktree currently has NO dist/ for tnf-cli (see methodology note -- could not run --dump-command-surface live because of this)"
+    },
+    {
+      "g": "test:*",
+      "count": 18,
+      "intent": "turbo-orchestrated unit/integration/e2e/coverage/watch test runs, memory-optimized variants",
+      "mutation": "local-mutation",
+      "notes": "writes test-results/coverage artifacts as a side effect; does not mutate source or external systems (except e2e, which drives a real browser via Playwright and may hit local dev servers).",
+      "owner": "human at terminal, or CI (billing-blocked)",
+      "evidence": "coverage/test-results output"
+    },
+    {
+      "g": "lint:*",
+      "count": 5,
+      "intent": "ESLint check, --fix, staged lint-staged retry",
+      "mutation": "local-mutation",
+      "notes": "lint (check-only) is read-only; lint:fix and lint:staged REWRITE source files in place.",
+      "owner": "human at terminal, or a git pre-commit hook (lint:staged, referenced by user memory \"Shared-checkout index hazard: lint-staged re-stages stale protocol docs after every commit\")",
+      "evidence": "git diff after the fact is the evidence; per user memory this has caused unintended re-staging of stale docs"
+    },
+    {
+      "g": "privacy:guard / secret:sweep / docs:pii:guard / agent:pii-gate / agent:pii-repro / supabase:rls",
+      "count": 14,
+      "intent": "Staged/pre-push/repo-wide privacy, secret, and PII guards; production PII gate; Supabase Row-Level-Security audit(+strict)/baseline-update",
+      "mutation": "read-only",
+      "notes": "all are scanning/check gates; :baseline:update variants (supabase:rls) overwrite the baseline file (local-mutation).",
+      "owner": "git hooks (staged/pre-push variants) and human at terminal (repo variants)",
+      "evidence": "exit code only, except baseline files"
+    },
+    {
+      "g": "format:*",
+      "count": 4,
+      "intent": "turbo-orchestrated Prettier format/check, plus root-level format:root (`prettier --write .`)",
+      "mutation": "destructive",
+      "notes": "format:root rewrites every file in the repo matched by the Prettier config in a single invocation -- the single highest-blast-radius non-deletion command in the root script surface by file count touched.",
+      "owner": "human at terminal",
+      "evidence": "git diff after the fact"
+    },
+    {
+      "g": "clean:*",
+      "count": 5,
+      "intent": "turbo clean, root-level rimraf of build outputs, clean:all (rm -rf all node_modules + reinstall), clean:cache, clean:deps",
+      "mutation": "destructive",
+      "notes": "clean:all is explicit and total: `rm -rf node_modules packages/*/node_modules apps/*/node_modules && pnpm install` -- the highest-blast-radius deletion command in the root script surface.",
+      "owner": "human at terminal",
+      "evidence": "directory absence + reinstall log"
+    },
+    {
+      "g": "docker:* / docker-compose",
+      "count": 5,
+      "intent": "Start/stop/status/logs for the dev-simple docker-compose stack, plus a docker integration test runner",
+      "mutation": "local-mutation",
+      "notes": "start/stop mutate local container state; status/logs are read-only.",
+      "owner": "human at terminal",
+      "evidence": "`docker-compose ps` is checkable"
+    },
+    {
+      "g": "release / validate:release-train",
+      "count": 5,
+      "intent": "Release-gate checks (+strict, +smoke), bundle-size check",
+      "mutation": "local-mutation",
+      "notes": "release:gate writes a gate report; :strict:smoke additionally hits a real API for a smoke test (remote read, RUN_API_SMOKE=1-gated).",
+      "owner": "human at terminal, or CI (billing-blocked)",
+      "evidence": "gate report file"
+    },
+    {
+      "g": "sync:repos / lineage",
+      "count": 8,
+      "intent": "Sync between multiple TNF repos (open/control/dry-run variants), audit repo parity, bundle/verify open-source lineage, check proprietary leakage",
+      "mutation": "remote-mutation",
+      "notes": "sync:repos (non-dry-run) can push/pull between the private and PUBLIC The-New-Fuse remotes -- directly relevant to the user memory \"TNF repo name collision + public sync\" and the proprietary-leakage checker existing specifically because that boundary has been crossed before.",
+      "owner": "human at terminal",
+      "evidence": "git log on the target remote is the real evidence; not independently checked here"
+    },
+    {
+      "g": "graph / viz",
+      "count": 3,
+      "intent": "(see graph:* above) plus standalone viz:generate CLI",
+      "mutation": "local-mutation",
+      "notes": "",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "contracts",
+      "count": 3,
+      "intent": "Generate/check protocol-contracts package (generate:all, check, check:drift)",
+      "mutation": "local-mutation",
+      "notes": "generate:all writes generated contract code; check/check:drift are read-only.",
+      "owner": "human at terminal",
+      "evidence": "generated files under the protocol-contracts package"
+    },
+    {
+      "g": "workflow:*",
+      "count": 3,
+      "intent": "turbo dev/build/test scoped to the workflow-engine + frontend/api slice",
+      "mutation": "local-mutation",
+      "notes": "same semantics as the top-level dev/build/test groups, narrowed by --filter.",
+      "owner": "human at terminal",
+      "evidence": "n/a"
+    },
+    {
+      "g": "mcp:* (root)",
+      "count": 2,
+      "intent": "Run the MCP API wrapper launcher / a one-shot tools/list smoke test",
+      "mutation": "local-mutation",
+      "notes": "starts a local MCP server process; test-wrapper pipes one JSON-RPC call in and exits.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "openapi:*",
+      "count": 2,
+      "intent": "Snapshot the OpenAPI docs JSON, check for drift against the snapshot",
+      "mutation": "local-mutation",
+      "notes": "snapshot writes the snapshot file; check is read-only.",
+      "owner": "human at terminal, or CI",
+      "evidence": "snapshot file"
+    },
+    {
+      "g": "cloudflare:zeroclaw:relay",
+      "count": 2,
+      "intent": "Local dev server for the Cloudflare zeroclaw relay worker; deploy to Cloudflare",
+      "mutation": "remote-mutation",
+      "notes": ":deploy pushes a real Cloudflare Worker deployment -- external infrastructure change.",
+      "owner": "human at terminal",
+      "evidence": "Cloudflare dashboard/API would confirm; not checked here"
+    },
+    {
+      "g": "product:*",
+      "count": 2,
+      "intent": "Check member-storage and personal-data-location policy compliance",
+      "mutation": "read-only",
+      "notes": "directly relevant to user memory \"Personal data stays in its own repo\" -- these are exactly the automated checks for that rule.",
+      "owner": "human at terminal, or CI",
+      "evidence": "exit code only"
+    },
+    {
+      "g": "master-clock / broker-agent / director-agent / relay / orchestrate / workflow-router:dev",
+      "count": 9,
+      "intent": "relay-core package entry points: master clock, broker agent, director agent, relay, orchestrator, workflow router (each with a :dev ts-node variant)",
+      "mutation": "local-mutation",
+      "notes": "each starts a real long-running local process; :dev variants run against source via ts-node instead of a build.",
+      "owner": "human at terminal, or launchd for relay (scripts/runtime/relay-service.sh, label com.thenewfuse.relay -- NOT wired via this exact script name, see Section D)",
+      "evidence": "not verified"
+    },
+    {
+      "g": "discord:bot:setup",
+      "count": 1,
+      "intent": "Register/configure a Discord bot",
+      "mutation": "remote-mutation",
+      "notes": "writes bot configuration to Discord's API.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "improver:scan / scout:scan / scout:knowledge:complete / scout:planning:drain",
+      "count": 4,
+      "intent": "Self-improvement scanner; news-scout swarm scan; knowledge-scout completion; planning-queue drain (both scout:* Redis-backed against TNF_LOCAL_REDIS_URL)",
+      "mutation": "local-mutation",
+      "notes": "writes to local Redis-backed queues/state.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "watchdog:model:consume",
+      "count": 1,
+      "intent": "Consume model-watchdog failover events",
+      "mutation": "local-mutation",
+      "notes": "processes a queue, likely triggers model failover switching (config write).",
+      "owner": "human at terminal, or a supervisor loop",
+      "evidence": "not verified"
+    },
+    {
+      "g": "flywheel:production(:loop)",
+      "count": 2,
+      "intent": "Production-ready flywheel orchestrator, continuous loop variant (LOOP_INTERVAL env)",
+      "mutation": "local-mutation",
+      "notes": "continuous local orchestration loop.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "joy",
+      "count": 1,
+      "intent": "scripts/improver/joy.js -- name and purpose not evident from the script name alone",
+      "mutation": "unknown",
+      "notes": "could not determine intent from the package.json entry alone; flagged rather than guessed.",
+      "owner": "human at terminal",
+      "evidence": "could not determine"
+    },
+    {
+      "g": "notebooklm:export",
+      "count": 1,
+      "intent": "Export notebooks (presumably to/from NotebookLM)",
+      "mutation": "local-mutation",
+      "notes": "writes export files locally; not verified whether it also pushes to a remote NotebookLM account.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "postinstall / prepare / predev / pretest / prebuild",
+      "count": 5,
+      "intent": "pnpm lifecycle hooks: native-module setup, husky + mutation-guard-hook install, port preflight before dev, pre-build check + port preflight before test, pre-build check before build",
+      "mutation": "local-mutation",
+      "notes": "prepare writes to .git/hooks (husky) and installs the mutation-guard hook -- runs on every `pnpm install` in this and every other clone/worktree; predev/pretest run `ports preflight --strict`, which can terminate processes holding conflicting ports if TNF_ALLOW_PROTECTED_PORT_TERMINATION=true.",
+      "owner": "pnpm itself (automatic lifecycle hooks, not directly human-invoked)",
+      "evidence": "not verified"
+    },
+    {
+      "g": "start",
+      "count": 1,
+      "intent": "Resolve port conflicts (optionally including protected ports) then run dev",
+      "mutation": "local-mutation",
+      "notes": "can auto-kill processes holding conflicting ports before starting dev servers.",
+      "owner": "human at terminal",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf-agent",
+      "count": 1,
+      "intent": "Alias for `pnpm run tnf --` (i.e. invokes the tnf-cli binary directly)",
+      "mutation": "unknown",
+      "notes": "pure pass-through into Section A's entire command surface.",
+      "owner": "human/agent CLI",
+      "evidence": "depends on the forwarded tnf-cli command"
+    },
+    {
+      "g": "local-runtime:guard / cleanroom:guard",
+      "count": 2,
+      "intent": "Validate the local-runtime and cleanroom architectural boundaries",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human at terminal, or CI",
+      "evidence": "exit code only"
+    },
+    {
+      "g": "lint:api / lint:frontend",
+      "count": 2,
+      "intent": "ESLint scoped to apps/api and apps/frontend",
+      "mutation": "read-only",
+      "notes": "no --fix flag used here.",
+      "owner": "human at terminal",
+      "evidence": "n/a"
+    },
+    {
+      "g": "clear-ports / ports:*",
+      "count": 5,
+      "intent": "Kill processes on conflicting dev ports (clear-ports, ports:conflicts:resolve); status/health checks",
+      "mutation": "destructive",
+      "notes": "ports:conflicts:resolve --auto-resolve and clear-ports both explicitly terminate other processes by port -- can kill something not started by TNF if a port collides.",
+      "owner": "human at terminal, or automatically via predev/start (see above)",
+      "evidence": "process list before/after; not verified whether anything logs what was killed"
+    },
+    {
+      "g": "check-build / validate:build / build:verify",
+      "count": 3,
+      "intent": "Post-build status/validation checks",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human at terminal, or CI",
+      "evidence": "exit code only"
+    },
+    {
+      "g": "health-check(:full)",
+      "count": 2,
+      "intent": "Composite gate: type-check + test + build (+ validate:clean-scripts + validate:build for :full)",
+      "mutation": "local-mutation",
+      "notes": "inherits the mutation profile of its constituent scripts (build writes dist/, test writes coverage).",
+      "owner": "human at terminal, or CI",
+      "evidence": "composed from constituent evidence"
+    },
+    {
+      "g": "git:sync-check / git:status / git:push-check",
+      "count": 3,
+      "intent": "Informational git state checks: sync status, unpushed-commit warning",
+      "mutation": "read-only",
+      "notes": "git:push-check warns but does not push.",
+      "owner": "human at terminal",
+      "evidence": "n/a"
+    },
+    {
+      "g": "twip:sign",
+      "count": 1,
+      "intent": "Sign a TWIP (The Web Interoperability Protocol) envelope",
+      "mutation": "local-mutation",
+      "notes": "cryptographic signing operation, writes a signature.",
+      "owner": "human/agent CLI",
+      "evidence": "not verified"
+    },
+    {
+      "g": "merge:guard / authority:surface:staged / handoff:gate:staged / guard:mutation",
+      "count": 4,
+      "intent": "Pre-merge / pre-commit protective gates: merge guard, authority-surface staged check, handoff gate, workspace-mutation-guard self-check",
+      "mutation": "read-only",
+      "notes": "these are exactly the gates that govern whether an agent (including this census-writing session) is allowed to touch authority files -- see user memory \"Agent self-edit gate\". guard:mutation --check is the mechanism that blocked one of this session's own shell commands earlier in this task (loops over multi-line file lists were refused as \"too complex to verify... stays inside the worktree\").",
+      "owner": "git hooks (pre-commit/pre-push/staged), and directly observed acting on this very session",
+      "evidence": "directly observed: this session's own Bash tool calls were refused twice by this exact class of guard"
+    },
+    {
+      "g": "reports:lifecycle",
+      "count": 1,
+      "intent": "Report lifecycle management (rotation, metadata) -- root-script twin of `tnf reports`",
+      "mutation": "local-mutation",
+      "notes": "",
+      "owner": "human at terminal, or cron",
+      "evidence": "not verified"
+    },
+    {
+      "g": "voice:drift-audit",
+      "count": 1,
+      "intent": "Audit voice-subsystem behavior drift",
+      "mutation": "read-only",
+      "notes": "relevant to user memory \"VLB voice subsystem is an uncommitted atomic unit\" -- this audit would not see uncommitted changes in a DIFFERENT checkout.",
+      "owner": "human at terminal",
+      "evidence": "audit report, not located"
+    },
+    {
+      "g": "setup:native-modules / fix:native-modules",
+      "count": 2,
+      "intent": "Set up / repair native Node modules",
+      "mutation": "local-mutation",
+      "notes": "",
+      "owner": "human at terminal, or postinstall chain",
+      "evidence": "not verified"
+    },
+    {
+      "g": "tnf",
+      "count": 1,
+      "intent": "`node --import tsx packages/tnf-cli/src/cli.ts` -- the direct, unbuilt entrypoint into the entire tnf-cli command tree (Section A)",
+      "mutation": "unknown",
+      "notes": "pure pass-through into every command in Section A; this is literally how `pnpm run tnf -- <anything>` and `pnpm run tnf-agent` reach the CLI.",
+      "owner": "human at terminal, and indirectly every other root script that shells out via `pnpm run tnf --` (start, predev, pretest)",
+      "evidence": "depends on the invoked tnf-cli subcommand"
+    },
+    {
+      "g": "type-check(:watch)",
+      "count": 2,
+      "intent": "turbo-orchestrated TypeScript type-check across apps/packages",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human at terminal, or CI",
+      "evidence": "n/a"
+    },
+    {
+      "g": "verify / verify:features / verify:honest-failure",
+      "count": 3,
+      "intent": "Run scripts/verify-features.sh; check for success-masking patterns in source (the documented \"fabricated results\" defect class)",
+      "mutation": "read-only",
+      "notes": "verify:honest-failure is the general-purpose sibling of scripts/protocols/verify-declarations.cjs -- both exist to catch the codebase's own documented history of commands reporting success without doing the work.",
+      "owner": "human at terminal, or CI",
+      "evidence": "exit code only"
+    },
+    {
+      "g": "gate:pi-bridge",
+      "count": 1,
+      "intent": "Composite gate: validate:pi-bridge + validate:model-watchdog-failover + relay-core type-check",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human at terminal, or CI",
+      "evidence": "composed from constituent evidence"
+    },
+    {
+      "g": "smoke:pi-bridge(:json/:failures)",
+      "count": 3,
+      "intent": "Smoke-test the pi-bridge integration; JSON output variant; failure-matrix report",
+      "mutation": "read-only",
+      "notes": "",
+      "owner": "human at terminal",
+      "evidence": "n/a"
+    },
+    {
+      "g": "docs:links:repair",
+      "count": 1,
+      "intent": "Repair broken documentation links",
+      "mutation": "local-mutation",
+      "notes": "rewrites doc files in place to fix links.",
+      "owner": "human at terminal",
+      "evidence": "git diff after the fact"
+    }
+  ],
+  "sectionC_systemCronJobs": [
+    {
+      "id": "tnf-auto-git-push",
+      "active": true,
+      "cadence": "0 * * * *",
+      "title": "TNF Auto Git Push",
+      "intent": "Pushes queued local commits on the working branch.",
+      "command": "bash scripts/orchestrator/auto-git-push.sh",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-director-resonance-cycle",
+      "active": false,
+      "cadence": "manual",
+      "title": "Director Resonance Cycle",
+      "intent": "UNRESOLVED: recovered catalog entry self-referenced the runner; no implementing script located. Disabled pending a real command.",
+      "command": "N/A (manual/no runNow)",
+      "mutation": "local-mutation",
+      "owner": "manual / inactive",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-growth-blocker-audit",
+      "active": true,
+      "cadence": "0 */4 * * *",
+      "title": "TNF Growth Blocker Audit",
+      "intent": "Audits systemic growth blockers and emits a prioritized remediation scorecard.",
+      "command": "node .skills/tnf-growth-blocker-auditor/scripts/run_growth_blocker_audit.cjs",
+      "mutation": "read-only",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-llm-arena-intel-collector",
+      "active": true,
+      "cadence": "0 */4 * * *",
+      "title": "LLM Arena Intel Collector",
+      "intent": "Collects LLM intelligence from arena rankings and provider status feeds.",
+      "command": "node scripts/llm-intel/llm-arena-intel-collector.cjs",
+      "mutation": "read-only",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-llm-ranking-optimizer",
+      "active": true,
+      "cadence": "30 */4 * * *",
+      "title": "LLM Ranking Optimizer",
+      "intent": "Recomputes provider/model ranking preferences from collected arena intelligence.",
+      "command": "node scripts/llm-intel/llm-ranking-optimizer.cjs",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-llm-verified-fleet-cycle",
+      "active": true,
+      "cadence": "0 */6 * * *",
+      "title": "TNF LLM Verified Fleet Cycle",
+      "intent": "TNF-first scout → capability tester → subject agent validation → apply verified winners to ~/.tnf model-providers + provider-config. Live /v1/models only; no hardcoded preference authority.",
+      "command": "node scripts/llm-intel/tnf-llm-verified-fleet-cycle.cjs",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-marketplace-curation-cycle",
+      "active": true,
+      "cadence": "*/30 * * * *",
+      "title": "TNF Marketplace Curation Cycle",
+      "intent": "Curates marketplace listings and refreshes catalog metadata.",
+      "command": "bash scripts/orchestrator/marketplace-curation-agent.sh",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-master-clock-super-cycle",
+      "active": true,
+      "cadence": "*/15 * * * *",
+      "title": "TNF Master Clock Super Cycle",
+      "intent": "Canonical system-wide federation and orchestration gate verification cycle for the TNF control plane.",
+      "command": "node scripts/protocols/synthetic-federation-gate-check.cjs --json",
+      "mutation": "read-only",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-openclaw-runtime-sync",
+      "active": true,
+      "cadence": "*/15 * * * *",
+      "title": "OpenClaw Runtime Sync",
+      "intent": "Reconciles OpenClaw gateway cron/instance state into the chronological control-plane snapshot.",
+      "command": "node scripts/openclaw/tnf-openclaw-control.cjs sync-control-plane",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-process-health-watchdog",
+      "active": true,
+      "cadence": "*/30 * * * *",
+      "title": "Process Health Watchdog",
+      "intent": "Surfaces chronological processes that are failing or have silently stopped running, and writes findings to ~/.tnf/alerts.json (read at every session start per Turn Zero).",
+      "command": "node scripts/protocols/verify-process-health.cjs",
+      "mutation": "read-only",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-self-improvement-scorecard",
+      "active": true,
+      "cadence": "0 */6 * * *",
+      "title": "TNF Self Improvement Scorecard",
+      "intent": "Protocol and schema conformance loop that keeps the canonical reliability and self-improvement envelope healthy.",
+      "command": "node scripts/validate-protocol-schemas.cjs",
+      "mutation": "read-only",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-staff-review-cycle",
+      "active": true,
+      "cadence": "15 */2 * * *",
+      "title": "TNF Staff Review Cycle",
+      "intent": "Periodic review of agent staff performance, ownership and role fit.",
+      "command": "node .skills/tnf-staff-review-agent/scripts/run_staff_review_cycle.cjs",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-staff-role-call-and-scheduling",
+      "active": true,
+      "cadence": "*/20 * * * *",
+      "title": "TNF Staff Role Call and Scheduling",
+      "intent": "Roll-call of registered agent staff and reconciliation of the master schedule.",
+      "command": "node scripts/protocols/staffops-role-call.cjs",
+      "mutation": "read-only",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-staffing-director-cycle",
+      "active": true,
+      "cadence": "30 */6 * * *",
+      "title": "TNF Staffing Director Cycle",
+      "intent": "Staffing architecture cycle that proposes agent roster and ownership changes.",
+      "command": "node .skills/tnf-staffing-director-agent/scripts/run_staffing_director_cycle.cjs",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-subdirector-codegen-worker",
+      "active": true,
+      "cadence": "manual",
+      "title": "Subdirector Codegen Worker",
+      "intent": "Drains the codegen work queue for the subdirector fleet.",
+      "command": "bash scripts/agents/subdirector-codegen-worker-cycle.sh",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-subdirector-infra-worker",
+      "active": true,
+      "cadence": "manual",
+      "title": "Subdirector Infra Worker",
+      "intent": "Drains the infrastructure work queue for the subdirector fleet.",
+      "command": "bash scripts/agents/subdirector-infra-worker-cycle.sh",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-swarm-stress-test",
+      "active": true,
+      "cadence": "*/10 * * * *",
+      "title": "TNF Swarm Stress Test",
+      "intent": "Exercises the agent swarm under load and records reliability signals.",
+      "command": "bash scripts/orchestrator/swarm-stress-test.sh",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-terminal-awareness-reminder",
+      "active": true,
+      "cadence": "*/30 * * * *",
+      "title": "Terminal Awareness Reminder",
+      "intent": "Procedural frontload/terminal context reminder loop that validates handoff and shell-start context hygiene.",
+      "command": "bash scripts/verify_frontload_state.sh --json",
+      "mutation": "read-only",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-terminal-heartbeat-pulse",
+      "active": true,
+      "cadence": "* * * * *",
+      "title": "TNF Terminal Heartbeat Pulse",
+      "intent": "Minute-cadence terminal heartbeat under the Operator Terminal Inviolability Protocol (D24).",
+      "command": "node scripts/runtime/terminal-heartbeat-pulse.cjs",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    },
+    {
+      "id": "tnf-twip-macro-board-refresh",
+      "active": true,
+      "cadence": "*/10 * * * *",
+      "title": "TWIP Macro Board Refresh",
+      "intent": "Procedural scan and refresh loop that updates terminal macro-board state and visualization artifacts.",
+      "command": "node scripts/protocols/twip-macro-board.cjs --json",
+      "mutation": "local-mutation",
+      "owner": "cron (SUPER_ADMIN system schedule, data/protocols/system-processes.json)",
+      "evidence": "entry exists in the git-tracked system-processes.json catalog; whether the schedule is ACTUALLY installed in the live crontab on this or any machine is NOT verifiable from repo state alone (the merged/generated cron-jobs.registry.json that would prove live installation is gitignored and absent from this checkout)"
+    }
+  ],
+  "sectionD_standaloneServiceScripts": [
+    {
+      "path": "scripts/claude-ping-cli.sh",
+      "intent": "CLI wrapper around an AppleScript-based \"Claude Ping Controller\" (macOS UI automation)",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (no cron/launchd install verb found in this script itself)",
+      "evidence": "writes /tmp/claude_ping_unified.log + .pid; documented in docs/claude-ping-controller-unified-docs.md"
+    },
+    {
+      "path": "scripts/pi-wrapper-ctl.sh",
+      "intent": "start/stop/restart/status control for the \"Pi Redis Wrapper\" launchd daemon (com.tnf.pi-redis-wrapper)",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (launchctl load/unload); the daemon itself then runs under launchd",
+      "evidence": "launchctl list | grep com.tnf.pi-redis-wrapper; stdout/stderr logs at /tmp/pi-wrapper-{stdout,stderr}.log"
+    },
+    {
+      "path": "scripts/protocols/verify-declarations.cjs",
+      "intent": "Reconcile declared control-plane references (catalogs, cron entries, provider lists, Dockerfiles) against what actually exists on disk",
+      "mutation": "read-only",
+      "owner": "human at terminal, or cron (not confirmed which)",
+      "evidence": "exit 0/1/2 semantics explicitly designed to never conflate \"found no problems\" with \"looked in the wrong place\" (source comment, lines 24-31) -- this script exists BECAUSE the class of failure this whole census is trying to avoid (declared-vs-actual drift) went undetected for ~11 weeks per its own header"
+    },
+    {
+      "path": "scripts/protocols/verify-process-health.cjs",
+      "intent": "Watch the chronological control plane for scheduled processes that are failing OR have gone silently stale (still \"running\" per last-good status, but not actually executing)",
+      "mutation": "local-mutation",
+      "owner": "intended to be cron-driven (per its own header comment); IS in fact cron job tnf-process-health-watchdog in system-processes.json (Section C, cadence */30 * * * *)",
+      "evidence": "writes findings to ~/.tnf/alerts.json, which Turn Zero Mandate and Kilo Gate 0 are both documented to read on session start -- one of the few scripts in this census with an explicit, named consumer of its output"
+    },
+    {
+      "path": "scripts/runtime/agent-poll-cron.sh",
+      "intent": "install/uninstall/status for a generic cron-driven agent-poll-pulse wrapper with backoff/jitter/stale-lock recovery",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (install/uninstall); cron thereafter for any job it installs",
+      "evidence": "per-job state under the poll pulse script; not independently verified"
+    },
+    {
+      "path": "scripts/runtime/local-subdirector-service.sh",
+      "intent": "Install/control a launchd LaunchAgent (com.tnf.local-subdirector) that runs the Local Subdirector runtime out of $HOME/.tnf/local-subdirector, mirrored from scripts/runtime/local-subdirector-runtime.cjs",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (install); launchd thereafter",
+      "evidence": "$HOME/.tnf/local-subdirector/{logs,state}; this is the runtime behind `tnf subdirector cycle/drain` (Section A)"
+    },
+    {
+      "path": "scripts/runtime/redis-connection-guard-cron.sh",
+      "intent": "install/uninstall/status/run-once for a 5-minute cron guard against Redis maxclients saturation",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (install); cron thereafter",
+      "evidence": "$HOME/.tnf/redis-guard/logs/cron.log; directly relevant to user memory \"Redis bus doom loop\" -- this is one of the fixes for that recurring incident"
+    },
+    {
+      "path": "scripts/runtime/redis-local-bootstrap.sh",
+      "intent": "start/restart/status/gate/guard/reap/launchd-install local Redis with TNF fleet-safe defaults (maxclients, maxmemory, idle-timeout)",
+      "mutation": "local-mutation",
+      "owner": "human at terminal, or launchd (com.thenewfuse.redis-tnf-bus) once installed",
+      "evidence": "redis-cli PING / CLIENT LIST are checkable"
+    },
+    {
+      "path": "scripts/runtime/relay-service.sh",
+      "intent": "launchd-persist the standalone TNF relay (default :3007) so it survives shell exit",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (install); launchd (com.thenewfuse.relay) thereafter",
+      "evidence": "launchctl list; $HOME/.tnf/relay/logs"
+    },
+    {
+      "path": "scripts/runtime/repair-tnf-failing-services.sh",
+      "intent": "Detect and repair TNF services in a crash-loop or failed state",
+      "mutation": "local-mutation",
+      "owner": "human at terminal, or invoked by another supervisor (not confirmed)",
+      "evidence": "not verified"
+    },
+    {
+      "path": "scripts/runtime/subdirector-autopilot-service.sh",
+      "intent": "Install/control a launchd LaunchAgent (com.tnf.subdirector-autopilot) running a 30s-interval subdirector-cycle-check loop",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (install); launchd thereafter",
+      "evidence": "logs/sub-director-autopilot-loop.jsonl"
+    },
+    {
+      "path": "scripts/runtime/tnf-agent-daemon-launchd.sh",
+      "intent": "Install/start/stop the TNF agent daemon (Python, scripts/agents/tnf-agent-daemon.py) as launchd LaunchAgent com.tnf.agent-daemon, wrapped with a Redis-guard preflight",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (install); launchd thereafter",
+      "evidence": "$TNF_HOME/logs; preflight is gated on Redis budget health via redis-connection-guard.cjs --preflight"
+    },
+    {
+      "path": "scripts/runtime/tnf-master-heartbeat-service.sh",
+      "intent": "Install/control a launchd LaunchAgent (com.tnf.master-heartbeat) running the master heartbeat loop from the live repo (preferred) or a mirrored $HOME/.tnf copy",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (install); launchd thereafter",
+      "evidence": "directly relevant to user memory \"TNF terminal heartbeat injection\" -- this is a keystroke/prompt-injection-capable daemon per the tnf-autonomy-safety-audit skill's explicit trigger list (terminal-heartbeat-pulse.cjs)"
+    },
+    {
+      "path": "scripts/runtime/voice-bridge-service.sh",
+      "intent": "Install/control a launchd LaunchAgent (com.tnf.voice-bridge-server) running the Python voice_server.py",
+      "mutation": "local-mutation",
+      "owner": "human at terminal (install); launchd thereafter",
+      "evidence": "this is the actual daemon behind `tnf voice up/down/status` (Section A)"
+    },
+    {
+      "path": "scripts/setup-master-architecture.sh",
+      "intent": "One-time scaffold: create directories, initialize a package.json if absent, install deps, set up monitoring config",
+      "mutation": "local-mutation",
+      "owner": "human at terminal",
+      "evidence": "not verified; appears to be an old bootstrap script (initializes package.json \"if not found\", which is not the current state of this repo)"
+    },
+    {
+      "path": "scripts/setup/provision-local-cron.cjs",
+      "intent": "THE cron provisioner: reads data/protocols/cron-jobs.registry.json + chronological-process-catalog.json and writes the resulting entries into the local crontab",
+      "mutation": "local-mutation",
+      "owner": "human at terminal",
+      "evidence": "CANNOT RUN in this checkout: both required inputs (cron-jobs.registry.json, chronological-process-catalog.json) are gitignored and absent (verified: ls returns ENOENT for both, confirmed against .gitignore lines 434-435) -- this is a live instance of exactly the failure mode described in user memory \"Cron registry vs catalog gap\" / \"TNF control-plane artifacts are gitignored\", caught directly in this pass rather than inferred"
+    },
+    {
+      "path": "scripts/start-agent-network.sh",
+      "intent": "Start the full multi-agent network: Redis, Redis WebSocket bridge, Antigravity orchestrator, optional Claude/Gemini/Jules/Pi wrappers, optional model-watchdog failover consumer",
+      "mutation": "local-mutation",
+      "owner": "human at terminal, or invoked by packages/tnf-cli/src/boot/pipeline.ts (verified via repo-wide grep: this script is referenced from the CLI's own boot pipeline, not just docs)",
+      "evidence": "PID file tracking per the script's own header; not independently verified"
+    }
+  ],
+  "sectionE_workspaceScriptsAggregate": {
+    "totalPackageJsonFiles": 136,
+    "nonRootPackageJsonFiles": 135,
+    "totalScriptsAllFiles": 1766,
+    "nonRootScripts": 1339,
+    "intent": "Standard per-package build/test/lint/dev/clean/type-check targets, invoked almost entirely through turbo task-graph fan-out from the root scripts already classified in Section B (`turbo run build`, `turbo run test`, etc.) rather than run directly by name.",
+    "mutation": "local-mutation (build/dev writes dist output; test writes coverage/test-results; lint --fix rewrites source) with a read-only subset (lint check-only, type-check)",
+    "owner": "turbo (invoked by the root scripts in Section B), or a human running `pnpm --filter <pkg> run <script>` directly",
+    "evidence": "per-package dist/coverage output; not enumerated individually"
+  }
+}

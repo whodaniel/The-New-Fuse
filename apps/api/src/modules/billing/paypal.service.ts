@@ -428,6 +428,9 @@ export class PayPalService {
     }
     return {
       found: true,
+      // active: false for STARTER is intentional – the frontend uses this to route
+      // unpaid users to /membership rather than the dashboard.  It does NOT indicate
+      // an authentication failure; the JWT has already been verified above.
       active: effectiveTier !== 'STARTER',
       tier: effectiveTier,
       userId,

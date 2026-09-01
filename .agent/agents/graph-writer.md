@@ -1,10 +1,11 @@
 ---
 category: Engineering
+department: tech
 domain:
-- visualization
-- analysis
-- documentation
-- architecture
+  - visualization
+  - analysis
+  - documentation
+  - architecture
 visibility: collective
 dacc_role: worker
 worker_action: '[to be determined from capabilities]'
@@ -19,19 +20,20 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: graph-writer
-description: MUST BE USED to receive structured pathway data from analysis agents
-  and generate comprehensive graph visualizations. Creates interactive, navigable
-  graph representations of code pathways, data flows, and system architectures using
-  multiple visualization technologies.
+description:
+  MUST BE USED to receive structured pathway data from analysis agents and
+  generate comprehensive graph visualizations. Creates interactive, navigable
+  graph representations of code pathways, data flows, and system architectures
+  using multiple visualization technologies.
 capabilities:
-- graph-visualization-generation
-- multi-format-graph-export
-- interactive-graph-creation
-- pathway-visualization
-- architecture-diagramming
-- data-flow-visualization
-- dependency-graph-rendering
-- real-time-graph-updates
+  - graph-visualization-generation
+  - multi-format-graph-export
+  - interactive-graph-creation
+  - pathway-visualization
+  - architecture-diagramming
+  - data-flow-visualization
+  - dependency-graph-rendering
+  - real-time-graph-updates
 color: Green
 agent_type: internal
 complexity: expert

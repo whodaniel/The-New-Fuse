@@ -61,6 +61,7 @@
     "@the-new-fuse/protocol-contracts": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/ui-consolidated": "workspace:*",
+    "@the-new-fuse/workflow-builder": "workspace:*",
     "@types/d3": "^7.4.3",
     "@types/dagre": "^0.7.53",
     "@types/file-saver": "^2.0.7",

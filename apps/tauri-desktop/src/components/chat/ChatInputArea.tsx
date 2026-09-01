@@ -1,4 +1,4 @@
-import { Layers, Send, Sparkles, SlidersHorizontal } from 'lucide-react';
+import { Layers, Send, SlidersHorizontal, Sparkles } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import type { OrchestrationMode } from '../../stores/chatStore';
 
@@ -16,19 +16,23 @@ interface ChatInputAreaProps {
 const PROMPT_PRESETS = [
   {
     title: 'Code Audit & Review',
-    prompt: 'Please review the following code for performance bottlenecks, security flaws, and idiomatic best practices:',
+    prompt:
+      'Please review the following code for performance bottlenecks, security flaws, and idiomatic best practices:',
   },
   {
     title: 'System Architecture Breakdown',
-    prompt: 'Analyze the system architecture requirements for a high-concurrency real-time agent orchestration layer:',
+    prompt:
+      'Analyze the system architecture requirements for a high-concurrency real-time agent orchestration layer:',
   },
   {
     title: 'Multi-Perspective Analysis',
-    prompt: 'Provide a multi-agent debate and comprehensive consensus on the trade-offs of microservices vs monolith:',
+    prompt:
+      'Provide a multi-agent debate and comprehensive consensus on the trade-offs of microservices vs monolith:',
   },
   {
     title: 'Bug & Crash Diagnostic',
-    prompt: 'Investigate the potential root cause and mitigation steps for the following runtime error stacktrace:',
+    prompt:
+      'Investigate the potential root cause and mitigation steps for the following runtime error stacktrace:',
   },
 ];
 
@@ -78,6 +82,7 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
           <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-xl p-1">
             <Layers className="w-3.5 h-3.5 text-indigo-400 ml-1.5" />
             <select
+              aria-label="Agent orchestration mode"
               value={mode}
               onChange={(e) => onModeChange(e.target.value as OrchestrationMode)}
               className="bg-transparent text-xs font-medium text-slate-200 focus:outline-none cursor-pointer pr-1"
@@ -91,7 +96,9 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
 
           {/* Prompt Presets Button */}
           <button
+            type="button"
             onClick={() => setShowPresets(!showPresets)}
+            aria-expanded={showPresets}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
@@ -101,7 +108,9 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
 
         {/* Temperature Quick Trigger */}
         <button
+          type="button"
           onClick={() => setShowSettings(!showSettings)}
+          aria-expanded={showSettings}
           className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -112,9 +121,12 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
       {/* Preset Popup Drawer */}
       {showPresets && (
         <div className="absolute bottom-full left-4 mb-2 w-80 bg-slate-900 border border-slate-800 rounded-2xl p-3 shadow-2xl z-30 space-y-1.5 animate-in fade-in slide-in-from-bottom-2">
-          <div className="text-[11px] font-bold uppercase text-slate-400 px-2 py-1">Prompt Presets</div>
+          <div className="text-[11px] font-bold uppercase text-slate-400 px-2 py-1">
+            Prompt Presets
+          </div>
           {PROMPT_PRESETS.map((p) => (
             <button
+              type="button"
               key={p.title}
               onClick={() => applyPreset(p.prompt)}
               className="w-full text-left p-2 rounded-xl hover:bg-slate-800 text-xs text-slate-200 font-medium transition-colors"
@@ -129,13 +141,16 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
       {/* Settings Popup Drawer */}
       {showSettings && (
         <div className="absolute bottom-full right-4 mb-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-2xl z-30 space-y-3 animate-in fade-in slide-in-from-bottom-2">
-          <div className="text-[11px] font-bold uppercase text-slate-400">Generation Temperature</div>
+          <div className="text-[11px] font-bold uppercase text-slate-400">
+            Generation Temperature
+          </div>
           <div className="flex justify-between text-xs text-slate-300">
             <span>Deterministic</span>
             <span className="font-bold text-indigo-400">{temperature}</span>
             <span>Creative</span>
           </div>
           <input
+            aria-label="Generation temperature"
             type="range"
             min="0"
             max="1"
@@ -165,12 +180,15 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
               : 'Select one or more agents from the left panel to begin'
           }
           disabled={disabled || selectedAgentCount === 0}
+          aria-label="Chat message"
           className="flex-1 bg-transparent text-white placeholder-slate-500 text-sm focus:outline-none resize-none py-1 px-2 max-h-44 scrollbar-thin"
         />
 
         <button
+          type="button"
           onClick={handleSend}
           disabled={!input.trim() || disabled || selectedAgentCount === 0 || isLoading}
+          aria-label={isLoading ? 'Sending message' : 'Send message'}
           className="p-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shrink-0 shadow-md shadow-indigo-600/20"
         >
           {isLoading ? (
@@ -183,7 +201,9 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
 
       <div className="flex justify-between items-center mt-2 px-1 text-[10px] text-slate-500 font-mono">
         <span>Shift + Enter for new line</span>
-        <span>Mode: <strong className="text-indigo-400 capitalize">{mode}</strong></span>
+        <span>
+          Mode: <strong className="text-indigo-400 capitalize">{mode}</strong>
+        </span>
       </div>
     </div>
   );

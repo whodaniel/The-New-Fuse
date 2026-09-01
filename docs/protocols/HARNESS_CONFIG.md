@@ -25,16 +25,16 @@ are optional **host harness surfaces**. Docs in `docs/core/` are artefacts;
 
 ## 2. Eight layers (UNU anatomy → TNF evidence)
 
-| Layer                           | TNF mapping                                                          | Verify                                                 |
-| ------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------ | ------- |
-| Interface / override            | Turn Zero, harness pause/resume, agent modes                         | `tnf harness inspect`                                  |
-| Provider routing                | Assimilation routes + failover policy + harness context              | `provider-failover.cjs` / harness-config               |
-| Context + compaction            | FRONTLOAD + compaction records + host-compaction adapter             | `host-compaction-adapter.cjs status                    | verify` |
-| Sandbox / isolation             | D11 + materialized seatbelt + `sandbox-run`                          | `scripts/harness/sandbox-run.cjs`                      |
-| Permissions / approvals / hooks | Permission berm + USER_CONFIRMATION + self-edit gate                 | `scripts/harness/permission-berm.cjs`                  |
-| Orchestration + budgets         | harness cycle/loop, full-auto, D10                                   | `tnf harness cycle`                                    |
-| Memory / session / trajectories | MEMORY.md (static) + memory-layer (dynamic) + trajectories + handoff | `scripts/harness/memory-layer.cjs`, `trajectory.cjs`   |
-| Tools / MCP / skills            | mcp lock + skill publisher registry/lock + optional cosign           | `skill-publisher-attest.cjs` / `supply-chain --skills` |
+| Layer                           | TNF mapping                                                                           | Verify                                                              |
+| ------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------- |
+| Interface / override            | Turn Zero, harness pause/resume, agent modes                                          | `tnf harness inspect`                                               |
+| Provider routing                | Assimilation routes + failover policy + harness context                               | `provider-failover.cjs` / harness-config                            |
+| Context + compaction            | FRONTLOAD + compaction records + host-compaction adapter                              | `host-compaction-adapter.cjs status                                 | verify` |
+| Sandbox / isolation             | D11 + materialized seatbelt + `sandbox-run`                                           | `scripts/harness/sandbox-run.cjs`                                   |
+| Permissions / approvals / hooks | Permission berm + USER_CONFIRMATION + self-edit gate                                  | `scripts/harness/permission-berm.cjs`                               |
+| Orchestration + budgets         | harness cycle/loop, full-auto, D10                                                    | `tnf harness cycle`                                                 |
+| Memory / session / trajectories | MEMORY.md (static) + `tnf remember` / memory-layer (dynamic) + trajectories + handoff | `tnf remember retain\|recall`, `memory-layer.cjs`, `trajectory.cjs` |
+| Tools / MCP / skills            | mcp lock + skill publisher registry/lock + optional cosign                            | `skill-publisher-attest.cjs` / `supply-chain --skills`              |
 
 Machine-readable status + evidence paths live in
 `data/harness/harness-config.json`. Update that file when a layer’s evidence or
@@ -72,14 +72,17 @@ tnf harness completeness --provision
 tnf harness provision --repair
 
 # Working operators
+tnf remember retain "durable operator fact"
+tnf remember recall "redis"
 tnf harness memory recall --query "redis" --limit 5
 tnf harness berm evaluate --action-class git_push --json
 tnf harness supply-chain
 tnf harness host-compaction record --host cursor
 tnf harness cycle --skip-live-loop
 
-# Global host frontload pointers (Codex/Gemini/Hermes/…)
+# Global host frontload pointers (Codex/Gemini/Hermes/Pi/…)
 node scripts/install-agent-frontload.cjs --verify
+tnf harness host-profiles
 ```
 
 ---

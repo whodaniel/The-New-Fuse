@@ -1,9 +1,14 @@
 ---
 name: skill-builder
-description: Meta-skill for creating and evolving TNF skills from patterns and requirements.
+category: skill-authoring
+department: tech
+description:
+  Meta-skill for creating and evolving TNF skills from patterns and
+  requirements.
 metadata:
   short-description: Builds and updates skills from user goals
 ---
+
 # META-SKILL: TNF Skill Builder
 
 ## Purpose
@@ -13,7 +18,8 @@ on patterns and requirements.
 
 ## Add Skill Type (Required)
 
-Every new or updated skill must declare a `type` conceptually (even if it is not encoded in frontmatter):
+Every new or updated skill must declare a `type` conceptually (even if it is not
+encoded in frontmatter):
 
 - `operator`: changes state (edits, deploys, migrations)
 - `validator`: checks correctness (tests, audits, link checks)
@@ -36,7 +42,8 @@ Bridging is a skill type, not an afterthought. A bridge must have:
 - a handoff contract
 - verification commands
 
-Use `skill-bridging.md` and `bridge-spec-template.md`. Generate a stub with `new_bridge_spec.sh`.
+Use `skill-bridging.md` and `bridge-spec-template.md`. Generate a stub with
+`new_bridge_spec.sh`.
 
 ## What is a Meta-Skill?
 

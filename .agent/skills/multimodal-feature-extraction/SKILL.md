@@ -1,5 +1,6 @@
 ---
 name: multimodal-feature-extraction
+department: tech
 description:
   A workflow for reverse-engineering software features by synthesizing static
   web scrapes, video transcripts, and programmatic screenshot captures. Use when

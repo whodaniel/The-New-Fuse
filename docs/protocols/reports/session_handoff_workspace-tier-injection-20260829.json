@@ -1,0 +1,128 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "36e0e76d-9227-4bc5-8bd0-ff9e08420023",
+  "created_at": "2026-08-29T15:45:52.073Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "integration/boot-local-live-surfaces-20260829",
+  "head_sha": "16dda85847ce8097311971bef218598d40725a6c",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Wire resolve-workspace-tier.cjs into tnf onboard as an advisory Turn Zero step (print tier, do not block)."
+  ],
+  "changed_paths": [
+    "scripts/tnf-onboard.cjs",
+    "docs/protocols/reports/session_handoff_workspace-tier-injection-20260829.json",
+    "docs/protocols/reports/session_handoff_workspace-tier-injection-20260829.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "Advisory spawnSync only. Missing newline after the catch block was fixed before commit."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "low",
+    "resume_checklist": [
+      "After merge, run tnf onboard and confirm a Workspace Tier Resolution section prints."
+    ]
+  },
+  "next_actions": [
+    "Keep the workspace-tier step advisory until isolation enforcement is an explicit operator decision."
+  ],
+  "artifacts": {
+    "commits": ["16dda85847ce8097311971bef218598d40725a6c"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": ["onboarder"],
+    "staffed_by": ["cursor-grok"]
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:38.051Z",
+      "value": "73cea241cca190faa98a2a5ea5bfdec920faaff2"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:45.037Z",
+      "value": "dcfb3f7598c148ec362678bc4ce0834b1dca0e90"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:49.582Z",
+      "value": "bf45be8893c3453f35a86509e9102fb735cdbaa8"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:52.712Z",
+      "value": "[161]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:54.422Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:59.780Z",
+      "value": "LEAKED:packages/relay-core/src/master-clock.ts\nLEAKED:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:00.764Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:01.494Z",
+      "value": "7cd0046243a9ddea5b165094b0af9ae8676c3e4f\n2026-08-13"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:06.916Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=b4511fcacea76ed009a430927be7842683c89d7d\nbranch=sentinel-fix-marketplace-cmd-injection-11879217410415317362\ndirty=86"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:08.906Z",
+      "value": "REDIS_UNREACHABLE\nRELAY_OK"
+    }
+  ]
+}

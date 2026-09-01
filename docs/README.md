@@ -60,6 +60,7 @@ Additional operations docs:
 
 - `docs/JULES_AUTONOMOUS_LOOP.md`
 - `docs/SKILL_BANK_OPERATIONS.md`
+- `docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`
 - `packages/tnf-cli/README.md`
 
 ### Access Points
@@ -137,26 +138,28 @@ PicoClaw Fleet (Edge) <── Lightweight edge agents
 - **[apps/vscode-extension/](apps/vscode-extension/)** — Full VS Code extension
   (v9.1.0): multi-LLM chat, A2A, AG-UI, MCP client, agent registry, collective
   orchestrator
-- **[apps/electron-desktop/](apps/electron-desktop/)** — Electron desktop app
-  with Chakra UI + Socket.io
+- **[apps/tauri-desktop/](apps/tauri-desktop/)** — Tauri desktop app (replaces
+  former `electron-desktop`)
+- **[apps/browser-control-surfaces/](apps/browser-control-surfaces/)** — Browser
+  automation control surfaces
 
 ### AI Infrastructure
 
-- **[apps/picoclaw-overseer/](apps/picoclaw-overseer/)** — Go-based
-  ultra-lightweight AI agent (<10MB RAM), three CloudRuntime instances
-  (tester/subject/perplexity)
 - **[apps/mcp-servers/](apps/mcp-servers/)** — MCP tool servers: network
   management, DevOps bridge, Claude/Gemini integration
-- **[apps/cloud-sandbox/](apps/cloud-sandbox/)** — Playwright browser automation
-  sandbox with Socket.io
 
-### Other
+### Extracted Satellites (not in monorepo tree)
 
-- **[apps/visualization-hub/](apps/visualization-hub/)** — D3.js real-time agent
-  network visualization
-- **[apps/ai-arcade/](apps/ai-arcade/)** — NFT/crypto-powered agent marketplace
-- **[apps/skideancer-ide/](apps/skideancer-ide/)** — Theia-based cloud IDE with
-  AI plugins (port 3007, excluded from pnpm workspace)
+The following apps were extracted from the monorepo and are maintained as
+separate private satellite repositories. They are no longer in `apps/` here.
+
+- **picoclaw-overseer** → `tnf-picoclaw-overseer` (private satellite)
+- **cloud-sandbox** → `tnf-cloud-sandbox` (private satellite)
+- **visualization-hub** → `tnf-visualization-hub` (private satellite)
+- **ai-arcade** → `tnf-ai-arcade` (private satellite)
+- **poker-room** → `tnf-poker-room` (private satellite; see also
+  `apps/poker-room/` if still present locally)
+- **skideancer-ide** → `SkIDEancer` (public repo, own project)
 
 ## Shared Packages
 
@@ -328,22 +331,26 @@ AI agent operating instructions for any AI working in this codebase:
 ## Project Structure
 
 ```
-The-New-Fuse/
-├── apps/
-│   ├── api/                    # Main NestJS API server (port 3001)
-│   ├── api-gateway/            # NestJS gateway (port 3005)
-│   ├── backend/                # Secondary NestJS service (port 3004)
-│   ├── frontend/               # React + Vite SPA (port 3000)
-│   ├── relay-server/           # WebSocket relay hub
-│   ├── chrome-extension/       # Browser AI automation (V7)
-│   ├── vscode-extension/       # VS Code extension (v9.1.0)
-│   ├── electron-desktop/       # Electron desktop app
-│   ├── picoclaw-overseer/      # Go-based lightweight AI agent
-│   ├── mcp-servers/            # MCP tool servers
-│   ├── cloud-sandbox/          # Playwright browser sandbox
-│   ├── visualization-hub/      # D3.js agent network viz
-│   ├── ai-arcade/              # Agent marketplace
-│   └── skideancer-ide/         # Theia cloud IDE (excluded from workspace)
+whodaniel/tnf-monorepo/
+├── apps/                           # In-monorepo applications
+│   ├── api/                        # Main NestJS API server (port 3001)
+│   ├── api-gateway/                # NestJS gateway (port 3005)
+│   ├── backend/                    # Secondary NestJS service (port 3004)
+│   ├── frontend/                   # React + Vite SPA (port 3000)
+│   ├── relay-server/               # WebSocket relay hub
+│   ├── chrome-extension/           # Browser AI automation (V7)
+│   ├── vscode-extension/           # VS Code extension (v9.1.0)
+│   ├── tauri-desktop/              # Tauri desktop app (replaces electron-desktop)
+│   ├── browser-control-surfaces/   # Browser automation control surfaces
+│   ├── mcp-servers/                # MCP tool servers
+│   └── extensions -> ../../TNF-Extensions  # symlink
+│   # Extracted satellites (separate repos, not present here):
+│   #   picoclaw-overseer → tnf-picoclaw-overseer
+│   #   cloud-sandbox     → tnf-cloud-sandbox
+│   #   visualization-hub → tnf-visualization-hub
+│   #   ai-arcade         → tnf-ai-arcade
+│   #   poker-room        → tnf-poker-room
+│   #   skideancer-ide    → SkIDEancer (public)
 ├── packages/
 │   ├── types/                  # Shared TypeScript types
 │   ├── database/               # Drizzle ORM + PostgreSQL schemas
@@ -451,32 +458,32 @@ pnpm run deploy:gcp
 
 ## Documentation
 
-- **[DOCUMENTATION_INDEX.md](./core/DOCUMENTATION_INDEX.md)** — Navigational index
-  with guided paths
+- **[DOCUMENTATION_INDEX.md](./core/DOCUMENTATION_INDEX.md)** — Navigational
+  index with guided paths
 - **[QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md)** — Fast setup guide
 - **[CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)** —
   Infrastructure reference (GCP + Cloudflare)
 - **[RELEASE_GATE.md](./RELEASE_GATE.md)** — Merge-blocking release gate
-- **[PRODUCTION_READINESS.md](./project-management/PRODUCTION_READINESS.md)**
-  — Production status
+- **[PRODUCTION_READINESS.md](./project-management/PRODUCTION_READINESS.md)** —
+  Production status
 
 ### By Topic
 
-| Topic               | Primary Doc                                                                                  |
-| ------------------- | -------------------------------------------------------------------------------------------- |
+| Topic               | Primary Doc                                                                             |
+| ------------------- | --------------------------------------------------------------------------------------- |
 | Architecture        | [docs/architecture/ARCHITECTURE_STANDARDS.md](./architecture/ARCHITECTURE_STANDARDS.md) |
 | Agent Development   | [docs/agents/COMPLETE-AGENT-GUIDE.md](./agents/COMPLETE-AGENT-GUIDE.md)                 |
 | Agent Communication | [docs/AGENT_COMMUNICATION_PROTOCOL.md](./AGENT_COMMUNICATION_PROTOCOL.md)               |
 | API Usage           | [docs/api/COMPLETE-API-GUIDE.md](./api/COMPLETE-API-GUIDE.md)                           |
-| GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                           |
-| MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)           |
+| GraphQL             | [apps/api/src/graphql/README.md](./apps/api/src/graphql/README.md)                      |
+| MCP Integration     | [apps/backend/src/modules/mcp/README.md](./apps/backend/src/modules/mcp/README.md)      |
 | Deployment          | [docs/guides/deployment-guide.md](./guides/deployment-guide.md)                         |
-| Cloud Infra         | [CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)                                |
+| Cloud Infra         | [CLOUD_MIGRATION_BLUEPRINT.md](/CLOUD_MIGRATION_BLUEPRINT.md)                           |
 | Security            | [docs/security/audit-findings.md](./security/audit-findings.md)                         |
 | Testing             | [docs/testing/TESTING_SETUP_COMPLETE.md](./testing/TESTING_SETUP_COMPLETE.md)           |
 | Design System       | [docs/PREMIUM_THEME_MANIFEST.md](./PREMIUM_THEME_MANIFEST.md)                           |
-| Chrome Extension    | [apps/chrome-extension/README.md](./apps/chrome-extension/README.md)                         |
-| VS Code Extension   | [apps/vscode-extension/README.md](./apps/vscode-extension/README.md)                         |
+| Chrome Extension    | [apps/chrome-extension/README.md](./apps/chrome-extension/README.md)                    |
+| VS Code Extension   | [apps/vscode-extension/README.md](./apps/vscode-extension/README.md)                    |
 | Workflows           | [docs/workflows/WORKFLOW_QUICKSTART.md](./workflows/WORKFLOW_QUICKSTART.md)             |
 | CLI Commands        | [docs/reference/command-map.md](./reference/command-map.md)                             |
 | Cloud QA            | [docs/qa/cloud-qa-guide.md](./qa/cloud-qa-guide.md)                                     |

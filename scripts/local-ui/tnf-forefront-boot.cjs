@@ -72,6 +72,15 @@ function main() {
     generatedAt: new Date().toISOString(),
     steps: [],
     uiUrl: 'http://localhost:1420/#/browser',
+    surfaces: {
+      localUi: 'http://localhost:1420/',
+      semanticHub: 'http://localhost:1420/visualizations/semantic/index.html',
+      semanticExplorer:
+        'http://localhost:1420/visualizations/semantic/unified_graph_explorer.html',
+      wordcount: 'http://localhost:1420/visualizations/semantic/wordcount_report.html',
+      webApp: 'http://localhost:5173/',
+      browserControl: 'http://127.0.0.1:1421/',
+    },
   };
 
   console.log('=== TNF Forefront Boot ===');
@@ -134,9 +143,12 @@ function main() {
 
   writeReceipt(receipt);
   console.log(`\n✅ Forefront boot initiated`);
-  console.log(`   UI:      ${receipt.uiUrl}`);
-  console.log(`   Receipt: ${RECEIPT_PATH}`);
-  console.log('   CLI:     tnf local-ui | tnf forefront status');
+  console.log(`   UI:       ${receipt.uiUrl}`);
+  console.log(`   Semantic: ${receipt.surfaces.semanticHub}`);
+  console.log(`   Web SPA:  ${receipt.surfaces.webApp}`);
+  console.log(`   Panel:    ${receipt.surfaces.browserControl}`);
+  console.log(`   Receipt:  ${RECEIPT_PATH}`);
+  console.log('   CLI:      tnf local-ui | tnf forefront status');
 }
 
 main();

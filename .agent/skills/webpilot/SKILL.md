@@ -1,5 +1,7 @@
 ---
 name: webpilot
+category: browser-automation
+department: tech
 description:
   DEPRECATED alias. Interactive browser work now uses agent-browser; read-only
   public URL extraction uses Crawl4AI. Authenticated session reuse uses

@@ -1,6 +1,6 @@
 import { TnfUser } from '../hooks/useTnfAuthorization';
 
-interface TnfHarnessStatusBarProps {
+export interface TnfHarnessStatusBarProps {
   connected: boolean;
   heartbeatStatus: 'healthy' | 'degraded' | 'not-connected';
   governanceStatus: Record<string, boolean>;

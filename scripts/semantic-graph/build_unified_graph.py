@@ -95,32 +95,43 @@ except (OSError, json.JSONDecodeError, KeyError) as e:
 
 # ---------------------------------------------------------- 3. concept KG
 print("[3/8] concept knowledge graph (43MB)...")
-kg = json.load(open(os.path.join(ROOT, ".documentation-system/analysis/knowledge-graph.public.json")))
-concepts = kg.get("concepts", {})
-relationships = kg.get("relationships", [])
-
-keep = set()
-for r in relationships:
-    keep.add(r["from"]); keep.add(r["to"])
-ranked = sorted(((c, v.get("frequency", 0)) for c, v in concepts.items()
-                 if c not in keep and v.get("frequency", 0) >= CONCEPT_MIN_FREQ),
-                key=lambda x: -x[1])
-for c, _ in ranked[:max(0, MAX_CONCEPTS - len(keep))]:
-    keep.add(c)
 
 def concept_id(name):
     return f"concept:{slugify(name)[:100]}"
 
-for c in keep:
-    v = concepts.get(c, {})
-    freq = v.get("frequency", 1)
-    add_node(concept_id(c), c, "concept", "concept-kg", weight=freq)
-    for src in v.get("sources", [])[:MENTION_TOP_SOURCES]:
-        add_edge(concept_id(c), path_node(src), "mentioned_in", min(freq, 50))
-
-for r in relationships:
-    add_edge(concept_id(r["from"]), concept_id(r["to"]),
-             f"rel_{slugify(r.get('type','related'))}")
+keep = set()
+concepts = {}
+relationships = []
+kg_path = os.path.join(ROOT, ".documentation-system/analysis/knowledge-graph.public.json")
+try:
+    kg = json.load(open(kg_path, encoding="utf-8"))
+    concepts = kg.get("concepts", {}) or {}
+    relationships = kg.get("relationships", []) or []
+    for r in relationships:
+        if r.get("from"):
+            keep.add(r["from"])
+        if r.get("to"):
+            keep.add(r["to"])
+    ranked = sorted(((c, v.get("frequency", 0)) for c, v in concepts.items()
+                     if c not in keep and v.get("frequency", 0) >= CONCEPT_MIN_FREQ),
+                    key=lambda x: -x[1])
+    for c, _ in ranked[:max(0, MAX_CONCEPTS - len(keep))]:
+        keep.add(c)
+    for c in keep:
+        v = concepts.get(c, {})
+        freq = v.get("frequency", 1)
+        add_node(concept_id(c), c, "concept", "concept-kg", weight=freq)
+        for src in v.get("sources", [])[:MENTION_TOP_SOURCES]:
+            add_edge(concept_id(c), path_node(src), "mentioned_in", min(freq, 50))
+    for r in relationships:
+        frm, to = r.get("from"), r.get("to")
+        if not frm or not to:
+            continue
+        add_edge(concept_id(frm), concept_id(to),
+                 f"rel_{slugify(r.get('type','related'))}")
+    print(f"  kept {len(keep)} concepts / {len(relationships)} typed rels")
+except (OSError, json.JSONDecodeError) as e:
+    print("  concept-kg skipped:", e)
 
 # --------------------------------------------------------- 4. codebase map
 print("[4/8] codebase map...")
@@ -209,15 +220,19 @@ STOP = {"the", "and", "for", "this", "that", "with", "from", "return", "const",
         "function", "var", "let", "null", "true", "false", "import", "export",
         "new", "not", "are", "was", "has", "have", "you", "all", "can", "will"}
 top_terms = []
-with gzip.open(os.path.join(OUT, "wordcount_full.tsv.gz"), "rt", encoding="utf-8") as f:
-    next(f)
-    for line in f:
-        term, cnt = line.rstrip("\n").split("\t")
-        if len(term) < 3 or term.lower() in STOP:
-            continue
-        top_terms.append((term, int(cnt)))
-        if len(top_terms) >= TOP_TERMS:
-            break
+wc_path = os.path.join(OUT, "wordcount_full.tsv.gz")
+try:
+    with gzip.open(wc_path, "rt", encoding="utf-8") as f:
+        next(f)
+        for line in f:
+            term, cnt = line.rstrip("\n").split("\t")
+            if len(term) < 3 or term.lower() in STOP:
+                continue
+            top_terms.append((term, int(cnt)))
+            if len(top_terms) >= TOP_TERMS:
+                break
+except (OSError, ValueError) as e:
+    print("  wordcount_full.tsv.gz skipped:", e)
 term_set = {t.lower(): (t, c) for t, c in top_terms}
 for t, c in top_terms:
     add_node(f"term:{t.lower()}", t, "term", "wordcount", weight=c)

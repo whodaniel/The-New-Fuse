@@ -1,5 +1,7 @@
 ---
 name: tnf-proactive-goal-wizard
+category: tnf-platform
+department: tech
 description:
   Proactively engage with the user via multi-step interactive wizarding to
   surface goals, contextual assets, milestones, schedules, and task tracking.

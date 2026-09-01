@@ -11,6 +11,7 @@ import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage, RedisAgentClient } from './RedisAgentClient.js';
+import { buildTnfAgentOrientation } from './agent-orientation.js';
 import { printProtocolAgentRosterSafe } from './boot/agent-roster.js';
 import {
   createBootPipeline,
@@ -21,7 +22,9 @@ import {
   type BootStepResult,
 } from './boot/pipeline.js';
 import { assertNoDuplicateCommands } from './commands/_registry.js';
+import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
+import { registerAgentsMatchCommand } from './commands/agents-match.js';
 import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-run.js';
 import { registerAgentsSpecsCommand } from './commands/agents-specs.js';
 import { registerAssimilateCommand } from './commands/assimilate.js';
@@ -29,6 +32,7 @@ import { registerBrowserCommand } from './commands/browser.js';
 import { registerCatalogCommand } from './commands/catalog.js';
 import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
+import { registerDepartmentCommands } from './commands/department.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerFleetCommands } from './commands/fleet/index.js';
 import { registerGoogleAiCommand } from './commands/google-ai.js';
@@ -39,6 +43,8 @@ import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
+import { registerRememberCommands } from './commands/remember.js';
+import { registerScoutCommands } from './commands/scout.js';
 import { registerSlackCommands } from './commands/slack/index.js';
 import { registerSparkCommand } from './commands/spark.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
@@ -58,6 +64,7 @@ import { CronService } from './services/CronService.js';
 import { decideDispatch, resolveRecipient } from './services/DispatchGuard.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
+import { MemoryCompactorEngine } from './services/MemoryCompactorEngine.js';
 import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { ParityService } from './services/ParityService.js';
 import { PluginsService } from './services/PluginsService.js';
@@ -102,6 +109,7 @@ import {
   tallyFullAutoRuns,
 } from './utils/full-auto-cycle.js';
 import { resolveBuiltinToolsAsOpenAI } from './utils/llm-tools.js';
+import { loadHomeCredentials } from './utils/load-home-credentials.js';
 import {
   DEFAULT_OPERATOR_WINDOW_MS,
   detectOperatorWindowDirective,
@@ -246,6 +254,10 @@ function loadLocalEnv(rootDir: string): void {
     if (!value || exportedKeys.has(key) || process.env[key]) continue;
     process.env[key] = value;
   }
+
+  // Machine-local keys (OpenRouter, etc.) after repo files so NVIDIA in
+  // .tnf.local.env / the shell is never overwritten.
+  loadHomeCredentials();
 }
 
 loadLocalEnv(repoRoot);
@@ -285,6 +297,20 @@ async function runCommand(
   }
   const started = Date.now();
   const cwd = options.cwd || repoRoot;
+
+  let authConfig: any = null;
+  try {
+    const { LocalSubdirectorAuthorityService } =
+      await import('./services/LocalSubdirectorAuthorityService.js');
+    authConfig = new LocalSubdirectorAuthorityService(repoRoot).getConfig();
+  } catch {}
+
+  const receiptProps = {
+    actor: DEFAULT_AGENT_IDENTITY.name,
+    localRealm: repoRoot,
+    authorityGrant: authConfig?.capabilities,
+  };
+
   try {
     await spawnWithTimeout(cmd, args, { ...options, cwd });
     recordCommandOutcome(repoRoot, {
@@ -294,6 +320,7 @@ async function runCommand(
       cwd,
       ok: true,
       durationMs: Date.now() - started,
+      ...receiptProps,
     });
   } catch (err: any) {
     recordCommandOutcome(repoRoot, {
@@ -303,7 +330,8 @@ async function runCommand(
       cwd,
       ok: false,
       durationMs: Date.now() - started,
-      error: err?.message || String(err),
+      error: err.message,
+      ...receiptProps,
     });
     throw err;
   }
@@ -440,9 +468,7 @@ async function requireSuperAdmin(
         );
       }
       console.log(
-        chalk.green(
-          `\n✅ Generated and persisted a new Super Admin token (value not printed).`
-        )
+        chalk.green(`\n✅ Generated and persisted a new Super Admin token (value not printed).`)
       );
       console.log(chalk.green(`Updated .env assignments for ${SUPER_ADMIN_ENV_KEY}.`));
       console.log(
@@ -489,9 +515,7 @@ async function requireSuperAdmin(
         );
       }
       console.log(
-        chalk.green(
-          `\n✅ Generated and persisted a new Super Admin token (value not printed).`
-        )
+        chalk.green(`\n✅ Generated and persisted a new Super Admin token (value not printed).`)
       );
       console.log(chalk.green(`Wrote .env assignments for ${SUPER_ADMIN_ENV_KEY}.`));
       console.log(
@@ -3399,6 +3423,7 @@ const cliEntryPath = fileURLToPath(import.meta.url);
 // =============================================================================
 export const PLATFORM_TAXONOMY: string[] = [
   // AGENT_PLATFORM_TRAITS (canonical runtime)
+  'agy',
   'antigravity',
   'browser',
   'claude',
@@ -3411,16 +3436,25 @@ export const PLATFORM_TAXONOMY: string[] = [
   'codex',
   'command-code',
   'cursor',
+  'droid',
   'hermes',
   'kilo',
   'opencode',
+  'pi',
   'project',
   'tnf',
 ];
 // DACC-v1 hierarchy values surfaced by `tnf traits list agent_roles`. These
 // two arrays are the contract for `tnf traits list`. Adding a new role or
 // platform here is the canonical way to extend the runtime taxonomy.
-const AGENT_ROLE_TRAITS = ['director', 'orchestrator', 'broker', 'worker', 'participant'];
+const AGENT_ROLE_TRAITS = [
+  'director',
+  'orchestrator',
+  'broker',
+  'worker',
+  'participant',
+  'local-subdirector',
+];
 const AGENT_PLATFORM_TRAITS = PLATFORM_TAXONOMY;
 // Valid qualifiers for `--director-tier`, used to distinguish the local
 // sub-director / cloud super-director authority split (see
@@ -4344,7 +4378,61 @@ function isPiPassthroughArgv(argv: string[]): boolean {
   return subcommand === 'pi';
 }
 
+function isKiloPassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'kilo';
+}
+
+function isOpencodePassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'opencode';
+}
+
+function isDroidPassthroughArgv(argv: string[]): boolean {
+  const subcommand = argv[2];
+  return subcommand === 'droid';
+}
+
 let cachedTopLevelCommands: Record<string, Set<string>> = {};
+
+// Disk-backed cache for passthrough CLI enumeration. Probing `<cli> --help`
+// costs seconds per target and TUI-heavy CLIs routinely approach the timeout,
+// so re-enumerating on every process start made any unknown `tnf <word>` pay
+// the full toll again. Persist verdicts for a day; staleness only risks
+// routing a since-removed subcommand implicitly, never explicit dispatch.
+const topLevelCommandsCacheFile = path.join(
+  os.homedir(),
+  '.tnf',
+  'cache',
+  'top-level-commands.json'
+);
+const TOP_LEVEL_COMMANDS_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+let topLevelCommandsDiskCache: Record<string, { commands: string[]; probedAt: number }> | null =
+  null;
+
+function loadTopLevelCommandsDiskCache(): Record<string, { commands: string[]; probedAt: number }> {
+  if (topLevelCommandsDiskCache === null) {
+    let loaded: Record<string, { commands: string[]; probedAt: number }> = {};
+    try {
+      loaded = JSON.parse(fs.readFileSync(topLevelCommandsCacheFile, 'utf8'));
+    } catch {
+      loaded = {};
+    }
+    topLevelCommandsDiskCache = loaded;
+  }
+  return topLevelCommandsDiskCache;
+}
+
+function saveTopLevelCommandsDiskCache(cliName: string, commands: Set<string>): void {
+  const cache = loadTopLevelCommandsDiskCache();
+  cache[cliName] = { commands: [...commands], probedAt: Date.now() };
+  try {
+    fs.mkdirSync(path.dirname(topLevelCommandsCacheFile), { recursive: true });
+    fs.writeFileSync(topLevelCommandsCacheFile, JSON.stringify(cache));
+  } catch {
+    // Best effort: an unwritable cache must never break dispatch.
+  }
+}
 
 function getTnfTopLevelCommands(): Set<string> {
   return new Set(
@@ -4378,10 +4466,21 @@ function getTopLevelCommands(cliName: string): Set<string> {
     return cachedTopLevelCommands[cliName];
   }
 
+  const cached = loadTopLevelCommandsDiskCache()[cliName];
+  if (cached && Date.now() - cached.probedAt < TOP_LEVEL_COMMANDS_CACHE_TTL_MS) {
+    const fromDisk = new Set(cached.commands);
+    cachedTopLevelCommands[cliName] = fromDisk;
+    return fromDisk;
+  }
+
   try {
     const result = spawnSync(cliName, ['--no-color', '--help'], {
       encoding: 'utf8',
       env: process.env,
+      // TUI-only CLIs (kilo, droid) never exit on a piped --help; without a
+      // timeout every unknown `tnf <word>` blocked forever on their probe.
+      timeout: 10_000,
+      killSignal: 'SIGKILL',
     });
     const output = `${result.stdout || ''}\n${result.stderr || ''}`;
     cachedTopLevelCommands[cliName] = parseTopLevelCommands(output);
@@ -4389,6 +4488,7 @@ function getTopLevelCommands(cliName: string): Set<string> {
     cachedTopLevelCommands[cliName] = new Set();
   }
 
+  saveTopLevelCommandsDiskCache(cliName, cachedTopLevelCommands[cliName]);
   return cachedTopLevelCommands[cliName];
 }
 
@@ -4405,6 +4505,10 @@ function resolveImplicitPassthroughArgs(
     'claude',
     'pi',
     'command-code',
+    'opencode',
+    'kilo',
+    'droid',
+    'agy',
   ];
 
   // A leading flag is never another CLI's subcommand, so there is nothing to
@@ -5645,9 +5749,20 @@ program
           process.exit(2);
         }
 
+        const {
+          LocalSubdirectorAuthorityService,
+        } = require('./services/LocalSubdirectorAuthorityService.js');
+        const authService = new LocalSubdirectorAuthorityService(repoRoot);
+        const authConfig = authService.getConfig();
+
         const yolo = Boolean(options.yolo || options.force);
-        const autonomous =
+        let autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
+
+        if (DEFAULT_AGENT_IDENTITY.role === 'local-subdirector' && authConfig.autonomyEnabled) {
+          autonomous = true;
+        }
+
         const wantsOneshot = Boolean(options.print || options.oneshot);
 
         if (options.model) {
@@ -6229,9 +6344,7 @@ promptTemplateCommand
 // in the same way `pi custom-provider.md` describes.
 const providerCommand = program
   .command('provider')
-  .description(
-    'Inspect built-in model providers (.pi custom-provider parity; add/remove deferred to Phase-2)'
-  );
+  .description('Inspect canonical and user-configured model providers');
 
 providerCommand
   .command('list')
@@ -6255,11 +6368,16 @@ providerCommand
         );
         return;
       }
-      console.log(chalk.bold('\nModel Providers (.pi parity)\n'));
+      console.log(chalk.bold('\nModel Providers\n'));
       for (const p of providers) {
-        const status = p.configured
-          ? chalk.green(`configured${p.models.length ? ` (${p.models.length} models)` : ''}`)
-          : chalk.dim('not configured');
+        const status =
+          p.status === 'ok'
+            ? chalk.green(`live (${p.models.length} models)`)
+            : p.status === 'probe_failed'
+              ? chalk.yellow(`catalog fallback (${p.models.length} models; ${p.error})`)
+              : p.models.length
+                ? chalk.cyan(`catalog (${p.models.length} models; API key not configured)`)
+                : chalk.dim(p.type === 'local' ? 'local endpoint unavailable' : 'not configured');
         console.log(`  ${chalk.cyan(p.id.padEnd(14))} ${p.name.padEnd(18)} ${status}`);
       }
       console.log('');
@@ -6277,8 +6395,7 @@ providerCommand
   .action(async (id: string, options: { json?: boolean }) => {
     try {
       const svc = new ModelsService();
-      const providers = await svc.listProviders();
-      const found = providers.find((p) => p.id === id);
+      const found = await svc.getProvider(id);
       if (!found) {
         console.error(chalk.red(`Unknown provider: ${id}`));
         process.exit(1);
@@ -6291,6 +6408,9 @@ providerCommand
       console.log(`  ID:         ${chalk.cyan(found.id)}`);
       console.log(`  Type:       ${found.type}`);
       console.log(`  Configured: ${found.configured ? chalk.green('yes') : chalk.yellow('no')}`);
+      console.log(`  Discovery:  ${found.discovery}`);
+      if (found.defaultModel) console.log(`  Default:    ${chalk.cyan(found.defaultModel)}`);
+      if (found.error) console.log(`  Probe:      ${chalk.yellow(found.error)}`);
       if (found.models.length > 0) {
         console.log(chalk.bold('\n  Models:\n'));
         for (const m of found.models.slice(0, 10)) {
@@ -6723,7 +6843,11 @@ function loadDefaultAgentIdentity(): {
   const identityPath = path.join(process.env.HOME || os.homedir(), '.tnf', 'agent.yaml');
   const defaults = {
     name: process.env.AGENT_NAME || 'tnf-local-subdirector',
-    role: process.env.AGENT_ROLE || 'director',
+    role:
+      process.env.AGENT_ROLE ||
+      (process.argv.includes('agent') && !process.argv.includes('run')
+        ? 'local-subdirector'
+        : 'generic-agent'),
     platform: process.env.AGENT_PLATFORM || 'tnf',
     directorTier: process.env.TNF_DIRECTOR_TIER || 'sub',
   };
@@ -8566,32 +8690,37 @@ harness
   .argument('[client]', 'claude|cursor|codex|gemini|agy|hermes|pi|openclaw')
   .option('--no-launch', 'Provision MCP config only; do not start the client')
   .option('--require-doctor', 'Fail if doctor checks fail')
-  .action(async (client: string | undefined, options: { noLaunch?: boolean; requireDoctor?: boolean }) => {
-    try {
-      const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
-      const known = new Set<string>(HARNESS_CLIENTS.map((entry) => entry.id));
-      let chosen = requested;
-      if (chosen && !known.has(chosen)) {
-        throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
+  .action(
+    async (
+      client: string | undefined,
+      options: { noLaunch?: boolean; requireDoctor?: boolean }
+    ) => {
+      try {
+        const requested = (client || process.env.TNF_HARNESS_CLIENT || '').trim().toLowerCase();
+        const known = new Set<string>(HARNESS_CLIENTS.map((entry) => entry.id));
+        let chosen = requested;
+        if (chosen && !known.has(chosen)) {
+          throw new Error(`Unknown harness client '${chosen}'. Use: ${[...known].join(', ')}`);
+        }
+        if (!chosen) {
+          const preferred = HARNESS_CLIENTS.filter((entry) => entry.id !== 'openclaw');
+          const found = preferred.find((entry) => {
+            const resolved = findExecutableOnPath(entry.binary);
+            return Boolean(resolved);
+          });
+          chosen = found?.id || 'claude';
+          console.log(chalk.dim(`No client specified; staffing with ${chosen}`));
+        }
+        const args = ['scripts/tnf-start-ai.cjs', chosen];
+        if (options.noLaunch) args.push('--no-launch');
+        if (options.requireDoctor) args.push('--require-doctor');
+        await runCommand('node', args);
+      } catch (err: any) {
+        console.error(chalk.red(`Error: ${err.message}`));
+        process.exit(1);
       }
-      if (!chosen) {
-        const preferred = HARNESS_CLIENTS.filter((entry) => entry.id !== 'openclaw');
-        const found = preferred.find((entry) => {
-          const resolved = findExecutableOnPath(entry.binary);
-          return Boolean(resolved);
-        });
-        chosen = found?.id || 'claude';
-        console.log(chalk.dim(`No client specified; staffing with ${chosen}`));
-      }
-      const args = ['scripts/tnf-start-ai.cjs', chosen];
-      if (options.noLaunch) args.push('--no-launch');
-      if (options.requireDoctor) args.push('--require-doctor');
-      await runCommand('node', args);
-    } catch (err: any) {
-      console.error(chalk.red(`Error: ${err.message}`));
-      process.exit(1);
     }
-  });
+  );
 
 // A1 — establish ≠ operate (observe/fail-closed; never stops full-auto loops)
 {
@@ -8858,12 +8987,33 @@ harness
     process.exitCode = runHarnessScript('scripts/harness/materialize-sandbox-profile.cjs', args);
   });
 
+harness
+  .command('host-profiles')
+  .description('Show which prompt files each enlisted host is expected to inject')
+  .option('--json', 'JSON output')
+  .option('--verify', 'Print enlisted/absent table (default)')
+  .action((options: { json?: boolean; verify?: boolean }) => {
+    const args = options.json ? ['--json'] : ['--verify'];
+    process.exitCode = runHarnessScript('scripts/harness/host-prompt-profiles.cjs', args);
+  });
+
+harness
+  .command('scout-staff')
+  .description('Assign due scout tasks to tnf-cli-agent (brief by default)')
+  .option('--json', 'JSON output')
+  .option('--limit <n>', 'Max tasks in the brief', '8')
+  .action((options: { json?: boolean; limit?: string }) => {
+    const args = [`--limit=${options.limit || '8'}`];
+    if (options.json) args.push('--json');
+    process.exitCode = runHarnessScript('scripts/scouting/staff-scout-missions.cjs', args);
+  });
+
 program
   .command('turn-end')
   .description('Run Turn End protocol: update LIVING_STATE and SESSION_HANDOFF artifacts')
   .action(async () => {
     try {
-      await runCommand('node', ['scripts/turn-end.cjs']);
+      await runCommand('node', ['scripts/turn-end-v2.cjs']);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -8915,7 +9065,9 @@ registry
     }
   });
 
-const metaskills = program.command('metaskills').description('Meta-skills audit utilities');
+const metaskills = program
+  .command('metaskills')
+  .description('Meta-skills audit and governance utilities');
 metaskills
   .command('audit')
   .description('Audit meta-skills and scaffolding readiness')
@@ -8924,6 +9076,22 @@ metaskills
     try {
       const args = ['scripts/tnf-metaskills-audit.cjs'];
       if (options.json) args.push('--json');
+      await runCommand('node', args);
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+metaskills
+  .command('govern')
+  .description('Govern meta-skill completeness and layer authority')
+  .option('--json', 'Print JSON output')
+  .option('--strict', 'Fail if any governed meta-skill is audit-incomplete')
+  .action(async (options: { json?: boolean; strict?: boolean }) => {
+    try {
+      const args = ['scripts/skills/tnf-meta-skill-meta-skill.cjs'];
+      if (options.json) args.push('--json');
+      if (options.strict) args.push('--strict');
       await runCommand('node', args);
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
@@ -9838,9 +10006,13 @@ program
   .action(async (query: string[], options: { task?: string; taskFile?: string }) => {
     try {
       const systemPromptPath = path.join(repoRoot, '.agent/SYSTEM_PROMPT.md');
-      const systemPrompt = fs.existsSync(systemPromptPath)
-        ? fs.readFileSync(systemPromptPath, 'utf8')
-        : 'You are the TNF Orchestrator agent.';
+      const { buildTnfAgentOrientation } = await import('./agent-orientation.js');
+      const systemPrompt = [
+        fs.existsSync(systemPromptPath)
+          ? fs.readFileSync(systemPromptPath, 'utf8')
+          : 'You are the TNF Orchestrator agent.',
+        buildTnfAgentOrientation(repoRoot),
+      ].join('\n\n');
 
       // Resolve the initial message using the SAME precedence engine as
       // `tnf agents run` so `cat prompt.md | tnf chat` works out of the box.
@@ -9914,6 +10086,14 @@ program
   .argument('[args...]', 'Arguments forwarded to pi')
   .action(async (args: string[]) => {
     await runPassthrough('pi', args);
+  });
+
+program
+  .command('opencode')
+  .description('Pass through any OpenCode CLI command with TNF harness MCP routing')
+  .argument('[args...]', 'Arguments forwarded to opencode')
+  .action(async (args: string[]) => {
+    await runPassthrough('opencode', args);
   });
 
 program
@@ -14862,12 +15042,43 @@ agents
   .argument('<message>', 'Message to send')
   .option('-t, --to <agentId>', 'Recipient agent ID')
   .option('-n, --name <name>', 'Sender name')
-  .action(async (message: string, options: { to?: string; name?: string } = {}) => {
-    const args = ['send', message];
-    if (options.to) args.push('--to', options.to);
-    if (options.name) args.push('--name', options.name);
-    await runSelfCliWithExit(args);
-  });
+  .option('--require-live', 'Refuse delivery when the target is not heartbeating')
+  .option(
+    '--require-capacity',
+    'Refuse delivery when the target declares itself busy (bus contract v1)'
+  )
+  .option('--await-ack [seconds]', 'Wait for a delivery ack (bus contract v1)')
+  .option('--idempotency-key <key>', 'Dedup key for receiving agents (bus contract v1)')
+  .option('--force', 'Send even when the recipient is unknown')
+  .option('--json', 'Emit the dispatch decision as JSON')
+  .action(
+    async (
+      message: string,
+      options: {
+        to?: string;
+        name?: string;
+        requireLive?: boolean;
+        requireCapacity?: boolean;
+        awaitAck?: string | boolean;
+        idempotencyKey?: string;
+        force?: boolean;
+        json?: boolean;
+      } = {}
+    ) => {
+      const args = ['send', message];
+      if (options.to) args.push('--to', options.to);
+      if (options.name) args.push('--name', options.name);
+      if (options.requireLive) args.push('--require-live');
+      if (options.requireCapacity) args.push('--require-capacity');
+      if (options.awaitAck !== undefined) {
+        args.push(options.awaitAck === true ? '--await-ack' : `--await-ack=${options.awaitAck}`);
+      }
+      if (options.idempotencyKey) args.push('--idempotency-key', options.idempotencyKey);
+      if (options.force) args.push('--force');
+      if (options.json) args.push('--json');
+      await runSelfCliWithExit(args);
+    }
+  );
 agents
   .command('orchestrate')
   .description('Alias for `tnf orchestrate`')
@@ -15547,6 +15758,18 @@ program
     '--require-live',
     'Refuse to send to an agent whose heartbeat is stale. Use in cron/full-auto, where queuing to a dead worker looks identical to progress.'
   )
+  .option(
+    '--require-capacity',
+    'Refuse to send to an agent that declares itself busy or at max load (bus contract v1). Complements --require-live.'
+  )
+  .option(
+    '--await-ack [seconds]',
+    'Wait for a delivery ack from a live subscriber (bus contract v1). Unconfirmed pure-PUBLISH frames are dead-lettered to tnf:dlq. Optional value = timeout seconds (default 10). OPT-IN: without this flag send stays fire-and-forget.'
+  )
+  .option(
+    '--idempotency-key <key>',
+    'Dedup key: receiving agents skip frames whose key was already processed (24h receipt window).'
+  )
   .option('--force', 'Send even when the recipient is unknown (records the id verbatim)')
   .option('--json', 'Emit the dispatch decision as JSON')
   .action(async (message, options) => {
@@ -15561,12 +15784,19 @@ program
       // verify, do not assume.
       const roster = await client.listAgents();
       const resolution = resolveRecipient(options.to, roster);
-      const decision = decideDispatch(resolution, { requireLive: options.requireLive });
+      const decision = decideDispatch(resolution, {
+        requireLive: options.requireLive,
+        requireCapacity: options.requireCapacity,
+      });
 
       if (options.json) {
         console.log(
           JSON.stringify(
-            { to: options.to ?? null, decision: decision.level, ...decision.resolution },
+            {
+              to: options.to ?? null,
+              decision: decision.level,
+              ...decision.resolution,
+            },
             null,
             2
           )
@@ -15576,6 +15806,15 @@ program
       if (!decision.proceed && !options.force) {
         if (!options.json) {
           console.error(chalk.red(`✖ Not sent — ${decision.resolution.summary}`));
+          if (
+            options.requireCapacity &&
+            decision.resolution.capacity?.busy &&
+            decision.exitCode === 4
+          ) {
+            console.error(
+              chalk.dim(`  Capacity: ${decision.resolution.capacity.summary} (override: --force)`)
+            );
+          }
           if (decision.resolution.suggestions.length > 0) {
             console.error(chalk.dim('  Did you mean:'));
             for (const id of decision.resolution.suggestions) {
@@ -15592,7 +15831,40 @@ program
         return;
       }
 
-      await client.send(message, { to: options.to ? { agentId: options.to } : undefined });
+      // Address by the RESOLVED registry id, not the raw --to string: the
+      // recipient's psubscribe pattern is tnf:direct:*:<fullAgentId>. Sending
+      // to the raw name published to a channel nobody subscribed (v0 masked
+      // this because the durable worker-inbox lane uses the resolved id).
+      const resolvedTo = decision.resolution.agentId || options.to;
+      // Bus contract v1: --await-ack swaps fire-and-forget publish for
+      // correlationId + tnf:ack wait. Unconfirmed PURE-PUBLISH frames land in
+      // the DLQ; when a durable worker-inbox LPUSH also happened below, the
+      // ack timeout is reported as queued-durable, not lost.
+      let ackResult: {
+        correlationId: string;
+        delivered: boolean;
+        ackFrom?: string;
+        duplicateAck?: boolean;
+      } | null = null;
+      if (options.awaitAck) {
+        const seconds = Math.max(
+          1,
+          typeof options.awaitAck === 'string' ? parseInt(options.awaitAck, 10) || 10 : 10
+        );
+        ackResult = await client.sendWithAck(
+          message,
+          {
+            to: resolvedTo ? { agentId: resolvedTo } : undefined,
+            idempotencyKey: options.idempotencyKey,
+          },
+          seconds * 1000
+        );
+      } else {
+        await client.send(message, {
+          to: resolvedTo ? { agentId: resolvedTo } : undefined,
+          idempotencyKey: options.idempotencyKey,
+        });
+      }
 
       let workerQueue: { queueKey: string; envelopeId: string } | null = null;
       if (
@@ -15647,6 +15919,37 @@ program
         } else {
           console.log(chalk.green(`📤 Sent — ${decision.resolution.summary}`));
         }
+
+        // Bus contract v1 reporting — always last, so the durable-lane
+        // outcome above is never shadowed by the ack outcome.
+        if (ackResult) {
+          if (ackResult.delivered) {
+            console.log(
+              chalk.green(
+                `📬 Acknowledged by ${ackResult.ackFrom}` +
+                  (ackResult.duplicateAck ? ' (duplicate — receiver deduped it)' : '') +
+                  ` · corr ${ackResult.correlationId}`
+              )
+            );
+          } else if (workerQueue) {
+            console.log(
+              chalk.yellow(
+                `📬 No live ack (corr ${ackResult.correlationId}) — but the durable worker inbox holds it.`
+              )
+            );
+          } else {
+            console.log(
+              chalk.red(
+                `☠ Unacknowledged (corr ${ackResult.correlationId}) — dead-lettered to tnf:dlq. Inspect: tnf dlq list`
+              )
+            );
+            process.exitCode = 5;
+          }
+        }
+      } else if (ackResult && !ackResult.delivered && !workerQueue) {
+        // JSON mode: surface the DLQ outcome via exit code only; the decision
+        // JSON was already printed and must not be double-printed.
+        process.exitCode = 5;
       }
 
       // Wait a bit for responses
@@ -15670,9 +15973,104 @@ program
     }
   });
 
-// ============================================================================
-// ENHANCED ORCHESTRATION COMMANDS
-// ============================================================================
+// ---------------------------------------------------------------------------
+// Bus contract v1 — dead-letter queue administration.
+// Frames that were published but never acked by a live subscriber (with no
+// durable worker-inbox lane to fall back on) land on `tnf:dlq`. These
+// commands are the recovery surface: list, clear, replay.
+// ---------------------------------------------------------------------------
+const dlqCommand = program
+  .command('dlq')
+  .description('Dead-letter queue for unconfirmed bus frames (bus contract v1)');
+
+dlqCommand
+  .command('list')
+  .description('List dead-lettered frames (newest first)')
+  .option('--limit <n>', 'Max entries to show', '20')
+  .option('--json', 'Emit JSON')
+  .action(async (options: { limit?: string; json?: boolean } = {}) => {
+    const RedisAgentClient = await loadRedisAgentClient();
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const entries = await client.listDlq(Math.max(1, parseInt(options.limit || '20', 10) || 20));
+      if (options.json) {
+        console.log(JSON.stringify({ count: entries.length, entries }, null, 2));
+        return;
+      }
+      if (entries.length === 0) {
+        console.log('Dead-letter queue is empty.');
+        return;
+      }
+      console.log(`Dead-letter queue — ${entries.length} entr(y/ies), newest first:\n`);
+      for (const e of entries) {
+        console.log(
+          `  ${chalk.red(e.id || '?')}  ${chalk.dim(e.deadAt || '')}  ${e.reason || '?'}`
+        );
+        console.log(
+          `    channel: ${e.channel || '?'}   to: ${e.to?.agentId || 'broadcast'}${
+            e.frame?.correlationId ? `   corr: ${e.frame.correlationId}` : ''
+          }`
+        );
+        const preview = String(e.frame?.content || '').slice(0, 120);
+        if (preview)
+          console.log(
+            `    frame: ${preview}${String(e.frame?.content || '').length > 120 ? '…' : ''}`
+          );
+      }
+      console.log(chalk.dim('\n  replay: tnf dlq replay <entryId>   ·   clear: tnf dlq clear'));
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) logRedisUnavailable('tnf dlq list');
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exitCode = 1;
+    } finally {
+      await client.cleanup();
+    }
+  });
+
+dlqCommand
+  .command('clear')
+  .description('Drop all dead-lettered frames')
+  .action(async () => {
+    const RedisAgentClient = await loadRedisAgentClient();
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const removed = await client.clearDlq();
+      console.log(chalk.green(`✔ Cleared ${removed} dead-lettered frame(s).`));
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) logRedisUnavailable('tnf dlq clear');
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exitCode = 1;
+    } finally {
+      await client.cleanup();
+    }
+  });
+
+dlqCommand
+  .command('replay')
+  .description('Re-publish one dead-lettered frame to its original channel')
+  .argument('<entryId>', 'Dead-letter entry id (from tnf dlq list)')
+  .action(async (entryId: string) => {
+    const RedisAgentClient = await loadRedisAgentClient();
+    const client = new RedisAgentClient();
+    try {
+      await client.initialize();
+      const ok = await client.replayDlqEntry(entryId);
+      if (ok) {
+        console.log(chalk.green(`↩ Replayed ${entryId} to its original channel.`));
+      } else {
+        console.error(chalk.red(`Entry not found: ${entryId}`));
+        process.exitCode = 3;
+      }
+    } catch (err: any) {
+      if (isRedisUnavailable(err)) logRedisUnavailable('tnf dlq replay');
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exitCode = 1;
+    } finally {
+      await client.cleanup();
+    }
+  });
 
 program
   .command('orchestrate')
@@ -16268,6 +16666,7 @@ import { ServeService } from './services/ServeService.js';
 import { SessionManagerService } from './services/SessionManagerService.js';
 import { StatsService } from './services/StatsService.js';
 import { UpgradeService } from './services/UpgradeService.js';
+import { interactiveSelect } from './utils/interactive-select.js';
 
 interface AcpExternalAgentPlan {
   agent: string;
@@ -17832,19 +18231,80 @@ program
 // Models command
 program
   .command('models')
-  .description('List all available models')
+  .description('List or interactively select dynamically discovered models')
   .argument('[provider]', 'Provider ID to filter models by')
   .option('--verbose', 'Show detailed model information')
   .option('--refresh', 'Refresh the models cache')
+  .option('--select', 'Choose provider/model with arrow keys and set it as the default')
   .option('--json', 'Output machine-readable JSON')
   .action(
     async (
       provider?: string,
-      options?: { verbose?: boolean; refresh?: boolean; json?: boolean }
+      options?: { verbose?: boolean; refresh?: boolean; select?: boolean; json?: boolean }
     ) => {
       try {
         const modelsService = new ModelsService();
-        const models = await modelsService.listModels(provider, { refresh: options?.refresh });
+        let selectedProvider = provider;
+
+        if (options?.select) {
+          if (options.json) throw new Error('--select and --json cannot be used together');
+          if (!process.stdin.isTTY || !process.stdout.isTTY) {
+            throw new Error('--select requires an interactive terminal');
+          }
+          if (!selectedProvider) {
+            const providers = await modelsService.listProviders({ probe: false });
+            const selected = await interactiveSelect(
+              providers.map((candidate) => ({
+                value: candidate.id,
+                label: `${candidate.name} (${candidate.id})`,
+                description: candidate.models.length
+                  ? `${candidate.models.length} catalog models${candidate.configured ? ' · live discovery available' : ''}`
+                  : candidate.configured
+                    ? 'live discovery available'
+                    : 'API key required for live discovery',
+              })),
+              { title: 'Select an LLM provider' }
+            );
+            if (!selected) {
+              console.log(chalk.dim('Model selection cancelled.'));
+              return;
+            }
+            selectedProvider = selected.value;
+          }
+
+          // A menu selection is a freshness request: probe only the chosen
+          // provider and bypass the cache instead of making N slow calls.
+          const models = await modelsService.listModels(selectedProvider, { refresh: true });
+          if (models.length === 0) {
+            throw new Error(`No models are available for provider "${selectedProvider}"`);
+          }
+          const selected = await interactiveSelect(
+            models.map((model) => ({
+              value: model,
+              label: model.name === model.id ? model.id : `${model.name} (${model.id})`,
+              description: [
+                model.contextWindow ? `${model.contextWindow.toLocaleString()} context` : '',
+                model.source ?? '',
+              ]
+                .filter(Boolean)
+                .join(' · '),
+            })),
+            { title: `Select a ${selectedProvider} model` }
+          );
+          if (!selected) {
+            console.log(chalk.dim('Model selection cancelled.'));
+            return;
+          }
+          const result = await modelsService.setDefaultModel(selectedProvider, selected.value.id);
+          console.log(
+            result.success ? chalk.green(`✓ ${result.message}`) : chalk.red(result.message)
+          );
+          return;
+        }
+
+        const models = await modelsService.listModels(selectedProvider, {
+          refresh: options?.refresh,
+        });
 
         if (options?.json) {
           console.log(JSON.stringify(models, null, 2));
@@ -17857,7 +18317,7 @@ program
         } else {
           for (const m of models) {
             if (options?.verbose) {
-              console.log(`${chalk.cyan(m.id)} (${m.provider})`);
+              console.log(`${chalk.cyan(m.id)} (${m.provider}; ${m.source ?? 'unknown'})`);
               if (m.contextWindow)
                 console.log(`  Context: ${m.contextWindow.toLocaleString()} tokens`);
               if (m.inputCost !== undefined)
@@ -19460,6 +19920,67 @@ pluginsCommand
     }
   });
 
+pluginsCommand
+  .command('install <source>')
+  .description('Install a validated loadable extension from a local directory or Git URL')
+  .option('--version <version>', 'Git tag or branch to clone')
+  .option('--activate', 'Activate after installation')
+  .option('--json', 'Print machine-readable output')
+  .action(
+    async (source: string, options: { version?: string; activate?: boolean; json?: boolean }) => {
+      const service = new PluginsService();
+      let plugin = await service.install(source, options.version);
+      if (options.activate) plugin = await service.enable(plugin.name);
+      console.log(
+        options.json
+          ? JSON.stringify(plugin, null, 2)
+          : chalk.green(`Installed ${plugin.name}@${plugin.version} (${plugin.status})`)
+      );
+    }
+  );
+
+pluginsCommand
+  .command('update [name]')
+  .description('Update one or all installed loadable extensions from their recorded source')
+  .option('--json', 'Print machine-readable output')
+  .action(async (name: string | undefined, options: { json?: boolean }) => {
+    const updated = await new PluginsService().update(name);
+    console.log(
+      options.json
+        ? JSON.stringify(updated, null, 2)
+        : chalk.green(`Updated ${updated.length} extension(s)`)
+    );
+  });
+
+for (const action of ['enable', 'disable', 'remove', 'status'] as const) {
+  pluginsCommand
+    .command(`${action} <name>`)
+    .description(`${action[0].toUpperCase()}${action.slice(1)} an installed extension`)
+    .option('--json', 'Print machine-readable output')
+    .action(async (name: string, options: { json?: boolean }) => {
+      const service = new PluginsService();
+      if (action === 'remove') {
+        await service.remove(name);
+        console.log(
+          options.json ? JSON.stringify({ removed: name }) : chalk.green(`Removed ${name}`)
+        );
+        return;
+      }
+      const plugin =
+        action === 'enable'
+          ? await service.enable(name)
+          : action === 'disable'
+            ? await service.disable(name)
+            : await service.getStatus(name);
+      if (!plugin) throw new Error(`Plugin not found: ${name}`);
+      console.log(
+        options.json
+          ? JSON.stringify(plugin, null, 2)
+          : `${plugin.name}@${plugin.version}: ${plugin.status}`
+      );
+    });
+}
+
 const cronCommand = program.command('cron').description('Cron and scheduled tasks management');
 cronCommand
   .command('list')
@@ -19484,6 +20005,10 @@ registerChannelCommands(program, repoRoot);
 registerAgentsClassifyCommand(program, repoRoot);
 registerAgentsRunCommand(program);
 registerAgentsSpecsCommand(program, repoRoot);
+// Capability broker (bus contract v1): `tnf agents match` joins spec
+// frontmatter with live registry state. Registered on the existing `agents`
+// group so the surface stays `tnf agents match`, not a new top-level family.
+registerAgentsMatchCommand(agents, repoRoot);
 registerStatusCommand(program, repoRoot);
 // `doctor` and `config` are already owned by cli.ts above. These modules nest
 // under the incumbent (`doctor health`, `config resolved`) via registerOrNest
@@ -19494,7 +20019,11 @@ registerParityCommand(program, repoRoot);
 registerLogsCommand(program, repoRoot);
 registerFederationTapCommand(program, repoRoot);
 registerRefreshContextCommand(program, repoRoot);
+registerAgentStateQuotaEcosystemCommands(program, repoRoot);
 registerStaffingCommands(program);
+registerDepartmentCommands(program, repoRoot);
+registerRememberCommands(program, repoRoot);
+registerScoutCommands(program, repoRoot);
 registerFleetCommands(program);
 // Free NVIDIA / LLM catalog inspector + active-model switcher. Reads from
 // data/providers/catalog.json + data/providers/nvidia-models.json (single
@@ -19565,7 +20094,9 @@ kanbanCommand
     }
   });
 
-const memoryCommand = program.command('memory').description('Memory provider management');
+const memoryCommand = program
+  .command('memory')
+  .description('Memory provider and compaction management');
 memoryCommand
   .command('list')
   .description('List all configured memory providers')
@@ -19577,6 +20108,62 @@ memoryCommand
       console.log(
         `- ${provider.enabled ? chalk.green('[ON]') : chalk.red('[OFF]')} ${chalk.cyan(provider.name)} [${provider.type}]`
       );
+    }
+  });
+
+memoryCommand
+  .command('compact')
+  .description(
+    'Compact, distill, and prune raw multi-agent brain transcripts (Gemini, Claude, Codex)'
+  )
+  .option('--dry-run', 'Simulate compaction without writing or deleting files')
+  .option('--prune-raw', 'Remove raw uncompacted logs older than threshold')
+  .option('--max-age-days <n>', 'Age threshold in days for pruning raw logs', '14')
+  .action(async (options: { dryRun?: boolean; pruneRaw?: boolean; maxAgeDays?: string }) => {
+    try {
+      const compactor = new MemoryCompactorEngine();
+      const maxAgeDays = options.maxAgeDays ? parseInt(options.maxAgeDays, 10) : 14;
+      console.log(chalk.bold.cyan('\n🧠 Starting Multi-Agent Memory Compaction Sweep...\n'));
+
+      const report = await compactor.compactAllTranscripts({
+        dryRun: options.dryRun,
+        pruneRaw: options.pruneRaw,
+        maxAgeDays,
+      });
+
+      console.log(chalk.bold.green('✅ Memory Compaction Complete:'));
+      console.log(`  - Sessions Scanned:   ${chalk.yellow(report.scannedCount)}`);
+      console.log(`  - Sessions Compacted: ${chalk.green(report.compactedCount)}`);
+      console.log(`  - Raw Logs Pruned:    ${chalk.magenta(report.prunedCount)}`);
+      console.log(
+        `  - Estimated Savings:  ${chalk.cyan((report.bytesSaved / (1024 * 1024)).toFixed(2) + ' MB')}`
+      );
+      console.log(`  - Vault Storage:      ${chalk.dim(report.artifactsPath)}\n`);
+    } catch (err: any) {
+      console.error(chalk.red(`Error during compaction: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+memoryCommand
+  .command('audit-drift')
+  .description('Audit cross-agent memory congruence and verify claim attributions')
+  .action(async () => {
+    try {
+      const compactor = new MemoryCompactorEngine();
+      console.log(
+        chalk.bold.cyan('\n🔍 Auditing Cross-Agent Memory Congruence & Attribution...\n')
+      );
+
+      const audit = await compactor.auditDrift();
+      console.log(chalk.bold.green('✅ Memory Congruence Audit Report:'));
+      console.log(`  - Fidelity Score:       ${chalk.bold(audit.overallFidelityScore + '%')}`);
+      console.log(`  - Conflicting Claims:   ${chalk.yellow(audit.agentDiscrepancies.length)}`);
+      console.log(`  - Unattributed Claims:  ${chalk.yellow(audit.unattributedClaims)}`);
+      console.log(`  - Timestamp:            ${chalk.dim(audit.timestamp)}\n`);
+    } catch (err: any) {
+      console.error(chalk.red(`Error during drift audit: ${err.message}`));
+      process.exit(1);
     }
   });
 
@@ -19784,6 +20371,8 @@ function loadTnfInteractiveContextPack(): string {
     '- If the operator names a file (for example `Main.tsx`), read it directly under `apps/frontend/src/`.',
     '- If command output is unavailable, say so and ask the operator — do not repeat searches.',
     '- Finish one task completely (write + verify) before starting another discovery loop.',
+    '',
+    buildTnfAgentOrientation(repoRoot),
   ].join('\n');
 }
 
@@ -21426,7 +22015,13 @@ function isInteractiveSessionArgv(argv: string[]): boolean {
  * runSelfCli (env).
  */
 function wantsSilentPreflight(argv: string[]): boolean {
-  if (isTruthyEnv(process.env.TNF_SILENT_PREFLIGHT)) return true;
+  // An explicit value wins in either direction. This lets CI and redirected
+  // diagnostics request visible preflight receipts with
+  // TNF_SILENT_PREFLIGHT=0 instead of non-TTY detection silently overriding
+  // the operator. With no override, retain the low-noise defaults below.
+  if (process.env.TNF_SILENT_PREFLIGHT !== undefined) {
+    return isTruthyEnv(process.env.TNF_SILENT_PREFLIGHT);
+  }
   if (!process.stdout.isTTY) return true;
   if (argv.includes('--no-splash')) return true;
   if (argv.includes('--json')) return true;
@@ -21577,6 +22172,18 @@ async function main(): Promise<void> {
   }
   if (isPiPassthroughArgv(argv)) {
     await runPassthrough('pi', argv.slice(3));
+    return;
+  }
+  if (isOpencodePassthroughArgv(argv)) {
+    await runPassthrough('opencode', argv.slice(3));
+    return;
+  }
+  if (isKiloPassthroughArgv(argv)) {
+    await runPassthrough('kilo', argv.slice(3));
+    return;
+  }
+  if (isDroidPassthroughArgv(argv)) {
+    await runPassthrough('droid', argv.slice(3));
     return;
   }
   const implicitArgs = resolveImplicitPassthroughArgs(argv);

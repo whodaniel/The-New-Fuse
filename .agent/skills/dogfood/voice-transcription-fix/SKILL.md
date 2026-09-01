@@ -1,5 +1,7 @@
 ---
 name: voice-transcription-fix
+category: knowledge-intake
+department: ops
 description:
   Permanent fix for Whisper model name mismatch error when using local mini-omni
   voice-bridge stack

@@ -1,5 +1,7 @@
 ---
 name: jules-delegation
+category: tnf-fleet
+department: ops
 description:
   Delegate complex coding tasks to Google's Jules autonomous AI coding agent.
   Use this skill when you need to offload time-consuming implementation work,
@@ -424,7 +426,7 @@ Current templates:
 | 02  | Drizzle Workflow Repo   | Database   |
 | 03  | Drizzle Task Repository | Database   |
 | 04  | Drizzle Chat Repository | Database   |
-| 05  | Core Drizzle Migration   | Migration  |
+| 05  | Core Drizzle Migration  | Migration  |
 | 06  | Core Messaging Service  | Migration  |
 | 07  | TypeScript Strict Audit | Validation |
 | 08  | Agent Dashboard         | Frontend   |

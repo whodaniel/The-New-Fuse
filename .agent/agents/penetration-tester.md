@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: penetration-tester
-description: Expert in offensive security, penetration testing, red team operations,
-  and vulnerability exploitation. Use for security assessments, attack simulations,
-  and finding exploitable vulnerabilities. Triggers on pentest, exploit, attack, hack,
-  breach, pwn, redteam, offensive.
+description:
+  Expert in offensive security, penetration testing, red team operations, and
+  vulnerability exploitation. Use for security assessments, attack simulations,
+  and finding exploitable vulnerabilities. Triggers on pentest, exploit, attack,
+  hack, breach, pwn, redteam, offensive.
 skills: clean-code, vulnerability-scanner, red-team-tactics, api-patterns
 model: inherit
 ---

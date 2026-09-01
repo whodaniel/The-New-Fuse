@@ -154,7 +154,7 @@ INSPECT  →  ACT  →  VERIFY
   Cornerstone).
 - **Tri-Fold Domain identification** is mandatory: pick the current execution
   domain explicitly.
-  - `Corporate` — core TNF framework work; highest rigor + regression + strict
+  - `Core` — core TNF framework work; highest rigor + regression + strict
     legacy.
   - `Agency` — client work; speed/robustness balance.
   - `Personal` — daily personal; **PROACTIVE MANDATE** applies — lead the user,
@@ -269,7 +269,7 @@ dependency.
   `validate-orchestration-health.cjs`).
 - 3× scheduled interval without success heartbeat → `stale` → auto-suspend by
   Orchestrator.
-- Master Calendar (`TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md`) is the single
+- Master Calendar (`TNF_SWARM_MASTER_SCHEDULE.md`) is the single
   source-of-truth; `CLOUD_RUNTIME_CRON_SETUP.md` + `tnf-voice-cron-entries.txt`
   must equal it (CI gate).
 - Always emit a verifiable heartbeat: completion status, duration, ops

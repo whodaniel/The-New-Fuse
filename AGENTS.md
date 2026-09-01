@@ -52,12 +52,29 @@ the same as host injection. Verify:
 node scripts/harness/verify-harness-completeness.cjs --provision
 ```
 
-| Layer concern                     | Entry point                                                  |
-| --------------------------------- | ------------------------------------------------------------ |
-| Permissions outside the model     | `scripts/harness/permission-berm.cjs`                        |
-| Dynamic memory retain/recall      | `scripts/harness/memory-layer.cjs` (≠ `docs/core/MEMORY.md`) |
-| Trajectories / compaction records | `scripts/harness/trajectory.cjs`, `compaction-record.cjs`    |
-| Sandbox materialization (D11)     | `scripts/harness/materialize-sandbox-profile.cjs`            |
+| Layer concern                            | Entry point                                                                                  |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Permissions outside the model            | `scripts/harness/permission-berm.cjs`                                                        |
+| Dynamic memory retain/recall             | `tnf remember retain\|recall` / `scripts/harness/memory-layer.cjs` (≠ `docs/core/MEMORY.md`) |
+| Operator departments (HR/Marketing/…)    | `tnf department list\|show\|route\|apply` — `docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`  |
+| Host prompt-file map                     | `tnf harness host-profiles` — `data/harness/host-prompt-profiles.json`                       |
+| Ecosystem scout staffing                 | `tnf scout staff\|status` — assigned to `tnf-cli-agent`                                      |
+| Trajectories / compaction records        | `scripts/harness/trajectory.cjs`, `compaction-record.cjs`                                    |
+| Sandbox materialization (D11)            | `scripts/harness/materialize-sandbox-profile.cjs`                                            |
+| Resource governance (CPU/memory/process) | `docs/protocols/TNF_RESOURCE_GOVERNANCE_MANDATE.md`                                          |
+
+### Resource Governance is a first-tier concern
+
+Memory/CPU/process management is not incidental infrastructure — see
+`docs/protocols/TNF_RESOURCE_GOVERNANCE_MANDATE.md`. Every cron/launchd job
+routes through a resource guard before it starts
+(`scripts/lib/tnf-resource-guard.cjs`, `scripts/runtime/tnf-launchd-guard.sh`)
+and is watched at runtime (`com.tnf.resource-watchdog`,
+`scripts/runtime/tnf-resource-watchdog.cjs`), which enforces per-job
+CPU/RSS/wall-clock budgets and can trip the fleet-wide pause switch
+(`scripts/lib/tnf-fleet-mode.cjs`) on system-wide overload. A new always-on job
+that execs its program unwrapped, without a declared resource class, is a
+mandate violation — see that doc's incident history for why.
 
 ### Core Tenet (CORRECTED 2026-07-22)
 

@@ -1,9 +1,10 @@
 ---
 category: Engineering
+department: tech
 domain:
-- coding
-- software-development
-- agentic-platform
+  - coding
+  - software-development
+  - agentic-platform
 visibility: collective
 dacc_role: worker
 worker_action: '[to be determined from capabilities]'
@@ -18,8 +19,8 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: qodercli
-description: '''MUST BE USED for terminal-native AI coding tasks with Qoder''s agentic
-  platform.
+description: "'MUST BE USED for terminal-native AI coding tasks with Qoder's
+  agentic platform.
 
   Qoder CLI is a terminal-native AI coding partner and agent engine that enables
 
@@ -27,27 +28,27 @@ description: '''MUST BE USED for terminal-native AI coding tasks with Qoder''s a
 
   multi-agent collaboration, long-horizon execution, memory, and deep codebase
 
-  integration—until delivery is complete.''
+  integration—until delivery is complete.'
 
-  '
+  "
 version: 1.0.0
 skills:
-- code-generation
-- code-refactoring
-- code-review
-- project-architecture
-- task-execution
-- research
+  - code-generation
+  - code-refactoring
+  - code-review
+  - project-architecture
+  - task-execution
+  - research
 capabilities:
-- CODE_GENERATION
-- CODE_REVIEW
-- CODE_REFACTORING
-- ARCHITECTURE_DESIGN
-- PROJECT_MANAGEMENT
-- TASK_EXECUTION
-- RESEARCH
-- FILE_MANAGEMENT
-- DEBUGGING
+  - CODE_GENERATION
+  - CODE_REVIEW
+  - CODE_REFACTORING
+  - ARCHITECTURE_DESIGN
+  - PROJECT_MANAGEMENT
+  - TASK_EXECUTION
+  - RESEARCH
+  - FILE_MANAGEMENT
+  - DEBUGGING
 displayName: Qoder CLI
 color: Blue
 platform: cli

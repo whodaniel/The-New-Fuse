@@ -236,22 +236,28 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
       })
     );
 
-    const federatedAgents = federation.agents.map(
-      (agent: {
-        id: string;
-        name: string;
-        platform: string;
-        status: string;
-        capabilities?: string[];
-      }): UnifiedAgent => ({
-        id: agent.id,
-        name: agent.name,
-        platform: String(agent.platform),
-        source: 'federation',
-        status: String(agent.status),
-        capabilities: agent.capabilities || [],
-      })
-    );
+    // The relay's agent list includes this desktop node. It is an operator
+    // transport, not a chat target; exposing it in the swarm picker routes a
+    // message back to the sender and guarantees a timeout because self messages
+    // are intentionally ignored by the chat listener.
+    const federatedAgents = federation.agents
+      .filter((agent: { id: string }) => agent.id !== federation.agentId)
+      .map(
+        (agent: {
+          id: string;
+          name: string;
+          platform: string;
+          status: string;
+          capabilities?: string[];
+        }): UnifiedAgent => ({
+          id: agent.id,
+          name: agent.name,
+          platform: String(agent.platform),
+          source: 'federation',
+          status: String(agent.status),
+          capabilities: agent.capabilities || [],
+        })
+      );
 
     const unifiedAgents = this.mergeAgents(federatedAgents, localAgents);
     const extensionConnected = FederationNodeService.isBrowserExtensionConnected();
@@ -267,7 +273,7 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
       relayRegistered: federation.registered,
       extensionConnected,
       browserSessionActive: federation.registered && extensionConnected,
-      federatedAgentCount: federation.agents.length,
+      federatedAgentCount: federatedAgents.length,
       channelCount: federation.channels.length || this.snapshot.relayHealth?.channels || 0,
       unifiedAgents,
       topology,

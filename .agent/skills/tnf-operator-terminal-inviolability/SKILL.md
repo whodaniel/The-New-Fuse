@@ -1,5 +1,7 @@
 ---
 name: tnf-operator-terminal-inviolability
+category: tnf-platform
+department: tech
 description:
   Codifies the D24 hard rule that no cron-driven agent may reach into the
   operator's Terminal.app UI (no activate, no set frontmost, no auto-submit).

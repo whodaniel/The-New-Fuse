@@ -1,11 +1,12 @@
 ---
 name: protecting-uncommitted-work
 description:
-  How to park and recover uncommitted work in a shared git checkout. Why
-  `git stash` is not a safe park, and the file-by-file recovery ladder that
-  actually gets work back after a destructive tree mutation.
+  How to park and recover uncommitted work in a shared git checkout. Why `git
+  stash` is not a safe park, and the file-by-file recovery ladder that actually
+  gets work back after a destructive tree mutation.
 primary_type: operational
 category: engineering/governance
+department: tech
 risk_tier: high
 harmful_pattern_detection: true
 harmful_pattern_signals:
@@ -66,7 +67,7 @@ steps.
 Work is almost never actually gone. In order:
 
 1. `git fsck --lost-found` and `git reflog` — commits survive nearly everything.
-2. `git stash list` — check **both** the stash's tracked set *and* whether the
+2. `git stash list` — check **both** the stash's tracked set _and_ whether the
    missing file was ever untracked. Untracked absence is silent: the file simply
    is not there and nothing says so.
 3. **Restore file by file.**

@@ -6,6 +6,7 @@ primary_type: diagnostic
 secondary_tags:
   - interactive
 category: security/reference
+department: tech
 risk_tier: medium
 harmful_pattern_detection: true
 harmful_pattern_signals:
@@ -16,8 +17,10 @@ metadata:
   source_snapshot: .agent/skill-bank/snapshots/project-agent/top-100-web-vulnerabilities-reference-6f86478d/SKILL.md
   status: permanent
 ---
-> Promoted from TNF snapshot history into permanent skill inventory.
-> Category and risk metadata added for adaptive routing and harmful-pattern recognition.
+
+> Promoted from TNF snapshot history into permanent skill inventory. Category
+> and risk metadata added for adaptive routing and harmful-pattern recognition.
+
 # Top 100 Web Vulnerabilities Reference
 
 ## Purpose

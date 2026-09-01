@@ -1,105 +1,103 @@
-`[CLASS:PRIME] [STATUS:LOCKED] [DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:PUBLIC]`
+`[CLASS:PRIME] [STATUS:LOCKED] [DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE]`
 
-# TNF Turn Zero Mandate — Open Runtime V2
+# TNF Turn Zero Mandate — V2
 
 **Status:** ACTIVE  
 **Protocol ID:** `TNF_TURN_ZERO_CANONICAL`  
-**Open runtime:** `whodaniel/The-New-Fuse`
+**Canonical development repository:** `whodaniel/tnf-monorepo`
 
 ## Purpose
 
-Turn Zero establishes the minimum verified authority, repository role, classification, current context, and capability staffing required to take the **next safe action**.
+Turn Zero establishes the minimum verified authority, repository identity,
+classification, current context, and capability staffing required to take the
+**next safe action**.
 
-It is not a ritual to load the entire framework before responding. In interactive work, responsiveness comes first; mutation readiness is gated separately.
+It is not a ritual to load the entire framework before responding. In
+interactive work, responsiveness comes first; mutation readiness is gated
+separately.
 
-The open runtime must remain capable of completing Turn Zero without access to private TNF source or the hosted orchestration-intelligence implementation.
+## Authority
 
-## Public semantic authority
+- Canonical source: `docs/protocols/TURN_ZERO_MANDATE.md` in
+  `whodaniel/tnf-monorepo`.
+- `whodaniel/The-New-Fuse` is the public open-runtime publication target.
+- `whodaniel/fuse-control-plane` is the private proprietary control-plane
+  publication target.
+- Do not develop directly in either downstream publication target.
+- External host mirrors are convenience surfaces only. If a mirror conflicts
+  with this file, this file wins.
+- Repository/product placement is governed jointly by:
+  - `docs/REPO_SEPARATION.md`
+  - `docs/product/TNF_PRODUCT_BOUNDARY.md`
+  - `data/distribution/product-repo-map.json`
+  - `data/distribution/oss-app-boundary.json`
 
-The open agent is grounded by:
+## System Boundary
 
-- `.agent/SYSTEM_PROMPT.md`
-- `docs/protocols/TNF_INTEROPERABILITY_KERNEL.md`
-- `docs/protocols/TNF_OPEN_AGENT_CORE.md`
-- `docs/core/FRONTLOAD_MANIFEST.md`
-- `data/harness/open-agent-contract.json`
+TNF is the orchestration framework/control plane. Harnesses and model hosts such
+as Claude Code, Codex, Cursor, Gemini, OpenClaw, Pi, local models, browser
+harnesses, or later providers are **capability providers**, not foundational
+protocol identities.
 
-Preserve the public semantic kernel:
+OpenClaw remains an optional adapter. Verification follows live enlistment and
+capability discovery rather than stale host assumptions.
 
-`Intent · Authority · Context · Capability · Boundary · Action · Receipt · Handoff`
+## Core Lifecycle
 
-## Repository roles are relational
-
-Repository identity does not have one universal meaning independent of observer/task.
-
-- `whodaniel/The-New-Fuse` is the official public runtime source and distribution repository. Open-source users may clone it, run it, inspect it, modify it locally, fork it, and contribute to it.
-- An external fork/clone is a legitimate public-runtime work surface. A fork does not automatically gain upstream publication authority.
-- TNF's internal product/release process may maintain a separate private canonical development source and publish into the open repository.
-- `private_control_plane` implementation does not belong in the open runtime and must be placed in an authorized private source.
-
-The open-source agent MUST NOT require private repository access for ordinary public/local operation.
-
-## Core lifecycle
-
-Use:
+Use the following lifecycle:
 
 `RESPOND → ORIENT → CLASSIFY → HYDRATE → STAFF → ACT → VERIFY → PROPAGATE → HANDOFF`
 
 ### RESPOND
 
-In interactive sessions, understand and answer the operator promptly. Do not block ordinary conversation on full repository scans, provider discovery, or context ingestion.
+In interactive sessions, understand and answer the operator promptly. Do not
+block ordinary conversation on repository probes, full frontload, fleet
+discovery, or assimilation scans.
 
 ### ORIENT
 
-Before a consequential state-changing action, obtain the minimum current receipts required by the task. Run the public rail gate and inspect current repository/runtime state.
+Before a state-changing action, obtain the minimum current receipts required by
+the task.
 
 ### CLASSIFY
 
-Before creating, moving, committing, publishing, or persisting an artifact, classify it independently across work domain, artifact destination, data residency, and sensitivity.
+Before creating, moving, committing, publishing, or persisting an artifact,
+classify it on the three independent axes below.
 
 ### HYDRATE
 
-Retrieve only task-relevant current context. Do not ingest an entire codebase or every memory artifact merely because the session began.
+Retrieve only task-relevant current context. Do not ingest a whole codebase map
+merely because the session began.
 
 ### STAFF
 
-Resolve required capabilities to currently available providers. Capability providers may include agents, models, scripts, services, tools, humans, or an optional hosted TNF decision service.
+Resolve required capabilities to currently available providers. A capability may
+be staffed by an agent, harness, model, script, service, or human gate.
 
 ### ACT
 
-Perform the bounded operation permitted by the current authority, boundary, and ownership state.
+Perform the scoped action.
 
 ### VERIFY
 
-Empirically verify the intended outcome using an appropriate pathway. Never infer system success from intent, generated prose, or a tool invocation alone.
+Empirically verify the result using a pathway appropriate to the action. Never
+infer success from intent or tool invocation alone.
 
 ### PROPAGATE
 
-Generalize reusable learning without leaking private/context-specific material.
+Generalize reusable learning without leaking private context.
 
 ### HANDOFF
 
-Preserve enough current state, receipts, ownership, classification, unresolved dependencies, and continuation information for another authorized actor/session to continue coherently.
+Write enough current state, receipts, classification, and continuation
+information for another provider/session to resume safely.
 
 ---
 
-## Gate 0 — Public agent rail
+## Gate 0 — Canonical Repository Identity
 
-Before claiming TNF onboarding, verify the public semantic/protocol rail:
-
-```bash
-node scripts/protocols/open-agent-rail-gate.cjs
-```
-
-This hashes the required public rails and writes a machine-local receipt under `~/.tnf/runtime/` unless `--no-write` is supplied.
-
-A missing rail means the open-agent harness is incomplete; it does not mean the hosted SaaS must be contacted.
-
----
-
-## Gate 1 — Repository / operation state
-
-Before write-capable work, inspect at least:
+Before **write-capable TNF code/protocol work**, derive a live repository
+receipt:
 
 ```bash
 git rev-parse --show-toplevel
@@ -111,32 +109,47 @@ git status --porcelain
 
 Also detect in-progress merge/rebase/cherry-pick/revert state.
 
+The canonical development origin must normalize to:
+
+```text
+whodaniel/tnf-monorepo
+```
+
+A historical local folder name such as `The-New-Fuse` does not establish
+repository identity. The remote does.
+
+If the active repository is `The-New-Fuse` or `fuse-control-plane`, stop
+write-capable development and return to `tnf-monorepo`. Downstream repos are
+publication surfaces.
+
 The machine gate is:
 
 ```bash
 node scripts/protocols/turn-zero-v2-gate.cjs --require-write-ready
 ```
 
-Repository mode changes the meaning of the work:
-
-- official public runtime → legitimate OSS/public-contract work surface;
-- fork/external clone → legitimate public-runtime work surface without implied upstream authority;
-- private control-plane source → not an OSS work surface;
-- internal TNF development source → may contain additional private capabilities, but those are not prerequisites for public protocol correctness.
+Read-only orientation may continue when repository identity cannot yet be
+proven; mutation may not.
 
 ---
 
-## Gate 2 — Three-axis classification
+## Three-Axis Classification
 
-### Axis 1 — Work domain
+The old single “work plane” model is superseded by three orthogonal axes.
 
-- `corporate`
-- `agency`
-- `personal`
+### Axis 1 — Work Domain
 
-Domain describes whose problem is being solved; it does not itself decide publication.
+- `core` — TNF/product/framework work.
+- `agency` — client-specific work.
+- `personal` — one person's private life/work context.
 
-### Axis 2 — Artifact destination
+Domain describes **whose problem** is being solved. It does not by itself
+determine where code belongs.
+
+### Axis 2 — Artifact Destination
+
+Every persisted artifact must be placed in one of the current product-boundary
+destinations:
 
 - `oss_runtime`
 - `public_contract`
@@ -144,9 +157,19 @@ Domain describes whose problem is being solved; it does not itself decide public
 - `satellite`
 - `external`
 
-In the open runtime, `private_control_plane` is a boundary violation for persisted implementation.
+Definitions follow `TNF_PRODUCT_BOUNDARY.md`.
 
-### Axis 3 — Data residency / sensitivity
+Examples:
+
+- a generalized relay primitive → `oss_runtime`
+- an interface/schema exposing private capability safely → `public_contract`
+- tenant authority/billing/hosted orchestration implementation →
+  `private_control_plane`
+- an optional game/integration/product → `satellite`
+- personal strategy, client brief, private benefits/medical/legal material →
+  `external`
+
+### Axis 3 — Data Residency / Sensitivity
 
 Residency:
 
@@ -162,15 +185,21 @@ Sensitivity:
 - `private`
 - `restricted`
 
-Safety rules:
+A useful product pattern discovered during personal/client work does **not**
+authorize carrying the underlying private facts into product source.
 
-1. private/restricted context must not be committed to public product source;
-2. secret-machine-local material remains outside repository source control;
-3. personal/client artifacts default external unless deliberately rewritten as sanitized product-neutral mechanisms;
-4. when classification is unclear, publish the smallest public contract or keep the implementation private/external until resolved;
-5. a public contract does not require disclosure of a private decision procedure.
+### Classification safety rules
 
-Environment hints:
+1. `private` or `restricted` context must not be committed to public product
+   source.
+2. `secret_machine_local` material remains outside repository source control.
+3. Personal/client artifacts default to `external` unless deliberately rewritten
+   as sanitized, product-neutral implementation.
+4. When classification is unclear, prefer the smallest public contract plus
+   private implementation, or keep the artifact external until resolved.
+5. Classification is recorded in handoff state.
+
+Environment hints accepted by V2 tooling:
 
 ```text
 TNF_WORK_DOMAIN
@@ -181,193 +210,277 @@ TNF_DATA_SENSITIVITY
 
 ---
 
-## Gate 3 — State freshness
+## State Freshness
 
 Volatile facts are not asserted from memory.
 
-Use current probes/receipts appropriate to the claim. Where available:
+Use `STATE_FRESHNESS_MANDATE.md` and:
 
 ```bash
 node scripts/protocols/state-freshness-gate.cjs --frontload
 node scripts/protocols/state-freshness-gate.cjs --refresh
 ```
 
-A stale or missing receipt means **unknown**, not automatically broken or verified.
+Turn Zero freshness includes, where relevant:
 
-After context compaction, provider/session substitution, repository movement, or loss of confidence in current state, re-probe facts on which the next action depends.
+- canonical `tnf-monorepo` main;
+- public open-runtime main;
+- private control-plane main;
+- public PR/rules/leakage state;
+- product-repository map;
+- OSS/satellite boundary map;
+- local repository identity/dirty state;
+- live runtime services.
 
----
+A stale or missing receipt means **unknown**, not broken.
 
-## Gate 4 — Task-scoped context hydration
+Catastrophic claims require corroboration from an independent probe.
 
-Hydrate in this order unless the task requires a narrower subset:
-
-1. public semantic rails from `FRONTLOAD_MANIFEST.md`;
-2. current repository/runtime receipt;
-3. public product/boundary maps relevant to the task;
-4. exact packages/files/tests involved;
-5. provider/capability observations required for execution;
-6. only then larger maps, histories, memories, or satellite repositories that are actually relevant.
-
-Generated codebase maps and dynamic recall are clue sources, not authority substitutes.
-
-Context may be inline or referenced through files, resources, content hashes, MCP resources, Redis references, URLs, or other supported carriers. The public protocol does not require the private hosted context-ranking algorithm.
+After context compaction, re-probe any volatile fact on which the next action
+depends.
 
 ---
 
-## Gate 5 — Capability staffing
+## Task-Scoped Context Hydration
 
-Turn Zero staffs **capabilities**, not brands.
+Do not use `apps/frontend/src/data/codebase_map.json` as mandatory Turn Zero
+authority.
+
+For TNF development, hydrate in this order:
+
+1. `data/distribution/product-repo-map.json`
+2. `data/distribution/oss-app-boundary.json`
+3. `docs/product/TNF_PRODUCT_BOUNDARY.md`
+4. `docs/REPO_SEPARATION.md`
+5. current freshness/repository receipts
+6. exact packages/files involved in the task
+7. relevant satellite repository only when the task crosses that boundary
+
+Large ledgers, generated trackers, historical maps, and daily memories are
+retrieved only when task-relevant.
+
+Dynamic recall may be used as a clue source, never as a substitute for current
+code/authority.
+
+---
+
+## Capability Staffing Mandate
+
+Turn Zero staffs **capabilities**, not brands or hard-coded agent identities.
 
 For a nontrivial task:
 
 1. identify required capabilities;
-2. discover currently available providers;
-3. apply hard capability, authority, boundary, privacy, and explicit operator requirements;
-4. choose among eligible providers using an inspectable local/operator policy or an intentionally configured hosted policy contract;
+2. discover currently enlisted providers;
+3. evaluate authority, privacy, cost, latency, context, and reliability;
+4. staff each capability with the best available provider;
 5. execute;
-6. verify independently when consequence warrants it.
+6. verify outputs independently when consequence warrants it.
 
-The open runtime may use local deterministic/configurable policy. Missing hosted optimization does not remove local agency.
+Discovery may use:
 
-`Capability != Authority` remains mandatory.
+- harness configuration/runtime state;
+- `tnf agents who --json`;
+- capability registry/matcher;
+- installed skills/scripts;
+- live provider probes;
+- human/operator approval surfaces.
 
----
+Named providers remain valid implementation details. They are not mandatory
+protocol dependencies.
 
-## Gate 6 — Shared mutation / ownership
-
-Before changing shared mutable state, establish ownership/collision awareness appropriate to the resource.
-
-General pattern:
-
-`READ → CLAIM/CHECK → MUTATE → VERIFY → RELEASE/HANDOFF`
-
-This applies to Git worktrees/index/branches, deployment state, durable shared files, browser sessions, task queues, migrations, and other shared mutation surfaces.
-
-A provider being available does not prove that it owns the resource or may change it.
+Parallelize when it reduces time/risk and the providers can work independently.
+Do not delegate merely to satisfy a ritual.
 
 ---
 
-## Gate 7 — Inspect → Act → Verify
+## Inspect → Act → Verify
 
-- **Inspect** current authority, relevant context, state, ownership, and source.
+This invariant remains mandatory.
+
+- **Inspect** current authority, state, and relevant context.
 - **Act** with explicit scope.
 - **Verify** empirically.
 
-Distinguish evidence classes at least as:
+Experimental/cutting-edge implementation should be verified through a stable or
+independently understandable path where practical.
 
-- `verified`
-- `reported`
-- `inferred`
-- `unknown`
-
-Do not silently upgrade reported/inferred state to verified.
-
-A successful tool call is a receipt for that invocation, not necessarily proof of the intended downstream outcome.
+A tool call returning success is a receipt for the call, not necessarily proof
+that the intended system outcome exists.
 
 ---
 
-## Gate 8 — Privacy-preserving propagation
+## Privacy-Preserving Assimilation
 
-**Universalize the pattern, not the private context.**
+### Universalize the pattern, not the private context.
 
-When sensitive work reveals a generally useful improvement:
+TNF should benefit from reusable lessons, but assimilation is a transformation,
+not copying.
+
+When a personal, tenant, client, medical, legal, financial, or other sensitive
+workflow reveals a generally useful improvement:
 
 1. extract the generalized mechanism;
-2. remove identities, private facts, credentials, case-specific destinations, and unnecessary source context;
-3. classify the generalized artifact;
-4. test it independently;
-5. only then promote it into shared/public TNF source.
+2. strip identities, private facts, destinations, secrets, and case-specific
+   data;
+3. classify the generalized artifact through the product boundary;
+4. test it independently of the private source context;
+5. only then assimilate it into TNF.
 
-Do not move private decision algorithms into the public runtime merely because a public contract calls them.
+Do not put private source material into TNF merely because the workflow produced
+a useful idea.
+
+Attribution remains required for substantive human/scientific claims where
+provenance matters.
 
 ---
 
-## Interactive mode
+## ASSIMILATE_CHECK V2
+
+ASSIMILATE_CHECK is a structured review, not a mandatory full-host scan on every
+interactive turn.
+
+### Inputs
+
+Inspect only enlisted/relevant sources:
+
+- current session/handoff;
+- recent task-relevant diff/commits;
+- known failure/trajectory sources exposed by enlisted harness adapters;
+- next actions;
+- recurring failures observed with sufficient evidence.
+
+No host-specific path such as `~/.hermes/...` is universally mandatory.
+
+### Outputs
+
+A material reusable finding becomes one of:
+
+- code/test fix;
+- protocol/runbook change;
+- skill;
+- issue/directive;
+- known-failure entry;
+- intentionally external/private note.
+
+Not every observation deserves a permanent TNF artifact. The test is reusable
+system value.
+
+---
+
+## Interactive Mode
+
+Interactive is the default.
 
 At session start:
 
 1. respond to the user;
-2. run/read the public Stage A rail as needed;
-3. orient repository/runtime state before mutation;
+2. read Stage A from `FRONTLOAD_MANIFEST.md` as needed;
+3. show/derive a compact repository + freshness orientation before mutation;
 4. classify when persistence/mutation becomes relevant;
 5. hydrate only the current task;
 6. staff capabilities only when useful.
 
-Do not automatically pull, load all memory, scan every provider, or execute full assimilation merely because the agent started.
+Do **not** automatically:
+
+- git pull;
+- ingest full codebase maps;
+- run all host scans;
+- load all memory/ledgers;
+- execute a full assimilation sweep.
+
+Heavy work can run when requested, in swarm mode, or at the point it becomes a
+dependency.
 
 ---
 
-## Swarm / autonomous mode
+## Swarm / Autonomous Mode
 
 For coordinated or long-running work:
 
-1. verify the public agent rail;
-2. orient repository/runtime state;
-3. classify planned artifacts;
-4. hydrate current task state;
-5. establish ownership/collision boundaries;
+1. run Gate 0;
+2. load Stage A and task-relevant Stage B/C frontload;
+3. validate handoff freshness;
+4. classify planned artifacts;
+5. hydrate current repository/product boundaries;
 6. discover/staff required capabilities;
-7. execute bounded work packages;
+7. execute work packages;
 8. verify;
-9. propagate only generalized public-safe learning;
-10. write receipts/handoff.
+9. perform ASSIMILATE_CHECK V2;
+10. write Turn End V2.
 
-Autonomous execution does not override destructive-operation, credential, elevation, publication, privacy, or operator-approval boundaries.
-
----
-
-## Public/private composition
-
-The open runtime must contain the **logical railways and gateways** required to follow TNF protocol.
-
-It may call a hosted TNF service for optional optimization or hosted authority through public contracts, but correctness of the public lifecycle must not depend on access to private implementation source.
-
-If hosted policy is absent:
-
-- use a valid inspectable local/operator policy where possible;
-- request operator choice where appropriate;
-- use a documented deterministic fallback where semantics permit;
-- defer/deny only the specific action whose missing authority/policy is consequential.
-
-Do not collapse the whole agent into a thin remote client.
+Autonomous execution does not override existing destructive-operation,
+credential, elevation, publication, or operator-approval boundaries.
 
 ---
 
-## Turn End contract
+## Repository Publication
 
-When durable continuation is required, preserve:
+All TNF development lands in `whodaniel/tnf-monorepo`.
 
-- repository/runtime identity;
-- intent/scope;
-- classification/boundaries;
-- current head/state references;
-- completed/pending/blocked work;
-- ownership;
-- evidence/receipts;
-- unverified assumptions;
-- next actions.
+After canonical development is merged:
 
-Use the current public handoff schema/tooling where available.
+```bash
+pnpm run sync:repos:dry-run
+```
+
+Then use the repository's controlled publication workflow:
+
+- public open runtime → generated `sync/open-runtime` PR into `The-New-Fuse`
+- proprietary control-plane extract → generated update to `fuse-control-plane`
+
+Never “keep repos in sync” by manually repeating feature commits in downstream
+targets.
 
 ---
 
-## Enforcement surfaces
+## Turn End Contract
 
-These public surfaces must remain aligned:
+Use:
 
-- `.agent/SYSTEM_PROMPT.md`
-- `.agent/context/agent-onboarding.md`
-- `.agent/workflows/frontload.md`
-- `docs/protocols/TNF_INTEROPERABILITY_KERNEL.md`
-- `docs/protocols/TNF_OPEN_AGENT_CORE.md`
+```bash
+node scripts/turn-end-v2.cjs
+```
+
+Turn End records:
+
+- canonical repository identity;
+- branch/head;
+- three-axis classification;
+- capabilities required/staffed;
+- publication impact;
+- freshness receipts;
+- changed paths;
+- verification;
+- continuation/next actions.
+
+Schema:
+
+`docs/protocols/schemas/tnf-session-handoff.schema.json`
+
+Current spec:
+
+`tnf/session-handoff/0.2`
+
+---
+
+## Enforcement Targets
+
+These surfaces must remain aligned with Turn Zero:
+
+- `docs/protocols/TURN_END_MANDATE.md`
+- `docs/protocols/STATE_FRESHNESS_MANDATE.md`
+- `docs/protocols/state-freshness.registry.json`
+- `docs/protocols/ADAPTABLE_HOST_VERIFICATION.md`
 - `docs/core/FRONTLOAD_MANIFEST.md`
-- `data/harness/open-agent-contract.json`
-- `scripts/protocols/open-agent-rail-gate.cjs`
+- `docs/product/TNF_PRODUCT_BOUNDARY.md`
+- `docs/REPO_SEPARATION.md`
 - `scripts/protocols/turn-zero-v2-gate.cjs`
 - `scripts/tnf-onboard-twip.cjs`
-- `packages/tnf-cli/src/orchestration/TurnZeroService.ts`
+- `scripts/turn-end-v2.cjs`
+- `docs/protocols/schemas/tnf-session-handoff.schema.json`
 
 ## Operator-facing principle
 
-**Establish just enough verified meaning, authority, context, classification, ownership, and capability to safely take the next action — while preserving local open-agent agency.**
+**Establish just enough verified authority, context, classification, and
+capability to safely take the next action.**

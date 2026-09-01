@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "id": "tnf-onboarding-contract",
+  "version": "2.2.0",
+  "updatedAt": "2026-08-22T18:25:00.000Z",
+  "authority": {
+    "turnZero": "docs/protocols/TURN_ZERO_MANDATE.md",
+    "frontloadManifest": "docs/core/FRONTLOAD_MANIFEST.md",
+    "canonicalDevelopmentRepository": "whodaniel/tnf-monorepo"
+  },
+  "standardEntryPoint": "pnpm run tnf:onboard",
+  "writeReadyEntryPoint": "pnpm run tnf:onboard -- --write-ready --task <task>",
+  "stageA": {
+    "deriveFromManifest": true,
+    "allowCompetingHardCodedRailLists": false,
+    "receiptPath": ".agent/runtime-logs/turn-zero-stage-a.latest.json",
+    "receiptRequires": [
+      "manifest_sha256",
+      "repository_origin",
+      "repository_branch",
+      "repository_head",
+      "rail_path",
+      "rail_sha256",
+      "load_status",
+      "observed_at",
+      "consumer"
+    ]
+  },
+  "fullyHarnessed": {
+    "definition": "A session has a current manifest-derived Stage A receipt, a repository/freshness orientation, a task-scoped hydration route, capability/provider discovery, and verified host injection coverage when the host exposes an injection surface. Write-capable work additionally requires resolved classification and no write-readiness blockers.",
+    "requirements": [
+      "stage_a_hydration_pass",
+      "canonical_or_explicit_external_repository_mode",
+      "current_repository_receipt",
+      "handoff_freshness_reported",
+      "task_hydration_plan_emitted",
+      "provider_discovery_attempted",
+      "host_injection_verified_or_not_applicable"
+    ],
+    "writeCapableAdditionalRequirements": [
+      "classification_resolved",
+      "stage_a_hashes_current",
+      "no_downstream_publication_target",
+      "no_in_progress_git_operation",
+      "required_host_injection_surfaces_verified"
+    ]
+  },
+  "rehydrateOn": [
+    "session_start",
+    "context_compaction",
+    "provider_substitution",
+    "repository_movement",
+    "manifest_hash_change",
+    "stage_a_rail_hash_change",
+    "authority_uncertainty"
+  ],
+  "taskRoutes": [
+    {
+      "when": "nontrivial TNF engineering, architecture, debugging, implementation, or review",
+      "load": [".agent/skills/tnf-engineering-context/SKILL.md"]
+    },
+    {
+      "when": "multiple agents or overlapping durable sources are involved",
+      "load": [
+        "docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md",
+        ".agent/skills/tnf-source-concordance/SKILL.md"
+      ]
+    },
+    {
+      "when": "source library freshness, packaging, Drive distribution, or supersession is involved",
+      "load": [".agent/skills/tnf-source-library-refresh/SKILL.md"]
+    },
+    {
+      "when": "assimilation, parodying an external agent, self-evolution capability intake, provider capability comparison, or turning an external agent feature into TNF-native capability is involved",
+      "load": [
+        ".agent/skills/tnf-parody-assimilate-cycle/SKILL.md",
+        ".agent/skills/tnf-self-evolution-protocol/SKILL.md",
+        "docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md",
+        ".agent/skills/tnf-agent-resource-convergence/SKILL.md"
+      ],
+      "rule": "Assimilation is the capability/evolution intake plane. Route reusable read-mostly artifacts into the Agent Resource Fabric, provider execution through existing provider/host authorities, stateful history through memory/compaction, user-owned durable context through the storage mandate, and secrets through the private credential boundary. Do not create a parallel assimilation registry."
+    },
+    {
+      "when": "local agent resource consolidation, host-internal skill/prompt/rule deduplication, agent resource migration, adaptive redirection, or new local CLI/desktop host resource mapping is involved",
+      "load": [
+        "docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md",
+        ".agent/skills/tnf-agent-resource-convergence/SKILL.md"
+      ],
+      "rule": "Reusable read-mostly resources may converge into the TNF content-addressed resource fabric. Secrets and opaque/stateful vendor stores must not be blindly deduplicated. Unknown hosts remain discovery-required until their real supported surfaces are verified."
+    },
+    {
+      "when": "user context, profile, memory persistence, local storage, or Google Drive storage is involved",
+      "loadIfPresent": [
+        "docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md",
+        ".agent/skills/tnf-user-context-storage/SKILL.md"
+      ],
+      "rule": "If these paths are absent on the current branch, locate and reconcile the active canonical PR/workstream before inventing a competing provider model."
+    },
+    {
+      "when": "video intelligence processing, actionable intelligence extraction, multi-persona combinatorics, non-destructive pruning, or hierarchical semantic skill tree traversal is involved",
+      "load": [
+        "docs/protocols/SOVEREIGN_DISTILLATION_AND_DUAL_TRACK_PROTOCOL.md",
+        "docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md",
+        "docs/protocols/NON_DESTRUCTIVE_PRUNING_PROTOCOL.md",
+        "docs/protocols/HIERARCHICAL_SEMANTIC_SKILL_TREE.md",
+        "docs/protocols/THE_VELOCITY_INTEGRITY_BALANCE.md"
+      ],
+      "rule": "Process incoming video/audio transcripts across the 7 Actionable Modalities, execute non-destructive pruning by offloading core digests to cloud ledgers and compressing raw media to cold storage, and navigate skills via the Hierarchical Semantic Skill Tree."
+    }
+  ],
+  "crossAgentRules": {
+    "inspectActiveOwnershipBeforeMutation": true,
+    "doNotReinventBeforeSearch": true,
+    "stableSourceIdentitySeparateFromFacets": true,
+    "sourceLabelsDoNotCreateAuthority": true,
+    "privacyPrecedesHydration": true,
+    "centralizeReusableHostResourcesBeforeCreatingProviderCopies": true,
+    "assimilationMustReuseExistingTNFAuthorities": true
+  },
+  "hostInjection": {
+    "installer": "scripts/install-agent-frontload.cjs",
+    "provisioner": "scripts/harness/provision-injection-surfaces.cjs",
+    "verifyCommand": "node scripts/harness/provision-injection-surfaces.cjs --verify",
+    "repairCommand": "node scripts/harness/provision-injection-surfaces.cjs --repair",
+    "policy": "Host surfaces contain pointers to the canonical onboarder/manifest, not copied Stage A rail lists. Reusable host resources should converge through TNF_AGENT_RESOURCE_CONVERGENCE when an adapter is verified."
+  },
+  "verification": [
+    "node --test scripts/protocols/frontload-manifest.test.cjs",
+    "node --test scripts/protocols/turn-zero-v2-gate.test.cjs",
+    "node --test scripts/harness/agent-resource-converge.test.cjs",
+    "node --test scripts/harness/assimilation-scan.test.cjs",
+    "node scripts/harness/agent-resource-converge.cjs scan",
+    "node scripts/harness/assimilation-scan.cjs --json",
+    "node scripts/verify-repo-frontload.cjs",
+    "node scripts/harness/provision-injection-surfaces.cjs --verify",
+    "pnpm run tnf:onboard -- --task <task>"
+  ]
+}

@@ -1,5 +1,7 @@
 ---
 name: whatsapp-voice-transcription-fix
+category: knowledge-intake
+department: ops
 description:
   Fix for WhatsApp voice message transcription on TNF using native voice-bridge
   / mini-omni instead of broken OpenAI Whisper CLI

@@ -28,7 +28,7 @@ export const ToolsetConfigDrawer = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const api = useApi();
+  const { api } = useApi();
   const [servers, setServers] = useState<McpServerRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

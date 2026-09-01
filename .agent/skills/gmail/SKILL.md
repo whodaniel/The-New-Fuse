@@ -1,11 +1,12 @@
 ---
 name: gmail
+department: tech
 description: |
   Gmail API integration with managed OAuth. Read, send, and manage emails, threads, labels, and drafts. Use this skill when users want to interact with Gmail. For other third party apps, use the api-gateway skill (https://clawhub.ai/byungkyu/api-gateway).
 compatibility: Requires network access and valid Maton API key
 metadata:
   author: maton
-  version: "1.0"
+  version: '1.0'
   clawdbot:
     emoji: 🧠
     requires:
@@ -15,7 +16,8 @@ metadata:
 
 # Gmail
 
-Access the Gmail API with managed OAuth authentication. Read, send, and manage emails, threads, labels, and drafts.
+Access the Gmail API with managed OAuth authentication. Read, send, and manage
+emails, threads, labels, and drafts.
 
 ## Quick Start
 
@@ -35,7 +37,9 @@ EOF
 https://gateway.maton.ai/google-mail/{native-api-path}
 ```
 
-Replace `{native-api-path}` with the actual Gmail API endpoint path. The gateway proxies requests to `gmail.googleapis.com` and automatically injects your OAuth token.
+Replace `{native-api-path}` with the actual Gmail API endpoint path. The gateway
+proxies requests to `gmail.googleapis.com` and automatically injects your OAuth
+token.
 
 ## Authentication
 
@@ -97,6 +101,7 @@ EOF
 ```
 
 **Response:**
+
 ```json
 {
   "connection": {
@@ -126,7 +131,8 @@ EOF
 
 ### Specifying Connection
 
-If you have multiple Gmail connections, specify which one to use with the `Maton-Connection` header:
+If you have multiple Gmail connections, specify which one to use with the
+`Maton-Connection` header:
 
 ```bash
 python <<'EOF'
@@ -246,6 +252,7 @@ GET /google-mail/gmail/v1/users/me/profile
 ## Query Operators
 
 Use in the `q` parameter:
+
 - `is:unread` - Unread messages
 - `is:starred` - Starred messages
 - `from:email@example.com` - From specific sender
@@ -264,8 +271,8 @@ const response = await fetch(
   'https://gateway.maton.ai/google-mail/gmail/v1/users/me/messages?maxResults=10',
   {
     headers: {
-      'Authorization': `Bearer ${process.env.MATON_API_KEY}`
-    }
+      Authorization: `Bearer ${process.env.MATON_API_KEY}`,
+    },
   }
 );
 ```
@@ -288,17 +295,20 @@ response = requests.get(
 - Use `me` as userId for the authenticated user
 - Message body is base64url encoded in the `raw` field
 - Common labels: `INBOX`, `SENT`, `DRAFT`, `STARRED`, `UNREAD`, `TRASH`
-- IMPORTANT: When using curl commands, use `curl -g` when URLs contain brackets (`fields[]`, `sort[]`, `records[]`) to disable glob parsing
-- IMPORTANT: When piping curl output to `jq` or other commands, environment variables like `$MATON_API_KEY` may not expand correctly in some shell environments. You may get "Invalid API key" errors when piping.
+- IMPORTANT: When using curl commands, use `curl -g` when URLs contain brackets
+  (`fields[]`, `sort[]`, `records[]`) to disable glob parsing
+- IMPORTANT: When piping curl output to `jq` or other commands, environment
+  variables like `$MATON_API_KEY` may not expand correctly in some shell
+  environments. You may get "Invalid API key" errors when piping.
 
 ## Error Handling
 
-| Status | Meaning |
-|--------|---------|
-| 400 | Missing Gmail connection |
-| 401 | Invalid or missing Maton API key |
-| 429 | Rate limited (10 req/sec per account) |
-| 4xx/5xx | Passthrough error from Gmail API |
+| Status  | Meaning                               |
+| ------- | ------------------------------------- |
+| 400     | Missing Gmail connection              |
+| 401     | Invalid or missing Maton API key      |
+| 429     | Rate limited (10 req/sec per account) |
+| 4xx/5xx | Passthrough error from Gmail API      |
 
 ### Troubleshooting: API Key Issues
 

@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: social
 visibility: collective
 dacc_role: worker
@@ -17,6 +18,7 @@ traits:
 name: Scout Llm Opportunities
 description: null
 ---
+
 # LLM Opportunity Scout
 
 ## Identity

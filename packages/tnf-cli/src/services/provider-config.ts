@@ -34,9 +34,25 @@ import { fileURLToPath } from 'node:url';
 export interface ProviderDef {
   id: string;
   name: string;
+  /** Local endpoints do not require a credential and are probed directly. */
+  type: 'cloud' | 'local' | 'custom';
   /** Environment variable holding this provider's credential. */
-  envKey: string;
+  envKey: string | null;
+  /** Accepted credential aliases, in priority order after envKey. */
+  altEnvKeys: string[];
   baseUrl: string;
+  /** Provider-specific model discovery path. Defaults to /models. */
+  modelsPath: string;
+  /** Authentication contract for model discovery. */
+  authStyle: 'bearer' | 'query' | 'x-api-key' | 'none';
+  /** Some catalogs (notably OpenRouter) can be listed without a key. */
+  authOptional: boolean;
+  defaultModel?: string;
+  /** Durable fallback entries used when live discovery is unavailable. */
+  models: string[];
+  /** Optional fuller model registry, resolved relative to catalog.json. */
+  modelRegistry?: string;
+  openaiCompatible?: boolean;
   /**
    * Preference order for tier resolution — lower is tried first. Free and
    * OAuth-backed providers belong at the low end so the resolver reaches for
@@ -71,70 +87,156 @@ export interface ProviderConfig {
  */
 export const DEFAULT_PROVIDERS: ProviderDef[] = [
   {
+    id: 'ollama',
+    name: 'Local Ollama',
+    type: 'local',
+    envKey: null,
+    altEnvKeys: [],
+    baseUrl: 'http://localhost:11434',
+    modelsPath: '/api/tags',
+    authStyle: 'none',
+    authOptional: true,
+    tier: 1,
+    enabled: true,
+    models: [],
+    openaiCompatible: true,
+  },
+  {
+    id: 'llamacpp',
+    name: 'Local llama.cpp',
+    type: 'local',
+    envKey: null,
+    altEnvKeys: [],
+    baseUrl: 'http://127.0.0.1:8081/v1',
+    modelsPath: '/models',
+    authStyle: 'none',
+    authOptional: true,
+    tier: 2,
+    enabled: true,
+    models: [],
+    openaiCompatible: true,
+  },
+  {
     id: 'google',
     name: 'Google AI',
+    type: 'cloud',
     envKey: 'GOOGLE_API_KEY',
+    altEnvKeys: ['GEMINI_API_KEY', 'GOOGLE_AI_API_KEY'],
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+    modelsPath: '/models',
+    authStyle: 'query',
+    authOptional: false,
     tier: 10,
     enabled: true,
+    models: [],
+    openaiCompatible: false,
   },
   {
     id: 'groq',
     name: 'Groq',
+    type: 'cloud',
     envKey: 'GROQ_API_KEY',
+    altEnvKeys: [],
     baseUrl: 'https://api.groq.com/openai/v1',
+    modelsPath: '/models',
+    authStyle: 'bearer',
+    authOptional: false,
     tier: 20,
     enabled: true,
+    models: [],
+    openaiCompatible: true,
   },
   {
     id: 'nvidia',
     name: 'NVIDIA NIM',
+    type: 'cloud',
     envKey: 'NVIDIA_API_KEY',
+    altEnvKeys: [],
     baseUrl: 'https://integrate.api.nvidia.com/v1',
+    modelsPath: '/models',
+    authStyle: 'bearer',
+    authOptional: false,
     tier: 30,
     enabled: true,
+    models: [],
+    openaiCompatible: true,
   },
   {
     id: 'deepseek',
     name: 'DeepSeek',
+    type: 'cloud',
     envKey: 'DEEPSEEK_API_KEY',
+    altEnvKeys: [],
     baseUrl: 'https://api.deepseek.com/v1',
+    modelsPath: '/models',
+    authStyle: 'bearer',
+    authOptional: false,
     tier: 40,
     enabled: true,
+    models: [],
+    openaiCompatible: true,
   },
   {
     id: 'openrouter',
     name: 'OpenRouter',
+    type: 'cloud',
     envKey: 'OPENROUTER_API_KEY',
+    altEnvKeys: [],
     baseUrl: 'https://openrouter.ai/api/v1',
+    modelsPath: '/models',
+    authStyle: 'bearer',
+    authOptional: true,
     tier: 50,
     enabled: true,
+    models: [],
+    openaiCompatible: true,
   },
   {
     // SpaceXAI (formerly xAI). Flagship long-running agent model as of 2026-08-12:
     // grok-4.6 (also via OpenRouter as x-ai/grok-4.6). Distinct from Grok Bot ETR.
     id: 'xai',
     name: 'SpaceXAI (xAI)',
+    type: 'cloud',
     envKey: 'XAI_API_KEY',
+    altEnvKeys: [],
     baseUrl: 'https://api.x.ai/v1',
+    modelsPath: '/models',
+    authStyle: 'bearer',
+    authOptional: false,
     tier: 55,
     enabled: true,
+    models: [],
+    openaiCompatible: true,
   },
   {
     id: 'anthropic',
     name: 'Anthropic',
+    type: 'cloud',
     envKey: 'ANTHROPIC_API_KEY',
+    altEnvKeys: [],
     baseUrl: 'https://api.anthropic.com/v1',
+    modelsPath: '/models',
+    authStyle: 'x-api-key',
+    authOptional: false,
     tier: 60,
     enabled: true,
+    models: [],
+    openaiCompatible: false,
   },
   {
     id: 'openai',
     name: 'OpenAI',
+    type: 'cloud',
     envKey: 'OPENAI_API_KEY',
+    altEnvKeys: [],
     baseUrl: 'https://api.openai.com/v1',
+    modelsPath: '/models',
+    authStyle: 'bearer',
+    authOptional: false,
     tier: 70,
     enabled: true,
+    models: [],
+    openaiCompatible: true,
   },
 ];
 
@@ -180,11 +282,51 @@ function mergeProvider(
   }
 
   const existing = base.get(id);
+  const type =
+    raw.type === 'local' || raw.type === 'custom' || raw.type === 'cloud'
+      ? raw.type
+      : (existing?.type ?? 'cloud');
+  const envKey =
+    typeof raw.envKey === 'string'
+      ? raw.envKey.trim() || null
+      : raw.envKey === null
+        ? null
+        : (existing?.envKey ?? null);
+  const authStyle =
+    raw.authStyle === 'query' ||
+    raw.authStyle === 'x-api-key' ||
+    raw.authStyle === 'none' ||
+    raw.authStyle === 'bearer'
+      ? raw.authStyle
+      : (existing?.authStyle ?? (type === 'local' ? 'none' : 'bearer'));
   const merged: ProviderDef = {
     id,
     name: typeof raw.name === 'string' ? raw.name : (existing?.name ?? id),
-    envKey: typeof raw.envKey === 'string' ? raw.envKey : (existing?.envKey ?? ''),
+    type,
+    envKey,
+    altEnvKeys: Array.isArray(raw.altEnvKeys)
+      ? raw.altEnvKeys.filter(
+          (key): key is string => typeof key === 'string' && Boolean(key.trim())
+        )
+      : (existing?.altEnvKeys ?? []),
     baseUrl: typeof raw.baseUrl === 'string' ? raw.baseUrl : (existing?.baseUrl ?? ''),
+    modelsPath:
+      typeof raw.modelsPath === 'string'
+        ? raw.modelsPath
+        : (existing?.modelsPath ?? (id === 'ollama' ? '/api/tags' : '/models')),
+    authStyle,
+    authOptional:
+      typeof raw.authOptional === 'boolean'
+        ? raw.authOptional
+        : (existing?.authOptional ?? (type === 'local' || authStyle === 'none')),
+    defaultModel: typeof raw.defaultModel === 'string' ? raw.defaultModel : existing?.defaultModel,
+    models: Array.isArray(raw.models)
+      ? raw.models.filter((model): model is string => typeof model === 'string' && Boolean(model))
+      : (existing?.models ?? []),
+    modelRegistry:
+      typeof raw.modelRegistry === 'string' ? raw.modelRegistry : existing?.modelRegistry,
+    openaiCompatible:
+      typeof raw.openaiCompatible === 'boolean' ? raw.openaiCompatible : existing?.openaiCompatible,
     tier:
       typeof raw.tier === 'number' && Number.isFinite(raw.tier)
         ? raw.tier
@@ -194,7 +336,7 @@ function mergeProvider(
 
   // A brand-new provider with no endpoint or credential key cannot be probed,
   // so it would silently contribute nothing. Reject it loudly instead.
-  if (!merged.baseUrl || !merged.envKey) {
+  if (!merged.baseUrl || (!merged.envKey && !merged.authOptional && merged.type !== 'local')) {
     warnings.push(
       `provider "${id}" is missing ${!merged.baseUrl ? 'baseUrl' : 'envKey'} and cannot be probed — entry ignored`
     );
@@ -246,16 +388,29 @@ function mergeTolerances(raw: unknown, warnings: string[]): ResolverTolerances {
  * The catalog is JSON precisely so the TypeScript CLI, the CommonJS tester and
  * the Python resolver can all read the same bytes.
  */
-export function providerCatalogPath(): string {
+export function providerCatalogPath(moduleUrl: string | URL = import.meta.url): string {
   const override = process.env.TNF_PROVIDER_CATALOG_PATH;
   if (override && override.trim()) return override.trim();
   // This package is ESM ("type": "module"), where __dirname does not exist —
   // using it typechecks fine and then throws at runtime, which would have made
   // every consumer degrade silently to built-in defaults. Derive the directory
   // from import.meta.url instead.
-  const here = path.dirname(fileURLToPath(import.meta.url));
-  // packages/tnf-cli/src/services -> repo root
-  return path.resolve(here, '../../../..', 'data', 'providers', 'catalog.json');
+  const here = path.dirname(fileURLToPath(moduleUrl));
+  // Support each real execution form:
+  // - src/services/provider-config.ts (tsx development)
+  // - dist/services/provider-config.js (tsc output)
+  // - dist/cli.js (single/split bundled entry)
+  // - dist/chunks/*.js (split-bundle chunks)
+  // The build copies both catalog files under dist/catalog so an installed
+  // binary keeps the full provider and NVIDIA registries instead of silently
+  // degrading to the smaller embedded fallback.
+  const candidates = [
+    path.resolve(here, 'catalog', 'catalog.json'),
+    path.resolve(here, '..', 'catalog', 'catalog.json'),
+    path.resolve(here, '../../../..', 'data', 'providers', 'catalog.json'),
+    path.resolve(here, '../../..', 'data', 'providers', 'catalog.json'),
+  ];
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
 }
 
 /**
@@ -271,24 +426,72 @@ export function loadProviderCatalog(): { providers: ProviderDef[]; warning?: str
     const parsed = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
     const rows = Array.isArray(parsed?.providers) ? parsed.providers : [];
     const providers: ProviderDef[] = [];
+    let warning: string | undefined;
     for (const row of rows) {
       if (!isRecord(row)) continue;
-      // Local providers legitimately have no credential; this resolver is
-      // credential-driven, so they are carried but cannot be selected without
-      // an envKey. Skipping them here keeps ProviderDef's contract intact.
-      if (typeof row.envKey !== 'string' || !row.envKey) continue;
       if (typeof row.id !== 'string' || typeof row.baseUrl !== 'string') continue;
       if (row.enabled === false) continue;
+      const type: ProviderDef['type'] = row.type === 'local' ? 'local' : 'cloud';
+      const authStyle: ProviderDef['authStyle'] =
+        row.authStyle === 'query' ||
+        row.authStyle === 'x-api-key' ||
+        row.authStyle === 'none' ||
+        row.authStyle === 'bearer'
+          ? row.authStyle
+          : row.id === 'google'
+            ? 'query'
+            : row.id === 'anthropic'
+              ? 'x-api-key'
+              : type === 'local'
+                ? 'none'
+                : 'bearer';
+      const models = Array.isArray(row.models)
+        ? row.models.filter((model: unknown): model is string => typeof model === 'string')
+        : [];
+      if (typeof row.modelRegistry === 'string') {
+        try {
+          const registryPath = path.resolve(path.dirname(catalogPath), row.modelRegistry);
+          const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+          for (const entry of Array.isArray(registry?.models) ? registry.models : []) {
+            const modelId = typeof entry === 'string' ? entry : entry?.id;
+            if (typeof modelId === 'string' && !models.includes(modelId)) models.push(modelId);
+          }
+        } catch (err) {
+          // Preserve the inline models and every other provider; a missing
+          // secondary registry must not truncate the primary provider list.
+          warning = `${row.modelRegistry} unreadable (${(err as Error).message})`;
+        }
+      }
       providers.push({
         id: row.id,
         name: typeof row.name === 'string' ? row.name : row.id,
-        envKey: row.envKey,
+        type,
+        envKey: typeof row.envKey === 'string' && row.envKey ? row.envKey : null,
+        altEnvKeys: Array.isArray(row.altEnvKeys)
+          ? row.altEnvKeys.filter((key: unknown): key is string => typeof key === 'string')
+          : [],
         baseUrl: row.baseUrl,
+        modelsPath:
+          typeof row.modelsPath === 'string'
+            ? row.modelsPath
+            : row.id === 'ollama'
+              ? '/api/tags'
+              : '/models',
+        authStyle,
+        authOptional:
+          typeof row.authOptional === 'boolean'
+            ? row.authOptional
+            : type === 'local' || row.id === 'openrouter',
+        defaultModel: typeof row.defaultModel === 'string' ? row.defaultModel : undefined,
+        models,
+        modelRegistry: typeof row.modelRegistry === 'string' ? row.modelRegistry : undefined,
+        openaiCompatible:
+          typeof row.openaiCompatible === 'boolean' ? row.openaiCompatible : undefined,
         tier: typeof row.tier === 'number' ? row.tier : 100,
         enabled: true,
       });
     }
-    return providers.length ? { providers } : null;
+    return providers.length ? { providers, ...(warning ? { warning } : {}) } : null;
   } catch (err) {
     return { providers: [], warning: `${catalogPath} unreadable (${(err as Error).message})` };
   }

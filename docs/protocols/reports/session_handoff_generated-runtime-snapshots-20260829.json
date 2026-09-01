@@ -1,0 +1,140 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "657cd90c-18dc-4ad6-8f3a-1f6de498bb9f",
+  "created_at": "2026-08-29T14:05:46.607Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "integration/boot-local-live-surfaces-20260829",
+  "head_sha": "5d9f6026a4a95198b8e842ef69eadf4e4b0ccb2c",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Separate commit of 2026-08-29 generated runtime snapshots left unstaged from the boot live-surfaces change: LLM arena intel, marketplace catalog, staff calendar, master reconciliation, TWIP macro board, and API log-rotation audit."
+  ],
+  "changed_paths": [
+    "apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "data/llm-intel/arena-intel-latest.json",
+    "data/llm-intel/arena-intel.json",
+    "data/llm-intel/history/intel_2026-08-29.json",
+    "data/llm-intel/ranking-recommendations.json",
+    "data/llm-intel/ranking-report-latest.md",
+    "data/marketplace/catalog-items.json",
+    "docs/operations/TNF_SWARM_MASTER_SCHEDULE.md",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "docs/protocols/reports/session_handoff_generated-runtime-snapshots-20260829.json",
+    "docs/protocols/reports/session_handoff_generated-runtime-snapshots-20260829.md",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "Snapshot-only; no source logic. insert_workspace_tier.js left untracked (broken onboard injector, not generated)."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "low",
+    "resume_checklist": [
+      "Confirm this snapshot commit is on integration/boot-local-live-surfaces-20260829"
+    ]
+  },
+  "next_actions": [
+    "Keep insert_workspace_tier.js untracked unless an operator explicitly wants the onboard workspace-tier injection."
+  ],
+  "artifacts": {
+    "commits": ["5d9f6026a4a95198b8e842ef69eadf4e4b0ccb2c"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": ["observability"],
+    "staffed_by": ["cursor-grok"]
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:38.051Z",
+      "value": "73cea241cca190faa98a2a5ea5bfdec920faaff2"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:45.037Z",
+      "value": "dcfb3f7598c148ec362678bc4ce0834b1dca0e90"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:49.582Z",
+      "value": "bf45be8893c3453f35a86509e9102fb735cdbaa8"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:52.712Z",
+      "value": "[161]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:54.422Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:52:59.780Z",
+      "value": "LEAKED:packages/relay-core/src/master-clock.ts\nLEAKED:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:00.764Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:01.494Z",
+      "value": "7cd0046243a9ddea5b165094b0af9ae8676c3e4f\n2026-08-13"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:06.916Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=b4511fcacea76ed009a430927be7842683c89d7d\nbranch=sentinel-fix-marketplace-cmd-injection-11879217410415317362\ndirty=86"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-08-26T00:53:08.906Z",
+      "value": "REDIS_UNREACHABLE\nRELAY_OK"
+    }
+  ]
+}

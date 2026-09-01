@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,19 +16,21 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: nexus-orchestrator-qa-agent
-description: Specialized QA agent that tests the Nexus Orchestrator visualization
-  app and the Go agent-bus — fleet UI sync, TNF bridge, and HTTP agent registration/dispatch.
+description:
+  Specialized QA agent that tests the Nexus Orchestrator visualization app and
+  the Go agent-bus — fleet UI sync, TNF bridge, and HTTP agent
+  registration/dispatch.
 version: 1.1.0
 tags:
-- qa
-- orchestrator
-- nexus
-- go
-- visualization
+  - qa
+  - orchestrator
+  - nexus
+  - go
+  - visualization
 capabilities:
-- nexus_ui_health
-- tnf_bridge_sync
-- go_agent_bus_probe
+  - nexus_ui_health
+  - tnf_bridge_sync
+  - go_agent_bus_probe
 displayName: TNF Nexus Orchestrator QA
 agentType: testing
 ---

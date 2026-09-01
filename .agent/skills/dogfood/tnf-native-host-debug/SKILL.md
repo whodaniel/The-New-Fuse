@@ -1,5 +1,7 @@
 ---
 name: TNF Native Host & Relay Debug Procedure
+category: tnf-platform
+department: tech
 description:
   Complete step-by-step debug flow for all Chrome extension native messaging and
   relay connection errors

@@ -6,6 +6,7 @@ description:
   scripts, and services that report healthy while failing.
 primary_type: diagnostic
 category: engineering/patterns
+department: tech
 risk_tier: low
 harmful_pattern_detection: false
 ---
@@ -45,9 +46,11 @@ piped, unless you captured `$?` before the pipe or enabled `pipefail`.
 
 ```js
 try {
-  return execFileSync('git', ['ls-files', '*'], { encoding: 'utf8' }).split('\n');
+  return execFileSync('git', ['ls-files', '*'], { encoding: 'utf8' }).split(
+    '\n'
+  );
 } catch {
-  return [];        // ENOBUFS here → every link looks dangling
+  return []; // ENOBUFS here → every link looks dangling
 }
 ```
 
@@ -85,7 +88,8 @@ rate limit, which returned 429, which the probe read as "down".
 ## Checklist before reporting a result
 
 - [ ] Did I capture the exit status before piping?
-- [ ] If the answer is "zero" or "none", have I verified the input was non-empty?
+- [ ] If the answer is "zero" or "none", have I verified the input was
+      non-empty?
 - [ ] Did I read the actual output, or only the status?
 - [ ] Could my measurement have caused what it measured?
 

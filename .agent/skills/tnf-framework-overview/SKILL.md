@@ -5,6 +5,7 @@ description:
   platform architecture, design principles, and current development focus for
   bridging with Hermes Agent capabilities.
 category: tnf
+department: tech
 ---
 
 # TNF Framework Overview Skill

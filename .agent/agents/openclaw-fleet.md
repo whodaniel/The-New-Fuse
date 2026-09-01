@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -17,6 +18,7 @@ traits:
 name: Openclaw Fleet
 description: null
 ---
+
 # OpenClaw Fleet Cluster
 
 ## Identity

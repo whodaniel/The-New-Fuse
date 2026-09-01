@@ -1,31 +1,39 @@
-# USER.md - About Your Human
+# USER.md — Active User Projection
 
-_Learn about the person you're helping. Update this as you go._
+This file is a **product-neutral compatibility surface**, not the canonical store for a real user's personal profile.
 
-- **Name:** Daniel Goldberg
-- **What to call them:** Daniel
-- **Pronouns:** He/Him
-- **Timezone:** America/New_York
-- **Role:** Creator of The New Fuse (TNF)
-- **Notes:**
-  - Local TNF codebase: `$TNF_ROOT`
-  - Public runtime repo: `https://github.com/whodaniel/The-New-Fuse`
-  - SaaS: `https://thenewfuse.com`
-  - High priority: pipeline to process, condense, and consolidate docs.
-  - Vision: context front-loading for all agents using the index tree.
+## Canonical rule
 
-## Context
+Real user-specific identity, preferences, personal source locations, and private durable context belong in the user-controlled TNF profile/storage layer described by:
 
-- **The New Fuse (TNF):** Multi-agent orchestration platform. Development in the
-  combined monorepo; public code syncs to `The-New-Fuse`.
-- **Portfolio model:** TNF is critical but not exclusive. See
-  `docs/operations/PROJECT_PORTFOLIO.md`.
-- **Mission style:** Proactive portfolio operator — surface next steps,
-  blockers, and opportunities.
-- **Agent role:** Explore codebases, read docs, compare protocols, and drive
-  completion across active projects.
+- `docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md`
+- `~/.tnf/profiles/<profile>.json`
+- `node scripts/user-context/resolve-storage.cjs --json`
 
----
+Do not commit a person's private profile, personal Google Drive folder ID, OAuth token, home-directory path, legal/medical/financial context, or personal source inventory into this repository file.
 
-The more you know, the better you can help. Remember — you're learning about a
-person, not building a dossier.
+## Projection contract
+
+When a harness needs a human-readable USER projection, derive it from the active authorized profile and include only the minimum task-relevant fields, for example:
+
+- preferred display name;
+- preferred form of address;
+- timezone/locale when operationally relevant;
+- current workspace/project role;
+- communication preferences needed for the task;
+- logical user-context collection references rather than raw provider paths.
+
+A generated projection must preserve the user's privacy and source-storage policy. It should be considered stale when the active profile changes.
+
+## Multi-user behavior
+
+- Local TNF: resolve the selected local profile under `~/.tnf/profiles/`.
+- `thenewfuse.com`: resolve the authenticated user's private profile from the hosted profile service/credential boundary.
+- Core fleet: inherit the active user's context-storage profile for user-context work.
+- Child swarms/agents: inherit their parent/user scope unless an authorized scoped override exists.
+
+## Repository/product relationship
+
+Repository doctrine and operational rails remain canonical in the repository. User-specific context remains user-controlled and is hydrated only when a task requires it.
+
+**Universalize the pattern, not the private context.**

@@ -1,5 +1,6 @@
 ---
 name: sspdf-theme-generator
+department: tech
 description:
   Generate sspdf theme files from brand specs (colors, fonts, document type).
   Use when asked to create a theme, style a document, or design a PDF layout for

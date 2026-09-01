@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useCallback, useEffect, useState } from 'react';
 import type { Edge, Node } from '../types/workflow';
-import { validateWorkflowWithErrors } from '../utils/workflow-schema-validator';
+import { validateWorkflowWithErrors } from '@the-new-fuse/workflow-builder';
 
 export const useWorkflowValidation = ({
   nodes,

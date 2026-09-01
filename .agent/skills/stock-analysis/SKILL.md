@@ -1,6 +1,13 @@
 ---
 name: stock-analysis
-description: Analyze stocks and cryptocurrencies using Yahoo Finance data. Supports portfolio management, watchlists with alerts, dividend analysis, 8-dimension stock scoring, viral trend detection (Hot Scanner), and rumor/early signal detection. Use for stock analysis, portfolio tracking, earnings reactions, crypto monitoring, trending stocks, or finding rumors before they hit mainstream.
+department: tech
+description:
+  Analyze stocks and cryptocurrencies using Yahoo Finance data. Supports
+  portfolio management, watchlists with alerts, dividend analysis, 8-dimension
+  stock scoring, viral trend detection (Hot Scanner), and rumor/early signal
+  detection. Use for stock analysis, portfolio tracking, earnings reactions,
+  crypto monitoring, trending stocks, or finding rumors before they hit
+  mainstream.
 version: 6.2.0
 homepage: https://finance.yahoo.com
 commands:
@@ -10,15 +17,35 @@ commands:
   - /stock_watch - Add/remove from watchlist
   - /stock_alerts - Check triggered alerts
   - /stock_hot - Find trending stocks & crypto (Hot Scanner)
-  - /stock_rumors - Find early signals, M&A rumors, insider activity (Rumor Scanner)
+  - /stock_rumors - Find early signals, M&A rumors, insider activity (Rumor
+    Scanner)
   - /portfolio - Show portfolio summary
   - /portfolio_add - Add asset to portfolio
-metadata: {"clawdbot":{"emoji":"📈","requires":{"bins":["uv"],"env":[]},"install":[{"id":"uv-brew","kind":"brew","formula":"uv","bins":["uv"],"label":"Install uv (brew)"}]}}
+metadata:
+  {
+    'clawdbot':
+      {
+        'emoji': '📈',
+        'requires': { 'bins': ['uv'], 'env': [] },
+        'install':
+          [
+            {
+              'id': 'uv-brew',
+              'kind': 'brew',
+              'formula': 'uv',
+              'bins': ['uv'],
+              'label': 'Install uv (brew)',
+            },
+          ],
+      },
+  }
 ---
 
 # Stock Analysis v6.1
 
-Analyze US stocks and cryptocurrencies with 8-dimension analysis, portfolio management, watchlists, alerts, dividend analysis, and **viral trend detection**.
+Analyze US stocks and cryptocurrencies with 8-dimension analysis, portfolio
+management, watchlists, alerts, dividend analysis, and **viral trend
+detection**.
 
 ## What's New in v6.2
 
@@ -46,6 +73,7 @@ Analyze US stocks and cryptocurrencies with 8-dimension analysis, portfolio mana
 ## Quick Commands
 
 ### Stock Analysis
+
 ```bash
 # Basic analysis
 uv run {baseDir}/scripts/analyze_stock.py AAPL
@@ -61,6 +89,7 @@ uv run {baseDir}/scripts/analyze_stock.py BTC-USD ETH-USD
 ```
 
 ### Dividend Analysis (NEW v6.0)
+
 ```bash
 # Analyze dividends
 uv run {baseDir}/scripts/dividends.py JNJ
@@ -70,6 +99,7 @@ uv run {baseDir}/scripts/dividends.py JNJ PG KO MCD --output json
 ```
 
 **Dividend Metrics:**
+
 - Dividend Yield & Annual Payout
 - Payout Ratio (safe/moderate/high/unsustainable)
 - 5-Year Dividend Growth (CAGR)
@@ -78,6 +108,7 @@ uv run {baseDir}/scripts/dividends.py JNJ PG KO MCD --output json
 - Income Rating (excellent/good/moderate/poor)
 
 ### Watchlist + Alerts (NEW v6.0)
+
 ```bash
 # Add to watchlist
 uv run {baseDir}/scripts/watchlist.py add AAPL
@@ -103,11 +134,13 @@ uv run {baseDir}/scripts/watchlist.py remove AAPL
 ```
 
 **Alert Types:**
+
 - 🎯 **Target Hit** — Price >= target
 - 🛑 **Stop Hit** — Price <= stop
 - 📊 **Signal Change** — BUY/HOLD/SELL changed
 
 ### Portfolio Management
+
 ```bash
 # Create portfolio
 uv run {baseDir}/scripts/portfolio.py create "Tech Portfolio"
@@ -124,6 +157,7 @@ uv run {baseDir}/scripts/analyze_stock.py --portfolio "Tech Portfolio" --period 
 ```
 
 ### 🔥 Hot Scanner (NEW v6.1)
+
 ```bash
 # Full scan - find what's trending NOW
 python3 {baseDir}/scripts/hot_scanner.py
@@ -136,6 +170,7 @@ python3 {baseDir}/scripts/hot_scanner.py --json
 ```
 
 **Data Sources:**
+
 - 📊 CoinGecko Trending — Top 15 trending coins
 - 📈 CoinGecko Movers — Biggest gainers/losers
 - 📰 Google News — Finance & crypto headlines
@@ -143,23 +178,27 @@ python3 {baseDir}/scripts/hot_scanner.py --json
 - 🐦 Twitter/X — Social sentiment (requires auth)
 
 **Output:**
+
 - Top trending by mention count
 - Crypto highlights with 24h changes
 - Stock movers by category
 - Breaking news with tickers
 
 **Twitter Setup (Optional):**
+
 1. Install bird: `npm install -g @steipete/bird`
 2. Login to x.com in Safari/Chrome
 3. Create `.env` with `AUTH_TOKEN` and `CT0`
 
 ### 🔮 Rumor Scanner (NEW v6.2)
+
 ```bash
 # Find early signals, M&A rumors, insider activity
 python3 {baseDir}/scripts/rumor_scanner.py
 ```
 
 **What it finds:**
+
 - 🏢 **M&A Rumors** — Merger, acquisition, takeover bids
 - 👔 **Insider Activity** — CEO/Director buying/selling
 - 📊 **Analyst Actions** — Upgrades, downgrades, price target changes
@@ -167,6 +206,7 @@ python3 {baseDir}/scripts/rumor_scanner.py
 - ⚖️ **SEC Activity** — Investigations, filings
 
 **Impact Scoring:**
+
 - Each rumor is scored by potential market impact (1-10)
 - M&A/Takeover: +5 points
 - Insider buying: +4 points
@@ -174,36 +214,39 @@ python3 {baseDir}/scripts/rumor_scanner.py
 - "Hearing"/"Sources say": +2 points
 - High engagement: +2 bonus
 
-**Best Practice:** Run at 07:00 before US market open to catch pre-market signals.
+**Best Practice:** Run at 07:00 before US market open to catch pre-market
+signals.
 
 ## Analysis Dimensions (8 for stocks, 3 for crypto)
 
 ### Stocks
-| Dimension | Weight | Description |
-|-----------|--------|-------------|
-| Earnings Surprise | 30% | EPS beat/miss |
-| Fundamentals | 20% | P/E, margins, growth |
-| Analyst Sentiment | 20% | Ratings, price targets |
-| Historical | 10% | Past earnings reactions |
-| Market Context | 10% | VIX, SPY/QQQ trends |
-| Sector | 15% | Relative strength |
-| Momentum | 15% | RSI, 52-week range |
-| Sentiment | 10% | Fear/Greed, shorts, insiders |
+
+| Dimension         | Weight | Description                  |
+| ----------------- | ------ | ---------------------------- |
+| Earnings Surprise | 30%    | EPS beat/miss                |
+| Fundamentals      | 20%    | P/E, margins, growth         |
+| Analyst Sentiment | 20%    | Ratings, price targets       |
+| Historical        | 10%    | Past earnings reactions      |
+| Market Context    | 10%    | VIX, SPY/QQQ trends          |
+| Sector            | 15%    | Relative strength            |
+| Momentum          | 15%    | RSI, 52-week range           |
+| Sentiment         | 10%    | Fear/Greed, shorts, insiders |
 
 ### Crypto
+
 - Market Cap & Category
 - BTC Correlation (30-day)
 - Momentum (RSI, range)
 
 ## Sentiment Sub-Indicators
 
-| Indicator | Source | Signal |
-|-----------|--------|--------|
-| Fear & Greed | CNN | Contrarian (fear=buy) |
-| Short Interest | Yahoo | Squeeze potential |
-| VIX Structure | Futures | Stress detection |
-| Insider Trades | SEC EDGAR | Smart money |
-| Put/Call Ratio | Options | Sentiment extreme |
+| Indicator      | Source    | Signal                |
+| -------------- | --------- | --------------------- |
+| Fear & Greed   | CNN       | Contrarian (fear=buy) |
+| Short Interest | Yahoo     | Squeeze potential     |
+| VIX Structure  | Futures   | Stress detection      |
+| Insider Trades | SEC EDGAR | Smart money           |
+| Put/Call Ratio | Options   | Sentiment extreme     |
 
 ## Risk Detection
 
@@ -216,24 +259,25 @@ python3 {baseDir}/scripts/rumor_scanner.py
 
 ## Performance Options
 
-| Flag | Effect | Speed |
-|------|--------|-------|
-| (default) | Full analysis | 5-10s |
-| `--no-insider` | Skip SEC EDGAR | 3-5s |
-| `--fast` | Skip insider + news | 2-3s |
+| Flag           | Effect              | Speed |
+| -------------- | ------------------- | ----- |
+| (default)      | Full analysis       | 5-10s |
+| `--no-insider` | Skip SEC EDGAR      | 3-5s  |
+| `--fast`       | Skip insider + news | 2-3s  |
 
 ## Supported Cryptos (Top 20)
 
-BTC, ETH, BNB, SOL, XRP, ADA, DOGE, AVAX, DOT, MATIC, LINK, ATOM, UNI, LTC, BCH, XLM, ALGO, VET, FIL, NEAR
+BTC, ETH, BNB, SOL, XRP, ADA, DOGE, AVAX, DOT, MATIC, LINK, ATOM, UNI, LTC, BCH,
+XLM, ALGO, VET, FIL, NEAR
 
 (Use `-USD` suffix: `BTC-USD`, `ETH-USD`)
 
 ## Data Storage
 
-| File | Location |
-|------|----------|
+| File       | Location                                            |
+| ---------- | --------------------------------------------------- |
 | Portfolios | `~/.clawdbot/skills/stock-analysis/portfolios.json` |
-| Watchlist | `~/.clawdbot/skills/stock-analysis/watchlist.json` |
+| Watchlist  | `~/.clawdbot/skills/stock-analysis/watchlist.json`  |
 
 ## Limitations
 
@@ -245,4 +289,5 @@ BTC, ETH, BNB, SOL, XRP, ADA, DOGE, AVAX, DOT, MATIC, LINK, ATOM, UNI, LTC, BCH,
 
 ## Disclaimer
 
-⚠️ **NOT FINANCIAL ADVICE.** For informational purposes only. Consult a licensed financial advisor before making investment decisions.
+⚠️ **NOT FINANCIAL ADVICE.** For informational purposes only. Consult a licensed
+financial advisor before making investment decisions.

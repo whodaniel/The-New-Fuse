@@ -29,8 +29,9 @@
  * WHAT IT DELIBERATELY DOES NOT DO
  *   It does not claim the recipient *processed* the message — only that the
  *   recipient exists and was heartbeating recently. End-to-end acknowledgement
- *   needs a reply channel and belongs in a later change; promising it here
- *   would recreate the very over-claiming this fixes.
+ *   is bus contract v1: `RedisAgentClient.sendWithAck` + the `tnf:ack` channel
+ *   (see docs/protocols/AGENT_BUS_CONTRACT.md). This guard still only judges
+ *   REGISTRY state — liveness and declared capacity — not per-frame delivery.
  *
  * KNOWN TRANSPORT INCOHERENCE (measured 2026-08-12, addressed 2026-08-12)
  *   Cron workers drain LIST queues at `tnf:direct:sub-director:<agentId>`.
@@ -56,6 +57,16 @@ export interface RegisteredAgent {
    * that declare nothing keep the flat window.
    */
   expectedCadenceSec?: number;
+  /**
+   * Bus contract v1 capacity fields (docs/protocols/AGENT_BUS_CONTRACT.md).
+   * `status: 'busy'` is a declaration by the agent itself; `currentLoad`/
+   * `maxLoad` let the broker derive saturation for multi-capacity agents.
+   * Agents that declare nothing are assumed to have capacity (backward
+   * compatible with every existing registry row).
+   */
+  status?: string;
+  currentLoad?: number;
+  maxLoad?: number;
 }
 
 export type RecipientStatus = 'live' | 'stale' | 'unknown' | 'broadcast';
@@ -73,6 +84,47 @@ export interface RecipientResolution {
   suggestions: string[];
   /** One-line explanation suitable for terminal output. */
   summary: string;
+  /** Capacity declaration for the matched agent (undefined when unmatched). */
+  capacity?: CapacityAssessment;
+}
+
+export interface CapacityAssessment {
+  /** The registry row carried any capacity information at all. */
+  declared: boolean;
+  /** The agent declared itself busy, or reported load at max. */
+  busy: boolean;
+  currentLoad?: number;
+  maxLoad?: number;
+  /** One-line explanation suitable for terminal output. */
+  summary: string;
+}
+
+/**
+ * Bus contract v1: derive a capacity verdict from a registry row.
+ *
+ * Busy means the agent declared `status: 'busy'` OR reported a load counter
+ * that has reached its max. An agent that declares nothing is NOT busy —
+ * the gate must stay backwards compatible with rows that predate the
+ * capacity fields.
+ */
+export function assessCapacity(agent: RegisteredAgent | undefined): CapacityAssessment {
+  const status = String(agent?.status ?? '').toLowerCase();
+  const currentLoad = typeof agent?.currentLoad === 'number' ? agent.currentLoad : undefined;
+  const maxLoad = typeof agent?.maxLoad === 'number' ? agent.maxLoad : undefined;
+  const declared = Boolean(status) || currentLoad !== undefined || maxLoad !== undefined;
+  const atLoadCap =
+    currentLoad !== undefined && maxLoad !== undefined && maxLoad > 0 && currentLoad >= maxLoad;
+  const busy = status === 'busy' || atLoadCap;
+  const summary = !declared
+    ? 'no capacity declared'
+    : status === 'busy'
+      ? 'declared busy'
+      : atLoadCap
+        ? `at capacity (${currentLoad}/${maxLoad})`
+        : currentLoad !== undefined && maxLoad !== undefined
+          ? `spare capacity (${currentLoad}/${maxLoad})`
+          : 'not busy';
+  return { declared, busy, currentLoad, maxLoad, summary };
 }
 
 /**
@@ -169,6 +221,7 @@ export function resolveRecipient(
     lastSeen: match.lastSeen,
     staleSeconds: Number.isFinite(age) ? Math.round(age / 1000) : undefined,
     suggestions: [],
+    capacity: assessCapacity(match),
     summary: live
       ? `${match.name ?? agentId} (${match.role ?? 'agent'}) is live`
       : `${match.name ?? agentId} (${match.role ?? 'agent'}) last heartbeat ${
@@ -194,6 +247,10 @@ export interface DispatchDecision {
  *   unknown  → refuse to send, exit 2. A message addressed to nobody is a bug
  *              in the caller every time; delivering it teaches the caller the
  *              id was fine.
+ *   busy     → with `requireCapacity`, refuse to send, exit 4. "Active but
+ *              busy" is exactly the state cron must not pile onto — the frame
+ *              would sit behind in-flight work with no visibility. Use --force
+ *              to override for humans who know better.
  *   stale    → send (the queue is durable and the agent may return), but WARN
  *              and exit 0 — unless `requireLive`, which is what cron and the
  *              full-auto loop should use, where a queued message to a dead
@@ -202,10 +259,13 @@ export interface DispatchDecision {
  */
 export function decideDispatch(
   resolution: RecipientResolution,
-  options: { requireLive?: boolean } = {}
+  options: { requireLive?: boolean; requireCapacity?: boolean } = {}
 ): DispatchDecision {
   if (resolution.status === 'unknown') {
     return { proceed: false, exitCode: 2, level: 'error', resolution };
+  }
+  if (options.requireCapacity && resolution.capacity?.busy) {
+    return { proceed: false, exitCode: 4, level: 'error', resolution };
   }
   if (resolution.status === 'stale') {
     return options.requireLive

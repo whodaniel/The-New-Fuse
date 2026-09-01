@@ -1,6 +1,7 @@
-`[CLASS:PRIME] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
-[DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE] restored for Gate 3
-compliance; reclassify on next vetting pass.
+`[CLUSTER_BINDING: ALL]` `[CLASS:PRIME] [STATUS:PENDING]`
+`[DOC_AUDIT_BACKFILL:2026-07-14]` — header [DOC_TYPE:PROTOCOL_STANDARD]
+[VISIBILITY:COLLECTIVE] restored for Gate 3 compliance; reclassify on next
+vetting pass.
 
 # 📖 TNF System Lexicon & Hierarchical Definitions
 
@@ -94,3 +95,69 @@ criteria:
 2. **Library Assignment:** Which `Namespace` does it belong to?
 3. **Flag Application:** Has it been assigned a `CLASS` and `STATUS`?
 4. **Linkage Check:** Does it have an `Attribution` resource pointer?
+
+---
+
+## 2. The Hierarchy of Agents and Infrastructure
+
+To maintain strict semantic cohesion and prevent dangerous overlap, TNF
+exclusively uses a unified **Network/Biological** metaphor for active systems
+and a strict **Object-Oriented** metaphor for static data.
+
+_Generic "Corporate" and "Staff" remain informal aliases, not protocol
+identities. Named operator-facing departments (HR, Marketing, Design, Legal,
+Tech, Finance, Product, Ops) are first-class routing lanes — they are not
+Clusters. Informal "department" / "team" / "staff" still maps to Cluster when
+the speaker is not naming one of those lanes. See
+`docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`._
+
+### A. Infrastructure (The Metal & The Network)
+
+- **FLEET:** Strictly refers to the underlying compute infrastructure (Docker
+  containers, Cloudflare edge nodes, local instances). Agents _run on_ the
+  Fleet; they are _not_ the Fleet.
+- **NODE:** A single hardware or serverless instance within the Fleet.
+
+### B. Synthetic Intelligence (The AI)
+
+- **SWARM:** The collective totality of all active AI agents within TNF.
+- **AGENT:** A singular, instantiated LLM loop executing tasks.
+- **CLUSTER:** A highly specific, grouped subset of the Swarm focused on a
+  single pipeline (e.g., _Cluster 2: Synthesis_).
+- **DEPARTMENT (named):** An operator-facing corporate lane — HR, Marketing,
+  Design, Legal, Tech, Finance, Product, Ops. Used for staffing and CLI routing
+  (`tnf department`). Distinct from Cluster. Catalog:
+  `data/departments/corporate-departments.json`.
+- **PIPELINE:** A sequential workflow that data passes through (e.g., the
+  Ingestion Pipeline).
+- **ROLE:** The assigned persona and capability set of an Agent.
+
+### C. Logical Boundaries (The Code)
+
+- **CORE / FRAMEWORK:** The foundational protocols, engine, and backend of TNF
+  (Tiers 1-6).
+- **SOVEREIGN:** Private, user-specific data and artifacts strictly isolated
+  from the Core.
+
+## 3. Lexical Forgiveness & Alias Resolution (The Translation Matrix)
+
+**Mandate:** Humans and external systems will frequently use colloquial,
+informal, or loosely defined terminology (e.g., "team", "staff", "department").
+Agents MUST NOT rigidly reject these terms or fail to execute tasks. Instead,
+agents are required to practice **Lexical Forgiveness** by continuously
+performing dynamic semantic mapping back to the foundational Lexicon.
+
+When an agent encounters an informal term, it must mentally (or
+programmatically) trace it to its canonical equivalent before processing:
+
+| Human / Colloquial Term                                                          | Foundational Lexicon Equivalent | Agent Action                                                                          |
+| :------------------------------------------------------------------------------- | :------------------------------ | :------------------------------------------------------------------------------------ |
+| **"Team", "Staff"**                                                              | **Swarm, Cluster**              | Map to the correct Agent Cluster (e.g., "Creative Team" maps to "Synthesis Cluster"). |
+| **Generic "department"**                                                         | **Cluster**                     | When no named lane is given, map to Cluster.                                          |
+| **Named department** (HR, Marketing, Design, Legal, Tech, Finance, Product, Ops) | **Department**                  | Route via `tnf department`; do not collapse into a generic Cluster.                   |
+| **"Employee", "Worker", "Bot"**                                                  | **Agent, Node**                 | Map to the specific execution entity (e.g., `tnf-swarm-supervisor`).                  |
+| **"Company", "Corporate"**                                                       | **Core Framework, System**      | Map to the overarching TNF monorepo or global protocols.                              |
+| **"Rules", "Guidelines"**                                                        | **Tenets, Protocols**           | Route to `docs/protocols/` and enforce Gate vetting.                                  |
+
+_Self-Prompting Note:_ If an agent is unsure of a mapping, it must default to
+the broadest applicable class and propose a new mapping alias in the next cycle.

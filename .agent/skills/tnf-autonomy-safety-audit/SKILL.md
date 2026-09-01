@@ -1,5 +1,7 @@
 ---
 name: tnf-autonomy-safety-audit
+category: tnf-platform
+department: tech
 description:
   Checklist for auditing or building any TNF daemon/script that (a) injects
   keystrokes/prompts into a terminal or app, or (b) claims autonomous execution

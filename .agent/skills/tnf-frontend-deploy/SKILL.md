@@ -1,5 +1,7 @@
 ---
 name: tnf-frontend-deploy
+category: tnf-platform
+department: tech
 description:
   Procedural guide for building and deploying The New Fuse frontend to
   Cloudflare Pages. Use when you need to sync the codebase and push the newest

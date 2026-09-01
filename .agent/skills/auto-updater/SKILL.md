@@ -1,7 +1,15 @@
 ---
 name: auto-updater
-description: "Automatically update Clawdbot and all installed skills once daily. Runs via cron, checks for updates, applies them, and messages the user with a summary of what changed."
-metadata: {"version":"1.0.0","clawdbot":{"emoji":"🔄","os":["darwin","linux"]}}
+department: tech
+description:
+  'Automatically update Clawdbot and all installed skills once daily. Runs via
+  cron, checks for updates, applies them, and messages the user with a summary
+  of what changed.'
+metadata:
+  {
+    'version': '1.0.0',
+    'clawdbot': { 'emoji': '🔄', 'os': ['darwin', 'linux'] },
+  }
 ---
 
 # Auto-Updater Skill
@@ -41,17 +49,18 @@ clawdbot cron add \
 
 ### Configuration Options
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| Time | 4:00 AM | When to run updates (use `--cron` to change) |
-| Timezone | System default | Set with `--tz` |
-| Delivery | Main session | Where to send the update summary |
+| Option   | Default        | Description                                  |
+| -------- | -------------- | -------------------------------------------- |
+| Time     | 4:00 AM        | When to run updates (use `--cron` to change) |
+| Timezone | System default | Set with `--tz`                              |
+| Delivery | Main session   | Where to send the update summary             |
 
 ## How Updates Work
 
 ### Clawdbot Updates
 
 For **npm/pnpm/bun installs**:
+
 ```bash
 npm update -g clawdbot@latest
 # or: pnpm update -g clawdbot@latest
@@ -59,6 +68,7 @@ npm update -g clawdbot@latest
 ```
 
 For **source installs** (git checkout):
+
 ```bash
 clawdbot update
 ```
@@ -71,7 +81,8 @@ Always run `clawdbot doctor` after updating to apply migrations.
 clawdhub update --all
 ```
 
-This checks all installed skills against the registry and updates any with new versions available.
+This checks all installed skills against the registry and updates any with new
+versions available.
 
 ## Update Summary Format
 
@@ -84,7 +95,7 @@ After updates complete, you'll receive a message like:
 
 **Skills Updated (3)**:
 - prd: 2.0.3 → 2.0.4
-- browser: 1.2.0 → 1.2.1  
+- browser: 1.2.0 → 1.2.1
 - nano-banana-pro: 3.1.0 → 3.1.2
 
 **Skills Already Current (5)**:
@@ -96,16 +107,19 @@ No issues encountered.
 ## Manual Commands
 
 Check for updates without applying:
+
 ```bash
 clawdhub update --all --dry-run
 ```
 
 View current skill versions:
+
 ```bash
 clawdhub list
 ```
 
 Check Clawdbot version:
+
 ```bash
 clawdbot --version
 ```
@@ -129,11 +143,13 @@ If an update fails, the summary will include the error. Common fixes:
 ### Disabling Auto-Updates
 
 Remove the cron job:
+
 ```bash
 clawdbot cron remove "Daily Auto-Update"
 ```
 
 Or disable temporarily in config:
+
 ```json
 {
   "cron": {

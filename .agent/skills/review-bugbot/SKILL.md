@@ -1,5 +1,7 @@
 ---
 name: review-bugbot
+category: engineering-practice
+department: tech
 description: Review code changes with Bugbot subagent.
 ---
 

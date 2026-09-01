@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
                   <span>Standalone Relay</span>
                   <span className="pid">
                     {synergy.relayHealth
-                      ? `${synergy.relayHealth.agents} agents · ${Math.round(synergy.relayHealth.uptime)}s uptime`
+                      ? `${synergy.unifiedAgents.length} agents · ${Math.round(synergy.relayHealth.uptime)}s uptime`
                       : 'DOWN'}
                   </span>
                 </div>
@@ -315,7 +315,8 @@ const Dashboard: React.FC = () => {
           overflow: hidden;
           display: flex;
           flex-direction: column;
-      }
+          min-width: 0;
+        }
 
       .console-card.full-width {
           grid-column: 1 / -1;

@@ -86,20 +86,20 @@
       "approval_required_paths": []
     },
     {
-      "owner_agent_id": "tnf-staff-review-agent",
+      "owner_agent_id": "tnf-agent-review-agent",
       "description": "Staff review cycle output.",
       "allowed_paths": [
         "docs/protocols/reports/**",
-        "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md"
+        "docs/operations/TNF_SWARM_MASTER_SCHEDULE.md"
       ],
       "approval_required_paths": []
     },
     {
-      "owner_agent_id": "tnf-staffing-director-agent",
+      "owner_agent_id": "tnf-swarm-director-agent",
       "description": "Staffing architecture proposals.",
       "allowed_paths": ["docs/protocols/reports/**"],
       "approval_required_paths": [
-        "docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md"
+        "docs/operations/TNF_SWARM_MASTER_SCHEDULE.md"
       ]
     },
     {

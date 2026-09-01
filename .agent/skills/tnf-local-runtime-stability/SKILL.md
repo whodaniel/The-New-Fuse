@@ -1,5 +1,7 @@
 ---
 name: tnf-local-runtime-stability
+category: tnf-platform
+department: tech
 description:
   Diagnose, repair, and harden TNF local runtime startup behavior. Use when TNF
   boot/login is slow, launchd or cron jobs appear to restart aggressively,

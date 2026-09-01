@@ -93,6 +93,8 @@ function main() {
     'scripts/harness/permission-berm.cjs',
     'scripts/harness/materialize-sandbox-profile.cjs',
     'scripts/harness/provision-injection-surfaces.cjs',
+    'scripts/harness/host-prompt-profiles.cjs',
+    'data/harness/host-prompt-profiles.json',
     'scripts/forge_sandbox.sb',
   ];
   for (const rel of requiredFiles) {

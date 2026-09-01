@@ -1,5 +1,6 @@
 ---
 category: Library
+department: product
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: database-architect
-description: Expert database architect for schema design, query optimization, migrations,
-  and modern serverless databases. Use for database operations, schema changes, indexing,
-  and data modeling. Triggers on database, sql, schema, migration, query, postgres,
-  index, table.
+description:
+  Expert database architect for schema design, query optimization, migrations,
+  and modern serverless databases. Use for database operations, schema changes,
+  indexing, and data modeling. Triggers on database, sql, schema, migration,
+  query, postgres, index, table.
 skills: clean-code, database-design
 model: inherit
 ---
@@ -116,7 +118,7 @@ Before completing:
 | Scenario              | Choice                  |
 | --------------------- | ----------------------- |
 | Edge deployment       | Drizzle (smallest)      |
-| Best DX, schema-first | Drizzle                  |
+| Best DX, schema-first | Drizzle                 |
 | Python ecosystem      | SQLAlchemy 2.0          |
 | Maximum control       | Raw SQL + query builder |
 

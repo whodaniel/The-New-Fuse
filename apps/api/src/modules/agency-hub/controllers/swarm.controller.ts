@@ -36,10 +36,10 @@ export class SwarmController {
         listExecutions: true,
         healthCheck: true,
         metrics: true,
+        updateExecutionStatus: true,
       },
       unavailable: {
         getExecution: true,
-        updateExecutionStatus: true,
         updateExecutionStep: true,
         sendMessage: true,
         getMessages: true,
@@ -68,7 +68,11 @@ export class SwarmController {
     @Query('offset') offset: number = 0
   ) {
     const metrics = await this.swarmOrchestrationService.getExecutionMetrics(agencyId);
-    return { metrics };
+    const allExecutions = this.swarmOrchestrationService.listExecutions(agencyId);
+    const executions = allExecutions
+      .filter((e) => !status || e.status === status)
+      .slice(offset, offset + limit);
+    return { metrics, executions };
   }
 
   @Get('executions/:executionId')
@@ -81,10 +85,40 @@ export class SwarmController {
   @Put('executions/:executionId/status')
   @UseGuards(RolesGuard)
   @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENT_OPERATOR)
-  @ApiOperation({ summary: 'Update execution status' })
+  @ApiOperation({ summary: 'Update execution status (terminal transitions only)' })
   @ApiResponse({ status: 200, description: 'Status updated successfully' })
-  async updateExecutionStatus(@Param('executionId') executionId: string, @Body() statusDto: any) {
-    this.notImplemented('Updating swarm execution status');
+  async updateExecutionStatus(
+    @Param('executionId') executionId: string,
+    @Body() statusDto: { status?: string; reason?: string; agencyId?: string }
+  ) {
+    const status = String(statusDto?.status || '').toLowerCase();
+    switch (status) {
+      case 'completed':
+      case 'complete':
+        return {
+          executionId,
+          updated: await this.swarmOrchestrationService.completeExecution(
+            executionId,
+            statusDto?.agencyId
+          ),
+        };
+      case 'failed':
+      case 'terminated':
+      case 'error':
+        return {
+          executionId,
+          updated: await this.swarmOrchestrationService.failExecution(
+            executionId,
+            statusDto?.reason || `status:${status}`,
+            statusDto?.agencyId
+          ),
+        };
+      default:
+        throw new HttpException(
+          `Unsupported terminal status '${statusDto?.status}'. Use 'completed', 'failed', 'terminated', or 'error'.`,
+          HttpStatus.BAD_REQUEST
+        );
+    }
   }
 
   @Post('executions/:executionId/steps/:stepId/update')

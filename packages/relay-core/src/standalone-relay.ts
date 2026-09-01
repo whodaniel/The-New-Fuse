@@ -303,17 +303,38 @@ export class TNFRelayServer extends EventEmitter {
   private registryReplySubscriber: StandaloneRedisClient | null = null;
   private registryReplySubscriberReady = false;
   private pendingAgentRegistrations: Map<string, PendingAgentRegistration> = new Map();
+  private allowAnonymous = false;
+  private readonly rateBuckets = new WeakMap<WebSocket, { tokens: number; last: number }>();
+  private readonly maxFrameBytes = Number.parseInt(process.env.RELAY_MAX_FRAME_BYTES || '65536', 10);
+  private readonly maxBufferedAmount = Number.parseInt(
+    process.env.RELAY_MAX_BUFFERED_AMOUNT || '1048576',
+    10
+  );
+  private readonly rateTokensPerSec = Number.parseInt(
+    process.env.RELAY_RATE_TOKENS_PER_SEC || '20',
+    10
+  );
+  private readonly rateBurst = Number.parseInt(process.env.RELAY_RATE_BURST || '40', 10);
 
   constructor(port: number = PORT) {
     super();
     this.port = port;
     this.sessionId = `RELAY-${Date.now()}`;
-    // Auth is optional for local development
+    this.allowAnonymous = process.env.RELAY_ALLOW_ANONYMOUS === '1';
     try {
       this.authService = createAuthService();
-    } catch {
-      console.log('[Relay] JWT auth disabled - running in open mode');
+    } catch (err) {
       this.authService = null;
+      if (!this.allowAnonymous) {
+        console.warn(
+          '[Relay] JWT_SECRET missing and RELAY_ALLOW_ANONYMOUS is not 1 — AGENT_REGISTER will be rejected'
+        );
+      } else {
+        console.warn(
+          '[Relay] JWT auth disabled — RELAY_ALLOW_ANONYMOUS=1; unauthenticated registrations are accepted'
+        );
+      }
+      void err;
     }
     this.subscriptionRegistry = new SubscriptionRegistry();
     this.bridgeAutoApproveLoopback = process.env.BRIDGE_AUTO_APPROVE_LOOPBACK !== 'false';
@@ -828,6 +849,14 @@ export class TNFRelayServer extends EventEmitter {
 
       fmt.newConnection(remoteAddress);
 
+      if (!this.authService) {
+        console.warn(
+          this.allowAnonymous
+            ? '[Relay] anonymous mode — RELAY_ALLOW_ANONYMOUS=1; this connection is unauthenticated'
+            : '[Relay] auth fail-closed — JWT_SECRET missing; registration will be rejected'
+        );
+      }
+
       // Send welcome message
       this.send(ws, {
         type: 'WELCOME',
@@ -835,13 +864,26 @@ export class TNFRelayServer extends EventEmitter {
           message: 'Connected to TNF Relay',
           version: '1.0.0',
           timestamp: Date.now(),
+          anonymous: !this.authService,
         },
       });
 
       // Handle messages
       ws.on('message', (data: Buffer | string) => {
         try {
-          const message: ProtocolMessage = JSON.parse(data.toString());
+          const raw = typeof data === 'string' ? data : data.toString();
+          if (Buffer.byteLength(raw) > this.maxFrameBytes) {
+            ws.close(1009, 'frame too large');
+            return;
+          }
+          if (!this.takeRateToken(ws)) {
+            this.send(ws, {
+              type: 'ERROR',
+              payload: { message: 'Rate limit exceeded', code: 'RATE_LIMITED' },
+            });
+            return;
+          }
+          const message: ProtocolMessage = JSON.parse(raw);
           agentId = this.handleMessage(ws, message, agentId);
         } catch (e) {
           console.error('[Relay] Invalid message:', (e as Error).message);
@@ -922,7 +964,29 @@ export class TNFRelayServer extends EventEmitter {
           ((message as unknown as Record<string, unknown>)?.token as string);
         let verifiedToken = null;
 
-        if (token && this.authService) {
+        if (!this.authService && !this.allowAnonymous) {
+          this.send(ws, {
+            type: 'REGISTRATION_ERROR',
+            payload: {
+              error: 'Authentication required. Set JWT_SECRET or RELAY_ALLOW_ANONYMOUS=1',
+              code: 'AUTH_REQUIRED',
+            },
+          });
+          return null;
+        }
+
+        if (this.authService) {
+          if (!token) {
+            console.warn(`[Relay] Authentication failed for agent. Token required but missing.`);
+            this.send(ws, {
+              type: 'REGISTRATION_ERROR',
+              payload: {
+                error: 'Authentication token required',
+                code: 'AUTH_REQUIRED',
+              },
+            });
+            return null;
+          }
           console.log(`[Relay] Authenticating agent via JWT...`);
           verifiedToken = this.authService.verifyToken(token);
 
@@ -1090,7 +1154,7 @@ export class TNFRelayServer extends EventEmitter {
       case 'CHANNEL_LIST': {
         this.send(ws, {
           type: 'CHANNEL_LIST',
-          payload: { channels: Array.from(this.channels.values()) },
+          payload: { channels: this.visibleChannelsFor(agentId) },
         });
         break;
       }
@@ -1115,6 +1179,7 @@ export class TNFRelayServer extends EventEmitter {
           console.log(
             `[Relay] Channel '${requestedName}' (normalized: '${normalizedRequested}') already exists (${existingChannel.id}), joining instead`
           );
+          if (this.denyPrivateChannelAccess(ws, agentId, existingChannel.id, 'join')) break;
           if (agentId && !existingChannel.members.includes(agentId)) {
             existingChannel.members.push(agentId);
           }
@@ -1132,6 +1197,11 @@ export class TNFRelayServer extends EventEmitter {
           // Create new channel. Slug ids are derived from the name so the same
           // channel keeps the same id across relay restarts; timestamps did not.
           const channelId = this.allocateChannelId(requestedName);
+          const invited = Array.isArray((payload as Record<string, unknown>)?.members)
+            ? ((payload as Record<string, unknown>).members as unknown[])
+                .filter((id): id is string => typeof id === 'string' && id.trim().length > 0)
+            : [];
+          const members = [...new Set([...(agentId ? [agentId] : []), ...invited])];
           const newChannel: Channel = {
             id: channelId,
             name: requestedName,
@@ -1139,7 +1209,7 @@ export class TNFRelayServer extends EventEmitter {
             createdBy: agentId || 'unknown',
             createdAt: Date.now(),
             isPrivate: ((payload as Record<string, unknown>)?.isPrivate as boolean) || false,
-            members: agentId ? [agentId] : [],
+            members,
           };
 
           this.channels.set(channelId, newChannel);
@@ -1157,18 +1227,38 @@ export class TNFRelayServer extends EventEmitter {
           });
         }
 
-        this.broadcast({
-          type: 'CHANNEL_LIST',
-          payload: { channels: Array.from(this.channels.values()) },
-        });
+        this.broadcastVisibleChannelLists();
         break;
       }
 
       case 'CHANNEL_JOIN': {
         const channelId = (payload as Record<string, unknown>)?.channelId as string;
         if (agentId && channelId) {
+          const denied = this.denyPrivateChannelAccess(ws, agentId, channelId, 'join');
+          if (denied) break;
           this.syncAgentChannelMembership(agentId, channelId);
         }
+        break;
+      }
+
+      case 'CHANNEL_INVITE': {
+        const channelId = (payload as Record<string, unknown>)?.channelId as string;
+        const inviteeId = (payload as Record<string, unknown>)?.agentId as string;
+        if (!agentId || !channelId || !inviteeId) break;
+        const ch = this.resolveChannel(channelId);
+        if (!ch) {
+          this.send(ws, { type: 'ERROR', payload: { message: `Unknown channel '${channelId}'` } });
+          break;
+        }
+        if (!this.canAdministerChannel(agentId, ch)) {
+          this.send(ws, {
+            type: 'ERROR',
+            payload: { message: 'Not authorized to invite to this channel', code: 'FORBIDDEN' },
+          });
+          break;
+        }
+        this.syncAgentChannelMembership(inviteeId, ch.id, { force: true });
+        this.send(ws, { type: 'CHANNEL_INVITED', payload: { channel: ch, agentId: inviteeId } });
         break;
       }
 
@@ -1191,6 +1281,7 @@ export class TNFRelayServer extends EventEmitter {
           ((payload as Record<string, unknown>)?.channelId as string) || channel;
 
         if (task && targetChannel) {
+          if (this.denyPrivateChannelAccess(ws, agentId, targetChannel, 'dispatch')) break;
           this.dispatchTask(task, targetChannel);
         }
         break;
@@ -1208,20 +1299,21 @@ export class TNFRelayServer extends EventEmitter {
           });
           break;
         }
-        if (this.channels.has(channelId)) {
-          this.channels.delete(channelId);
-          // Remove from all agent channel sets
-          this.agentChannels.forEach((channels) => channels.delete(channelId));
-
-          // FIX: Clear conversation manager for the deleted channel to prevent memory leak
-          this.conversationManagers.delete(channelId);
-
-          fmt.channelDeleted(channelId);
-
-          this.broadcast({
-            type: 'CHANNEL_LIST',
-            payload: { channels: Array.from(this.channels.values()) },
+        const existing = this.resolveChannel(channelId);
+        if (existing && !this.canAdministerChannel(agentId, existing)) {
+          this.send(ws, {
+            type: 'ERROR',
+            payload: { message: 'Not authorized to delete this channel', code: 'FORBIDDEN' },
           });
+          break;
+        }
+        if (this.channels.has(channelId) || existing) {
+          const id = existing?.id || channelId;
+          this.channels.delete(id);
+          this.agentChannels.forEach((channels) => channels.delete(id));
+          this.conversationManagers.delete(id);
+          fmt.channelDeleted(id);
+          this.broadcastVisibleChannelLists();
         }
         break;
       }
@@ -1229,6 +1321,7 @@ export class TNFRelayServer extends EventEmitter {
       case 'CHANNEL_PAUSE': {
         const channelId = (payload as Record<string, unknown>)?.channelId as string;
         if (channelId) {
+          if (this.denyPrivateChannelAccess(ws, agentId, channelId, 'pause')) break;
           const manager = this.getOrCreateConversationManager(channelId);
           void manager.pause(); // async but we don't await
           fmt.channelPaused(channelId);
@@ -1239,6 +1332,7 @@ export class TNFRelayServer extends EventEmitter {
       case 'CHANNEL_RESUME': {
         const channelId = (payload as Record<string, unknown>)?.channelId as string;
         if (channelId) {
+          if (this.denyPrivateChannelAccess(ws, agentId, channelId, 'resume')) break;
           const manager = this.getOrCreateConversationManager(channelId);
           void manager.resume(); // async but we don't await
           fmt.channelResumed(channelId);
@@ -1263,6 +1357,12 @@ export class TNFRelayServer extends EventEmitter {
           timestamp: Date.now(),
           metadata, // <-- PRESERVE metadata for loop prevention
         };
+
+        // Deny before persist/membership. Auto-join used to add the sender to a
+        // private room first, so the later access check always passed.
+        if (channel && this.denyPrivateChannelAccess(ws, agentId, channel, 'post')) {
+          break;
+        }
 
         this.emit('message', msg);
         void this.persistActivityMessage(message, msg);
@@ -1307,32 +1407,7 @@ export class TNFRelayServer extends EventEmitter {
           }
         }
 
-        if (to === 'broadcast') {
-          if (channel) {
-            // Broadcast to channel members
-            const ch = this.ensureChannelExists(channel, {
-              createdBy: agentId || 'unknown',
-              description: 'Auto-created from relay message traffic',
-            });
-            if (ch) {
-              ch.members.forEach((memberId) => {
-                const memberWs = this.sockets.get(memberId);
-                if (memberWs && memberWs.readyState === WebSocket.OPEN) {
-                  this.send(memberWs, {
-                    type: 'CHANNEL_MESSAGE',
-                    payload: msg,
-                  });
-                }
-              });
-            }
-          } else {
-            // Broadcast to all
-            this.broadcast({
-              type: 'MESSAGE_RECEIVE',
-              payload: msg,
-            });
-          }
-        } else if (to) {
+        if (to && to !== 'broadcast') {
           // Direct message
           const targetWs = this.sockets.get(to);
           if (targetWs && targetWs.readyState === WebSocket.OPEN) {
@@ -1341,6 +1416,27 @@ export class TNFRelayServer extends EventEmitter {
               payload: msg,
             });
           }
+        } else if (channel) {
+          // Channel-scoped post. `to: 'broadcast'` and an omitted `to` are the
+          // same intent — everyone in the room. Only the explicit 'broadcast'
+          // form used to deliver, so a post that named a channel and left `to`
+          // unset was emitted and persisted but sent to nobody.
+          const ch = this.ensureChannelExists(channel, {
+            createdBy: agentId || 'unknown',
+            description: 'Auto-created from relay message traffic',
+          });
+          if (ch) {
+            this.broadcastToChannel(ch.id, {
+              type: 'CHANNEL_MESSAGE',
+              payload: msg,
+            });
+          }
+        } else if (to === 'broadcast') {
+          // Broadcast to all
+          this.broadcast({
+            type: 'MESSAGE_RECEIVE',
+            payload: msg,
+          });
         }
         break;
       }
@@ -1355,11 +1451,47 @@ export class TNFRelayServer extends EventEmitter {
       }
 
       case 'AGENT_METADATA_UPDATE': {
-        const agentInfo = (payload as Record<string, unknown>)?.agent;
-        if (agentInfo) {
-          // Update agent logic... we need to be careful with types here
-          // For now, let's assume agentInfo is partial update
+        if (!agentId) {
+          this.send(ws, {
+            type: 'ERROR',
+            payload: { message: 'Register before updating metadata', code: 'UNREGISTERED' },
+          });
+          break;
         }
+        const agent = this.agents.get(agentId);
+        if (!agent) {
+          this.send(ws, {
+            type: 'ERROR',
+            payload: { message: `Unknown agent '${agentId}'`, code: 'UNKNOWN_AGENT' },
+          });
+          break;
+        }
+        const patch =
+          ((payload as Record<string, unknown>)?.agent as Record<string, unknown>) ||
+          ((payload as Record<string, unknown>)?.metadata as Record<string, unknown>) ||
+          {};
+        if (typeof patch.name === 'string' && patch.name.trim()) {
+          agent.name = patch.name.trim();
+        }
+        if (Array.isArray(patch.capabilities)) {
+          agent.capabilities = patch.capabilities.filter(
+            (c): c is string => typeof c === 'string'
+          );
+        }
+        if (patch.metadata && typeof patch.metadata === 'object' && !Array.isArray(patch.metadata)) {
+          agent.metadata = {
+            ...(agent.metadata || {}),
+            ...(patch.metadata as Record<string, unknown>),
+          };
+        } else if (
+          !((payload as Record<string, unknown>)?.agent as Record<string, unknown>) &&
+          Object.keys(patch).length
+        ) {
+          agent.metadata = { ...(agent.metadata || {}), ...patch };
+        }
+        agent.lastSeen = Date.now();
+        this.send(ws, { type: 'AGENT_UPDATED', payload: { agent } });
+        this.broadcast({ type: 'AGENT_UPDATED', payload: { agent } }, agentId);
         break;
       }
 
@@ -1661,15 +1793,20 @@ export class TNFRelayServer extends EventEmitter {
   }
 
   private send(ws: WebSocket, message: Partial<ProtocolMessage>): void {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(
-        JSON.stringify({
-          id: message.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          timestamp: Date.now(),
-          ...message,
-        })
-      );
+    if (ws.readyState !== WebSocket.OPEN) {
+      return;
     }
+    if (typeof ws.bufferedAmount === 'number' && ws.bufferedAmount > this.maxBufferedAmount) {
+      ws.close(1013, 'backpressure');
+      return;
+    }
+    ws.send(
+      JSON.stringify({
+        id: message.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        timestamp: Date.now(),
+        ...message,
+      })
+    );
   }
 
   private async setupRegistryReplyListener(): Promise<void> {
@@ -1819,7 +1956,7 @@ export class TNFRelayServer extends EventEmitter {
     });
     this.send(ws, {
       type: 'CHANNEL_LIST',
-      payload: { channels: Array.from(this.channels.values()) },
+      payload: { channels: this.visibleChannelsFor(agentId) },
     });
     this.send(ws, {
       type: 'REGISTRATION_CONFIRMED',
@@ -2006,16 +2143,94 @@ export class TNFRelayServer extends EventEmitter {
     }
   }
 
+  private takeRateToken(ws: WebSocket): boolean {
+    const now = Date.now();
+    let bucket = this.rateBuckets.get(ws);
+    if (!bucket) {
+      bucket = { tokens: this.rateBurst, last: now };
+      this.rateBuckets.set(ws, bucket);
+    }
+    const elapsed = (now - bucket.last) / 1000;
+    bucket.tokens = Math.min(this.rateBurst, bucket.tokens + elapsed * this.rateTokensPerSec);
+    bucket.last = now;
+    if (bucket.tokens < 1) return false;
+    bucket.tokens -= 1;
+    return true;
+  }
+
+  private agentHasOperatorCapability(agentId: string | null): boolean {
+    if (!agentId) return false;
+    const agent = this.agents.get(agentId);
+    if (!agent) return false;
+    return agent.capabilities.some((c) =>
+      ['operator', 'channel:admin', 'relay:admin'].includes(String(c).toLowerCase())
+    );
+  }
+
+  private canAdministerChannel(agentId: string | null, channel: Channel): boolean {
+    if (!agentId) return false;
+    if (channel.createdBy === agentId) return true;
+    if (channel.members.includes(agentId) && !channel.isPrivate) return true;
+    if (channel.isPrivate && channel.members.includes(agentId) && channel.createdBy === agentId) {
+      return true;
+    }
+    return this.agentHasOperatorCapability(agentId);
+  }
+
+  private canAccessChannel(agentId: string | null, channel: Channel): boolean {
+    if (!channel.isPrivate) return true;
+    if (!agentId) return false;
+    if (channel.createdBy === agentId) return true;
+    if (channel.members.includes(agentId)) return true;
+    return this.agentHasOperatorCapability(agentId);
+  }
+
+  private visibleChannelsFor(agentId: string | null): Channel[] {
+    return Array.from(this.channels.values()).filter((ch) => this.canAccessChannel(agentId, ch));
+  }
+
+  private broadcastVisibleChannelLists(): void {
+    if (!this.sockets) return;
+    this.sockets.forEach((socket, id) => {
+      this.send(socket, {
+        type: 'CHANNEL_LIST',
+        payload: { channels: this.visibleChannelsFor(id) },
+      });
+    });
+  }
+
+  private denyPrivateChannelAccess(
+    ws: WebSocket,
+    agentId: string | null,
+    channelRef: string,
+    action: string
+  ): boolean {
+    const channel = this.resolveChannel(channelRef);
+    if (!channel || !channel.isPrivate) return false;
+    if (this.canAccessChannel(agentId, channel)) return false;
+    this.send(ws, {
+      type: 'ERROR',
+      payload: {
+        message: `Not authorized to ${action} private channel '${channel.id}'`,
+        code: 'FORBIDDEN',
+      },
+    });
+    return true;
+  }
+
   private broadcastToChannel(channelId: string, message: ProtocolMessage): void {
-    const channel = this.channels.get(channelId);
+    // Resolve rather than exact-match: callers address rooms by id ('green')
+    // and by display name ('Green') interchangeably, and an unresolved id here
+    // is a silent no-delivery.
+    const channel = this.resolveChannel(channelId);
     if (!channel) {
       return;
     }
 
     channel.members.forEach((memberId) => {
       const socket = this.sockets.get(memberId);
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify(message));
+      if (socket) {
+        this.send(socket, message);
       }
     });
   }
@@ -2027,6 +2242,7 @@ export class TNFRelayServer extends EventEmitter {
       ...message,
     });
 
+    if (!this.sockets) return;
     this.sockets.forEach((ws, agentId) => {
       if (agentId !== excludeAgentId && ws.readyState === WebSocket.OPEN) {
         ws.send(data);
@@ -2080,10 +2296,7 @@ export class TNFRelayServer extends EventEmitter {
     };
     this.channels.set(id, channel);
     console.log(`[Relay] Auto-created channel: ${id} (${channel.name})`);
-    this.broadcast({
-      type: 'CHANNEL_LIST',
-      payload: { channels: Array.from(this.channels.values()) },
-    });
+    this.broadcastVisibleChannelLists();
     return channel;
   }
 
@@ -2116,13 +2329,22 @@ export class TNFRelayServer extends EventEmitter {
     return null;
   }
 
-  private syncAgentChannelMembership(agentId: string, channelId: string): void {
+  private syncAgentChannelMembership(
+    agentId: string,
+    channelId: string,
+    options?: { force?: boolean }
+  ): void {
     const channel = this.ensureChannelExists(channelId);
     if (!channel) {
       return;
     }
 
     if (!channel.members.includes(agentId)) {
+      // Posting or registering must not mint membership in a private room.
+      // Invites pass force:true after canAdministerChannel.
+      if (channel.isPrivate && !options?.force && !this.canAccessChannel(agentId, channel)) {
+        return;
+      }
       channel.members.push(agentId);
     }
 

@@ -6,6 +6,7 @@ primary_type: operational
 secondary_tags:
   - deterministic
 category: ops/systems
+department: product
 risk_tier: medium
 harmful_pattern_detection: false
 harmful_pattern_signals:
@@ -16,8 +17,10 @@ metadata:
   source_snapshot: .agent/skill-bank/snapshots/project-agent/linux-production-shell-scripts-c52e2c53/SKILL.md
   status: permanent
 ---
-> Promoted from TNF snapshot history into permanent skill inventory.
-> Category and risk metadata added for adaptive routing and harmful-pattern recognition.
+
+> Promoted from TNF snapshot history into permanent skill inventory. Category
+> and risk metadata added for adaptive routing and harmful-pattern recognition.
+
 # Linux Production Shell Scripts
 
 ## Purpose

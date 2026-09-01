@@ -1,5 +1,6 @@
 ---
 name: keychain-login-autotype
+department: tech
 description:
   Automate secure website login typing from macOS Keychain without printing
   secrets to logs. Use when an agent needs to fill username/password prompts in

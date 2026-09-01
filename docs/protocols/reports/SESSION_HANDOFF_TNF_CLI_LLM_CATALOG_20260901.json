@@ -1,0 +1,85 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "45a49463-46e3-4c01-a892-ed592c0b4401",
+  "created_at": "2026-09-01T06:05:47Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
+  "head_sha": "6cdf8c392230945fa6009a96a9324f52d260346d",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node", "pnpm", "network"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-CLI-LLM-CATALOG"],
+  "work_summary": [
+    "Unified TNF CLI model selection around a bundled 22-provider catalog and provider-specific live discovery.",
+    "Added a real arrow-key provider/model selector with filtering, cancellation, and default-model persistence.",
+    "Bundled the provider catalog and 202-model NVIDIA registry in the installed CLI package.",
+    "Reconciled the 512-path command-surface oracle and replaced an unbounded doctor-based preflight test probe with a bounded real CLI probe."
+  ],
+  "changed_paths": [
+    "README.md",
+    "data/providers/catalog.json",
+    "docs/UNIFIED_LLM_CATALOG.md",
+    "docs/operations/audits/tnf-llm-provider-model-surface-audit-2026-08-31.md",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_LLM_CATALOG_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_LLM_CATALOG_20260901.md",
+    "packages/tnf-cli/package.json",
+    "packages/tnf-cli/scripts/copy-provider-catalog.cjs",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "packages/tnf-cli/src/services/ModelsService.ts",
+    "packages/tnf-cli/src/services/provider-catalog.test.ts",
+    "packages/tnf-cli/src/services/provider-config.test.ts",
+    "packages/tnf-cli/src/services/provider-config.ts",
+    "packages/tnf-cli/src/utils/interactive-select.test.ts",
+    "packages/tnf-cli/src/utils/interactive-select.ts",
+    "packages/tnf-cli/src/utils/preflight-skip.test.ts"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "tnf-cli type-check and complete package test passed; command-surface staged and CI gates passed at 512 paths; real OpenRouter refresh returned 425 live models; built package contained 22 providers and 202 NVIDIA models; real PTY navigation verified."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Verify the PATH-resolved tnf launcher uses the canonical local checkout.",
+      "Run tnf models --select in a real terminal and confirm arrow navigation and selection.",
+      "Treat the heavyweight tnf doctor latency as a separate performance workstream."
+    ]
+  },
+  "next_actions": [
+    "Install the committed CLI from the canonical local checkout.",
+    "Verify provider catalog packaging, live model refresh, and interactive selection through the PATH-resolved tnf command.",
+    "Publish only through the normal TNF review and release workflow; this receipt does not authorize a push."
+  ]
+}

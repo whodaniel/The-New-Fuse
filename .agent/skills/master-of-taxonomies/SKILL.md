@@ -1,5 +1,6 @@
 ---
 name: master-of-taxonomies
+department: tech
 description:
   Define and govern ontologies, role titles, skill classifications, sub-skill
   hierarchies, and skill chains across TNF. Use when Codex must formalize

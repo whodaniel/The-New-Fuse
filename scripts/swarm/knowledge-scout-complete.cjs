@@ -30,8 +30,15 @@ function main() {
     });
   }
 
+  const staff = spawnSync(process.execPath, [path.join(ROOT, 'scripts/scouting/staff-scout-missions.cjs')], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    env: process.env,
+    timeout: Number(process.env.TNF_SCOUT_STAFF_TIMEOUT_MS || 60000),
+  });
+
   const payload = {
-    ok: !(child && child.status && child.status !== 0),
+    ok: !(child && child.status && child.status !== 0) && (staff.status ?? 1) === 0,
     processId: 'tenant-knowledge-scout-sprint',
     startedAt,
     finishedAt: new Date().toISOString(),
@@ -43,7 +50,12 @@ function main() {
           stderrPreview: String(child.stderr || '').slice(0, 500),
         }
       : { skipped: true, reason: 'news-scout absent or TNF_KNOWLEDGE_SCOUT_SKIP_NEWS=1' },
-    note: 'Knowledge scout sprint completed as local artifact write (growth-blocker unblock).',
+    scoutStaff: {
+      status: staff.status,
+      stdoutPreview: String(staff.stdout || '').slice(0, 500),
+      stderrPreview: String(staff.stderr || '').slice(0, 500),
+    },
+    note: 'Knowledge scout sprint completed as local artifact write and tnf-cli-agent mission brief.',
   };
 
   fs.writeFileSync(OUT_JSON, `${JSON.stringify(payload, null, 2)}\n`);

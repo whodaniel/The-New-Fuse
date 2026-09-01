@@ -1,11 +1,13 @@
 ---
 name: youtube
+category: media-content
+department: marketing
 description: |
   YouTube Data API integration with managed OAuth. Search videos, manage playlists, access channel data, and interact with comments. Use this skill when users want to interact with YouTube. For other third party apps, use the api-gateway skill (https://clawhub.ai/byungkyu/api-gateway).
 compatibility: Requires network access and valid Maton API key
 metadata:
   author: maton
-  version: "1.0"
+  version: '1.0'
   clawdbot:
     emoji: 🧠
     requires:
@@ -15,7 +17,9 @@ metadata:
 
 # YouTube
 
-Access the YouTube Data API v3 with managed OAuth authentication. Search videos, manage playlists, access channel information, and interact with comments and subscriptions.
+Access the YouTube Data API v3 with managed OAuth authentication. Search videos,
+manage playlists, access channel information, and interact with comments and
+subscriptions.
 
 ## Quick Start
 
@@ -35,7 +39,9 @@ EOF
 https://gateway.maton.ai/youtube/{native-api-path}
 ```
 
-Replace `{native-api-path}` with the actual YouTube Data API endpoint path. The gateway proxies requests to `www.googleapis.com` and automatically injects your OAuth token.
+Replace `{native-api-path}` with the actual YouTube Data API endpoint path. The
+gateway proxies requests to `www.googleapis.com` and automatically injects your
+OAuth token.
 
 ## Authentication
 
@@ -97,6 +103,7 @@ EOF
 ```
 
 **Response:**
+
 ```json
 {
   "connection": {
@@ -126,7 +133,8 @@ EOF
 
 ### Specifying Connection
 
-If you have multiple YouTube connections, specify which one to use with the `Maton-Connection` header:
+If you have multiple YouTube connections, specify which one to use with the
+`Maton-Connection` header:
 
 ```bash
 python <<'EOF'
@@ -151,6 +159,7 @@ GET /youtube/youtube/v3/search
 ```
 
 Query parameters:
+
 - `part` - Required: `snippet`
 - `q` - Search query
 - `type` - Filter by type: `video`, `channel`, `playlist`
@@ -169,6 +178,7 @@ curl -s -X GET "https://gateway.maton.ai/youtube/youtube/v3/search?part=snippet&
 ```
 
 **Response:**
+
 ```json
 {
   "kind": "youtube#searchListResponse",
@@ -190,7 +200,7 @@ curl -s -X GET "https://gateway.maton.ai/youtube/youtube/v3/search?part=snippet&
         "title": "Machine Learning Tutorial",
         "description": "Learn ML basics...",
         "thumbnails": {
-          "default": {"url": "https://i.ytimg.com/vi/abc123xyz/default.jpg"}
+          "default": { "url": "https://i.ytimg.com/vi/abc123xyz/default.jpg" }
         },
         "channelTitle": "Tech Channel"
       }
@@ -208,6 +218,7 @@ GET /youtube/youtube/v3/videos?part=snippet,statistics,contentDetails&id={videoI
 ```
 
 Parts available:
+
 - `snippet` - Title, description, thumbnails, channel info
 - `statistics` - View count, likes, comments
 - `contentDetails` - Duration, dimension, definition
@@ -261,6 +272,7 @@ GET /youtube/youtube/v3/channels?part=snippet,statistics,contentDetails&mine=tru
 ```
 
 **Response:**
+
 ```json
 {
   "items": [
@@ -472,20 +484,20 @@ DELETE /youtube/youtube/v3/comments?id={commentId}
 
 ```javascript
 const headers = {
-  'Authorization': `Bearer ${process.env.MATON_API_KEY}`
+  Authorization: `Bearer ${process.env.MATON_API_KEY}`,
 };
 
 // Search videos
 const results = await fetch(
   'https://gateway.maton.ai/youtube/youtube/v3/search?part=snippet&q=tutorial&type=video&maxResults=10',
   { headers }
-).then(r => r.json());
+).then((r) => r.json());
 
 // Get video details
 const video = await fetch(
   'https://gateway.maton.ai/youtube/youtube/v3/videos?part=snippet,statistics&id=dQw4w9WgXcQ',
   { headers }
-).then(r => r.json());
+).then((r) => r.json());
 
 // Create playlist
 await fetch(
@@ -495,8 +507,8 @@ await fetch(
     headers: { ...headers, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       snippet: { title: 'My Playlist', description: 'Videos I like' },
-      status: { privacyStatus: 'private' }
-    })
+      status: { privacyStatus: 'private' },
+    }),
   }
 );
 ```
@@ -541,21 +553,25 @@ response = requests.post(
 - Playlist IDs start with `PL` (user) or `UU` (uploads)
 - Use `pageToken` for pagination through large result sets
 - The `part` parameter is required and determines what data is returned
-- Quota costs vary by endpoint - search is expensive (100 units), reads are cheap (1 unit)
+- Quota costs vary by endpoint - search is expensive (100 units), reads are
+  cheap (1 unit)
 - Some write operations require channel verification
-- IMPORTANT: When using curl commands, use `curl -g` when URLs contain brackets (`fields[]`, `sort[]`, `records[]`) to disable glob parsing
-- IMPORTANT: When piping curl output to `jq` or other commands, environment variables like `$MATON_API_KEY` may not expand correctly in some shell environments. You may get "Invalid API key" errors when piping.
+- IMPORTANT: When using curl commands, use `curl -g` when URLs contain brackets
+  (`fields[]`, `sort[]`, `records[]`) to disable glob parsing
+- IMPORTANT: When piping curl output to `jq` or other commands, environment
+  variables like `$MATON_API_KEY` may not expand correctly in some shell
+  environments. You may get "Invalid API key" errors when piping.
 
 ## Error Handling
 
-| Status | Meaning |
-|--------|---------|
-| 400 | Missing YouTube connection or invalid request |
-| 401 | Invalid or missing Maton API key |
-| 403 | Forbidden - quota exceeded or insufficient permissions |
-| 404 | Video, channel, or playlist not found |
-| 429 | Rate limited (10 req/sec per account) |
-| 4xx/5xx | Passthrough error from YouTube API |
+| Status  | Meaning                                                |
+| ------- | ------------------------------------------------------ |
+| 400     | Missing YouTube connection or invalid request          |
+| 401     | Invalid or missing Maton API key                       |
+| 403     | Forbidden - quota exceeded or insufficient permissions |
+| 404     | Video, channel, or playlist not found                  |
+| 429     | Rate limited (10 req/sec per account)                  |
+| 4xx/5xx | Passthrough error from YouTube API                     |
 
 ### Troubleshooting: API Key Issues
 
