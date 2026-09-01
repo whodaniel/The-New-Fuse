@@ -1,5 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
+import { AgentApiGrantsService } from '../agent-api-grants.service';
+import { AgentService } from '../agent.service';
+import {
+  evaluateConditionExpression,
+  ExpressionEvalError,
+  ExpressionSyntaxError,
+} from './safe-expression-evaluator';
 
 interface RuntimeNode {
   id: string;
@@ -12,12 +19,27 @@ interface RuntimeNode {
 interface RuntimeEdge {
   source: string;
   target: string;
+  /**
+   * Which named output handle this edge left from. ReactFlow sets this
+   * automatically whenever a node has more than one output handle (e.g. a
+   * condition node's 'true'/'false' pair) — ordinary single-output nodes'
+   * edges may have this unset, which is fine: it only matters for nodes
+   * whose execution computes a specific `branch` to follow.
+   */
+  sourceHandle?: string | null;
 }
 
 interface RuntimeContext {
   executionId: string;
   input: any;
   nodeOutputs: Record<string, any>;
+  /**
+   * The user who owns this execution (resolved by the controller from the
+   * saved workflow's `creatorId`, or from the request body for ad-hoc
+   * definition runs). Required for anything that spends a user's own
+   * provider budget — agent-node execution resolves grants against this.
+   */
+  userId?: string | null;
 }
 
 interface NodeExecutionLog {
@@ -35,12 +57,28 @@ interface NodeExecutionLog {
 export class WorkflowExecutionService {
   private readonly logger = new Logger(WorkflowExecutionService.name);
 
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly agentApiGrants: AgentApiGrantsService,
+    private readonly agents: AgentService
+  ) {}
 
   /**
    * Run a workflow execution with best-effort node orchestration.
+   *
+   * @param userId The workflow's owning user, when known — needed to resolve
+   *   per-user agent grants for real agent-node execution. Missing for ad-hoc
+   *   definition runs with no authenticated caller identity; agent nodes will
+   *   fail with a clear "no owning user" error rather than silently no-op in
+   *   that case, since spending a provider budget with no accountable owner
+   *   is not a safe default.
    */
-  async run(executionId: string, definition: any, input: any = {}): Promise<void> {
+  async run(
+    executionId: string,
+    definition: any,
+    input: any = {},
+    userId?: string | null
+  ): Promise<void> {
     this.logger.log(`Running workflow execution ${executionId}`);
     const nodes: RuntimeNode[] = Array.isArray(definition?.nodes) ? definition.nodes : [];
     const edges: RuntimeEdge[] = Array.isArray(definition?.edges) ? definition.edges : [];
@@ -49,6 +87,7 @@ export class WorkflowExecutionService {
       executionId,
       input,
       nodeOutputs: {},
+      userId,
     };
 
     try {
@@ -109,7 +148,12 @@ export class WorkflowExecutionService {
           throw new Error(`Node ${node.id} failed: ${message}`);
         }
 
-        const nextEdges = edges.filter((e: any) => e.source === node.id);
+        const outgoingEdges = edges.filter((e: any) => e.source === node.id);
+        const nextEdges = this.selectOutgoingEdges(
+          node,
+          outgoingEdges,
+          runtimeContext.nodeOutputs[node.id]
+        );
         for (const edge of nextEdges) {
           const nextNode = nodes.find((n: any) => n.id === edge.target);
           if (nextNode && !visited.has(nextNode.id)) {
@@ -165,12 +209,9 @@ export class WorkflowExecutionService {
     return String(node.type || node.data?.type || 'unknown').toLowerCase();
   }
 
-  private classifyNode(node: RuntimeNode):
-    | 'webhook-trigger'
-    | 'webhook-action'
-    | 'http-request'
-    | 'condition'
-    | 'generic' {
+  private classifyNode(
+    node: RuntimeNode
+  ): 'webhook-trigger' | 'webhook-action' | 'http-request' | 'condition' | 'agent' | 'generic' {
     const typeHints = [
       String(node.type || ''),
       String(node.data?.type || ''),
@@ -203,7 +244,55 @@ export class WorkflowExecutionService {
       return 'condition';
     }
 
+    // Matches both the shared package's node type ('agent') and Tauri's
+    // (also 'agent') — see packages/workflow-builder/src/nodes/agent-node.tsx
+    // and apps/tauri-desktop/src/pages/WorkflowBuilder.tsx's nodeTypes map.
+    // These two surfaces use different config shapes for the same type key;
+    // executeAgentNode() resolves both.
+    if (typeHints.includes('agent') && !typeHints.includes('subworkflow')) {
+      return 'agent';
+    }
+
     return 'generic';
+  }
+
+  /**
+   * Decide which of a node's outgoing edges actually fire, given what it
+   * just computed. Only condition-classified nodes branch — every other
+   * node type keeps the original "every outgoing edge fires" behavior,
+   * matching what a node with a single default output handle means.
+   *
+   * For a condition node, `output.branch` names the handle id
+   * ('true'/'false') the UI's two named output handles produce; only edges
+   * whose recorded `sourceHandle` matches actually enqueue. If no edge
+   * matches — e.g. a workflow whose edges predate this fix and never
+   * recorded a sourceHandle — fall back to the previous both-branches
+   * behavior rather than silently running nothing, but log it: that
+   * workflow's edges should be re-saved from the canvas to pick up real
+   * branch routing.
+   */
+  private selectOutgoingEdges(
+    node: RuntimeNode,
+    outgoingEdges: RuntimeEdge[],
+    output: any
+  ): RuntimeEdge[] {
+    if (this.classifyNode(node) !== 'condition') {
+      return outgoingEdges;
+    }
+
+    const branch = output && typeof output === 'object' ? output.branch : undefined;
+    if (typeof branch !== 'string') {
+      return outgoingEdges;
+    }
+
+    const matching = outgoingEdges.filter((edge) => edge.sourceHandle === branch);
+    if (matching.length === 0 && outgoingEdges.length > 0) {
+      this.logger.warn(
+        `Condition node ${node.id} computed branch '${branch}' but no outgoing edge has a matching sourceHandle — falling back to firing all ${outgoingEdges.length} edge(s). Re-save this workflow from the canvas to record branch routing.`
+      );
+      return outgoingEdges;
+    }
+    return matching;
   }
 
   private resolveNodeConfig(node: RuntimeNode): Record<string, any> {
@@ -237,6 +326,8 @@ export class WorkflowExecutionService {
         return this.executeHttpNode(node, context);
       case 'condition':
         return this.executeConditionNode(node, context);
+      case 'agent':
+        return this.executeAgentNode(node, context);
       default:
         return this.executeGenericNode(node, context);
     }
@@ -321,11 +412,38 @@ export class WorkflowExecutionService {
   private executeConditionNode(node: RuntimeNode, context: RuntimeContext): any {
     const cfg = this.resolveNodeConfig(node);
     const payload = this.resolveNodeInput(node, context) || {};
+
+    // `config.condition` (a JS-expression string) is what condition-node.tsx
+    // — the only UI that has ever produced condition nodes — actually
+    // writes. See packages/workflow-builder/src/nodes/condition-node.tsx.
+    if (typeof cfg.condition === 'string' && cfg.condition.trim().length > 0) {
+      try {
+        const passed = evaluateConditionExpression(cfg.condition, {
+          input: payload,
+          context: { nodeOutputs: context.nodeOutputs, executionId: context.executionId },
+        });
+        return {
+          condition: cfg.condition,
+          passed,
+          branch: passed ? 'true' : 'false',
+        };
+      } catch (error) {
+        if (error instanceof ExpressionSyntaxError || error instanceof ExpressionEvalError) {
+          throw new Error(`Condition node ${node.id} has an invalid expression: ${error.message}`);
+        }
+        throw error;
+      }
+    }
+
+    // No UI has ever produced this shape, but keep it as a fallback rather
+    // than break whatever might already rely on it — see
+    // docs/development/WORKFLOW_BUILDER_PACKAGE_BOUNDARY.md-style caution
+    // about not assuming a shape is truly unused just because no known
+    // caller writes it today.
     const field = String(cfg.field || 'status');
     const operator = String(cfg.operator || 'eq').toLowerCase();
     const expected = cfg.value;
     const actual = this.readPath(payload, field);
-
     const passed = this.compareCondition(actual, operator, expected);
 
     return {
@@ -338,6 +456,82 @@ export class WorkflowExecutionService {
     };
   }
 
+  /**
+   * Real agent invocation, spending the owning user's own provider budget
+   * through the same AgentApiGrantsService the HTTP agent-proxy uses — never
+   * a bypass of grant/rate/budget enforcement, even from server-side code.
+   *
+   * Two config shapes are both legitimate and both handled:
+   *  - shared package (packages/workflow-builder/src/nodes/agent-node.tsx):
+   *    `config.agentId` — a registered agent, resolved to its provider.
+   *  - Tauri desktop (apps/tauri-desktop/src/pages/WorkflowBuilder.tsx):
+   *    `config.provider` + `config.prompt` directly, no registered agent.
+   *    This shape has no grant to resolve against (grants are scoped to a
+   *    specific agent, not an ad-hoc provider call) — it throws a clear,
+   *    actionable error rather than silently no-op or bypass the grant
+   *    system. Registering the ad-hoc call as a real agent first is the
+   *    correct fix on the workflow-authoring side, not a server-side hack.
+   */
+  private async executeAgentNode(node: RuntimeNode, context: RuntimeContext): Promise<any> {
+    const cfg = this.resolveNodeConfig(node);
+    const agentId = typeof cfg.agentId === 'string' ? cfg.agentId.trim() : '';
+
+    if (!agentId) {
+      throw new Error(
+        `Agent node ${node.id} has no agentId — ad-hoc provider+prompt agent nodes ` +
+          `(the Tauri desktop shape) cannot execute yet because grants are issued per ` +
+          `registered agent, not per raw provider call. Register this as an agent ` +
+          `first, then reference it by agentId.`
+      );
+    }
+
+    if (!context.userId) {
+      throw new Error(
+        `Agent node ${node.id} cannot execute: this workflow execution has no owning ` +
+          `user, so there is no one's grant/budget to spend against.`
+      );
+    }
+
+    const agent = await this.agents.findAgentById(agentId, context.userId);
+    const provider = (agent.provider || '').trim().toLowerCase();
+    if (!provider) {
+      throw new Error(`Agent ${agentId} has no configured provider — cannot execute.`);
+    }
+
+    const grant = await this.agentApiGrants.findActiveGrantForAgentProvider(
+      context.userId,
+      agentId,
+      provider
+    );
+    if (!grant) {
+      throw new Error(
+        `No active API grant for agent ${agentId} on provider '${provider}'. Create one ` +
+          `(POST /agent-grants) before running workflows that use this agent.`
+      );
+    }
+
+    const prompt =
+      (typeof cfg.prompt === 'string' && cfg.prompt.trim()) ||
+      (typeof cfg.customPrompt === 'string' && cfg.customPrompt.trim()) ||
+      '';
+    if (!prompt) {
+      throw new Error(`Agent node ${node.id} has no prompt configured.`);
+    }
+
+    const response = await this.agentApiGrants.executeProxyForGrant(
+      grant,
+      { messages: [{ role: 'user', content: prompt }] },
+      Date.now()
+    );
+
+    return {
+      agentId,
+      provider,
+      grantId: grant.id,
+      response,
+    };
+  }
+
   private async executeGenericNode(node: RuntimeNode, context: RuntimeContext): Promise<any> {
     await new Promise((resolve) => setTimeout(resolve, 80));
     const payload = this.resolveNodeInput(node, context);
@@ -346,9 +540,7 @@ export class WorkflowExecutionService {
       nodeType: this.getNodeTypeLabel(node),
       executedAt: new Date().toISOString(),
       inputPreview:
-        payload && typeof payload === 'object'
-          ? Object.keys(payload).slice(0, 8)
-          : typeof payload,
+        payload && typeof payload === 'object' ? Object.keys(payload).slice(0, 8) : typeof payload,
     };
   }
 
@@ -360,7 +552,10 @@ export class WorkflowExecutionService {
     return fieldPath
       .split('.')
       .filter(Boolean)
-      .reduce((acc: any, key: string) => (acc === undefined || acc === null ? acc : acc[key]), payload);
+      .reduce(
+        (acc: any, key: string) => (acc === undefined || acc === null ? acc : acc[key]),
+        payload
+      );
   }
 
   private compareCondition(actual: any, operator: string, expected: any): boolean {

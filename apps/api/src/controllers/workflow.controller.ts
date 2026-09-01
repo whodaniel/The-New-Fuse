@@ -291,6 +291,7 @@ export class WorkflowController {
         triggerType = 'manual',
         triggerId = null,
         triggerSource = null,
+        userId: bodyUserId,
       } = body;
 
       if (!workflowId && !definition) {
@@ -340,7 +341,8 @@ export class WorkflowController {
       );
 
       // Trigger real execution engine here (background)
-      void this.executionService.run(execution.id, targetDefinition, input);
+      const ownerId = (workflow as any)?.creatorId || bodyUserId || null;
+      void this.executionService.run(execution.id, targetDefinition, input, ownerId);
 
       res.status(201).json(execution);
     } catch (error: unknown) {
@@ -696,11 +698,16 @@ export class WorkflowController {
         },
       } as any);
 
-      void this.executionService.run(execution.id, targetDefinition, {
-        payload,
-        headers: this.pickHeaderSubset(headers),
-        __trigger: triggerEnvelope,
-      });
+      void this.executionService.run(
+        execution.id,
+        targetDefinition,
+        {
+          payload,
+          headers: this.pickHeaderSubset(headers),
+          __trigger: triggerEnvelope,
+        },
+        (workflow as any)?.creatorId || null
+      );
 
       res.status(202).json({
         executionId: execution.id,
@@ -771,9 +778,7 @@ export class WorkflowController {
       };
     }
 
-    const conditions = Array.isArray(selectedTrigger?.conditions)
-      ? selectedTrigger.conditions
-      : [];
+    const conditions = Array.isArray(selectedTrigger?.conditions) ? selectedTrigger.conditions : [];
     const conditionsMatched = conditions.every((condition) =>
       this.evaluateTriggerCondition(condition, payload)
     );
@@ -832,7 +837,10 @@ export class WorkflowController {
     return fieldPath
       .split('.')
       .filter(Boolean)
-      .reduce((acc: any, key: string) => (acc === undefined || acc === null ? acc : acc[key]), payload);
+      .reduce(
+        (acc: any, key: string) => (acc === undefined || acc === null ? acc : acc[key]),
+        payload
+      );
   }
 
   private getTriggerSecret(trigger: any): string | undefined {

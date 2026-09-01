@@ -4,7 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Commit the Select shim + 9 node-file import fixes.
+**Current Directive:** Open a PR for this Workstream A Phase 1 commit against
+main.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1150,6 +1151,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-01T06:00:26.770Z handoff `30f7bd2e-0ec7-4287-8745-0e80d9aef8ec` head
+  `c426044841c0` project `TNF-SESSION` — Open a PR for this Workstream A Phase 1
+  commit against main.
 
 - 2026-09-01T04:10:17.909Z handoff `7f246b53-b0d9-4974-878a-da066f51d766` head
   `5a20169d60ee` project `TNF-SESSION` — Commit the Select shim + 9 node-file

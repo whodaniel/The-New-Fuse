@@ -114,7 +114,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-01T04:10:13.916Z** — handoff
+Updated: **2026-09-01T06:00:22.011Z** — handoff
+`30f7bd2e-0ec7-4287-8745-0e80d9aef8ec` (`c426044841c0`).
 `7f246b53-b0d9-4974-878a-da066f51d766` (`5a20169d60ee`).
 `03b98dc2-44ba-46aa-9baa-9eeab96a0d15` (`5a20169d60ee`).
 `524ffbf1-6b3b-471f-ae45-5fedcbdadc7a` (`59e86d8e9c31`).
@@ -317,13 +318,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                                    |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Commit the Select shim + 9 node-file import fixes.                                                                                                                                                                        |
-| **P0**   | Smoke-test /workflows/builder, /workflows/nexus, and the advanced-builder redirect via claude-in-chrome — specifically exercise every dropdown in the shimmed nodes since the shim is new code with no test coverage yet. |
-| **P0**   | Run apps/tauri-desktop type-check once more to confirm no regression.                                                                                                                                                     |
-| **P0**   | /workflows-enhanced (6th surface, see plan addendum) still needs its own follow-up decision.                                                                                                                              |
-| **P1**   | Then open PR 1 per ~/.claude/plans/glimmering-weaving-noodle.md. Stage 2 (Tauri) and Stage 3 (N8N) remain separate follow-on PRs.                                                                                         |
+| Priority | Action                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Open a PR for this Workstream A Phase 1 commit against main.                                                                                                                                                                                                                                                                                                                                                  |
+| **P0**   | Phase A2 (follow-up PR): mcpTool/loop/transform/notification/subworkflow real execution, status-vocabulary unification across frontend/shared-package/backend.                                                                                                                                                                                                                                                |
+| **P0**   | Then move to Workstream B (Fuse Connect browser-automation parity) per ~/.claude/plans/glimmering-weaving-noodle.md — wire the already-built-but-uncalled AccessibilityTree/HumanBehaviorSimulator/CaptchaHandler content-script handlers, add screenshot/generic-navigate/arbitrary-JS-eval/console-reading/network-reading, route through the relay following the proven INJECT_MESSAGE end-to-end pattern. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1572,3 +1571,6 @@ clean | ✅ COMPLETE |
 
 | 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (7f246b53-b0d9-4974-878a-da066f51d766) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(30f7bd2e-0ec7-4287-8745-0e80d9aef8ec) | ✅ HANDOFF_READY |
