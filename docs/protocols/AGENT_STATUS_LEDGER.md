@@ -114,7 +114,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-01T06:00:22.011Z** — handoff
+Updated: **2026-09-01T12:16:31.064Z** — handoff
+`d500dd27-320e-4e35-b766-5fed4dec4564` (`e0380981be8d`).
+`78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff` (`e0380981be8d`).
 `30f7bd2e-0ec7-4287-8745-0e80d9aef8ec` (`c426044841c0`).
 `7f246b53-b0d9-4974-878a-da066f51d766` (`5a20169d60ee`).
 `03b98dc2-44ba-46aa-9baa-9eeab96a0d15` (`5a20169d60ee`).
@@ -318,11 +320,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                                                                                                                                                                                                                        |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Open a PR for this Workstream A Phase 1 commit against main.                                                                                                                                                                                                                                                                                                                                                  |
-| **P0**   | Phase A2 (follow-up PR): mcpTool/loop/transform/notification/subworkflow real execution, status-vocabulary unification across frontend/shared-package/backend.                                                                                                                                                                                                                                                |
-| **P0**   | Then move to Workstream B (Fuse Connect browser-automation parity) per ~/.claude/plans/glimmering-weaving-noodle.md — wire the already-built-but-uncalled AccessibilityTree/HumanBehaviorSimulator/CaptchaHandler content-script handlers, add screenshot/generic-navigate/arbitrary-JS-eval/console-reading/network-reading, route through the relay following the proven INJECT_MESSAGE end-to-end pattern. |
+| Priority | Action                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Live-verify navigate/goBack, click/type, human-behavior, and CAPTCHA-detection browserAction handlers end-to-end (blocked earlier this session by host CPU load driving CDP timeouts, never conclusively confirmed). Fix the content-script injection allowlist gap so browserAction works on arbitrary pages, not just the curated chat-site list. Address the native-messaging-host manifest path mismatch (points at main checkout, not this worktree). |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1574,3 +1574,9 @@ clean | ✅ COMPLETE |
 
 | 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (30f7bd2e-0ec7-4287-8745-0e80d9aef8ec) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d500dd27-320e-4e35-b766-5fed4dec4564) | ✅ HANDOFF_READY |

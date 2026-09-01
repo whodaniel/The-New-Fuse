@@ -18,6 +18,9 @@
     },
     "default_title": "Fuse Connect"
   },
+  "side_panel": {
+    "default_path": "sidepanel/index.html"
+  },
   "background": {
     "service_worker": "service-worker.js"
   },
@@ -63,6 +66,44 @@
     },
     {
       "matches": [
+        "https://gemini.google.com/*",
+        "https://bard.google.com/*",
+        "https://chatgpt.com/*",
+        "https://*.chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://*.openai.com/*",
+        "https://claude.ai/*",
+        "https://*.claude.ai/*",
+        "https://cursor.com/*",
+        "https://*.cursor.com/*",
+        "https://cursor.sh/*",
+        "https://*.cursor.sh/*",
+        "https://perplexity.ai/*",
+        "https://*.perplexity.ai/*",
+        "https://www.perplexity.ai/*",
+        "https://poe.com/*",
+        "https://chat.qwen.ai/*",
+        "https://qwen.ai/*",
+        "https://kimi.com/*",
+        "https://*.kimi.com/*",
+        "https://kimi.moonshot.cn/*",
+        "https://*.moonshot.cn/*",
+        "http://localhost:*/*",
+        "http://127.0.0.1:*/*",
+        "https://openclaw-gateway.workers.dev/*",
+        "https://*.workers.dev/*",
+        "https://thenewfuse.com/*",
+        "https://*.thenewfuse.com/*"
+      ],
+      "js": [
+        "content/main-world-console-hook.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false,
+      "world": "MAIN"
+    },
+    {
+      "matches": [
         "https://aistudio.google.com/*"
       ],
       "js": [
@@ -105,6 +146,7 @@
     "unlimitedStorage",
     "activeTab",
     "tabs",
+    "bookmarks",
     "notifications",
     "nativeMessaging",
     "scripting",
@@ -112,7 +154,9 @@
     "cookies",
     "alarms",
     "contextMenus",
-    "webRequest"
+    "webRequest",
+    "sidePanel",
+    "windows"
   ],
   "oauth2": {
     "client_id": "637776200146-pa5fs3eggfmh5gr92gvrp955keg0lrah.apps.googleusercontent.com",
@@ -151,7 +195,8 @@
     {
       "resources": [
         "icons/*",
-        "popup/*"
+        "popup/*",
+        "sidepanel/*"
       ],
       "matches": [
         "<all_urls>"

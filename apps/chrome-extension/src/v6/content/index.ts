@@ -20,7 +20,13 @@ import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable
 import { SelfPrompter } from './self-prompting';
 import { accessibilityTree } from './utils/AccessibilityTree';
 import { captchaHandler } from './utils/CaptchaHandler';
+import { consoleCapture } from './utils/ConsoleCapture';
 import { humanSimulator } from './utils/HumanBehaviorSimulator';
+
+// Install as early as possible so console activity from this page's own
+// scripts is captured from the start, not just from whenever a caller first
+// asks for logs.
+consoleCapture.install();
 
 /** Page-world <-> content-script test bridge event names (loopback origins only). */
 const FUSE_BRIDGE_REQUEST = 'fuse-connect:request';
@@ -409,6 +415,54 @@ class FuseConnectContentScript {
         return;
       }
 
+      // Generic forward of any internal runtime message — the same
+      // chrome.runtime.sendMessage path setupMessageHandlers() itself
+      // listens on, reached from the loopback test bridge for whichever
+      // message type needs live verification (CHANNEL_JOIN, etc.), not
+      // just the browserAction case below. args = { message: {...} }.
+      if (detail.action === 'runtimeMessage') {
+        try {
+          chrome.runtime.sendMessage(detail.args?.message ?? {}, (response) => {
+            if (chrome.runtime.lastError) {
+              respond({ ok: false, error: chrome.runtime.lastError.message });
+              return;
+            }
+            respond({ ok: true, result: response });
+          });
+        } catch (e: any) {
+          respond({ ok: false, error: e?.message || String(e) });
+        }
+        return;
+      }
+
+      // Forwards to the real BROWSER_ACTION handler in background/index.ts
+      // (browser-automation.ts) — same real message path a relay-connected
+      // TNF agent uses, just reached from the page-world test bridge since
+      // loopback-only automation can't reach chrome-extension:// pages
+      // directly. args = { browserAction, tabId?, params? }.
+      if (detail.action === 'browserAction') {
+        try {
+          chrome.runtime.sendMessage(
+            {
+              type: 'BROWSER_ACTION',
+              browserAction: detail.args?.browserAction,
+              tabId: detail.args?.tabId,
+              params: detail.args?.params,
+            },
+            (response) => {
+              if (chrome.runtime.lastError) {
+                respond({ ok: false, error: chrome.runtime.lastError.message });
+                return;
+              }
+              respond({ ok: true, result: response });
+            }
+          );
+        } catch (e: any) {
+          respond({ ok: false, error: e?.message || String(e) });
+        }
+        return;
+      }
+
       try {
         respond({ ok: true, result: this.runBridgeAction(detail.action, detail.args || {}) });
       } catch (e: any) {
@@ -750,6 +804,29 @@ class FuseConnectContentScript {
               safeSendResponse({ solved });
             });
             return true;
+
+          // Browser-automation parity commands (see background/browser-automation.ts)
+          case 'GET_CONSOLE_LOGS':
+            safeSendResponse({
+              success: true,
+              messages: consoleCapture.query({
+                pattern: message.pattern,
+                onlyErrors: message.onlyErrors,
+                limit: message.limit,
+              }),
+            });
+            return true;
+
+          case 'GET_PAGE_TEXT': {
+            // Prefer <article>/<main> when present — matches claude-in-chrome's
+            // get_page_text preference for article content over full-page
+            // chrome (nav bars, footers, ads).
+            const container =
+              document.querySelector('article') || document.querySelector('main') || document.body;
+            const text = (container as HTMLElement)?.innerText?.trim() ?? '';
+            safeSendResponse({ success: true, text, length: text.length });
+            return true;
+          }
 
           // Forward state updates to panel if it exists
           case 'CONNECTION_STATUS':

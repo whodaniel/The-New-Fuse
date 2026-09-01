@@ -65,6 +65,7 @@ import type {
   TranscriptRole,
 } from '../shared/types';
 import { simpleHash } from '../shared/utils';
+import { browserAutomation } from './browser-automation';
 
 const STORAGE_KEYS = {
   ...STORAGE_KEYS_CONST,
@@ -238,6 +239,7 @@ class BackgroundService {
     this.setupTabLifecycleHandlers();
     this.setupAlarmHandlers();
     this.ensureKeepAliveAlarm();
+    browserAutomation.installNetworkListeners();
     const sidePanelApi = (chrome as { sidePanel?: { setPanelBehavior: Function } }).sidePanel;
     if (sidePanelApi?.setPanelBehavior) {
       void sidePanelApi.setPanelBehavior({ openPanelOnActionClick: false });
@@ -466,9 +468,9 @@ class BackgroundService {
       const running = Array.isArray(response?.running) ? response.running : [];
       const discovery = Array.isArray(response?.discoveryPorts) ? response.discoveryPorts : [];
       const inspectedReady = Array.isArray(response?.inspected)
-        ? response.inspected.filter((entry: { ready?: boolean; port?: number }) => entry?.ready).map(
-            (entry: { port?: number }) => entry.port
-          )
+        ? response.inspected
+            .filter((entry: { ready?: boolean; port?: number }) => entry?.ready)
+            .map((entry: { port?: number }) => entry.port)
         : [];
       return [...running, ...inspectedReady, ...discovery]
         .map((value) => Number(value))
@@ -951,12 +953,14 @@ class BackgroundService {
     const existing = this.sidePanelPairs.get(tabId);
     const next = {
       tabId,
-      pageAgentId: patch.pageAgentId !== undefined ? patch.pageAgentId : existing?.pageAgentId || null,
+      pageAgentId:
+        patch.pageAgentId !== undefined ? patch.pageAgentId : existing?.pageAgentId || null,
       sidePanelAgentId:
         patch.sidePanelAgentId !== undefined
           ? patch.sidePanelAgentId
           : existing?.sidePanelAgentId || null,
-      a2aEnabled: patch.a2aEnabled !== undefined ? patch.a2aEnabled : existing?.a2aEnabled ?? true,
+      a2aEnabled:
+        patch.a2aEnabled !== undefined ? patch.a2aEnabled : (existing?.a2aEnabled ?? true),
       channelId: a2aChannelIdForTab(tabId),
     };
     this.sidePanelPairs.set(tabId, next);
@@ -1009,12 +1013,7 @@ class BackgroundService {
     }
   }
 
-  private registerSidePanelAgent(
-    id: string,
-    name: string,
-    platform: string,
-    tabId: number
-  ): Agent {
+  private registerSidePanelAgent(id: string, name: string, platform: string, tabId: number): Agent {
     const identity = buildSidePanelAgentIdentity(id, platform, tabId);
     const agent: Agent = {
       id,
@@ -1638,6 +1637,38 @@ class BackgroundService {
       case 'WELCOME':
         console.log('[FuseConnect v7] Welcome received');
         break;
+
+      // Browser-automation parity: lets a TNF backend/agent joined to this
+      // relay as a node drive the user's real Chrome session the same way
+      // claude-in-chrome drives Claude's — navigate, click/type, screenshot,
+      // read console/network/DOM, resize, manage tabs. See
+      // background/browser-automation.ts for the full action list; this
+      // case is pure dispatch, same shape as the BROWSER_ACTION handler in
+      // setupMessageHandlers() below (that one's reachable from the popup/
+      // sidepanel without a relay connection, for direct testing).
+      case 'BROWSER_ACTION': {
+        const payload = (message.payload || {}) as {
+          action: string;
+          tabId?: number;
+          params?: Record<string, unknown>;
+          requestId?: string;
+        };
+        void browserAutomation
+          .executeBrowserAction({
+            action: payload.action,
+            tabId: payload.tabId,
+            params: payload.params,
+          })
+          .then((result) => {
+            this.send({
+              type: 'BROWSER_ACTION_RESULT',
+              requestId: payload.requestId ?? (message as any).id,
+              action: payload.action,
+              ...result,
+            });
+          });
+        break;
+      }
 
       case 'AGENT_LIST': {
         const incoming = ((message.payload as any).agents || []) as Agent[];
@@ -4736,13 +4767,17 @@ Format as JSON array:
         case 'SIDE_PANEL_OPENED':
           void this.handleSidePanelOpened(message)
             .then(sendResponse)
-            .catch((error) => sendResponse({ success: false, error: String(error?.message || error) }));
+            .catch((error) =>
+              sendResponse({ success: false, error: String(error?.message || error) })
+            );
           return true;
 
         case 'SIDE_PANEL_READY':
           void this.handleSidePanelReady(message)
             .then(sendResponse)
-            .catch((error) => sendResponse({ success: false, error: String(error?.message || error) }));
+            .catch((error) =>
+              sendResponse({ success: false, error: String(error?.message || error) })
+            );
           return true;
 
         case 'SET_SIDE_PANEL_PAIRING': {
@@ -5197,6 +5232,20 @@ Format as JSON array:
           }
           sendResponse({ success: true });
           break;
+
+        case 'BROWSER_ACTION':
+          // Same entry point the relay's BROWSER_ACTION case below calls —
+          // exposed here too so it's directly testable from the popup/
+          // sidepanel without a live relay connection. See
+          // background/browser-automation.ts for the full action list.
+          browserAutomation
+            .executeBrowserAction({
+              action: message.browserAction,
+              tabId: message.tabId,
+              params: message.params,
+            })
+            .then((result) => sendResponse(result));
+          return true; // Async response
 
         case 'DISCOVER_AGENTS':
           if (this.primaryConnection) {

@@ -95,10 +95,42 @@ function findProjectRoot() {
 
 const PROJECT_ROOT = findProjectRoot();
 const LOG_FILE = path.join(os.homedir(), '.tnf-native-host.log');
-const RELAY_PORT_CANDIDATES = [3000, 3001, 3010, 3100];
 const RELAY_HEALTH_TIMEOUT_MS = 1500;
 const SERVICE_START_LOCK_DIR = path.join(os.homedir(), '.tnf', 'native-host', 'start-locks');
 const SERVICE_START_LOCK_STALE_MS = 30000;
+
+function loadRelayPortCatalog() {
+  const candidates = [
+    path.join(PROJECT_ROOT, 'scripts', 'lib', 'tnf-relay-port-catalog.cjs'),
+    path.join(__dirname, 'tnf-relay-port-catalog.cjs'),
+  ];
+  for (const catalogPath of candidates) {
+    try {
+      if (fs.existsSync(catalogPath)) {
+        return require(catalogPath);
+      }
+    } catch (_error) {
+      // try next
+    }
+  }
+  return null;
+}
+
+function loadPortReaper() {
+  try {
+    return require(path.join(PROJECT_ROOT, 'scripts', 'lib', 'tnf-port-reaper.cjs'));
+  } catch (_error) {
+    return null;
+  }
+}
+
+const RELAY_PORT_CATALOG = loadRelayPortCatalog();
+const PORT_REAPER = loadPortReaper();
+const RELAY_START_PORTS = RELAY_PORT_CATALOG?.RELAY_START_PORTS || [3000, 3010, 3020, 3030];
+const RELAY_DISCOVERY_PORTS = RELAY_PORT_CATALOG?.RELAY_DISCOVERY_PORTS || [
+  3000, 3010, 3020, 3030, 3007,
+];
+const RELAY_PORT_CANDIDATES = RELAY_START_PORTS;
 
 // Service definitions (relative to project root)
 const SERVICES = {
@@ -314,6 +346,14 @@ function killPort(port) {
 }
 
 async function isRelayHealthyOnPort(port) {
+  if (RELAY_PORT_CATALOG?.inspectRelayPort) {
+    try {
+      const info = await RELAY_PORT_CATALOG.inspectRelayPort(port, RELAY_HEALTH_TIMEOUT_MS);
+      return !!(info && info.ready);
+    } catch (_error) {
+      return false;
+    }
+  }
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), RELAY_HEALTH_TIMEOUT_MS);
@@ -324,20 +364,31 @@ async function isRelayHealthyOnPort(port) {
     clearTimeout(timeout);
     if (!response.ok) return false;
     const data = await response.json();
-    return data && data.status === 'ok' && data.relay === 'running';
+    return data && data.status === 'ok' && data.relay === 'running' && data.websocket === true;
   } catch (_error) {
     return false;
   }
 }
 
-async function getRunningRelayPorts() {
-  const running = [];
-  for (const port of RELAY_PORT_CANDIDATES) {
-    if (await isRelayHealthyOnPort(port)) {
-      running.push(port);
+async function inspectRelayPorts() {
+  const ports = [];
+  const seen = new Set();
+  for (const port of [...RELAY_DISCOVERY_PORTS, ...RELAY_START_PORTS]) {
+    if (seen.has(port)) continue;
+    seen.add(port);
+    if (RELAY_PORT_CATALOG?.inspectRelayPort) {
+      ports.push(await RELAY_PORT_CATALOG.inspectRelayPort(port, RELAY_HEALTH_TIMEOUT_MS));
+    } else {
+      const ready = await isRelayHealthyOnPort(port);
+      ports.push({ port, ready, http: ready, websocket: ready });
     }
   }
-  return running;
+  return ports;
+}
+
+async function getRunningRelayPorts() {
+  const inspected = await inspectRelayPorts();
+  return inspected.filter((entry) => entry.ready).map((entry) => entry.port);
 }
 
 async function chooseRelayStartPort() {
@@ -346,8 +397,29 @@ async function chooseRelayStartPort() {
     return { kind: 'already-running', port: runningPorts[0] };
   }
 
-  for (const port of RELAY_PORT_CANDIDATES) {
-    // Skip occupied ports; they may belong to unrelated services.
+  for (const port of RELAY_START_PORTS) {
+    if (PORT_REAPER?.ensurePortReady) {
+      const probeReady = RELAY_PORT_CATALOG?.probeRelayWebSocket
+        ? () => RELAY_PORT_CATALOG.probeRelayWebSocket(port, RELAY_HEALTH_TIMEOUT_MS)
+        : undefined;
+      const result = await PORT_REAPER.ensurePortReady({
+        port,
+        healthUrl: `http://127.0.0.1:${port}/health`,
+        isHealthy: RELAY_PORT_CATALOG?.isRelayHealthBody,
+        probeReady,
+        timeoutMs: RELAY_HEALTH_TIMEOUT_MS,
+        graceMs: 2000,
+        log: (message) => log(message),
+      });
+      if (result.state === 'already-running') {
+        return { kind: 'already-running', port };
+      }
+      if (result.state === 'clear') {
+        return { kind: 'start', port };
+      }
+      continue;
+    }
+
     if (await isPortInUse(port)) continue;
     return { kind: 'start', port };
   }
@@ -369,6 +441,11 @@ async function getServiceStatus(serviceName) {
       running: runningPorts.length > 0,
       port: runningPorts[0] || null,
       pid: null,
+      websocket: runningPorts.length > 0,
+      catalog: {
+        startPorts: RELAY_START_PORTS,
+        discoveryPorts: RELAY_DISCOVERY_PORTS,
+      },
     };
   }
 
@@ -454,7 +531,9 @@ async function startServiceWhileLocked(serviceName, service) {
       env: {
         ...process.env,
         FORCE_COLOR: '0',
-        ...(serviceName === 'relay' && relayStartPort ? { PORT: String(relayStartPort) } : {}),
+        ...(serviceName === 'relay' && relayStartPort
+          ? { PORT: String(relayStartPort), RELAY_PORT: String(relayStartPort) }
+          : {}),
       },
     });
 
@@ -724,6 +803,19 @@ async function handleMessage(message) {
           },
         };
 
+      case 'ports': {
+        const inspected = await inspectRelayPorts();
+        return {
+          action: 'ports_response',
+          preferred: RELAY_START_PORTS[0],
+          startPorts: RELAY_START_PORTS,
+          discoveryPorts: RELAY_DISCOVERY_PORTS,
+          running: inspected.filter((entry) => entry.ready).map((entry) => entry.port),
+          inspected,
+          projectRoot: PROJECT_ROOT,
+        };
+      }
+
       case 'open-terminal':
         // Open Terminal.app with the command to start the relay
         return await openTerminalWithCommand(message.command || 'pnpm relay:start');
@@ -778,4 +870,7 @@ module.exports = {
   acquireServiceStartLock,
   isProcessRunning,
   startService,
+  RELAY_START_PORTS,
+  RELAY_DISCOVERY_PORTS,
+  inspectRelayPorts,
 };

@@ -69,6 +69,42 @@
       "match_about_blank": false
     },
     {
+      "matches": [
+        "https://gemini.google.com/*",
+        "https://bard.google.com/*",
+        "https://chatgpt.com/*",
+        "https://*.chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://*.openai.com/*",
+        "https://claude.ai/*",
+        "https://*.claude.ai/*",
+        "https://cursor.com/*",
+        "https://*.cursor.com/*",
+        "https://cursor.sh/*",
+        "https://*.cursor.sh/*",
+        "https://perplexity.ai/*",
+        "https://*.perplexity.ai/*",
+        "https://www.perplexity.ai/*",
+        "https://poe.com/*",
+        "https://chat.qwen.ai/*",
+        "https://qwen.ai/*",
+        "https://kimi.com/*",
+        "https://*.kimi.com/*",
+        "https://kimi.moonshot.cn/*",
+        "https://*.moonshot.cn/*",
+        "http://localhost:*/*",
+        "http://127.0.0.1:*/*",
+        "https://openclaw-gateway.workers.dev/*",
+        "https://*.workers.dev/*",
+        "https://thenewfuse.com/*",
+        "https://*.thenewfuse.com/*"
+      ],
+      "js": ["content/main-world-console-hook.js"],
+      "run_at": "document_start",
+      "all_frames": false,
+      "world": "MAIN"
+    },
+    {
       "matches": ["https://aistudio.google.com/*"],
       "js": ["content/ai-studio-automation.js"],
       "run_at": "document_idle",
@@ -106,7 +142,8 @@
     "alarms",
     "contextMenus",
     "webRequest",
-    "sidePanel"
+    "sidePanel",
+    "windows"
   ],
 
   "oauth2": {

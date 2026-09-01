@@ -4,8 +4,12 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Open a PR for this Workstream A Phase 1 commit against
-main.
+**Current Directive:** Live-verify navigate/goBack, click/type, human-behavior,
+and CAPTCHA-detection browserAction handlers end-to-end (blocked earlier this
+session by host CPU load driving CDP timeouts, never conclusively confirmed).
+Fix the content-script injection allowlist gap so browserAction works on
+arbitrary pages, not just the curated chat-site list. Address the
+native-messaging-host manifest path mismatch (po
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1151,6 +1155,22 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-01T12:16:31.866Z handoff `d500dd27-320e-4e35-b766-5fed4dec4564` head
+  `e0380981be8d` project `TNF-SESSION` — Live-verify navigate/goBack,
+  click/type, human-behavior, and CAPTCHA-detection browserAction handlers
+  end-to-end (blocked earlier this session by host CPU load driving CDP
+  timeouts, never conclusively confirmed). Fix the content-script injection
+  allowlist gap so browserAction works on arbitrary pages, not just the curated
+  chat-site list. Address the native-messaging-host manifest path mismatch (po
+
+- 2026-09-01T10:48:57.964Z handoff `78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff` head
+  `e0380981be8d` project `TNF-SESSION` — Live-verify navigate/goBack,
+  click/type, human-behavior, and CAPTCHA-detection browserAction handlers
+  end-to-end (blocked earlier this session by host CPU load driving CDP
+  timeouts, never conclusively confirmed). Fix the content-script injection
+  allowlist gap so browserAction works on arbitrary pages, not just the curated
+  chat-site list. Address the native-messaging-host manifest path mismatch (po
 
 - 2026-09-01T06:00:26.770Z handoff `30f7bd2e-0ec7-4287-8745-0e80d9aef8ec` head
   `c426044841c0` project `TNF-SESSION` — Open a PR for this Workstream A Phase 1
