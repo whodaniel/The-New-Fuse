@@ -114,7 +114,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-01T12:57:27.460Z** — handoff
+Updated: **2026-09-01T17:18:19.999Z** — handoff
+`64bb992e-4379-42e4-ba26-284216403c6b` (`34b87570802b`).
 `3bb048df-301d-4944-8dd5-2c020ae9e0f5` (`92f3c2ed0594`).
 `d500dd27-320e-4e35-b766-5fed4dec4564` (`e0380981be8d`).
 `78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff` (`e0380981be8d`).
@@ -321,9 +322,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                                   |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **P0**   | Re-verify /api/agents through the gateway now that apps/api can actually boot repeatedly; confirm no other packages in the monorepo share nest-cli.json's deleteOutDir+tsbuildinfo combination with the same latent bug. |
+| Priority | Action                                                                                                                                                                                                                                                                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Provision a real apps/api/.env from .env.example (JWT_SECRET, A2A_SECRET_KEY, DATABASE_URL, etc.) so a fresh nest start --watch boots cleanly in a worktree without ad-hoc env overrides; only .env.\*.example templates exist in this checkout.                                                                                                  |
+| **P0**   | Consider fixing the pre-existing (unrelated) TS strictness errors surfaced while force-rebuilding packages/web-scraping (WebScrapingService.ts:107, ProxyService.ts:97/109 -- axios header value typed as string\|number\|... used where string is required); build currently succeeds because noEmitOnError is not set, but the errors are real. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1584,3 +1586,9 @@ clean | ✅ COMPLETE |
 
 | 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (3bb048df-301d-4944-8dd5-2c020ae9e0f5) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(94192ce3-0e9a-4eb5-a605-f40f7cb5726a) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(64bb992e-4379-42e4-ba26-284216403c6b) | ✅ HANDOFF_READY |

@@ -4,10 +4,10 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Re-verify /api/agents through the gateway now that
-apps/api can actually boot repeatedly; confirm no other packages in the monorepo
-share nest-cli.json's deleteOutDir+tsbuildinfo combination with the same latent
-bug.
+**Current Directive:** Provision a real apps/api/.env from .env.example
+(JWT_SECRET, A2A_SECRET_KEY, DATABASE_URL, etc.) so a fresh nest start --watch
+boots cleanly in a worktree without ad-hoc env overrides; only .env.\*.example
+templates exist in this checkout.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1153,6 +1153,16 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-01T17:18:20.961Z handoff `64bb992e-4379-42e4-ba26-284216403c6b` head
+  `34b87570802b` project `TNF-SESSION` — Provision a real apps/api/.env from
+  .env.example (JWT_SECRET, A2A_SECRET_KEY, DATABASE_URL, etc.) so a fresh nest
+  start --watch boots cleanly in a worktree without ad-hoc env overrides; only
+  .env.\*.example templates exist in this checkout.
+
+- 2026-09-01T17:17:50.933Z handoff `94192ce3-0e9a-4eb5-a605-f40f7cb5726a` head
+  `34b87570802b` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-09-01T12:57:29.514Z handoff `3bb048df-301d-4944-8dd5-2c020ae9e0f5` head
   `92f3c2ed0594` project `TNF-SESSION` — Re-verify /api/agents through the
