@@ -1154,10 +1154,17 @@ export class MarketplaceService implements OnModuleInit, OnModuleDestroy {
       throw new BadRequestException('Marketplace DB unavailable');
     }
 
+    if (input?.command) {
+      throw new BadRequestException(
+        'Dynamically specifying shell commands is disabled for security reasons.'
+      );
+    }
+
     const runId = `crawl-${Date.now()}-${randomUUID().slice(0, 8)}`;
-    const command =
-      this.sanitizeText(input?.command, MAX_DESCRIPTION_LENGTH) ||
-      this.sanitizeText(process.env.CRAWL4AI_PIPELINE_COMMAND, MAX_DESCRIPTION_LENGTH);
+    const command = this.sanitizeText(
+      process.env.CRAWL4AI_PIPELINE_COMMAND,
+      MAX_DESCRIPTION_LENGTH
+    );
 
     await this.upsertCrawlRun({
       id: runId,

@@ -360,6 +360,34 @@ export async function runRefreshContext(
     agents,
   };
 
+  // Persist bounded agent-state ledger + quotas for delegation (best-effort).
+  if (!options.dryRun) {
+    try {
+      const { AgentStateLedgerService } = await import('../services/AgentStateLedgerService.js');
+      const ledger = new AgentStateLedgerService({ tnfHome: options.tnfHome });
+      ledger.writeSnapshot({
+        writer: 'refresh-context',
+        agents: agents.map((agent) => ({
+          agentId: agent.id,
+          name: agent.name || agent.id,
+          role: agent.role,
+          platform: agent.platform,
+          capabilities: agent.capabilities || [],
+          isOnline: Boolean(agent.isOnline) || agent.source === 'redis' || agent.source === 'daemon-state',
+          lastSeen: undefined,
+          source: agent.source || 'refresh-context',
+          protocolsVerified: protocolsToInject,
+        })),
+      });
+    } catch (ledgerErr: any) {
+      degradations.push(
+        `agent-state-ledger: ${ledgerErr?.message ?? String(ledgerErr)}`
+      );
+      report.after.degradations = [...degradations];
+      report.diff.degraded = [...degradations];
+    }
+  }
+
   return { ok: true, report };
 }
 

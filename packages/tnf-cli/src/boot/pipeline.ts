@@ -82,6 +82,10 @@ function printManualUiAlternatives(): void {
   console.log(chalk.cyan('     tnf local-ui        (web UI only)'));
   console.log(chalk.cyan('     tnf tui             (TNF TUI agent CLI)'));
   console.log(chalk.cyan('     tnf local-ui --tauri  (native Tauri shell)'));
+  console.log(chalk.dim('   Live local surfaces after boot:'));
+  console.log(chalk.dim('     http://localhost:1420/visualizations/semantic/index.html'));
+  console.log(chalk.dim('     http://localhost:5173/  (frontend SPA, when :5173 is up)'));
+  console.log(chalk.dim('     http://127.0.0.1:1421/  (browser-control panel)'));
 }
 
 /**
@@ -459,6 +463,37 @@ export function createBootPipeline(
             MINI_OMNI_ENABLED: process.env.MINI_OMNI_ENABLED || 'false',
           },
         });
+      },
+    },
+    {
+      id: 'local-live-surfaces',
+      label: 'Local live surfaces (semantic + frontend + browser-control)',
+      critical: false,
+      launches: [
+        'node scripts/local-ui/ensure-local-live-surfaces.cjs',
+        'python3 scripts/semantic-graph/build_all.py --publish-only',
+        'frontend-app Vite (:5173)',
+        'browser-control (:1421)',
+      ],
+      notes: [
+        'Copies already-built semantic artifacts into apps/frontend/public/visualizations/semantic/.',
+        'Does not recount concordance (no GB scan on boot). Skip with TNF_SKIP_LIVE_SURFACES=1.',
+        'Local UI :1420 also serves /visualizations once forefront/local-ui starts.',
+      ],
+      action: async () => {
+        if (
+          process.env.TNF_SKIP_LIVE_SURFACES === '1' ||
+          process.env.TNF_SKIP_LIVE_SURFACES === 'true'
+        ) {
+          console.log(chalk.dim('   Local live surfaces skipped (TNF_SKIP_LIVE_SURFACES=1).'));
+          return;
+        }
+        const bootScript = path.join(repoRoot, 'scripts/local-ui/ensure-local-live-surfaces.cjs');
+        if (!fs.existsSync(bootScript)) {
+          console.log(chalk.dim('   ensure-local-live-surfaces.cjs missing; skipped'));
+          return;
+        }
+        await runCommand('node', [bootScript]);
       },
     },
     {

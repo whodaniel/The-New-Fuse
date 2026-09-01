@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
-import { Agent } from '../../types/federation';
+import { Agent } from '../types/federation';
 
-interface AgentOrchestratorProps {
+export interface AgentOrchestratorProps {
   agents: Map<string, Agent>;
   onExecuteAction: (action: any) => Promise<any>;
   connected: boolean;

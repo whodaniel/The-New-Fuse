@@ -29,6 +29,7 @@ const DEFAULT_PORTS = mergePortCatalog([
   { port: 3007, service: 'skideancer/ide', protected: false },
   { port: 3008, service: 'skideancer websocket', protected: true },
   { port: 1420, service: 'tauri-desktop', protected: false },
+  { port: 1421, service: 'browser-control', protected: false },
   { port: 5173, service: 'vite', protected: false },
   { port: 5174, service: 'vite-alt', protected: false },
   { port: 5555, service: 'drizzle-studio', protected: true },
@@ -295,7 +296,7 @@ function getRuntimeHealth(entry) {
   // Only attempt health checks for HTTP-based services
   // Ports like Redis (6379) or Postgres (5432) do not expose HTTP health endpoints
   if (
-    ![1420, 3000, 3001, 3004, 3005, 3006, 3007, 43110, 43120, 5173, 5174].includes(entry.port)
+    ![1420, 1421, 3000, 3001, 3004, 3005, 3006, 3007, 43110, 43120, 5173, 5174].includes(entry.port)
   ) {
     return null;
   }
@@ -315,6 +316,26 @@ function getRuntimeHealth(entry) {
     ]);
     if (String(root).trim() === '200') {
       return { ok: true, service: entry.service, status: 'ok' };
+    }
+    return null;
+  }
+
+  if (entry.port === 1421) {
+    const panel = run('curl', [
+      '-fsS',
+      '--max-time',
+      '1',
+      'http://127.0.0.1:1421/panel/health',
+    ]);
+    if (panel.trim()) {
+      try {
+        const body = JSON.parse(panel);
+        if (body && body.generatedAt) {
+          return { ok: true, service: 'browser-control', status: 'ok' };
+        }
+      } catch {
+        /* fall through */
+      }
     }
     return null;
   }

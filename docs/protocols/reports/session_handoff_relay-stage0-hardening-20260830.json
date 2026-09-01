@@ -1,0 +1,77 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "79de3197-3c7e-4ee7-bd24-7324bc193006",
+  "created_at": "2026-08-30T16:58:07.741Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "feat/relay-stage0-hardening-wt",
+  "head_sha": "893405aa42f7f821a017f2e0fbd3ba51e6496e93",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Close Stage 0 relay gaps: channel delivery without to, fail-closed auth, private-channel isolation, rate/frame limits, AGENT_METADATA_UPDATE."
+  ],
+  "changed_paths": [
+    "packages/relay-core/src/standalone-relay.ts",
+    "packages/relay-core/tests/message-delivery.test.cjs",
+    "packages/relay-core/tests/stage0-hardening.test.cjs",
+    "docs/protocols/reports/session_handoff_relay-stage0-hardening-20260830.json",
+    "docs/protocols/reports/session_handoff_relay-stage0-hardening-20260830.md"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "relay-core node:test 52/52 pass including new stage0-hardening suite."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "pnpm --filter @the-new-fuse/relay-core run test is 52/52 on the shared checkout."
+    ]
+  },
+  "next_actions": [
+    "Do not start Stage 1\u20135 relay work unless the operator expands scope.",
+    "Do not touch apps/relay-server; relay-core is the Stage 0 surface."
+  ],
+  "artifacts": {
+    "commits": ["893405aa42f7f821a017f2e0fbd3ba51e6496e93"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": false,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": ["relay-core"],
+    "staffed_by": ["cursor-grok"]
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "git.repository.identity",
+      "state": "CURRENT",
+      "observed_at": "2026-08-30T16:58:07.741Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=893405aa42f7f821a017f2e0fbd3ba51e6496e93\nbranch=feat/relay-stage0-hardening-wt\ndirty=0"
+    }
+  ]
+}

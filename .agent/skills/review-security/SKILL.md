@@ -1,5 +1,7 @@
 ---
 name: review-security
+category: security-privacy
+department: tech
 description: Review code changes with Security Review subagent.
 ---
 

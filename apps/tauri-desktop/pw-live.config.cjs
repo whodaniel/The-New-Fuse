@@ -12,6 +12,9 @@ module.exports = defineConfig({
     baseURL: 'http://127.0.0.1:1420',
     trace: 'on-first-retry',
     ...devices['Desktop Chrome'],
+    // Use the installed browser for live local checks; the Playwright-managed
+    // Chromium binary is intentionally not downloaded on constrained TNF hosts.
+    channel: 'chrome',
   },
   webServer: {
     command: 'echo',

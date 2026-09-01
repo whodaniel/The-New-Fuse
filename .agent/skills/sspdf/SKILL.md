@@ -1,5 +1,6 @@
 ---
 name: sspdf
+department: tech
 description:
   Generate PDF documents with the sspdf engine. Use when asked to create,
   render, or generate a PDF, invoice, report, article, tear sheet, event

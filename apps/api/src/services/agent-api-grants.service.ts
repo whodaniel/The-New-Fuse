@@ -6,12 +6,12 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { and, DatabaseService, desc, eq, gte } from '@the-new-fuse/database';
 import { drizzleConfigurationRepository } from '@the-new-fuse/database/drizzle/repositories';
 import { agentApiGrants } from '@the-new-fuse/database/drizzle/schema';
+import { randomUUID } from 'node:crypto';
 import { CreateAgentGrantDto } from '../dto/agent-grants.dto';
 import { assertDevLoopBudget, withNextDevLoopIteration } from '../utils/dev-loop-guard';
 
@@ -181,7 +181,17 @@ export class AgentApiGrantsService {
     };
   }
 
-  private async executeProxyForGrant(grant: any, body: any, started: number) {
+  /**
+   * Public entry point for server-side callers that already hold a resolved
+   * grant row (e.g. the workflow execution engine, via `findActiveGrantForAgentProvider`)
+   * and want to spend it directly, without going through the HTTP-layer
+   * bearer-token flow this service's `proxy()`/`adaptiveProxy()` methods use.
+   */
+  async executeProxyForGrant(grant: any, body: any, started: number) {
+    return this.doExecuteProxyForGrant(grant, body, started);
+  }
+
+  private async doExecuteProxyForGrant(grant: any, body: any, started: number) {
     const provider = grant.provider;
     const devLoopIteration = assertDevLoopBudget(`agent-proxy.${provider}`, body);
 
@@ -309,7 +319,15 @@ export class AgentApiGrantsService {
     return { payload, grant };
   }
 
-  private async findActiveGrantForAgentProvider(
+  /**
+   * Resolve the active grant a specific user has for a specific agent+provider
+   * pair, without requiring a bearer token — for server-side callers (the
+   * workflow execution engine) that already know the authenticated user from
+   * their own request context. Returns `null` rather than throwing when no
+   * active grant exists, so callers can produce a clear "not authorized to
+   * run this agent" error naming exactly what's missing.
+   */
+  async findActiveGrantForAgentProvider(
     userId: string,
     agentId: string,
     provider: string
@@ -439,8 +457,10 @@ export class AgentApiGrantsService {
 
     const mappedMessages = this.normalizeGoogleADKMessages(rest);
     return {
-      requestId: typeof rest.requestId === 'string' && rest.requestId.trim() ? rest.requestId : randomUUID(),
-      traceId: typeof rest.traceId === 'string' && rest.traceId.trim() ? rest.traceId : randomUUID(),
+      requestId:
+        typeof rest.requestId === 'string' && rest.requestId.trim() ? rest.requestId : randomUUID(),
+      traceId:
+        typeof rest.traceId === 'string' && rest.traceId.trim() ? rest.traceId : randomUUID(),
       workspaceId:
         typeof rest.workspaceId === 'string' && rest.workspaceId.trim()
           ? rest.workspaceId
@@ -548,11 +568,15 @@ export class AgentApiGrantsService {
     totalTokens: number;
   } {
     const usage = responseBody?.usage || {};
-    const promptTokens = Number(usage.prompt_tokens ?? usage.input_tokens ?? usage.inputTokens ?? 0);
+    const promptTokens = Number(
+      usage.prompt_tokens ?? usage.input_tokens ?? usage.inputTokens ?? 0
+    );
     const completionTokens = Number(
       usage.completion_tokens ?? usage.output_tokens ?? usage.outputTokens ?? 0
     );
-    const totalTokens = Number(usage.total_tokens ?? usage.totalTokens ?? promptTokens + completionTokens);
+    const totalTokens = Number(
+      usage.total_tokens ?? usage.totalTokens ?? promptTokens + completionTokens
+    );
     return {
       promptTokens: Number.isFinite(promptTokens) ? promptTokens : 0,
       completionTokens: Number.isFinite(completionTokens) ? completionTokens : 0,

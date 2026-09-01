@@ -23,6 +23,8 @@ const SCRIPTS = {
   skillPublisher: 'scripts/harness/skill-publisher-attest.cjs',
   hostCompaction: 'scripts/harness/host-compaction-adapter.cjs',
   failover: 'scripts/harness/provider-failover.cjs',
+  hostProfiles: 'scripts/harness/host-prompt-profiles.cjs',
+  scoutStaff: 'scripts/scouting/staff-scout-missions.cjs',
 };
 
 function run(rel, args) {
@@ -50,6 +52,8 @@ Commands:
   skill-publisher [--json] [--write-lock] [--check-lock] [--strict-skills]
   failover [--host <name>] [--seed] [--json]
   host-compaction record|import|list|status|verify|discover …
+  host-profiles [--verify|--json]
+  scout-staff [--json] [--limit=N]
 `);
 }
 
@@ -71,6 +75,8 @@ function main() {
   if (cmd === 'skill-publisher') run(SCRIPTS.skillPublisher, rest);
   if (cmd === 'failover' || cmd === 'provider-failover') run(SCRIPTS.failover, rest);
   if (cmd === 'host-compaction') run(SCRIPTS.hostCompaction, rest);
+  if (cmd === 'host-profiles') run(SCRIPTS.hostProfiles, rest.length ? rest : ['--verify']);
+  if (cmd === 'scout-staff') run(SCRIPTS.scoutStaff, rest);
   console.error(`unknown command: ${cmd}`);
   help();
   process.exit(1);

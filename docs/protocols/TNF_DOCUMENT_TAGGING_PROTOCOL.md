@@ -21,6 +21,7 @@ Every governed markdown unit must include:
 - `[STATUS:<value>]`
 - `[DOC_TYPE:<value>]`
 - `[VISIBILITY:<value>]`
+- `[CLUSTER_BINDING:<value>]` (Optional: used for JIT Context Injection)
 
 Ownership requirement:
 
@@ -98,3 +99,14 @@ The validator enforces:
 2. Tag values are valid enums.
 3. Owner constraints for private/agent-scoped docs.
 4. `WORK_ID` requirement for manuscript doc types.
+
+### CLUSTER_BINDING
+
+Defines which agent clusters (Assembly Line stages) require this document
+dynamically injected into their context window at boot.
+
+- `ALL`: Injected globally for all agents.
+- `INTAKE`: Cluster 1 (Scouting, Ingestion).
+- `SYNTHESIS`: Cluster 2 (Logic, Processing, Engine).
+- `MEMORY`: Cluster 4 (Pruning, Archival).
+- `NONE` (or omitted): Document is only retrieved via explicit tool search.

@@ -18,7 +18,6 @@ export default defineConfig({
     '@the-new-fuse/api-types',
     '@the-new-fuse/core',
     '@the-new-fuse/database',
-    '@the-new-fuse/features',
     '@radix-ui/react-avatar',
     '@radix-ui/react-dropdown-menu',
     '@radix-ui/react-label',

@@ -77,7 +77,7 @@ export interface Worker {
   role: string;
   platform: string;
   capabilities: string[];
-  status: 'active' | 'idle' | 'offline';
+  status: 'active' | 'busy' | 'idle' | 'offline';
   lastSeen: string;
   queue: string;
 }

@@ -1,5 +1,7 @@
 ---
 name: tnf-directive-rotation
+category: tnf-platform
+department: tech
 description:
   Scheduled TNF directive rotation — validate handoff matrix, refresh active
   directives, prune stale entries, inject current protocols into all running

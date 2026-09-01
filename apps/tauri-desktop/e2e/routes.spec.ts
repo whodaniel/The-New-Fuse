@@ -2,10 +2,10 @@ import { expect, test } from '@playwright/test';
 
 /** Representative native routes → expected PageShell h1 */
 const ROUTE_TITLES: Record<string, string> = {
-  '/dashboard': 'System Console',
+  '/dashboard': 'The New Fuse',
   '/platform': 'The New Fuse Platform',
   '/agents': 'Agent Hub',
-  '/chat': 'Multi-Agent Chat',
+  '/chat': 'Multi-Agent Swarm Chat',
   '/workflows': 'Workflow Builder',
   '/analytics': 'Analytics',
   '/mcp': 'MCP Store',
@@ -51,7 +51,7 @@ test.describe('desktop route navigation', () => {
 
   test('command palette navigates to Agent Hub', async ({ page }) => {
     await page.goto('/#/dashboard');
-    await expectPageTitle(page, 'System Console');
+    await expectPageTitle(page, 'The New Fuse');
 
     const modKey = process.platform === 'darwin' ? 'Meta' : 'Control';
     await page.keyboard.press(`${modKey}+KeyK`);
@@ -67,8 +67,39 @@ test.describe('desktop route navigation', () => {
   test('sidebar navigates to Settings', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/#/dashboard');
-    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await expectPageTitle(page, 'Settings');
     expect(page.url()).toContain('#/settings');
+  });
+
+  test('chat workspace stays contained and preserves a readable message pane', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await page.goto('/#/chat');
+    await expectPageTitle(page, 'Multi-Agent Swarm Chat');
+
+    const layout = page.locator('.chat-layout');
+    const conversation = page.getByRole('main').last();
+
+    await expect(layout).toHaveCSS('flex-direction', 'row');
+    await expect(page.getByRole('button', { name: 'Show History' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Chat message' })).toBeVisible();
+
+    const geometry = await page.evaluate(() => ({
+      pageScrollY: window.scrollY,
+      conversationWidth: [...document.querySelectorAll('main')].at(-1)?.getBoundingClientRect()
+        .width,
+      headerPadding: getComputedStyle([...document.querySelectorAll('header')].at(-1)!).padding,
+      feedPadding: getComputedStyle(document.querySelector('[aria-label="Conversation messages"]')!)
+        .padding,
+    }));
+
+    expect(geometry.pageScrollY).toBe(0);
+    expect(geometry.conversationWidth).toBeGreaterThan(700);
+    expect(geometry.headerPadding).toBe('16px');
+    expect(geometry.feedPadding).toBe('24px');
+
+    await page.getByRole('button', { name: 'Show History' }).click();
+    await expect(page.getByRole('button', { name: 'Hide History' })).toBeVisible();
+    await expect(conversation).toBeVisible();
   });
 });

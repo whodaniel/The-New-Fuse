@@ -1,5 +1,7 @@
 ---
 name: TNF Launchd Admin Popup Root Cause Fix
+category: tnf-platform
+department: tech
 description:
   Permanent fix for the infinite crash-restart loop causing repeated macOS admin
   permission popups from TNF background services

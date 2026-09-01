@@ -16,6 +16,7 @@ const requiredFiles = [
   'tnf-cron-governance.schema.json',
   'tnf-session-handoff.schema.json',
   'tnf-hook-chain.schema.json',
+  'tnf-extension-manifest.schema.json',
 ];
 
 function fail(message) {
@@ -234,6 +235,33 @@ function validateHookChain(schema) {
   });
 }
 
+function validateExtensionManifest(schema) {
+  if (!schema) return;
+  const required = new Set(schema.required || []);
+  [
+    'apiVersion',
+    'kind',
+    'id',
+    'name',
+    'version',
+    'description',
+    'compatibility',
+    'capabilities',
+    'entrypoints',
+    'permissions',
+  ].forEach((key) => {
+    assert(required.has(key), `tnf-extension-manifest.schema.json: required must include ${key}`);
+  });
+  assert(
+    schema?.properties?.apiVersion?.const === 'tnf.extension/v1',
+    'tnf-extension-manifest.schema.json: apiVersion const must be tnf.extension/v1',
+  );
+  const kinds = schema?.properties?.kind?.enum || [];
+  ['loadable-extension', 'external-service', 'form-factor', 'standalone-product'].forEach(
+    (kind) => assert(kinds.includes(kind), `tnf-extension-manifest.schema.json: kind enum missing ${kind}`),
+  );
+}
+
 function main() {
   if (!fs.existsSync(schemaDir)) {
     fail(`Missing schema directory: ${schemaDir}`);
@@ -263,6 +291,7 @@ function main() {
   validateCronGovernance(parsed['tnf-cron-governance.schema.json']);
   validateSessionHandoff(parsed['tnf-session-handoff.schema.json']);
   validateHookChain(parsed['tnf-hook-chain.schema.json']);
+  validateExtensionManifest(parsed['tnf-extension-manifest.schema.json']);
 
   if (process.exitCode) {
     process.exit(process.exitCode);

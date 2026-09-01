@@ -405,7 +405,7 @@ with no dependency on the commit landing first. Existing entries with
 - file: docs/protocols/TNF_ARTIFACTS_LIFECYCLE_PROTOCOL.md (new), D25 added to
   DIRECTIVES.md §1, scripts/protocols/check-artifacts-lifecycle.cjs (new),
   scripts/operations/swarm-disk-retention.sh (wired to consult the policy),
-  docs/operations/TNF_STAFF_MASTER_CALENDAR_AND_SCHEDULE.md (new row for
+  docs/operations/TNF_SWARM_MASTER_SCHEDULE.md (new row for
   `tnf-terminal-heartbeat-pulse` per D15)
 - doc_hash:
   sha256:36366b04d3ae319c4e84e9ae56af6ecc720d71c891f26a37382e3914ee65c123
@@ -537,3 +537,44 @@ with no dependency on the commit landing first. Existing entries with
   config.
 - attributed_to: Daniel Goldberg (operator), 2026-08-11 chat guidance after
   Spark sanitize / OSS-safety review.
+
+### [2026-08-30] Semantic Cohesion Reconciliation
+
+- **File:** `TNF_SYSTEM_LEXICON.md`
+- **Rationale:** The document was [STATUS:LOCKED] but inherently contradicted
+  the multi-tenant architecture and industrial/biological metaphors used by
+  active cluster agents (e.g., `AGENTS.md` and `PROTOCOL_MAP.md`). As per the
+  Operator's directive to reconcile and purge the "Corporate" metaphor across
+  the fleet, the lexicon was updated to adopt a unified Swarm/Cluster/Node and
+  Library/Class/Domain topology.
+- **Authorizer:** Operator (via explicit "proceed on all fronts" directive).
+
+### [2026-08-30] Dynamic Context Broker Injection
+
+- **File:** `TNF_DOCUMENT_TAGGING_PROTOCOL.md`
+- **Rationale:** To implement the JIT Context Broker and prevent context bloat,
+  the tagging protocol was extended to support `[CLUSTER_BINDING: <value>]`.
+  This tag allows the broker to dynamically map protocol documents to specific
+  agent clusters at runtime.
+- **Authorizer:** Operator (via explicit "proceed" directive).
+
+### [2026-08-30] Lexical Forgiveness & Alias Resolution
+
+- **File:** `TNF_SYSTEM_LEXICON.md`
+- **Rationale:** Added Section 3 (Lexical Forgiveness & Alias Resolution). This
+  codifies that related colloquial terms (e.g., "team", "staff") must be
+  dynamically traced back to the foundational lexicon by the agents, preventing
+  rigid failures during real-world interactions where exact terminology is not
+  always used.
+- **Authorizer:** Operator (via explicit directive to allow related terms and
+  codify the tracing).
+
+### [2026-08-30] Synergistic Alignment Protocol Instantiation
+
+- **File:** `TNF_SYNERGISTIC_ALIGNMENT_PROTOCOL.md`
+- **Rationale:** Instantiated the protocol to codify the continuous
+  self-improvement, meta-auditing (auditing the auditors), and creative
+  brainstorming loops for skills and `/commands` as explicitly requested by the
+  Operator.
+- **Authorizer:** Operator (via explicit directive to define synergistic
+  alignment and the creative review process).

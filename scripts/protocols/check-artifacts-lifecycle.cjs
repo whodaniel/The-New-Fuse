@@ -105,6 +105,17 @@ const POLICY = [
     retentionDays: 14,
     rationale: 'hermes cron output; cap 400 files OR 14 days',
   },
+  {
+    id: 'agent-state-history-cap',
+    kind: 'nested-history-cap',
+    path: path.join(TNF_HOME, 'agent-state'),
+    nestedSegment: 'history',
+    cap: 300,
+    retentionDays: 14,
+    rationale:
+      'onboarded agent-state history snapshots under agent-state/<profile>/history; ' +
+      'cap 300 files OR 14 days across profiles (latest.json is never pruned)',
+  },
 
   // JSONL-tail caps (line count, not file count).
   {
@@ -118,6 +129,15 @@ const POLICY = [
     ),
     cap: 500,
     rationale: 'terminal heartbeat JSONL tail; cap 500 lines',
+  },
+  {
+    id: 'agent-state-history-jsonl-tail',
+    kind: 'nested-jsonl-tail',
+    path: path.join(TNF_HOME, 'agent-state'),
+    nestedFile: 'history.jsonl',
+    cap: 1000,
+    rationale:
+      'agent-state/<profile>/history.jsonl tails; each file capped at 1000 lines',
   },
 
   // Operator-owned — report-only.
@@ -151,6 +171,54 @@ function listFilesSafe(p) {
   } catch (_e) {
     return null;
   }
+}
+
+function listNestedHistoryFiles(root, nestedSegment = 'history') {
+  if (!fs.existsSync(root)) return null;
+  const files = [];
+  try {
+    for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const historyDir = path.join(root, entry.name, nestedSegment);
+      const names = listFilesSafe(historyDir);
+      if (!names) continue;
+      for (const name of names) {
+        files.push(path.join(historyDir, name));
+      }
+    }
+  } catch (_e) {
+    return null;
+  }
+  return files;
+}
+
+function countOlderThanPaths(filePaths, days) {
+  const cutoff = Date.now() - days * 86400_000;
+  let n = 0;
+  for (const filePath of filePaths) {
+    try {
+      if (fs.statSync(filePath).mtimeMs < cutoff) n += 1;
+    } catch (_e) {
+      // ignore
+    }
+  }
+  return n;
+}
+
+function nestedJsonlLineCounts(root, nestedFile) {
+  if (!fs.existsSync(root)) return null;
+  const counts = [];
+  try {
+    for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const filePath = path.join(root, entry.name, nestedFile);
+      const n = lineCount(filePath);
+      if (n != null) counts.push({ filePath, lines: n });
+    }
+  } catch (_e) {
+    return null;
+  }
+  return counts;
 }
 
 function countOlderThan(p, days) {
@@ -269,6 +337,62 @@ function evaluate(rule) {
       out.detail = `lines=${n} cap=${cap} (within grace)`;
     } else {
       out.detail = `lines=${n} cap=${cap}`;
+    }
+    return out;
+  }
+
+  if (kind === 'nested-history-cap') {
+    const files = listNestedHistoryFiles(p, rule.nestedSegment || 'history');
+    if (files == null) {
+      out.status = 'skip';
+      out.detail = 'directory does not exist (yet)';
+      return out;
+    }
+    const count = files.length;
+    out.count = count;
+    out.cap = cap;
+    out.threshold = Math.floor(cap * (1 + grace));
+    const olderThanCount =
+      retentionDays != null ? countOlderThanPaths(files, retentionDays) : null;
+    if (olderThanCount != null) out.olderThanDays = olderThanCount;
+    const overCount = count > cap;
+    const overGrace = count > out.threshold;
+    const overAge =
+      retentionDays != null && olderThanCount > Math.floor((cap * grace) / 2);
+    if (overGrace || overAge) {
+      out.status = 'fail';
+      out.detail =
+        `count=${count} cap=${cap} threshold=${out.threshold}` +
+        (retentionDays != null ? ` olderThan${retentionDays}d=${olderThanCount}` : '');
+    } else if (overCount) {
+      out.status = 'warn';
+      out.detail = `count=${count} cap=${cap} (within ${Math.round(grace * 100)}% grace)`;
+    } else {
+      out.detail = `count=${count} cap=${cap}`;
+    }
+    return out;
+  }
+
+  if (kind === 'nested-jsonl-tail') {
+    const counts = nestedJsonlLineCounts(p, rule.nestedFile || 'history.jsonl');
+    if (counts == null || counts.length === 0) {
+      out.status = 'skip';
+      out.detail = 'nested jsonl does not exist (yet)';
+      return out;
+    }
+    const worst = counts.reduce((a, b) => (a.lines >= b.lines ? a : b));
+    out.count = worst.lines;
+    out.cap = cap;
+    out.threshold = Math.floor(cap * (1 + grace));
+    out.detailFiles = counts.length;
+    if (worst.lines > out.threshold) {
+      out.status = 'fail';
+      out.detail = `worst lines=${worst.lines} file=${worst.filePath} cap=${cap}`;
+    } else if (worst.lines > cap) {
+      out.status = 'warn';
+      out.detail = `worst lines=${worst.lines} cap=${cap} (within grace)`;
+    } else {
+      out.detail = `worst lines=${worst.lines} cap=${cap} across ${counts.length} profile(s)`;
     }
     return out;
   }

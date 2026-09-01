@@ -1,23 +1,35 @@
 ---
-name: "figma-implement-design"
-description: "Translate Figma nodes into production-ready code with 1:1 visual fidelity using the Figma MCP workflow (design context, screenshots, assets, and project-convention translation). Trigger when the user provides Figma URLs or node IDs, or asks to implement designs or components that must match Figma specs. Requires a working Figma MCP server connection."
+name: 'figma-implement-design'
+category: frontend-design
+department: design
+description:
+  'Translate Figma nodes into production-ready code with 1:1 visual fidelity
+  using the Figma MCP workflow (design context, screenshots, assets, and
+  project-convention translation). Trigger when the user provides Figma URLs or
+  node IDs, or asks to implement designs or components that must match Figma
+  specs. Requires a working Figma MCP server connection.'
 ---
-
 
 # Implement Design
 
 ## Overview
 
-This skill provides a structured workflow for translating Figma designs into production-ready code with pixel-perfect accuracy. It ensures consistent integration with the Figma MCP server, proper use of design tokens, and 1:1 visual parity with designs.
+This skill provides a structured workflow for translating Figma designs into
+production-ready code with pixel-perfect accuracy. It ensures consistent
+integration with the Figma MCP server, proper use of design tokens, and 1:1
+visual parity with designs.
 
 ## Prerequisites
 
 - Figma MCP server must be connected and accessible
-- User must provide a Figma URL in the format: `https://figma.com/design/:fileKey/:fileName?node-id=1-2`
+- User must provide a Figma URL in the format:
+  `https://figma.com/design/:fileKey/:fileName?node-id=1-2`
   - `:fileKey` is the file key
   - `1-2` is the node ID (the specific component or frame to implement)
-- **OR** when using `figma-desktop` MCP: User can select a node directly in the Figma desktop app (no URL required)
-- Project should have an established design system or component library (preferred)
+- **OR** when using `figma-desktop` MCP: User can select a node directly in the
+  Figma desktop app (no URL required)
+- Project should have an established design system or component library
+  (preferred)
 
 ## Required Workflow
 
@@ -30,17 +42,20 @@ If any MCP call fails because Figma MCP is not connected, pause and set it up:
 1. Add the Figma MCP:
    - `codex mcp add figma --url https://mcp.figma.com/mcp`
 2. Enable remote MCP client:
-   - Set `[features].rmcp_client = true` in `config.toml` **or** run `codex --enable rmcp_client`
+   - Set `[features].rmcp_client = true` in `config.toml` **or** run
+     `codex --enable rmcp_client`
 3. Log in with OAuth:
    - `codex mcp login figma`
 
-After successful login, the user will have to restart codex. You should finish your answer and tell them so when they try again they can continue with Step 1.
+After successful login, the user will have to restart codex. You should finish
+your answer and tell them so when they try again they can continue with Step 1.
 
 ### Step 1: Get Node ID
 
 #### Option A: Parse from Figma URL
 
-When the user provides a Figma URL, extract the file key and node ID to pass as arguments to MCP tools.
+When the user provides a Figma URL, extract the file key and node ID to pass as
+arguments to MCP tools.
 
 **URL format:** `https://figma.com/design/:fileKey/:fileName?node-id=1-2`
 
@@ -49,19 +64,26 @@ When the user provides a Figma URL, extract the file key and node ID to pass as 
 - **File key:** `:fileKey` (the segment after `/design/`)
 - **Node ID:** `1-2` (the value of the `node-id` query parameter)
 
-**Note:** When using the local desktop MCP (`figma-desktop`), `fileKey` is not passed as a parameter to tool calls. The server automatically uses the currently open file, so only `nodeId` is needed.
+**Note:** When using the local desktop MCP (`figma-desktop`), `fileKey` is not
+passed as a parameter to tool calls. The server automatically uses the currently
+open file, so only `nodeId` is needed.
 
 **Example:**
 
-- URL: `https://figma.com/design/kL9xQn2VwM8pYrTb4ZcHjF/DesignSystem?node-id=42-15`
+- URL:
+  `https://figma.com/design/kL9xQn2VwM8pYrTb4ZcHjF/DesignSystem?node-id=42-15`
 - File key: `kL9xQn2VwM8pYrTb4ZcHjF`
 - Node ID: `42-15`
 
 #### Option B: Use Current Selection from Figma Desktop App (figma-desktop MCP only)
 
-When using the `figma-desktop` MCP and the user has NOT provided a URL, the tools automatically use the currently selected node from the open Figma file in the desktop app.
+When using the `figma-desktop` MCP and the user has NOT provided a URL, the
+tools automatically use the currently selected node from the open Figma file in
+the desktop app.
 
-**Note:** Selection-based prompting only works with the `figma-desktop` MCP server. The remote server requires a link to a frame or layer to extract context. The user must have the Figma desktop app open with a node selected.
+**Note:** Selection-based prompting only works with the `figma-desktop` MCP
+server. The remote server requires a link to a frame or layer to extract
+context. The user must have the Figma desktop app open with a node selected.
 
 ### Step 2: Fetch Design Context
 
@@ -81,9 +103,11 @@ This provides the structured data including:
 
 **If the response is too large or truncated:**
 
-1. Run `get_metadata(fileKey=":fileKey", nodeId="1-2")` to get the high-level node map
+1. Run `get_metadata(fileKey=":fileKey", nodeId="1-2")` to get the high-level
+   node map
 2. Identify the specific child nodes needed from the metadata
-3. Fetch individual child nodes with `get_design_context(fileKey=":fileKey", nodeId=":childNodeId")`
+3. Fetch individual child nodes with
+   `get_design_context(fileKey=":fileKey", nodeId=":childNodeId")`
 
 ### Step 3: Capture Visual Reference
 
@@ -93,7 +117,8 @@ Run `get_screenshot` with the same file key and node ID for a visual reference.
 get_screenshot(fileKey=":fileKey", nodeId="1-2")
 ```
 
-This screenshot serves as the source of truth for visual validation. Keep it accessible throughout implementation.
+This screenshot serves as the source of truth for visual validation. Keep it
+accessible throughout implementation.
 
 ### Step 4: Download Required Assets
 
@@ -101,21 +126,28 @@ Download any assets (images, icons, SVGs) returned by the Figma MCP server.
 
 **IMPORTANT:** Follow these asset rules:
 
-- If the Figma MCP server returns a `localhost` source for an image or SVG, use that source directly
-- DO NOT import or add new icon packages - all assets should come from the Figma payload
+- If the Figma MCP server returns a `localhost` source for an image or SVG, use
+  that source directly
+- DO NOT import or add new icon packages - all assets should come from the Figma
+  payload
 - DO NOT use or create placeholders if a `localhost` source is provided
 - Assets are served through the Figma MCP server's built-in assets endpoint
 
 ### Step 5: Translate to Project Conventions
 
-Translate the Figma output into this project's framework, styles, and conventions.
+Translate the Figma output into this project's framework, styles, and
+conventions.
 
 **Key principles:**
 
-- Treat the Figma MCP output (typically React + Tailwind) as a representation of design and behavior, not as final code style
-- Replace Tailwind utility classes with the project's preferred utilities or design system tokens
-- Reuse existing components (buttons, inputs, typography, icon wrappers) instead of duplicating functionality
-- Use the project's color system, typography scale, and spacing tokens consistently
+- Treat the Figma MCP output (typically React + Tailwind) as a representation of
+  design and behavior, not as final code style
+- Replace Tailwind utility classes with the project's preferred utilities or
+  design system tokens
+- Reuse existing components (buttons, inputs, typography, icon wrappers) instead
+  of duplicating functionality
+- Use the project's color system, typography scale, and spacing tokens
+  consistently
 - Respect existing routing, state management, and data-fetch patterns
 
 ### Step 6: Achieve 1:1 Visual Parity
@@ -126,7 +158,8 @@ Strive for pixel-perfect visual parity with the Figma design.
 
 - Prioritize Figma fidelity to match designs exactly
 - Avoid hardcoded values - use design tokens from Figma where available
-- When conflicts arise between design system tokens and Figma specs, prefer design system tokens but adjust spacing or sizes minimally to match visuals
+- When conflicts arise between design system tokens and Figma specs, prefer
+  design system tokens but adjust spacing or sizes minimally to match visuals
 - Follow WCAG requirements for accessibility
 - Add component documentation as needed
 
@@ -170,32 +203,43 @@ Before marking complete, validate the final UI against the Figma screenshot.
 
 ### Example 1: Implementing a Button Component
 
-User says: "Implement this Figma button component: https://figma.com/design/kL9xQn2VwM8pYrTb4ZcHjF/DesignSystem?node-id=42-15"
+User says: "Implement this Figma button component:
+https://figma.com/design/kL9xQn2VwM8pYrTb4ZcHjF/DesignSystem?node-id=42-15"
 
 **Actions:**
 
 1. Parse URL to extract fileKey=`kL9xQn2VwM8pYrTb4ZcHjF` and nodeId=`42-15`
 2. Run `get_design_context(fileKey="kL9xQn2VwM8pYrTb4ZcHjF", nodeId="42-15")`
-3. Run `get_screenshot(fileKey="kL9xQn2VwM8pYrTb4ZcHjF", nodeId="42-15")` for visual reference
+3. Run `get_screenshot(fileKey="kL9xQn2VwM8pYrTb4ZcHjF", nodeId="42-15")` for
+   visual reference
 4. Download any button icons from the assets endpoint
 5. Check if project has existing button component
-6. If yes, extend it with new variant; if no, create new component using project conventions
-7. Map Figma colors to project design tokens (e.g., `primary-500`, `primary-hover`)
+6. If yes, extend it with new variant; if no, create new component using project
+   conventions
+7. Map Figma colors to project design tokens (e.g., `primary-500`,
+   `primary-hover`)
 8. Validate against screenshot for padding, border radius, typography
 
-**Result:** Button component matching Figma design, integrated with project design system.
+**Result:** Button component matching Figma design, integrated with project
+design system.
 
 ### Example 2: Building a Dashboard Layout
 
-User says: "Build this dashboard: https://figma.com/design/pR8mNv5KqXzGwY2JtCfL4D/Dashboard?node-id=10-5"
+User says: "Build this dashboard:
+https://figma.com/design/pR8mNv5KqXzGwY2JtCfL4D/Dashboard?node-id=10-5"
 
 **Actions:**
 
 1. Parse URL to extract fileKey=`pR8mNv5KqXzGwY2JtCfL4D` and nodeId=`10-5`
-2. Run `get_metadata(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId="10-5")` to understand the page structure
-3. Identify main sections from metadata (header, sidebar, content area, cards) and their child node IDs
-4. Run `get_design_context(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId=":childNodeId")` for each major section
-5. Run `get_screenshot(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId="10-5")` for the full page
+2. Run `get_metadata(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId="10-5")` to
+   understand the page structure
+3. Identify main sections from metadata (header, sidebar, content area, cards)
+   and their child node IDs
+4. Run
+   `get_design_context(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId=":childNodeId")`
+   for each major section
+5. Run `get_screenshot(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId="10-5")` for the
+   full page
 6. Download all assets (logos, icons, charts)
 7. Build layout using project's layout primitives
 8. Implement each section using existing components where possible
@@ -207,55 +251,69 @@ User says: "Build this dashboard: https://figma.com/design/pR8mNv5KqXzGwY2JtCfL4
 
 ### Always Start with Context
 
-Never implement based on assumptions. Always fetch `get_design_context` and `get_screenshot` first.
+Never implement based on assumptions. Always fetch `get_design_context` and
+`get_screenshot` first.
 
 ### Incremental Validation
 
-Validate frequently during implementation, not just at the end. This catches issues early.
+Validate frequently during implementation, not just at the end. This catches
+issues early.
 
 ### Document Deviations
 
-If you must deviate from the Figma design (e.g., for accessibility or technical constraints), document why in code comments.
+If you must deviate from the Figma design (e.g., for accessibility or technical
+constraints), document why in code comments.
 
 ### Reuse Over Recreation
 
-Always check for existing components before creating new ones. Consistency across the codebase is more important than exact Figma replication.
+Always check for existing components before creating new ones. Consistency
+across the codebase is more important than exact Figma replication.
 
 ### Design System First
 
-When in doubt, prefer the project's design system patterns over literal Figma translation.
+When in doubt, prefer the project's design system patterns over literal Figma
+translation.
 
 ## Common Issues and Solutions
 
 ### Issue: Figma output is truncated
 
-**Cause:** The design is too complex or has too many nested layers to return in a single response.
-**Solution:** Use `get_metadata` to get the node structure, then fetch specific nodes individually with `get_design_context`.
+**Cause:** The design is too complex or has too many nested layers to return in
+a single response. **Solution:** Use `get_metadata` to get the node structure,
+then fetch specific nodes individually with `get_design_context`.
 
 ### Issue: Design doesn't match after implementation
 
-**Cause:** Visual discrepancies between the implemented code and the original Figma design.
-**Solution:** Compare side-by-side with the screenshot from Step 3. Check spacing, colors, and typography values in the design context data.
+**Cause:** Visual discrepancies between the implemented code and the original
+Figma design. **Solution:** Compare side-by-side with the screenshot from
+Step 3. Check spacing, colors, and typography values in the design context data.
 
 ### Issue: Assets not loading
 
-**Cause:** The Figma MCP server's assets endpoint is not accessible or the URLs are being modified.
-**Solution:** Verify the Figma MCP server's assets endpoint is accessible. The server serves assets at `localhost` URLs. Use these directly without modification.
+**Cause:** The Figma MCP server's assets endpoint is not accessible or the URLs
+are being modified. **Solution:** Verify the Figma MCP server's assets endpoint
+is accessible. The server serves assets at `localhost` URLs. Use these directly
+without modification.
 
 ### Issue: Design token values differ from Figma
 
-**Cause:** The project's design system tokens have different values than those specified in the Figma design.
-**Solution:** When project tokens differ from Figma values, prefer project tokens for consistency but adjust spacing/sizing to maintain visual fidelity.
+**Cause:** The project's design system tokens have different values than those
+specified in the Figma design. **Solution:** When project tokens differ from
+Figma values, prefer project tokens for consistency but adjust spacing/sizing to
+maintain visual fidelity.
 
 ## Understanding Design Implementation
 
-The Figma implementation workflow establishes a reliable process for translating designs to code:
+The Figma implementation workflow establishes a reliable process for translating
+designs to code:
 
-**For designers:** Confidence that implementations will match their designs with pixel-perfect accuracy.
-**For developers:** A structured approach that eliminates guesswork and reduces back-and-forth revisions.
-**For teams:** Consistent, high-quality implementations that maintain design system integrity.
+**For designers:** Confidence that implementations will match their designs with
+pixel-perfect accuracy. **For developers:** A structured approach that
+eliminates guesswork and reduces back-and-forth revisions. **For teams:**
+Consistent, high-quality implementations that maintain design system integrity.
 
-By following this workflow, you ensure that every Figma design is implemented with the same level of care and attention to detail.
+By following this workflow, you ensure that every Figma design is implemented
+with the same level of care and attention to detail.
 
 ## Additional Resources
 

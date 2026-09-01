@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,7 +48,7 @@ assert.deepEqual(
 );
 
 const root = resolveTnfRepoRoot(here);
-assert.ok(root.endsWith('The-New-Fuse') || root.includes('The-New-Fuse'));
+assert.ok(fs.existsSync(path.join(root, 'packages', 'tnf-cli', 'package.json')));
 
 // Even when startDir is outside the repo, fall back via MODULE_DIR
 const fromTmp = resolveTnfRepoRoot(path.join(os.tmpdir(), 'tnf-not-a-repo'));

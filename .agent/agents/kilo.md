@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,13 +16,14 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: Kilo
-description: General-purpose software engineering agent with extensive tool access
+description:
+  General-purpose software engineering agent with extensive tool access
 version: 1.0.0
 tags:
-- code
-- development
-- general
-- worker
+  - code
+  - development
+  - general
+  - worker
 author: The New Fuse
 platform: darwin
 type: agent
@@ -31,7 +33,9 @@ type: agent
 
 ## Overview
 
-Kilo is a general-purpose software engineering agent designed to assist with coding tasks, debugging, code reviews, and feature development across multiple programming languages and frameworks.
+Kilo is a general-purpose software engineering agent designed to assist with
+coding tasks, debugging, code reviews, and feature development across multiple
+programming languages and frameworks.
 
 ## Capabilities
 
@@ -63,6 +67,7 @@ tnf agents register Kilo code darwin
 ## Integration
 
 Kilo registers with TNF and can:
+
 - Receive messages via `tnf agents send`
 - Participate in orchestrated workflows
 - Join conversations via `tnf agents convo`

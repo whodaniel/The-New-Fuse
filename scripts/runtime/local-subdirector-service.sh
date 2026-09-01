@@ -53,7 +53,41 @@ load_identity_value() {
 }
 
 xml_escape() {
-  python3 -c 'import sys,html; print(html.escape(sys.stdin.read(), quote=True), end="")' <<<"$1"
+  # Bash-only: python3 startup was paging for seconds apiece at load 500+ /
+  # ~4k free pages (2026-08-29) and doubled create_plist past establish's timeout.
+  local s="$1"
+  s="${s//&/&amp;}"
+  s="${s//</&lt;}"
+  s="${s//>/&gt;}"
+  s="${s//\"/&quot;}"
+  s="${s//\'/&apos;}"
+  printf '%s' "$s"
+}
+
+fleet_paused() {
+  local f="$HOME/.tnf/fleet/mode.json"
+  [[ -f "$f" ]] && grep -Eq '"mode":[[:space:]]*"paused"' "$f"
+}
+
+# launchctl bootout can wait forever on a stuck descendant (`ps` / osascript).
+# Bound every launchctl so establish's spawnSync timeout is never the first
+# thing that notices. perl alarm is the portable macOS stand-in for timeout(1).
+launchctl_bounded() {
+  local secs="$1"
+  shift
+  if command -v perl >/dev/null 2>&1; then
+    perl -e 'alarm shift @ARGV; exec @ARGV' "$secs" "$@"
+  else
+    "$@"
+  fi
+}
+
+job_state_running() {
+  launchctl_bounded 8 launchctl print "${LAUNCH_DOMAIN}/${LABEL}" 2>/dev/null | grep -q 'state = running'
+}
+
+job_loaded() {
+  launchctl_bounded 8 launchctl print "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1
 }
 
 create_plist() {
@@ -78,15 +112,36 @@ create_plist() {
     encryption_pem=""
   fi
 
-  cat > "$PLIST_PATH" <<PLIST
+  # Write-then-rename, not a direct `>` truncate: 2026-08-27, a hang mid-
+  # heredoc (system under extreme load from an unrelated concurrent branch
+  # switch) left this file 0 bytes / unparseable because `>` truncates the
+  # target before any content is written. Renaming into place means a hung
+  # regeneration leaves the previous, still-valid plist intact instead of an
+  # empty one. Matches the atomic-write pattern in tnf-fleet-mode.cjs.
+  local plist_tmp="${PLIST_PATH}.tmp.$$"
+  cat > "$plist_tmp" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>Label</key>
   <string>${LABEL}</string>
+  <!-- 2026-08-27: routed through tnf-launchd-guard.sh (class=probe) — see
+       docs/protocols/TNF_RESOURCE_GOVERNANCE_MANDATE.md. This template is
+       regenerated unconditionally on every `start` (see start()), which is
+       exactly why a manual, unwrapped edit to the live plist kept getting
+       silently reverted: fix it here, at the source of truth, not on the
+       live file. -->
   <key>ProgramArguments</key>
   <array>
+    <string>${ROOT_DIR}/scripts/runtime/tnf-launchd-guard.sh</string>
+    <string>--job</string>
+    <string>${LABEL}</string>
+    <string>--class</string>
+    <string>probe</string>
+    <string>--repo-root</string>
+    <string>${ROOT_DIR}</string>
+    <string>--</string>
     <string>${NODE_BIN}</string>
     <string>${SCRIPT_PATH}</string>
   </array>
@@ -115,6 +170,10 @@ create_plist() {
   <true/>
   <key>StartInterval</key>
   <integer>300</integer>
+  <key>Nice</key>
+  <integer>10</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
   <key>WorkingDirectory</key>
   <string>${WORK_DIR}</string>
   <key>StandardOutPath</key>
@@ -124,30 +183,48 @@ create_plist() {
 </dict>
 </plist>
 PLIST
+  mv -f "$plist_tmp" "$PLIST_PATH"
 }
 
 install() {
   sync_runtime
   create_plist
-  start
+  if job_state_running; then
+    echo "installed: $LABEL"
+    return 0
+  fi
+  if fleet_paused; then
+    echo "installed: $LABEL (start deferred: fleet paused)"
+    return 0
+  fi
+  start || true
   echo "installed: $LABEL"
 }
 
 start() {
-  sync_runtime
-  create_plist
-  if launchctl print "${LAUNCH_DOMAIN}/${LABEL}" 2>/dev/null | grep -q 'state = running'; then
+  # Fast path: do not sync or bootout a healthy running job. bootout was the
+  # 2026-08-29 establish hang (120s spawnSync timeout → status null).
+  if job_state_running; then
     echo "already-running: $LABEL"
     return 0
   fi
-  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
-  launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || launchctl load -w "$PLIST_PATH"
-  launchctl kickstart "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  if job_loaded; then
+    launchctl_bounded 10 launchctl kickstart "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+    echo "started: $LABEL"
+    return 0
+  fi
+  sync_runtime
+  create_plist
+  launchctl_bounded 15 launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
+  if ! launchctl_bounded 15 launchctl bootstrap "$LAUNCH_DOMAIN" "$PLIST_PATH" >/dev/null 2>&1; then
+    launchctl_bounded 10 launchctl load -w "$PLIST_PATH" >/dev/null 2>&1 || true
+  fi
+  launchctl_bounded 10 launchctl kickstart "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
   echo "started: $LABEL"
 }
 
 stop() {
-  launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || launchctl unload "$PLIST_PATH" 2>/dev/null || true
+  launchctl_bounded 15 launchctl bootout "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1 || launchctl unload "$PLIST_PATH" 2>/dev/null || true
   echo "stopped: $LABEL"
 }
 
@@ -164,8 +241,10 @@ uninstall() {
 }
 
 status() {
-  if launchctl print "${LAUNCH_DOMAIN}/${LABEL}" >/dev/null 2>&1; then
+  if job_state_running; then
     echo "running: $LABEL"
+  elif job_loaded; then
+    echo "loaded: $LABEL"
   else
     echo "not-running: $LABEL"
   fi

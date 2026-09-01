@@ -55,7 +55,6 @@ export * from './enhanced_communication';
 export * from './mcp_integration';
 export * from './workflow';
 export * from './workflow-optimizer';
-export * from './workflow-schema-validator';
 export * from './workflow_agent';
 export * from './workflow_manager';
 export * from './workflowValidation';

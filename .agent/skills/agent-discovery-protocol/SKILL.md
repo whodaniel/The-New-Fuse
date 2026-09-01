@@ -1,5 +1,7 @@
 ---
 name: agent-discovery-protocol
+category: tnf-fleet
+department: ops
 description:
   Protocol for discovering and coordinating with other AI agents in a federated
   communication channel

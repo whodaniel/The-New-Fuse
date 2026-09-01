@@ -10,9 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import * as crypto from 'node:crypto';
 import { StripeService } from './stripe.service';
+
 
 @Controller('billing/stripe')
 export class StripeController {
@@ -44,7 +45,7 @@ export class StripeController {
   }
 
   @Post('subscribe')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   async recordSubscription(
     @Body()
     body: {
@@ -58,7 +59,7 @@ export class StripeController {
     },
     @Req() req: any
   ) {
-    const userId = req.user?.id;
+    const userId = req.user?.id || req.user?.sub;
     if (!userId) {
       throw new UnauthorizedException('User not authenticated');
     }
@@ -72,7 +73,7 @@ export class StripeController {
   }
 
   @Post('checkout-session')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   async createCheckoutSession(
     @Body()
     body: {
@@ -83,7 +84,7 @@ export class StripeController {
     },
     @Req() req: any
   ) {
-    const userId = req.user?.id;
+    const userId = req.user?.id || req.user?.sub;
     if (!userId) {
       throw new UnauthorizedException('User not authenticated');
     }

@@ -236,7 +236,7 @@ ALWAYS_EXCLUDE=(
   ".agent/skills/antigravity/loki-mode/benchmarks/results"
   # Generated run records that embed absolute paths
   "data/ingestion-runs"
-  "data/intelligence-artifacts"
+  "../User-Data/$USER/intelligence-artifacts"
   # Personal user data: an Apple Notes export. Not system data, not a fixture.
   "data/apple-notes-new-may-2026.json"
   # Fleet/agent run snapshots — regenerated locally, embed absolute paths
@@ -325,6 +325,16 @@ ALWAYS_EXCLUDE=(
   "~"
   "--help"
   ".venv_crawler"
+)
+
+# These runtime authority files are intentionally tracked in the monorepo but
+# match its broad .agent/* ignore rules. A normal `git add -A` in the generated
+# public worktree silently omits them, so publish only this reviewed subset with
+# force-add rather than exposing every tracked local agent artifact.
+PUBLIC_FORCE_INCLUDE=(
+  ".agent/SYSTEM_PROMPT.md"
+  ".agent/context/agent-onboarding.md"
+  ".agent/workflows/frontload.md"
 )
 
 # ─────────────────────────────────────────────────────────────────────
@@ -638,9 +648,10 @@ STUB
     git init -b main -q
     git remote add origin "$OPEN_REMOTE"
     git add -A
-    git commit -m "sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
+    git commit -m "chore(sync): publish open runtime from monorepo @ $MONO_HEAD
 
 Source commit: $MONO_MSG
+Published at: $TIMESTAMP
 Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null || echo "Nothing to commit"
     if [ "$DRY_RUN" = true ]; then
       echo "🔍 DRY RUN: Would force-push ORPHAN history to The-New-Fuse main"
@@ -668,15 +679,23 @@ Proprietary content stripped. Stubs reference fuse-control-plane." 2>/dev/null |
 
     cd "$OPEN_DIR"
     git add -A
+    for f in "${PUBLIC_FORCE_INCLUDE[@]}"; do
+      if [ ! -f "$f" ]; then
+        echo "ABORT: required public runtime authority file is missing: $f"
+        exit 1
+      fi
+      git add -f -- "$f"
+    done
     PUBLIC_HEAD=$(git rev-parse HEAD)
     NEW_TREE=$(git write-tree)
     PUBLIC_TREE=$(gh_authenticated api "repos/whodaniel/The-New-Fuse/git/commits/$PUBLIC_HEAD" --jq .tree.sha)
     if [ "$NEW_TREE" = "$PUBLIC_TREE" ] && [ "$FORCE" != true ]; then
       echo "ℹ️  The-New-Fuse (public): no changes to sync"
     else
-      COMMIT_MESSAGE="sync: open-runtime ← monorepo @ $MONO_HEAD ($TIMESTAMP)
+      COMMIT_MESSAGE="chore(sync): publish open runtime from monorepo @ $MONO_HEAD
 
 Source commit: $MONO_MSG
+Published at: $TIMESTAMP
 Proprietary content stripped. Stubs reference fuse-control-plane."
       NEW_COMMIT=$(printf '%s\n' "$COMMIT_MESSAGE" | git commit-tree "$NEW_TREE" -p "$PUBLIC_HEAD")
       SYNC_BRANCH="sync/open-runtime"
@@ -686,17 +705,24 @@ Proprietary content stripped. Stubs reference fuse-control-plane."
         git_authenticated push origin "${NEW_COMMIT}:refs/heads/${SYNC_BRANCH}" --force
         echo "✅ Pushed $SYNC_BRANCH (main was not force-pushed)"
         if command -v gh >/dev/null 2>&1; then
-          if gh_authenticated pr view "$SYNC_BRANCH" --repo whodaniel/The-New-Fuse >/dev/null 2>&1; then
-            echo "  Existing PR for $SYNC_BRANCH updated by branch push"
-          else
-            gh_authenticated pr create --repo whodaniel/The-New-Fuse \
-              --base main --head "$SYNC_BRANCH" \
-              --title "sync: open-runtime ← tnf-monorepo @ $MONO_HEAD" \
-              --body "Automated open-runtime publication from \`tnf-monorepo @ $MONO_HEAD\`.
+          PUBLIC_PR_TITLE="chore(sync): publish open runtime from tnf-monorepo @ $MONO_HEAD"
+          PUBLIC_PR_BODY="Automated open-runtime publication from \`tnf-monorepo @ $MONO_HEAD\`.
 
 Does **not** force-push \`main\`. Merge this PR to publish.
 
-Proprietary paths stripped; Master Clock / Broker / Orchestrator are stubs." \
+Proprietary paths stripped; Master Clock / Broker / Orchestrator are stubs."
+          EXISTING_PUBLIC_PR=$(gh_authenticated pr list --repo whodaniel/The-New-Fuse \
+            --head "$SYNC_BRANCH" --base main --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING_PUBLIC_PR" ]; then
+            gh_authenticated api --method PATCH \
+              "repos/whodaniel/The-New-Fuse/pulls/$EXISTING_PUBLIC_PR" \
+              -f title="$PUBLIC_PR_TITLE" -f body="$PUBLIC_PR_BODY" >/dev/null
+            echo "  Existing PR #$EXISTING_PUBLIC_PR for $SYNC_BRANCH updated by branch push"
+          else
+            gh_authenticated pr create --repo whodaniel/The-New-Fuse \
+              --base main --head "$SYNC_BRANCH" \
+              --title "$PUBLIC_PR_TITLE" --body "$PUBLIC_PR_BODY" \
               || echo "  gh pr create failed — branch is still on origin/$SYNC_BRANCH"
           fi
         fi

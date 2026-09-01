@@ -1,5 +1,6 @@
 ---
 category: Library
+department: product
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,11 +16,13 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: categorization-master
-description: Custodian of the TNF Entity ID Taxonomy and Master Agent Registry. Use
-  when you need to register new agents, models, or MCP servers, audit the registry
+description:
+  Custodian of the TNF Entity ID Taxonomy and Master Agent Registry. Use when
+  you need to register new agents, models, or MCP servers, audit the registry
   for consistency, or manage agent identity and metadata.
-skills: taxonomy-enforcement, registry-management, metadata-auditing, onboarding-protocols,
-  system-intelligence
+skills:
+  taxonomy-enforcement, registry-management, metadata-auditing,
+  onboarding-protocols, system-intelligence
 model: inherit
 ---
 

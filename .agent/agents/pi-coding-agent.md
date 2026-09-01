@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,39 +16,40 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: pi-coding-agent
-description: MUST BE USED for coding tasks requiring autonomous file editing, bash
-  execution, and multi-provider LLM inference. Pi is a TUI-based AI coding agent with
-  read/bash/edit/write tools, multi-provider support (Google, Anthropic, OpenAI, OpenRouter,
-  NVIDIA, DeepSeek, etc.), skills, extensions, sessions, and plan-mode capabilities.
-  Ingested from @earendil-works/pi-coding-agent v0.74.1.
+description:
+  MUST BE USED for coding tasks requiring autonomous file editing, bash
+  execution, and multi-provider LLM inference. Pi is a TUI-based AI coding agent
+  with read/bash/edit/write tools, multi-provider support (Google, Anthropic,
+  OpenAI, OpenRouter, NVIDIA, DeepSeek, etc.), skills, extensions, sessions, and
+  plan-mode capabilities. Ingested from @earendil-works/pi-coding-agent v0.74.1.
 version: 0.74.1
 tags:
-- coding
-- autonomous
-- multi-provider
-- tui
-- skills
-- extensions
-- sessions
-- read-write-edit-bash
-- web
+  - coding
+  - autonomous
+  - multi-provider
+  - tui
+  - skills
+  - extensions
+  - sessions
+  - read-write-edit-bash
+  - web
 capabilities:
-- autonomous-code-editing
-- multi-provider-llm
-- skill-loading
-- extension-system
-- session-persistence
-- plan-mode
-- thinking-levels
-- model-cycling
-- non-interactive-mode
-- session-export
-- context-file-discovery
-- prompt-templates
-- theming
-- web-browsing
-- web-search
-- url-scraping
+  - autonomous-code-editing
+  - multi-provider-llm
+  - skill-loading
+  - extension-system
+  - session-persistence
+  - plan-mode
+  - thinking-levels
+  - model-cycling
+  - non-interactive-mode
+  - session-export
+  - context-file-discovery
+  - prompt-templates
+  - theming
+  - web-browsing
+  - web-search
+  - url-scraping
 color: Cyan
 provider: multi
 config_dir: ~/.pi/agent

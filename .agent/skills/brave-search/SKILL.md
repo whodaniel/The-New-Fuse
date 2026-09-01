@@ -1,11 +1,16 @@
 ---
 name: brave-search
-description: Web search and content extraction via Brave Search API. Use for searching documentation, facts, or any web content. Lightweight, no browser required.
+category: data-storage
+department: tech
+description:
+  Web search and content extraction via Brave Search API. Use for searching
+  documentation, facts, or any web content. Lightweight, no browser required.
 ---
 
 # Brave Search
 
-Headless web search and content extraction using Brave Search. No browser required.
+Headless web search and content extraction using Brave Search. No browser
+required.
 
 ## Setup
 

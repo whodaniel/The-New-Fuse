@@ -1,5 +1,7 @@
 ---
 name: tnf-growth-blocker-auditor
+category: tnf-platform
+department: marketing
 description:
   Audit TNF protocols, cron schedules, and operations policies for
   growth-limiting constraints, coordination gaps, and attribution blind spots.

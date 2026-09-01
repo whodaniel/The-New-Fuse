@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,11 +16,13 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: orchestrator
-description: Multi-agent coordination and task orchestration. Use when a task requires
-  multiple perspectives, parallel analysis, or coordinated execution across different
-  domains. Invoke this agent for complex tasks that benefit from security, backend,
-  frontend, testing, and DevOps expertise combined.
-skills: clean-code, parallel-agents, behavioral-modes, plan-writing, brainstorming,
+description:
+  Multi-agent coordination and task orchestration. Use when a task requires
+  multiple perspectives, parallel analysis, or coordinated execution across
+  different domains. Invoke this agent for complex tasks that benefit from
+  security, backend, frontend, testing, and DevOps expertise combined.
+skills:
+  clean-code, parallel-agents, behavioral-modes, plan-writing, brainstorming,
   architecture, lint-and-validate, powershell-windows, bash-linux
 model: inherit
 ---
@@ -119,7 +122,7 @@ Before I coordinate the agents, I need to understand your requirements better:
 | `frontend-specialist`   | Frontend & UI     | React, Next.js, Tailwind, components      |
 | `test-engineer`         | Testing & QA      | Unit tests, E2E, coverage, TDD            |
 | `devops-engineer`       | DevOps & Infra    | Deployment, CI/CD, PM2, monitoring        |
-| `database-architect`    | Database & Schema | Drizzle, migrations, optimization          |
+| `database-architect`    | Database & Schema | Drizzle, migrations, optimization         |
 | `mobile-developer`      | Mobile Apps       | React Native, Flutter, Expo               |
 | `api-designer`          | API Design        | REST, GraphQL, OpenAPI                    |
 | `debugger`              | Debugging         | Root cause analysis, systematic debugging |
@@ -163,12 +166,12 @@ Before I coordinate the agents, I need to understand your requirements better:
 
 ### File Type Ownership
 
-| File Pattern                    | Owner Agent           | Others BLOCKED   |
-| ------------------------------- | --------------------- | ---------------- |
-| `**/*.test.{ts,tsx,js}`         | `test-engineer`       | ❌ All others    |
-| `**/__tests__/**`               | `test-engineer`       | ❌ All others    |
-| `**/components/**`              | `frontend-specialist` | ❌ backend, test |
-| `**/api/**`, `**/server/**`     | `backend-specialist`  | ❌ frontend      |
+| File Pattern                     | Owner Agent           | Others BLOCKED   |
+| -------------------------------- | --------------------- | ---------------- |
+| `**/*.test.{ts,tsx,js}`          | `test-engineer`       | ❌ All others    |
+| `**/__tests__/**`                | `test-engineer`       | ❌ All others    |
+| `**/components/**`               | `frontend-specialist` | ❌ backend, test |
+| `**/api/**`, `**/server/**`      | `backend-specialist`  | ❌ frontend      |
 | `**/drizzle/**`, `**/drizzle/**` | `database-architect`  | ❌ frontend      |
 
 ### Enforcement Protocol

@@ -25,7 +25,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // import { WebScrapingMCPTools } from '@the-new-fuse/web-scraping';
-import { JulesClient } from '@the-new-fuse/jules-skill';
+import {
+  JulesClient,
+  RemoteCodingAgentClient,
+  type CreateSessionOptions,
+  type ListSessionsOptions,
+  type PullSessionOptions,
+} from '@the-new-fuse/coding-agent-delegation';
 
 // Mock services interface (will be replaced with actual services in production)
 interface ServiceInterface {
@@ -46,7 +52,22 @@ export class TheNewFuseMCPServer {
   private isRemote: boolean;
   private services: ServiceInterface = {};
   private webScrapingTools: any;
-  private julesClient: any;
+  private julesClient: RemoteCodingAgentClient;
+
+  /**
+   * Guard for the generic coding_agent_* tool surface. Validates the optional
+   * `provider` argument against registered remote coding-agent providers.
+   * Jules is the first provider; extend this check when new adapters land.
+   */
+  private assertCodingAgentProvider(args?: { provider?: unknown }): void {
+    const provider = args?.provider ?? 'jules';
+    if (typeof provider === 'string' && provider !== 'jules') {
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        `Remote coding-agent provider '${provider}' is not registered. Supported providers: jules.`
+      );
+    }
+  }
   /** Streamable HTTP mode only — null under stdio. */
   private httpTransport: StreamableHTTPServerTransport | null = null;
   private httpServer: any = null;
@@ -354,17 +375,18 @@ export class TheNewFuseMCPServer {
         })),
         */
 
-        // Jules Coding Agent Tools (from @the-new-fuse/jules-skill)
+        // Remote coding-agent delegation (generic surface; Google Jules = first provider).
+        // Provider-agnostic names so new remote agent adapters plug in without tool renames.
         {
-          name: 'jules_create_session',
-          description: `Create a new Jules coding session. Jules is Google's autonomous AI coding agent that can work on tasks asynchronously. Use this to delegate complex coding tasks like implementing features, fixing bugs, refactoring code, or writing tests.`,
+          name: 'coding_agent_delegate',
+          description: `Delegate a coding task to a remote autonomous coding agent (currently Google Jules). Runs asynchronously: implement features, fix bugs, refactor, or write tests, then pull the results back.`,
           inputSchema: {
             type: 'object',
             properties: {
               task: {
                 type: 'string',
                 description:
-                  'The task description/instructions for Jules. Be specific about what you want done.',
+                  'The task description/instructions. Be specific about what you want done.',
               },
               repository: {
                 type: 'string',
@@ -374,21 +396,27 @@ export class TheNewFuseMCPServer {
               workspace_context: {
                 type: 'string',
                 description:
-                  'Optional: Additional context about the workspace/codebase to help Jules.',
+                  'Optional: Additional context about the workspace/codebase to help the agent.',
               },
               parallel: {
                 type: 'number',
                 description:
                   'Optional: Number of parallel sessions to create (1-16). Default is 1.',
               },
+              provider: {
+                type: 'string',
+                enum: ['jules'],
+                description:
+                  'Optional: Remote coding-agent provider. Currently supported: jules (default).',
+              },
             },
             required: ['task'],
           },
         },
         {
-          name: 'jules_list_sessions',
+          name: 'coding_agent_list_sessions',
           description:
-            'List all Jules sessions. Returns information about active and completed coding sessions.',
+            'List remote coding-agent sessions. Returns information about active and completed delegation sessions.',
           inputSchema: {
             type: 'object',
             properties: {
@@ -396,12 +424,18 @@ export class TheNewFuseMCPServer {
                 type: 'number',
                 description: 'Maximum number of sessions to return. Default is 10.',
               },
+              provider: {
+                type: 'string',
+                enum: ['jules'],
+                description:
+                  'Optional: Remote coding-agent provider. Currently supported: jules (default).',
+              },
             },
           },
         },
         {
-          name: 'jules_get_session',
-          description: 'Get details of a specific Jules session by ID.',
+          name: 'coding_agent_get_session',
+          description: 'Get details of a specific remote coding-agent session by ID.',
           inputSchema: {
             type: 'object',
             properties: {
@@ -409,14 +443,20 @@ export class TheNewFuseMCPServer {
                 type: 'string',
                 description: 'The session ID to retrieve.',
               },
+              provider: {
+                type: 'string',
+                enum: ['jules'],
+                description:
+                  'Optional: Remote coding-agent provider. Currently supported: jules (default).',
+              },
             },
             required: ['session_id'],
           },
         },
         {
-          name: 'jules_pull_session',
+          name: 'coding_agent_pull_results',
           description:
-            'Pull the results of a completed Jules session. Optionally apply the patch to the local repository.',
+            'Pull the results of a completed remote coding-agent session. Optionally apply the patch to the local repository.',
           inputSchema: {
             type: 'object',
             properties: {
@@ -429,7 +469,49 @@ export class TheNewFuseMCPServer {
                 description:
                   'Whether to apply the patch to the local repository. Default is false.',
               },
+              provider: {
+                type: 'string',
+                enum: ['jules'],
+                description:
+                  'Optional: Remote coding-agent provider. Currently supported: jules (default).',
+              },
             },
+            required: ['session_id'],
+          },
+        },
+        // Deprecated jules_* aliases — kept for backward compatibility; prefer coding_agent_* tools.
+        {
+          name: 'jules_create_session',
+          description: 'Deprecated alias of coding_agent_delegate.',
+          inputSchema: {
+            type: 'object',
+            properties: { task: { type: 'string' } },
+            required: ['task'],
+          },
+        },
+        {
+          name: 'jules_list_sessions',
+          description: 'Deprecated alias of coding_agent_list_sessions.',
+          inputSchema: {
+            type: 'object',
+            properties: { limit: { type: 'number' } },
+          },
+        },
+        {
+          name: 'jules_get_session',
+          description: 'Deprecated alias of coding_agent_get_session.',
+          inputSchema: {
+            type: 'object',
+            properties: { session_id: { type: 'string' } },
+            required: ['session_id'],
+          },
+        },
+        {
+          name: 'jules_pull_session',
+          description: 'Deprecated alias of coding_agent_pull_results.',
+          inputSchema: {
+            type: 'object',
+            properties: { session_id: { type: 'string' } },
             required: ['session_id'],
           },
         },
@@ -625,40 +707,64 @@ export class TheNewFuseMCPServer {
           }
           */
 
-          // Jules Tools
+          // Remote coding-agent delegation (generic surface; deprecated jules_* aliases preserved)
+          case 'coding_agent_delegate':
           case 'jules_create_session':
+            this.assertCodingAgentProvider(args);
             return {
               content: [
                 {
                   type: 'text',
-                  text: JSON.stringify(await this.julesClient.createSession(args), null, 2),
+                  text: JSON.stringify(
+                    await this.julesClient.createSession(args as CreateSessionOptions),
+                    null,
+                    2
+                  ),
                 },
               ],
             };
+          case 'coding_agent_list_sessions':
           case 'jules_list_sessions':
+            this.assertCodingAgentProvider(args);
             return {
               content: [
                 {
                   type: 'text',
-                  text: JSON.stringify(await this.julesClient.listSessions(args), null, 2),
+                  text: JSON.stringify(
+                    await this.julesClient.listSessions(args as ListSessionsOptions | undefined),
+                    null,
+                    2
+                  ),
                 },
               ],
             };
+          case 'coding_agent_get_session':
           case 'jules_get_session':
+            this.assertCodingAgentProvider(args);
             return {
               content: [
                 {
                   type: 'text',
-                  text: JSON.stringify(await this.julesClient.getSession(args.session_id), null, 2),
+                  text: JSON.stringify(
+                    await this.julesClient.getSession(args.session_id as string),
+                    null,
+                    2
+                  ),
                 },
               ],
             };
+          case 'coding_agent_pull_results':
           case 'jules_pull_session':
+            this.assertCodingAgentProvider(args);
             return {
               content: [
                 {
                   type: 'text',
-                  text: JSON.stringify(await this.julesClient.pullSession(args), null, 2),
+                  text: JSON.stringify(
+                    await this.julesClient.pullSession(args as PullSessionOptions),
+                    null,
+                    2
+                  ),
                 },
               ],
             };

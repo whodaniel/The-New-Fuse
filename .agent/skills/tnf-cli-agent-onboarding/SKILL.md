@@ -9,6 +9,7 @@ description: >-
   new agent must be discoverable by orchestrators.
 primary_type: protocol
 category: engineering/onboarding
+department: tech
 risk_tier: low
 harmful_pattern_detection: false
 ---

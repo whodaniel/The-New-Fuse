@@ -8,6 +8,7 @@ description: >-
   the gate script, the --update flow, and the staged pre-commit wiring.
 primary_type: protocol
 category: engineering/cli
+department: tech
 risk_tier: low
 harmful_pattern_detection: false
 ---

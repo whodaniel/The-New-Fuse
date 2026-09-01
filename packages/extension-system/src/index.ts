@@ -23,6 +23,7 @@ export {
 
 // Types and interfaces
 export * from './types/ExtensionTypes.js';
+export * from './satellite/SatelliteManifest.js';
 
 // Satellite app path resolution (TNF-Extensions / apps/extensions redirect)
 export {

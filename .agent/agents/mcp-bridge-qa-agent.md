@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,20 +16,22 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: mcp-bridge-qa-agent
-description: Specialized QA agent that tests TNF MCP servers and bridges — tools/list
-  contracts, the cloud-redis bridge, concordance server, and tar/msgpack bridges.
+description:
+  Specialized QA agent that tests TNF MCP servers and bridges — tools/list
+  contracts, the cloud-redis bridge, concordance server, and tar/msgpack
+  bridges.
 version: 1.1.0
 tags:
-- qa
-- mcp
-- bridge
-- redis
-- protocol
+  - qa
+  - mcp
+  - bridge
+  - redis
+  - protocol
 capabilities:
-- mcp_tools_list
-- schema_contract_check
-- bridge_roundtrip
-- redis_bridge_probe
+  - mcp_tools_list
+  - schema_contract_check
+  - bridge_roundtrip
+  - redis_bridge_probe
 displayName: TNF MCP Bridge QA
 agentType: testing
 ---

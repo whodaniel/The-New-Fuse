@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import { z } from 'zod';
 import { CloudRedisClient } from './RedisClient.js';
 import { SecurityService } from './crypto.js';
-import { MasterClockSignalEnvelope, TNFEnvelope } from './types.js';
+import { MasterClockSignalEnvelope } from './types.js';
 
 const server = new Server(
   { name: 'mcp-cloud-redis-bridge', version: '1.0.0' },
@@ -130,67 +130,42 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       case 'set_director_identity': {
-        const parsed = SetIdentitySchema.parse(args);
-        authorizedIdentity = parsed;
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Identity set for NFT ${parsed.nft_id} (${parsed.wallet_address}). Authorization confirmed.`,
-            },
-          ],
-        };
+        // TNF-P0 CONTAINMENT (2026-08-25, incident: MCP Director identity
+        // path). This tool used to accept any caller-supplied
+        // wallet_address/nft_id as fact — `authorizedIdentity = parsed`, with
+        // zero independent verification (no signature challenge, no
+        // ownership proof, no proof of key possession) — and that
+        // self-asserted identity then authorized a bus-wide broadcast below.
+        // Disabled fail-closed pending real proof-of-possession or an
+        // operator-issued CapabilityGrant (see
+        // packages/control-plane-contracts/src/authority.ts and
+        // docs/protocols/DIRECTIVES.md D23: "authority comes from verified
+        // identity, never from a wire claim"). Do not re-enable by trusting
+        // any request field, env var, or claimed role/NFT id — that
+        // reintroduces the same hole.
+        throw new Error(
+          'UNAVAILABLE: set_director_identity is disabled pending independently ' +
+            'verifiable authority evidence. wallet_address/nft_id supplied in a ' +
+            'tool call are unverified claims, not proof of identity.'
+        );
       }
 
       case 'broadcast_super_director_prompt': {
-        if (!authorizedIdentity) {
-          throw new Error(
-            'UNAUTHORIZED: Director identity not set. Use set_director_identity first.'
-          );
-        }
-        const { prompt, targetChannel, priority, invokerAgentId } =
-          BroadcastPromptSchema.parse(args);
-
-        // Authorization Gate: Only Sub-Director or Orchestration Agent can pulse the cloud bus
-        const authorizedInvokers = ['sub-director', 'orchestration-agent'];
-        if (!authorizedInvokers.includes(invokerAgentId)) {
-          throw new Error(
-            `ACCESS_DENIED: Agent '${invokerAgentId}' is not authorized to pulse the Super Director command chain.`
-          );
-        }
-
-        const payload = {
-          directive: 'SUPER_DIRECTOR_INJECTION',
-          content: prompt,
-          priority,
-          issuer: authorizedIdentity.nft_id,
-        };
-
-        const envelope: TNFEnvelope = {
-          id: `sd-prompt-${crypto.randomUUID()}`,
-          type: 'MESSAGE_SEND',
-          source: 'SUPER-DIRECTOR',
-          channel: targetChannel,
-          payload,
-          timestamp: Date.now(),
-        };
-
-        // If we have a signing key, sign the envelope
-        if (authorizedIdentity.signing_private_key_pem) {
-          // Simplification: just hashing for now as per twip-hmac,
-          // but scaffolding is ready for full ed25519 signable conversion.
-          envelope.sig = `nft-authorized:${authorizedIdentity.nft_id}`;
-        }
-
-        await redisClient.publish(redisClient.getIngressChannel(), JSON.stringify(envelope));
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Successfully broadcasted Super Director prompt to ${targetChannel}.\nEnvelope ID: ${envelope.id}`,
-            },
-          ],
-        };
+        // TNF-P0 CONTAINMENT (2026-08-25, incident: MCP Director identity
+        // path). This tool's authorization rested on two caller-controlled
+        // inputs: `invokerAgentId` (a plain string in the same request) and
+        // `authorizedIdentity` (settable via set_director_identity, now
+        // disabled above). The envelope's "signature" was never
+        // cryptographic — `nft-authorized:${nft_id}` is a template literal,
+        // not an Ed25519/HMAC signature, and nothing downstream ever
+        // verified it. Disabled fail-closed pending real verification of
+        // both invoker identity and envelope signature. See D23.
+        throw new Error(
+          'UNAVAILABLE: broadcast_super_director_prompt is disabled. Authorization ' +
+            'here was a caller-supplied invokerAgentId string plus a ' +
+            'non-cryptographic signature template — neither proves the caller is ' +
+            'actually the Sub-Director or Super Director.'
+        );
       }
 
       case 'verify_master_clock_signal': {
@@ -232,7 +207,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           content: [
             {
               type: 'text',
-              text: `Fresh Node Identity Generated:\n${JSON.stringify(bootstrapId, null, 2)}\n\nIMPORTANT: Save these keys. They are required for 'set_director_identity'.`,
+              text: `Fresh Node Identity Generated:\n${JSON.stringify(bootstrapId, null, 2)}\n\nIMPORTANT: Save these keys. 'set_director_identity' is currently disabled pending TNF-P0 containment review (see src/index.ts).`,
             },
           ],
         };

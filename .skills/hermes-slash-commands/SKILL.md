@@ -1,13 +1,20 @@
 ---
 name: hermes-slash-commands
-description: Reference for Hermes Agent CLI subcommands and interactive slash commands. Use this when operating Hermes or managing its background services (gateway, cron, kanban).
+category: tnf-platform
+department: tech
+description:
+  Reference for Hermes Agent CLI subcommands and interactive slash commands. Use
+  this when operating Hermes or managing its background services (gateway, cron,
+  kanban).
 ---
 
 # Hermes Agent Slash Commands
 
-Hermes provides a powerful CLI interface and interactive TUI for agentic operations.
+Hermes provides a powerful CLI interface and interactive TUI for agentic
+operations.
 
 ## CLI Subcommands (Non-Interactive)
+
 - `hermes chat`: Start an interactive chat session.
 - `hermes model`: Select the default model and provider.
 - `hermes fallback`: Manage the fallback provider chain.
@@ -22,6 +29,7 @@ Hermes provides a powerful CLI interface and interactive TUI for agentic operati
 - `hermes logs`: View and filter Hermes log files.
 
 ## Interactive TUI Slash Commands
+
 - `/help`: Displays help for interactive commands.
 - `/clear`: Wipes session history.
 - `/compact`: Summarizes context to save tokens.

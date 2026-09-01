@@ -1,0 +1,166 @@
+{
+  "schema": "tnf.host-prompt-profiles/1.0",
+  "updated_at": "2026-08-30",
+  "purpose": "Map each enlisted agent host to the prompt files it actually injects, and the TNF canonical those files must point at.",
+  "aliases": {
+    "soul.md": "docs/core/SOUL.md",
+    "agent.md": ".agent/agents/<id>.md + docs/core/IDENTITY.md",
+    "brain.md": "docs/core/MEMORY.md + tnf remember / harness memory-layer",
+    "user.md": "docs/core/USER.md",
+    "heartbeat.md": "docs/core/HEARTBEAT.md"
+  },
+  "authority": {
+    "stage_a": "docs/core/FRONTLOAD_MANIFEST.md",
+    "onboard": "pnpm run tnf:onboard",
+    "verify": "node scripts/harness/host-prompt-profiles.cjs --verify",
+    "repair": "node scripts/install-agent-frontload.cjs --repair && node scripts/harness/provision-injection-surfaces.cjs --repair"
+  },
+  "hosts": [
+    {
+      "id": "tnf-repo",
+      "runtime": "TNF monorepo",
+      "scope": "project",
+      "expected_files": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".agent/SYSTEM_PROMPT.md",
+        "docs/core/SOUL.md",
+        "docs/core/IDENTITY.md",
+        "docs/core/USER.md",
+        "docs/core/MEMORY.md",
+        "docs/core/HEARTBEAT.md",
+        "docs/core/TOOLS.md",
+        "docs/core/BOOTSTRAP.md",
+        ".cursor/rules/tnf-harness.mdc"
+      ],
+      "notes": "Canonical content. Host files elsewhere are pointers."
+    },
+    {
+      "id": "hermes",
+      "runtime": "Hermes",
+      "scope": "global",
+      "expected_files": ["~/.hermes/SOUL.md"],
+      "canonical": "docs/core/SOUL.md",
+      "installer_id": "hermes"
+    },
+    {
+      "id": "claude-code",
+      "runtime": "Claude Code",
+      "scope": "global",
+      "expected_files": ["~/.claude/hooks/tnf-frontload.sh", "CLAUDE.md"],
+      "injection": "SessionStart hook runs pnpm run tnf:onboard",
+      "installer_id": "claude.sessionStart"
+    },
+    {
+      "id": "codex",
+      "runtime": "Codex",
+      "scope": "global",
+      "expected_files": ["~/.codex/AGENTS.md"],
+      "canonical": "AGENTS.md + FRONTLOAD_MANIFEST.md",
+      "installer_id": "codex"
+    },
+    {
+      "id": "gemini",
+      "runtime": "Gemini CLI",
+      "scope": "global",
+      "expected_files": ["~/GEMINI.md", "~/.gemini/GEMINI.md"],
+      "installer_id": "gemini-home"
+    },
+    {
+      "id": "cursor",
+      "runtime": "Cursor",
+      "scope": "project",
+      "expected_files": [
+        "AGENTS.md",
+        ".cursor/rules/tnf-harness.mdc",
+        "~/.cursor/AGENTS.md"
+      ],
+      "installer_id": "cursor"
+    },
+    {
+      "id": "opencode",
+      "runtime": "OpenCode",
+      "scope": "global",
+      "expected_files": ["~/.opencode/AGENTS.md"],
+      "installer_id": "opencode"
+    },
+    {
+      "id": "agy",
+      "runtime": "Antigravity CLI",
+      "scope": "global",
+      "expected_files": ["~/.agy/AGENTS.md"],
+      "installer_id": "agy"
+    },
+    {
+      "id": "kilo",
+      "runtime": "Kilo",
+      "scope": "global",
+      "expected_files": [
+        "~/.kilo/AGENTS.md",
+        "~/.kilo/agents/tnf-startup-gate.md"
+      ],
+      "installer_id": "kilo"
+    },
+    {
+      "id": "zcode",
+      "runtime": "ZCode",
+      "scope": "global",
+      "expected_files": ["~/.zcode/AGENTS.md"],
+      "installer_id": "zcode"
+    },
+    {
+      "id": "openclaw",
+      "runtime": "OpenClaw",
+      "scope": "workspace",
+      "expected_files": [
+        "~/.openclaw/workspace/AGENTS.md",
+        "~/.openclaw/workspace/SOUL.md",
+        "~/.openclaw/workspace/IDENTITY.md",
+        "~/.openclaw/workspace/USER.md",
+        "~/.openclaw/workspace/TOOLS.md",
+        "~/.openclaw/workspace/HEARTBEAT.md",
+        "~/.openclaw/workspace/MEMORY.md",
+        "~/.openclaw/workspace/BOOTSTRAP.md"
+      ],
+      "canonical_map": {
+        "AGENTS.md": "docs/core/AGENTS.md",
+        "SOUL.md": "docs/core/SOUL.md",
+        "IDENTITY.md": "docs/core/IDENTITY.md",
+        "USER.md": "docs/core/USER.md",
+        "TOOLS.md": "docs/core/TOOLS.md",
+        "HEARTBEAT.md": "docs/core/HEARTBEAT.md",
+        "MEMORY.md": "docs/core/MEMORY.md",
+        "BOOTSTRAP.md": "docs/core/BOOTSTRAP.md"
+      }
+    },
+    {
+      "id": "command-code",
+      "runtime": "Command Code",
+      "scope": "global",
+      "expected_files": ["~/.command-code/AGENTS.md"],
+      "notes": "Passthrough CLI. Onboard via tnf-cli-agent-onboarding skill."
+    },
+    {
+      "id": "droid",
+      "runtime": "Droid / Factory",
+      "scope": "global",
+      "expected_files": ["~/.factory/AGENTS.md"],
+      "notes": "Passthrough CLI when enlisted."
+    },
+    {
+      "id": "pi",
+      "runtime": "Pi",
+      "scope": "global",
+      "expected_files": ["~/.pi/agent/AGENTS.md"],
+      "canonical": "AGENTS.md + FRONTLOAD_MANIFEST.md",
+      "installer_id": "pi"
+    },
+    {
+      "id": "jules",
+      "runtime": "Jules",
+      "scope": "global",
+      "expected_files": ["~/.jules/AGENTS.md"],
+      "notes": "Directory may exist without a prompt file. Missing file is advisory until Jules is enlisted for a task."
+    }
+  ]
+}

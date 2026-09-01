@@ -1,5 +1,6 @@
 ---
 name: dogfood
+department: tech
 description:
   Systematic exploratory QA testing of web applications — find bugs, capture
   evidence, and generate structured reports

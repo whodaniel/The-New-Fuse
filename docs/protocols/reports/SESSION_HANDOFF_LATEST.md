@@ -1,60 +1,86 @@
 # SESSION_HANDOFF_LATEST
 
-Protocol ACK: `TNF_PROTOCOL_ACK`
-Spec: `tnf/session-handoff/0.2`
-Created At: `2026-08-21T07:07:08.717Z`
-Handoff ID: `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9`
+Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
+`2026-09-01T17:18:19.999Z` Handoff ID: `64bb992e-4379-42e4-ba26-284216403c6b`
 
 ## Scope
+
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `docs/reconciliation-2026-08-21`
-- Head SHA: `9561fa7c1eb605f86d20f87405753d7bc46e43eb`
+- Branch: `fix/api-dev-stale-tsbuildinfo`
+- Head SHA: `34b87570802b19007a52912b074738225f937600`
 - Sensitive Scope: `internal`
 
 ## Classification
-- Work Domain: `corporate`
-- Artifact Destination: `oss_runtime`
-- Data Residency: `product_state`
-- Sensitivity: `internal`
+
+- Work Domain: `unknown`
+- Artifact Destination: `unknown`
+- Data Residency: `unknown`
+- Sensitivity: `unknown`
 
 ## Work Summary
-- Canonical PRs #125-#130 merged with local verification.
-- Open runtime published through The-New-Fuse PR #154; public issue #157 closed.
-- Divergent checkout preserved and classified without mutation; external Actions, Jules cadence, control-plane, extension-contract, and professional-review gates recorded.
+
+- Extended the apps/api stale-tsbuildinfo fix (34b875708) to the two sibling
+  Nest packages that share the same deleteOutDir:true + incremental-compile
+  combination and were exposed to the identical latent bug: packages/api
+  (composite:true via tsconfig.base.json) and apps/api-gateway (incremental:true
+  explicit). Cleared tsconfig.tsbuildinfo before nest start in each package's
+  dev/start:dev/start:debug scripts, mirroring apps/api's fix. Checked
+  apps/backend: not affected, its tsconfig.json does not extend the base config
+  and sets neither incremental nor composite, so no tsbuildinfo is ever
+  produced.
+- Also fixed an unrelated real bug found while re-verifying:
+  packages/web-scraping/tsconfig.json's exclude array contained a bogus "\*\*\*"
+  glob that matches every path, so tsc silently compiled zero files (exit 0,
+  empty dist/) even though apps/api depends on this package at runtime. Removed
+  it.
+- Live re-verification of the prior handoff's next_action: built the
+  previously-unbuilt workspace deps apps/api needed (n8n-workflows,
+  coding-agent-delegation, web-scraping), then confirmed against the actual
+  running services in the main checkout (not this worktree) -- apps/api on :3002
+  (up since 9:00AM) and apps/api-gateway on :3001 -- that GET /api/agents now
+  returns a clean 401 Unauthorized with full security/rate-limit headers through
+  both the direct port and the gateway. No more 502.
 
 ## Changed Paths
-- README.md
+
+- apps/api-gateway/package.json
+- packages/api/package.json
+- packages/web-scraping/tsconfig.json
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- scripts/protocols/emit-session-handoff.cjs
-- scripts/protocols/validate-turn-zero-authority.cjs
-- scripts/tests/session-handoff-v2.test.cjs
-- scripts/sync-repos-auth.test.cjs
-- scripts/sync-repos.sh
-- docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
+- apps/api/package.json
 
 ## Verification
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
+
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation
-- Owner: `orchestrator`
-- Targets: `orchestrator`, `operator`
-- Priority: `high`
+
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `medium`
 
 ### Resume Checklist
-- Read docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md
-- Verify live canonical main and public publication receipts
-- Keep the protected checkout mutation-prohibited
-- Separate infrastructure failures from executed test failures
+
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
-- After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence.
-- Operator: resolve GitHub Actions account restriction or register a self-hosted runner through an approved credential flow.
-- Review protected checkout candidate lanes individually against current main; do not bulk merge.
-- Continue issues #113 and #114 only after their canonical ownership decisions.
+
+- Provision a real apps/api/.env from .env.example (JWT_SECRET, A2A_SECRET_KEY,
+  DATABASE_URL, etc.) so a fresh nest start --watch boots cleanly in a worktree
+  without ad-hoc env overrides; only .env.\*.example templates exist in this
+  checkout.
+- Consider fixing the pre-existing (unrelated) TS strictness errors surfaced
+  while force-rebuilding packages/web-scraping (WebScrapingService.ts:107,
+  ProxyService.ts:97/109 -- axios header value typed as string|number|... used
+  where string is required); build currently succeeds because noEmitOnError is
+  not set, but the errors are real.

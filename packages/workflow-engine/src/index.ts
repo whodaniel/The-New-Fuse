@@ -1,16 +1,44 @@
 /**
  * Unified Workflow Engine - Main Export File
- * 
+ *
  * Consolidates all workflow engine components for The New Fuse Framework
  * Provides a single entry point for all workflow-related functionality
  */
 
 // Core engine components
+export {
+  WorkflowBuilder,
+  type BuilderAction,
+  type BuilderConfig,
+  type BuilderState,
+} from './builder/WorkflowBuilder.js';
 export { UnifiedWorkflowEngine, type WorkflowEngineConfig } from './engine/WorkflowEngine.js';
 export { WorkflowExecutor, type ExecutorConfig } from './executor/WorkflowExecutor.js';
-export { WorkflowBuilder, type BuilderConfig, type BuilderState, type BuilderAction } from './builder/WorkflowBuilder.js';
-export { WorkflowQueue, type StartWorkflowJobData, type ExecuteNodeJobData } from './queue/WorkflowQueue.js';
+export {
+  WorkflowQueue,
+  type ExecuteNodeJobData,
+  type StartWorkflowJobData,
+} from './queue/WorkflowQueue.js';
 export { WorkflowWorker } from './queue/WorkflowWorker.js';
+
+/** Assembly Line Pattern Components */
+export {
+  AssemblyLine,
+  DraftGenerator,
+  SpecificationEngine,
+  VerificationGate,
+  type AssemblyLineResult,
+  type DraftGeneratorInput,
+  type DraftOutput,
+  type GateLogger,
+  type SpecificationEngineInput,
+  type TaskSpecification,
+  type VerificationError,
+  type VerificationGateInput,
+  type VerificationResult,
+  type VerificationWarning,
+  type WorkflowStructureValidator,
+} from './assembly/index.js';
 
 // Repository and validation
 export { WorkflowRepository, type RepositoryConfig } from './repository/WorkflowRepository.js';
@@ -20,12 +48,11 @@ export { WorkflowValidator, type ValidatorConfig } from './validator/WorkflowVal
 export * from './types/WorkflowTypes.js';
 
 // Utilities
-export { getErrorMessage, isError, createExecutionError } from './utils/errorUtils.js';
 export {
-  ProgressiveDisclosureSequencer,
-  ProgressiveSelfPrompter,
   DEFAULT_PROGRESSIVE_DISCLOSURE_STEPS,
   DEFAULT_PROGRESSIVE_PROMPT_STEPS,
+  ProgressiveDisclosureSequencer,
+  ProgressiveSelfPrompter,
   type ProgressiveDisclosureSequencerOptions,
   type ProgressiveDisclosureSequencerStatus,
   type ProgressiveDisclosureStep,
@@ -34,43 +61,44 @@ export {
   type ProgressiveSelfPrompterOptions,
   type ProgressiveSelfPrompterStatus,
 } from './sequencer/ProgressiveDisclosureSequencer.js';
+export { createExecutionError, getErrorMessage, isError } from './utils/errorUtils.js';
 
 // Utility functions
 export {
-  isAgentTaskNode,
   isAgentHandoffNode,
+  isAgentTaskNode,
   isConditionNode,
-  isLLMPromptNode
+  isLLMPromptNode,
 } from './types/WorkflowTypes.js';
 
 /**
  * Workflow Engine Factory
- * 
+ *
  * Provides a convenient way to create and configure the workflow engine
  */
 // import { DrizzleClient } from '@drizzle/client';
 import { Logger } from '@the-new-fuse/relay-core';
 
 // Import actual types from relay-core
-import { MasterAgentRegistry, HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
-import { UnifiedWorkflowEngine } from './engine/WorkflowEngine.js';
-import { WorkflowRepository } from './repository/WorkflowRepository.js';
-import { WorkflowValidator } from './validator/WorkflowValidator.js';
+import { HeartbeatMonitoringService, MasterAgentRegistry } from '@the-new-fuse/relay-core';
 import { WorkflowBuilder } from './builder/WorkflowBuilder.js';
+import { UnifiedWorkflowEngine } from './engine/WorkflowEngine.js';
 import { WorkflowExecutor } from './executor/WorkflowExecutor.js';
 import { WorkflowQueue } from './queue/WorkflowQueue.js';
 import { WorkflowWorker } from './queue/WorkflowWorker.js';
+import { WorkflowRepository } from './repository/WorkflowRepository.js';
+import { WorkflowValidator } from './validator/WorkflowValidator.js';
 
 export interface WorkflowEngineFactoryConfig {
   // Database configuration
   drizzle: any; // DrizzleClient;
   redisConnection?: any; // Redis connection options
-  
+
   // Core services
   agentRegistry: MasterAgentRegistry;
   heartbeatService: HeartbeatMonitoringService;
   logger: Logger;
-  
+
   // Engine configuration
   engine: {
     maxConcurrentExecutions: number;
@@ -81,7 +109,7 @@ export interface WorkflowEngineFactoryConfig {
     relayIntegration: boolean;
     debug: boolean;
   };
-  
+
   // Repository configuration
   repository: {
     enableCaching: boolean;
@@ -89,7 +117,7 @@ export interface WorkflowEngineFactoryConfig {
     maxCacheSize: number;
     enableMetrics: boolean;
   };
-  
+
   // Validator configuration
   validator: {
     strictMode: boolean;
@@ -101,7 +129,7 @@ export interface WorkflowEngineFactoryConfig {
     requireEndNode: boolean;
     enablePerformanceValidation: boolean;
   };
-  
+
   // Builder configuration
   builder: {
     enableAutoValidation: boolean;
@@ -112,7 +140,7 @@ export interface WorkflowEngineFactoryConfig {
     enableVersioning: boolean;
     debug: boolean;
   };
-  
+
   // Executor configuration
   executor: {
     maxParallelNodes: number;
@@ -126,35 +154,21 @@ export interface WorkflowEngineFactoryConfig {
 export class WorkflowEngineFactory {
   static create(config: WorkflowEngineFactoryConfig) {
     // Create repository
-    const repository = new WorkflowRepository(
-      config.drizzle,
-      config.repository,
-      config.logger
-    );
-    
+    const repository = new WorkflowRepository(config.drizzle, config.repository, config.logger);
+
     // Create validator
-    const validator = new WorkflowValidator(
-      config.validator,
-      config.logger
-    );
-    
+    const validator = new WorkflowValidator(config.validator, config.logger);
+
     // Create builder
-    const builder = new WorkflowBuilder(
-      config.builder,
-      config.logger
-    );
-    
+    const builder = new WorkflowBuilder(config.builder, config.logger);
+
     // Create executor
-    const executor = new WorkflowExecutor(
-      config.executor,
-      config.agentRegistry,
-      config.logger
-    );
-    
+    const executor = new WorkflowExecutor(config.executor, config.agentRegistry, config.logger);
+
     // Create workflow queue if redis connection is provided
     let workflowQueue: WorkflowQueue | undefined;
     if (config.redisConnection) {
-        workflowQueue = new WorkflowQueue(config.logger, config.redisConnection);
+      workflowQueue = new WorkflowQueue(config.logger, config.redisConnection);
     }
 
     // Create main engine
@@ -170,15 +184,15 @@ export class WorkflowEngineFactory {
     // Create workflow worker if queue is available
     let workflowWorker: WorkflowWorker | undefined;
     if (workflowQueue && config.redisConnection) {
-        workflowWorker = new WorkflowWorker(
-            config.logger,
-            config.redisConnection,
-            engine,
-            workflowQueue
-        );
-        // Note: Caller is responsible for gracefully closing the worker
+      workflowWorker = new WorkflowWorker(
+        config.logger,
+        config.redisConnection,
+        engine,
+        workflowQueue
+      );
+      // Note: Caller is responsible for gracefully closing the worker
     }
-    
+
     return {
       engine,
       executor,
@@ -186,10 +200,10 @@ export class WorkflowEngineFactory {
       repository,
       validator,
       workflowQueue,
-      workflowWorker
+      workflowWorker,
     };
   }
-  
+
   static createDefault(
     drizzle: any, // DrizzleClient,
     agentRegistry: MasterAgentRegistry,
@@ -210,13 +224,13 @@ export class WorkflowEngineFactory {
         enableAgentCoordination: true,
         enableStatePreservation: true,
         relayIntegration: true,
-        debug: false
+        debug: false,
       },
       repository: {
         enableCaching: true,
         cacheTimeoutMs: 300000, // 5 minutes
         maxCacheSize: 1000,
-        enableMetrics: true
+        enableMetrics: true,
       },
       validator: {
         strictMode: false,
@@ -226,7 +240,7 @@ export class WorkflowEngineFactory {
         allowCircularReferences: false,
         requireStartNode: true,
         requireEndNode: true,
-        enablePerformanceValidation: true
+        enablePerformanceValidation: true,
       },
       builder: {
         enableAutoValidation: true,
@@ -235,24 +249,24 @@ export class WorkflowEngineFactory {
         maxNodes: 100,
         maxConnections: 200,
         enableVersioning: true,
-        debug: false
+        debug: false,
       },
       executor: {
         maxParallelNodes: 5,
         nodeTimeoutMs: 60000, // 1 minute
         retryDelayMs: 5000, // 5 seconds
         maxRetries: 3,
-        enableDebugLogging: false
-      }
+        enableDebugLogging: false,
+      },
     };
-    
+
     return this.create(config);
   }
 }
 
 /**
  * Workflow Engine Manager
- * 
+ *
  * Provides high-level workflow management operations
  */
 export class WorkflowEngineManager {
@@ -282,13 +296,13 @@ export class WorkflowEngineManager {
   async createWorkflow(workflowData: any): Promise<{ workflow: any; validation: any }> {
     // Build workflow
     const workflow = this.builder.createWorkflow(workflowData.name, workflowData.description);
-    
+
     // Add nodes and connections based on workflowData
     // (Implementation would depend on the specific input format)
-    
+
     // Validate workflow
     const validation = await this.validator.validateWorkflow(workflow);
-    
+
     if (validation.valid) {
       // Save to repository
       const savedWorkflow = await this.repository.createWorkflow(workflow);
@@ -313,7 +327,9 @@ export class WorkflowEngineManager {
     // Validate before execution
     const validation = await this.validator.validateWorkflow(workflow);
     if (!validation.valid) {
-      throw new Error(`Workflow validation failed: ${validation.errors.map((e: any) => e.message).join(', ')}`);
+      throw new Error(
+        `Workflow validation failed: ${validation.errors.map((e: any) => e.message).join(', ')}`
+      );
     }
 
     // Execute workflow
@@ -324,21 +340,17 @@ export class WorkflowEngineManager {
    * Get workflow health status
    */
   async getHealthStatus(): Promise<any> {
-    const [
-      dbHealth,
-      engineMetrics,
-      cacheStats
-    ] = await Promise.all([
+    const [dbHealth, engineMetrics, cacheStats] = await Promise.all([
       this.repository.healthCheck(),
       this.engine.getMetrics(),
-      this.repository.getCacheStats()
+      this.repository.getCacheStats(),
     ]);
 
     return {
       database: { healthy: dbHealth },
       engine: engineMetrics,
       cache: cacheStats,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -347,12 +359,12 @@ export class WorkflowEngineManager {
    */
   async performMaintenance(): Promise<any> {
     const cleanupResults = await this.repository.cleanupOldExecutions(30); // 30 days retention
-    
+
     this.logger.info(`🧹 Maintenance completed: cleaned up ${cleanupResults} old executions`);
-    
+
     return {
       cleanedExecutions: cleanupResults,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }

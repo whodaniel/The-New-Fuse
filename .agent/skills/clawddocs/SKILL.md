@@ -1,13 +1,20 @@
 ---
 name: clawddocs
-description: Clawdbot documentation expert with decision tree navigation, search scripts, doc fetching, version tracking, and config snippets for all Clawdbot features
+department: tech
+description:
+  Clawdbot documentation expert with decision tree navigation, search scripts,
+  doc fetching, version tracking, and config snippets for all Clawdbot features
 ---
 
 # Clawdbot Documentation Expert
 
-**Capability Summary:** Clawdbot documentation expert skill with decision tree navigation, search scripts (sitemap, keyword, full-text index via qmd), doc fetching, version tracking, and config snippets for all Clawdbot features (providers, gateway, automation, platforms, tools).
+**Capability Summary:** Clawdbot documentation expert skill with decision tree
+navigation, search scripts (sitemap, keyword, full-text index via qmd), doc
+fetching, version tracking, and config snippets for all Clawdbot features
+(providers, gateway, automation, platforms, tools).
 
-You are an expert on Clawdbot documentation. Use this skill to help users navigate, understand, and configure Clawdbot.
+You are an expert on Clawdbot documentation. Use this skill to help users
+navigate, understand, and configure Clawdbot.
 
 ## Quick Start
 
@@ -46,6 +53,7 @@ You are an expert on Clawdbot documentation. Use this skill to help users naviga
 All scripts are in `./scripts/`:
 
 ### Core
+
 ```bash
 ./scripts/sitemap.sh # Show all docs by category
 ./scripts/cache.sh status # Check cache status
@@ -53,6 +61,7 @@ All scripts are in `./scripts/`:
 ```
 
 ### Search & Discovery
+
 ```bash
 ./scripts/search.sh discord # Find docs by keyword
 ./scripts/recent.sh 7 # Docs updated in last N days
@@ -60,6 +69,7 @@ All scripts are in `./scripts/`:
 ```
 
 ### Full-Text Index (requires qmd)
+
 ```bash
 ./scripts/build-index.sh fetch # Download all docs
 ./scripts/build-index.sh build # Build search index
@@ -67,6 +77,7 @@ All scripts are in `./scripts/`:
 ```
 
 ### Version Tracking
+
 ```bash
 ./scripts/track-changes.sh snapshot # Save current state
 ./scripts/track-changes.sh list # Show snapshots
@@ -76,44 +87,57 @@ All scripts are in `./scripts/`:
 ## Documentation Categories
 
 ### 🚀 Getting Started (`/start/`)
+
 First-time setup, onboarding, FAQ, wizard
 
 ### 🔧 Gateway & Operations (`/gateway/`)
+
 Configuration, security, health, logging, tailscale, troubleshooting
 
 ### 💬 Providers (`/providers/`)
+
 Discord, Telegram, WhatsApp, Slack, Signal, iMessage, MS Teams
 
 ### 🧠 Core Concepts (`/concepts/`)
+
 Agent, sessions, messages, models, queues, streaming, system-prompt
 
 ### 🛠️ Tools (`/tools/`)
+
 Bash, browser, skills, reactions, subagents, thinking
 
 ### ⚡ Automation (`/automation/`)
+
 Cron jobs, webhooks, polling, Gmail pub/sub
 
 ### 💻 CLI (`/cli/`)
+
 Gateway, message, sandbox, update commands
 
 ### 📱 Platforms (`/platforms/`)
+
 macOS, Linux, Windows, iOS, Android, Hetzner
 
 ### 📡 Nodes (`/nodes/`)
+
 Camera, audio, images, location, voice
 
 ### 🌐 Web (`/web/`)
+
 Webchat, dashboard, control UI
 
 ### 📦 Install (`/install/`)
+
 Docker, Ansible, Bun, Nix, updating
 
 ### 📚 Reference (`/reference/`)
+
 Templates, RPC, device models
 
 ## Config Snippets
 
 See `./snippets/common-configs.md` for ready-to-use configuration patterns:
+
 - Provider setup (Discord, Telegram, WhatsApp, etc.)
 - Gateway configuration
 - Agent defaults
@@ -142,9 +166,11 @@ See `./snippets/common-configs.md` for ready-to-use configuration patterns:
 **User:** "How do I make my bot only respond when mentioned in Discord?"
 
 **You:**
+
 1. Fetch `providers/discord` doc
 2. Find the `requireMention` setting
 3. Provide the config snippet:
+
 ```json
 {
   "discord": {
@@ -156,11 +182,13 @@ See `./snippets/common-configs.md` for ready-to-use configuration patterns:
   }
 }
 ```
+
 4. Link: https://docs.clawd.bot/providers/discord
 
 **User:** "What's new in the docs?"
 
 **You:**
+
 1. Run `./scripts/recent.sh 7`
 2. Summarize recently updated pages
 3. Offer to dive into any specific updates

@@ -11,6 +11,11 @@ Auditor (Traversal: INFRA-002)
    (Regex/Python) over expensive cloud reasoning. (Artifact #46).
 3. **The Radical Transparency Axiom:** Every agent thought-stream and tool-call
    must be recorded in a persistent JSON-RPC log. (Artifact #202, #608).
+4. **The Active Follow-Through Mandate:** Information artifacts must never be
+   considered static unless formally archived. They must be integrated into
+   regular actionable processes that are tracked, monitored, and regularly
+   revisited. The processes managing these artifacts must themselves be
+   routinely discovered, audited, and refined by the swarm.
 
 ---
 

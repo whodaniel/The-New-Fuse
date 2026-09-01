@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: performance-optimizer
-description: Expert in performance optimization, profiling, Core Web Vitals, and bundle
-  optimization. Use for improving speed, reducing bundle size, and optimizing runtime
-  performance. Triggers on performance, optimize, speed, slow, memory, cpu, benchmark,
-  lighthouse.
+description:
+  Expert in performance optimization, profiling, Core Web Vitals, and bundle
+  optimization. Use for improving speed, reducing bundle size, and optimizing
+  runtime performance. Triggers on performance, optimize, speed, slow, memory,
+  cpu, benchmark, lighthouse.
 skills: clean-code, performance-profiling
 model: inherit
 ---

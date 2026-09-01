@@ -163,13 +163,19 @@ for (const rel of runtimeInstructionFiles) {
   }
 }
 
-const requiredPrompt =
+const { CANONICAL_RAW_AGENT_PROMPT } = require('../lib/tnf-canonical-onboarding.cjs');
+const legacyPrompt =
   'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md.';
 for (const rel of ['.agent/SYSTEM_PROMPT.md', '.agent/context/agent-onboarding.md', '.agent/workflows/frontload.md', 'scripts/tnf-onboard.cjs']) {
   const content = read(rel);
-  if (!content.includes(requiredPrompt)) {
+  const hasLegacy = content.includes(legacyPrompt);
+  const hasCanonicalPrompt = content.includes(CANONICAL_RAW_AGENT_PROMPT);
+  const hasImportedPrompt = content.includes('CANONICAL_RAW_AGENT_PROMPT');
+  const hasManifestOnboard = content.includes('pnpm run tnf:onboard') && (content.includes('FRONTLOAD_MANIFEST') || content.includes('TURN_ZERO_MANDATE'));
+  if (!hasLegacy && !hasCanonicalPrompt && !hasImportedPrompt && !hasManifestOnboard) {
     fail(`${rel} does not expose the repository-relative raw-agent onboarding prompt`);
   }
 }
 
 ok('canonical Turn Zero authority and references are aligned');
+

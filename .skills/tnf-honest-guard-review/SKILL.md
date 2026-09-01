@@ -1,5 +1,7 @@
 ---
 name: tnf-honest-guard-review
+category: tnf-platform
+department: tech
 description:
   Review any check, gate, probe, validator, health monitor, or CI workflow
   before it ships, to ensure it cannot report success it did not achieve. Use

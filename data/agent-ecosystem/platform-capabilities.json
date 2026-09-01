@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-08-20T20:01:00Z",
+  "generatedAt": "2026-08-21T13:35:00Z",
   "defaultStaleAfterDays": 30,
   "principles": [
     "Platform capability is not the same thing as capability enabled for a particular user or workspace.",
@@ -13,26 +13,30 @@
       "id": "openai-codex",
       "provider": "OpenAI",
       "product": "Codex",
-      "category": ["coding-agent", "multi-agent", "automation"],
+      "category": ["coding-agent", "multi-agent", "automation", "knowledge-work"],
       "status": "active",
       "capabilities": [
         "parallel agent threads",
         "worktree-isolated coding work",
         "CLI/web/IDE/app surfaces",
         "skills for reusable workflows",
-        "scheduled/background work",
+        "scheduled/background automations",
         "cloud environments",
         "mobile supervision of active work",
-        "plugin/app-backed workflow capabilities"
+        "plugin-backed workflow capabilities",
+        "MCP and tool connections",
+        "role-specific knowledge-work workflows"
       ],
-      "interoperabilityHooks": ["Git repositories", "skills", "plugins/apps", "CLI", "IDE", "cloud environments"],
-      "instanceStateTNFShouldCapture": ["active projects", "available skills/plugins", "connected apps", "scheduled jobs", "recent task receipts", "repository/worktree scope", "approval/sandbox policy"],
+      "interoperabilityHooks": ["Git repositories", "skills", "plugins/apps", "MCP", "CLI", "IDE", "cloud environments"],
+      "instanceStateTNFShouldCapture": ["active projects", "available skills/plugins", "connected apps", "MCP connections", "scheduled jobs", "recent task receipts", "repository/worktree scope", "approval/sandbox policy"],
       "source": [
-        "https://openai.com/index/introducing-the-codex-app/",
         "https://openai.com/codex/",
-        "https://help.openai.com/en/articles/20001256-plugins-in-codex/"
+        "https://openai.com/index/introducing-the-codex-app/",
+        "https://help.openai.com/en/articles/20001256-plugins-in-codex/",
+        "https://academy.openai.com/public/clubs/builders-etkn1/events/codex-bootcamp-201-team-workflows-a3krsush07"
       ],
-      "verifiedAt": "2026-08-20"
+      "verifiedAt": "2026-08-21",
+      "notes": ["Plugin Directory replaced the prior App Directory on July 9, 2026; plugins can package skills, apps, and app templates while app-level permissions remain authoritative."]
     },
     {
       "id": "openai-chatgpt-work",
@@ -44,12 +48,16 @@
         "long-horizon work across apps and files",
         "multi-step autonomous task completion",
         "document/spreadsheet/slides/web-app artifact production",
-        "Codex-derived execution capabilities"
+        "Codex-derived execution capabilities",
+        "plugin-packaged app and skill workflows"
       ],
-      "interoperabilityHooks": ["connected apps", "files", "Codex technology"],
-      "instanceStateTNFShouldCapture": ["connected apps", "workspace/project context", "active delegated tasks", "completed task receipts", "artifact references", "permissions granted"],
-      "source": ["https://openai.com/index/chatgpt-for-your-most-ambitious-work/"],
-      "verifiedAt": "2026-08-20"
+      "interoperabilityHooks": ["plugins", "connected apps", "files", "Codex technology"],
+      "instanceStateTNFShouldCapture": ["connected apps", "installed plugins", "workspace/project context", "active delegated tasks", "completed task receipts", "artifact references", "permissions granted"],
+      "source": [
+        "https://openai.com/index/chatgpt-for-your-most-ambitious-work/",
+        "https://help.openai.com/en/articles/20001256-plugins-in-codex/"
+      ],
+      "verifiedAt": "2026-08-21"
     },
     {
       "id": "anthropic-claude-cowork",
@@ -61,21 +69,49 @@
         "multi-step work execution beyond chat",
         "connected-tool context and actions",
         "MCP-powered connectors",
-        "desktop-file and knowledge access when granted"
+        "desktop-file and knowledge access when granted",
+        "skills-supported reusable workflows"
       ],
-      "interoperabilityHooks": ["MCP", "connectors", "desktop files", "connected tools"],
-      "instanceStateTNFShouldCapture": ["enabled connectors", "MCP servers", "granted action scopes", "active work", "completed task receipts", "artifact references"],
+      "interoperabilityHooks": ["MCP", "connectors", "skills", "desktop files", "connected tools"],
+      "instanceStateTNFShouldCapture": ["enabled connectors", "MCP servers", "available skills", "granted action scopes", "active work", "completed task receipts", "artifact references"],
       "source": [
         "https://www.anthropic.com/webinars/future-of-ai-at-work-introducing-cowork",
-        "https://support.anthropic.com/en/articles/11817150-connect-your-tools-to-unlock-a-smarter-more-capable-ai-companion"
+        "https://support.anthropic.com/en/articles/11817150-connect-your-tools-to-unlock-a-smarter-more-capable-ai-companion",
+        "https://www.anthropic.com/webinars/claude-for-marketing-ops-and-analytics"
       ],
-      "verifiedAt": "2026-08-20"
+      "verifiedAt": "2026-08-21"
+    },
+    {
+      "id": "anthropic-claude-code-agent-sdk",
+      "provider": "Anthropic",
+      "product": "Claude Code / Claude Agent SDK",
+      "category": ["coding-agent", "agent-sdk", "multi-agent", "background-agent"],
+      "status": "active",
+      "capabilities": [
+        "subagents with separate delegated work",
+        "hooks at agent lifecycle points",
+        "background tasks",
+        "checkpoint and rewind support",
+        "MCP tool integrations",
+        "Agent SDK exposing Claude Code agent infrastructure",
+        "managed tool/file/MCP policies for organizational deployments",
+        "programmatic compliance and usage observability for enterprise deployments"
+      ],
+      "interoperabilityHooks": ["MCP", "Claude Agent SDK", "hooks", "subagents", "CLI", "IDE integrations", "Compliance API"],
+      "instanceStateTNFShouldCapture": ["active session/task receipts", "subagent topology", "configured MCP servers", "hook configuration digest", "permission policy", "checkpoint/artifact references", "repository scope", "usage/spend-cap state where available"],
+      "source": [
+        "https://www.anthropic.com/news/enabling-claude-code-to-work-more-autonomously",
+        "https://www.anthropic.com/webinars/claude-code-advanced-patterns",
+        "https://www.anthropic.com/news/claude-code-on-team-and-enterprise",
+        "https://www.anthropic.com/news/apple-xcode-claude-agent-sdk"
+      ],
+      "verifiedAt": "2026-08-21"
     },
     {
       "id": "google-gemini-spark",
       "provider": "Google",
       "product": "Gemini Spark",
-      "category": ["personal-agent", "workflow-agent", "scheduled-agent"],
+      "category": ["personal-agent", "workflow-agent", "scheduled-agent", "browser-agent"],
       "status": "active",
       "capabilities": [
         "tasks as persistent high-level goals",
@@ -85,16 +121,21 @@
         "reusable skills",
         "Google Workspace actions",
         "custom connected apps through MCP server URLs",
+        "Chrome authenticated web errands with user permission",
+        "background execution even after the client closes",
         "up to 15 concurrent tasks as documented"
       ],
-      "interoperabilityHooks": ["Google Workspace", "skills", "MCP custom connected apps", "Personal Intelligence", "websites/session context"],
-      "instanceStateTNFShouldCapture": ["tasks", "schedules", "skills", "connected apps", "MCP endpoints by identifier only", "recent runs", "run outcomes", "permissions", "usage-limit/deferred state"],
+      "interoperabilityHooks": ["Google Workspace", "skills", "MCP custom connected apps", "Personal Intelligence", "Chrome/session context", "connected third-party apps"],
+      "instanceStateTNFShouldCapture": ["tasks", "schedules", "skills", "connected apps", "MCP endpoints by identifier only", "recent runs", "run outcomes", "permissions", "browser-action receipts", "usage-limit/deferred state"],
       "source": [
         "https://support.google.com/gemini/answer/17094507",
         "https://support.google.com/gemini/answer/17094710",
-        "https://support.google.com/gemini/answer/17171264"
+        "https://support.google.com/gemini/answer/17171264",
+        "https://blog.google/innovation-and-ai/products/gemini-app/gemini-spark-updates-june-2026/",
+        "https://blog.google/innovation-and-ai/products/gemini-app/gemini-spark-updates-july-2026/"
       ],
-      "verifiedAt": "2026-08-20"
+      "verifiedAt": "2026-08-21",
+      "notes": ["Spark is currently limited to personal Google Accounts with qualifying Google AI plans and is unavailable in some regions; Chrome auto-browse initially rolled out in the US."]
     },
     {
       "id": "google-gemini-scheduled-actions",
@@ -105,12 +146,55 @@
       "capabilities": [
         "daily/weekly/monthly recurring actions in Gemini chats",
         "background preparation before delivery",
+        "connected-app-backed scheduled actions",
         "up to 10 active scheduled actions as documented"
       ],
-      "interoperabilityHooks": ["Gemini chat", "location context where relevant"],
+      "interoperabilityHooks": ["Gemini chat", "connected apps", "location context where relevant"],
       "instanceStateTNFShouldCapture": ["scheduled action names", "cadence", "instructions digest", "last run", "next run", "enabled/paused state", "result references"],
       "source": ["https://support.google.com/gemini/answer/16316416"],
-      "verifiedAt": "2026-08-20"
+      "verifiedAt": "2026-08-21",
+      "notes": ["Scheduled actions are distinct from Gemini Spark schedules. Responses may be prepared in advance; they are not appropriate for time-critical monitoring."]
+    },
+    {
+      "id": "google-gemini-managed-agents-api",
+      "provider": "Google",
+      "product": "Managed Agents in Gemini API",
+      "category": ["agent-api", "background-agent", "mcp-client", "developer-platform"],
+      "status": "active",
+      "capabilities": [
+        "background execution for asynchronous agent interactions",
+        "remote MCP server integration",
+        "custom function calling",
+        "credential refresh across interactions"
+      ],
+      "interoperabilityHooks": ["Gemini API", "remote MCP", "custom functions", "provider-managed background tasks"],
+      "instanceStateTNFShouldCapture": ["managed-agent identifier", "task/run identifier", "background status", "MCP server identifiers", "credential-scope metadata without secrets", "usage and cost receipts", "result/artifact references"],
+      "source": ["https://blog.google/innovation-and-ai/technology/developers-tools/expanding-managed-agents-gemini-api/"],
+      "verifiedAt": "2026-08-21"
+    },
+    {
+      "id": "google-agents-cli-adk-a2a",
+      "provider": "Google",
+      "product": "Agents CLI / Agent Development Kit",
+      "category": ["agent-harness", "agent-cli", "multi-agent", "a2a"],
+      "status": "active",
+      "capabilities": [
+        "build/evaluate/deploy lifecycle for ADK agents",
+        "A2A protocol exposed by default by current Python ADK template",
+        "local and deployed agent execution",
+        "session continuity",
+        "skills for coding-agent-driven agent development",
+        "deployment to Agent Runtime, Cloud Run, or GKE",
+        "observability integrations"
+      ],
+      "interoperabilityHooks": ["A2A agent cards", "A2A JSON-RPC", "ADK SSE", "skills", "OpenTelemetry", "Agent Registry"],
+      "instanceStateTNFShouldCapture": ["agent card URL", "protocol mode", "deployment target", "session ID", "artifact references", "evaluation receipts", "trace identifiers", "cost/runtime receipts"],
+      "source": [
+        "https://google.github.io/agents-cli/cli/",
+        "https://google.github.io/agents-cli/guide/templates/",
+        "https://google.github.io/agents-cli/reference/skills/"
+      ],
+      "verifiedAt": "2026-08-21"
     },
     {
       "id": "cursor-agent",
@@ -132,9 +216,40 @@
       "source": [
         "https://docs.cursor.com/background-agent",
         "https://docs.cursor.com/background-agent/api/overview",
-        "https://docs.cursor.com/en/agent/tools"
+        "https://docs.cursor.com/en/agent/tools",
+        "https://docs.cursor.com/account/pricing"
       ],
-      "verifiedAt": "2026-08-20"
+      "verifiedAt": "2026-08-21",
+      "notes": ["Background Agents use model API pricing and require a spend limit; VM compute is documented as potentially separately priced in the future."]
+    },
+    {
+      "id": "github-copilot-agent-platform",
+      "provider": "GitHub",
+      "product": "GitHub Copilot cloud agent / CLI / app / SDK",
+      "category": ["coding-agent", "multi-agent", "agent-sdk", "cloud-agent"],
+      "status": "active",
+      "capabilities": [
+        "repository/org/enterprise custom agents defined as Markdown profiles",
+        "subagent delegation with isolated context windows",
+        "parallel subagent execution",
+        "built-in explore/task/research/code-review/rubber-duck/general-purpose agents in CLI",
+        "MCP server configuration with per-agent tool scoping",
+        "agent skills",
+        "lifecycle hooks",
+        "installable plugins",
+        "programmatic custom-agent selection in CLI",
+        "Copilot SDK custom agents with lifecycle events",
+        "cloud agent execution on GitHub repositories"
+      ],
+      "interoperabilityHooks": ["GitHub issues/PRs", "MCP", "custom agent profiles", "skills", "hooks", "plugins", "Copilot CLI", "Copilot SDK"],
+      "instanceStateTNFShouldCapture": ["active cloud-agent tasks", "agent profile/version SHA", "subagent tree", "repo/branch", "MCP/tool grants", "skill/plugin inventory", "permission decisions", "PR/result references", "usage receipts"],
+      "source": [
+        "https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-custom-agents",
+        "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents",
+        "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+        "https://docs.github.com/en/copilot/how-tos/github-copilot-app/customize-github-copilot-app"
+      ],
+      "verifiedAt": "2026-08-21"
     }
   ]
 }

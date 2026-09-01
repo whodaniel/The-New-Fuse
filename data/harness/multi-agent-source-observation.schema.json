@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/multi-agent-source-observation.schema.json",
+  "title": "TNF Multi-Agent Source Observation",
+  "description": "Proof-bearing observation and governance envelope for a durable source inspected by one or more TNF capability providers.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "source_key",
+    "provider",
+    "provider_object_id",
+    "observed_at",
+    "observer",
+    "authority_status",
+    "freshness_status",
+    "hydration_policy",
+    "sensitivity",
+    "actionability",
+    "evidence"
+  ],
+  "properties": {
+    "version": {
+      "const": "1.0.0"
+    },
+    "source_key": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Stable namespaced source identity, e.g. gdrive:<file-id> or github:<repo>@<commit>:<path>."
+    },
+    "provider": {
+      "type": "string",
+      "enum": ["google_drive", "github", "web", "local", "connector", "other"]
+    },
+    "provider_object_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "observer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider_id", "role"],
+      "properties": {
+        "provider_id": { "type": "string", "minLength": 1 },
+        "session_or_run_id": { "type": ["string", "null"] },
+        "role": {
+          "type": "string",
+          "enum": ["discovery", "governance", "execution", "verification", "human", "mixed"]
+        }
+      }
+    },
+    "title_observed": {
+      "type": ["string", "null"]
+    },
+    "source_uri": {
+      "type": ["string", "null"]
+    },
+    "content_version": {
+      "type": ["string", "null"],
+      "description": "Revision ID, commit SHA, ETag, content hash, or other version receipt where available."
+    },
+    "facets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "value"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["taxonomy", "domain", "tag", "alias", "summary", "relationship", "other"]
+          },
+          "value": { "type": "string", "minLength": 1 },
+          "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "provenance": { "type": ["string", "null"] }
+        }
+      },
+      "default": []
+    },
+    "work_domain": {
+      "type": ["string", "null"],
+      "enum": ["corporate", "agency", "personal", null]
+    },
+    "artifact_destination": {
+      "type": ["string", "null"],
+      "enum": ["oss_runtime", "public_contract", "private_control_plane", "satellite", "external", null]
+    },
+    "residency": {
+      "type": ["string", "null"],
+      "enum": ["product_state", "bounded_working", "external_durable", "secret_machine_local", null]
+    },
+    "sensitivity": {
+      "type": "string",
+      "enum": ["public", "internal", "private", "restricted"]
+    },
+    "authority_status": {
+      "type": "string",
+      "enum": ["canonical_live", "current_candidate", "historical", "superseded", "reference", "unknown"]
+    },
+    "freshness_status": {
+      "type": "string",
+      "enum": ["live_verified", "recent_receipt", "metadata_only", "aging", "stale", "unknown"]
+    },
+    "hydration_policy": {
+      "type": "string",
+      "enum": ["default_allowed", "task_scoped", "task_scoped_until_verified", "operator_scoped", "excluded_by_default", "prohibited"]
+    },
+    "actionability": {
+      "type": "string",
+      "enum": ["informational", "candidate_task", "needs_reconciliation", "ready_for_scoped_action", "operator_gate_required", "blocked"]
+    },
+    "conflict_flags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "REPEATED_ID",
+          "TITLE_DRIFT",
+          "TAXONOMY_DRIFT",
+          "SUMMARY_DRIFT",
+          "AUTHORITY_CONFLICT",
+          "PRIVACY_CONFLICT",
+          "FRESHNESS_CONFLICT",
+          "ACTIONABILITY_CONFLICT",
+          "CONTENT_DUPLICATE"
+        ]
+      },
+      "default": []
+    },
+    "superseded_by": {
+      "type": ["string", "null"],
+      "description": "source_key of the superseding source when authority_status=superseded."
+    },
+    "reconciliation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "canonical_repo": { "type": ["string", "null"] },
+        "canonical_head": { "type": ["string", "null"] },
+        "checked_paths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "result": {
+          "type": ["string", "null"],
+          "enum": ["existing", "renamed", "retired", "partial", "missing", "not_applicable", "unresolved", null]
+        },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "value"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["provider_id", "uri", "revision", "commit", "hash", "ledger_row", "range", "receipt", "other"]
+          },
+          "value": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "notes": {
+      "type": ["string", "null"]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "authority_status": { "const": "superseded" } },
+        "required": ["authority_status"]
+      },
+      "then": {
+        "required": ["superseded_by"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "sensitivity": { "enum": ["private", "restricted"] } },
+        "required": ["sensitivity"]
+      },
+      "then": {
+        "properties": {
+          "hydration_policy": {
+            "enum": ["task_scoped", "operator_scoped", "excluded_by_default", "prohibited"]
+          }
+        }
+      }
+    }
+  ]
+}

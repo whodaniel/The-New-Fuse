@@ -1,5 +1,7 @@
 ---
 name: TNF Health Check
+category: tnf-platform
+department: tech
 description:
   Run comprehensive health checks on all TNF properties, including
   thenewfuse.com, app.thenewfuse.com, extreamix.com, app.extreamix.com,

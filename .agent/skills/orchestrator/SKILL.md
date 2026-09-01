@@ -1,5 +1,7 @@
 ---
 name: orchestrator
+category: tnf-fleet
+department: ops
 description:
   Multi-Agent Orchestration skill for coordinating AI agents across channels,
   managing sessions, distributing tasks, and leveraging distributed compute

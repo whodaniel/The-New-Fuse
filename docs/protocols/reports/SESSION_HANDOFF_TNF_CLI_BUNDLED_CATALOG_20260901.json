@@ -1,0 +1,71 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "7499ae96-ec9d-4b58-b4e8-f14cd2dc8d14",
+  "created_at": "2026-09-01T14:20:29.722Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tnf-cli-live-model-catalog-20260901",
+  "head_sha": "dad6266d023508a2c5da88bdc59aea211cf1c14e",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node", "pnpm", "terminal", "network"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-CLI-LLM-CATALOG"],
+  "work_summary": [
+    "Fixed provider-catalog resolution for source, tsc output, bundled-entry, and split-chunk execution layouts.",
+    "Prevented an installed bundled CLI from silently degrading from the 22-provider catalog and 202-model NVIDIA registry to the 10-provider built-in fallback.",
+    "Added regression coverage for bundled-entry and split-chunk catalog paths and reconciled the current-main command-surface snapshot."
+  ],
+  "changed_paths": [
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_BUNDLED_CATALOG_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_BUNDLED_CATALOG_20260901.md",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "packages/tnf-cli/src/services/provider-config.test.ts",
+    "packages/tnf-cli/src/services/provider-config.ts"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Clean origin/main worktree dependency build, tnf-cli type-check, complete tnf-cli test suite, and 512-path command-surface gate passed. The canonical installed split bundle displayed 22 providers and 202 NVIDIA models; Down Arrow navigation and Escape exit returned code 0; live OpenRouter refresh returned 417 models."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Review the clean three-commit branch against origin/main.",
+      "Let required GitHub checks complete before merging.",
+      "After merge, rebuild the installed CLI and repeat the PATH-resolved selector smoke."
+    ]
+  },
+  "next_actions": [
+    "Publish feat/tnf-cli-live-model-catalog-20260901 and open a pull request against main.",
+    "Do not merge until required review and CI checks pass."
+  ]
+}

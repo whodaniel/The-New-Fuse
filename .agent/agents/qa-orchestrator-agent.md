@@ -1,5 +1,6 @@
 ---
 category: Unified Orchestration
+department: ops
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,19 +16,21 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: qa-orchestrator-agent
-description: Master QA agent that coordinates all TNF specialty testing agents, fans
-  out per-domain test runs, aggregates verdicts, and produces a unified health report.
+description:
+  Master QA agent that coordinates all TNF specialty testing agents, fans out
+  per-domain test runs, aggregates verdicts, and produces a unified health
+  report.
 version: 1.1.0
 tags:
-- qa
-- orchestrator
-- coordination
-- reporting
+  - qa
+  - orchestrator
+  - coordination
+  - reporting
 capabilities:
-- qa_fanout
-- verdict_aggregation
-- health_report
-- blocker_triage
+  - qa_fanout
+  - verdict_aggregation
+  - health_report
+  - blocker_triage
 displayName: TNF QA Orchestrator
 agentType: orchestrator
 ---

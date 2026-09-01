@@ -1,6 +1,12 @@
 ---
 name: jules-followup-ops
-description: Operate and stabilize Jules session follow-up in The-New-Fuse. Use when sessions are stuck in REVIEW or COMPLETED without publish/PR, when you need continuous supervision of Jules follow-up and merges, when cron-based follow-up is failing, or when alert-driven escalation is required for brittle scattered Jules processes.
+department: tech
+description:
+  Operate and stabilize Jules session follow-up in The-New-Fuse. Use when
+  sessions are stuck in REVIEW or COMPLETED without publish/PR, when you need
+  continuous supervision of Jules follow-up and merges, when cron-based
+  follow-up is failing, or when alert-driven escalation is required for brittle
+  scattered Jules processes.
 ---
 
 # Jules Follow-up Ops
@@ -17,6 +23,7 @@ node scripts/jules-pipeline.cjs status
 ```
 
 Confirm:
+
 - Supervisor status is `running`.
 - Heartbeat file is fresh.
 - Session counts (`without_pr`, `without_branch`) are trending down, not up.
@@ -40,7 +47,8 @@ pnpm run jules:supervisor:start
 
 ## Enforce No Manual Frontend Delegation To Jules
 
-Before submitting or following up Jules work, keep tasks limited to logs, tests, and code.
+Before submitting or following up Jules work, keep tasks limited to logs, tests,
+and code.
 
 Use the guard directly when needed:
 
@@ -48,7 +56,8 @@ Use the guard directly when needed:
 bash scripts/jules-task-guard.sh --text "<task prompt>"
 ```
 
-If blocked, reroute the work to a browser-capable path and keep Jules on code-only remediation.
+If blocked, reroute the work to a browser-capable path and keep Jules on
+code-only remediation.
 
 ## Follow-up Actions For Stalled Sessions
 
@@ -86,10 +95,12 @@ Read `references/alerts.md` for payload format and tuning guidance.
 ## Escalation Rule
 
 Escalate when either condition persists for 3+ cycles:
+
 - `without_pr` flat or rising.
 - Repeated publish conflicts on the same sessions.
 
 Escalation output:
+
 - Session IDs.
 - Primary conflict files.
 - Last successful action in the cycle.

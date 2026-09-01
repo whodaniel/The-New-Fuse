@@ -1,5 +1,7 @@
 ---
 name: tnf-artifacts-lifecycle
+category: tnf-platform
+department: tech
 description:
   Codifies the D25 retention policy with three categories (persistent logic /
   transient state / open tasks), hard numeric caps, sweep reports, and

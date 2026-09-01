@@ -33,6 +33,7 @@ const Settings: React.FC = () => {
     { id: 'appearance', title: 'Appearance', Icon: Palette },
     { id: 'ai', title: 'AI Configuration', Icon: Bot },
     { id: 'notifications', title: 'Notifications', Icon: Bell },
+    { id: 'advanced', title: 'Advanced', Icon: ShieldCheck },
     { id: 'about', title: 'About', Icon: Info },
   ];
 
@@ -41,7 +42,6 @@ const Settings: React.FC = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [fallbackProvider, setFallbackProvider] = useState('NVIDIA NIM');
   const [defaultProvider, setDefaultProvider] = useState('NVIDIA NIM');
-  const [showAdvancedTui, setShowAdvancedTui] = useState(false);
   const [integrityStatus, setIntegrityStatus] = useState<string | null>(null);
 
   const handleRediscover = async () => {
@@ -285,45 +285,26 @@ const Settings: React.FC = () => {
                 <span className="slider"></span>
               </label>
             </div>
+          </section>
 
-            <div className="advanced-tui-controls">
-              <button
-                type="button"
-                className="advanced-tui-btn"
-                onClick={() => setShowAdvancedTui(!showAdvancedTui)}
-              >
-                {showAdvancedTui ? '▼' : '▶'} Advanced TUI Precision Controls
-              </button>
-              {showAdvancedTui && (
-                <div className="advanced-tui-panel">
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <label>Terminal Mirror Contrast</label>
-                      <p>Adjust the contrast of the live terminal mirror</p>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      defaultValue="50"
-                      className="range-input"
-                    />
-                  </div>
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <label>Syntax Highlighting Intensity</label>
-                      <p>Enhance the vibrancy of terminal output</p>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      defaultValue="75"
-                      className="range-input"
-                    />
-                  </div>
-                </div>
-              )}
+          {/* Advanced / Experimental Section */}
+          <section id="advanced" className="settings-section">
+            <h2 className="section-title">Advanced / Experimental</h2>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Retro Phosphor TUI Mode (Swarm Terminal)</label>
+                <p>Enhance the vibrancy of terminal output in the Swarm Terminal surface.</p>
+              </div>
+              <input type="range" min="0" max="100" defaultValue="75" className="range-input" />
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Terminal Mirror Contrast</label>
+                <p>Adjust the contrast of the live terminal mirror in Mission Control.</p>
+              </div>
+              <input type="range" min="0" max="100" defaultValue="50" className="range-input" />
             </div>
           </section>
 

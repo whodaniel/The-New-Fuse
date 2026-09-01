@@ -121,6 +121,13 @@ describe('route persistence', () => {
     expect(resolveBootRoute()).toBe('/agents');
   });
 
+  it('preserves an unknown URL hash for the 404 recovery route', () => {
+    vi.stubGlobal('window', {
+      location: { hash: '#/not-a-real-route', search: '' },
+    });
+    expect(resolveBootRoute()).toBe('/not-a-real-route');
+  });
+
   it('uses storage key constant', () => {
     expect(ROUTE_STORAGE_KEY).toBe('tnf.desktop.lastRoute');
   });

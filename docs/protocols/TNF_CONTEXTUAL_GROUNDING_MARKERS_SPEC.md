@@ -29,7 +29,7 @@ goals.
 |                        TNF CONTEXTUAL GROUNDING MARKER TAXONOMY                       |
 +---------------------------------------------------------------------------------------+
 |                                                                                       |
-|  1. [DOMAIN_SCOPE: CORPORATE | AGENCY | PERSONAL]  → Scopes isolation & SLA rules.   |
+|  1. [DOMAIN_SCOPE: CORE | AGENCY | PERSONAL]  → Scopes isolation & SLA rules.   |
 |  2. [TENANT_BOUND: tenantId / orgId / userId]     → Enforces RLS & data boundary.    |
 |  3. [5W1H_MATRIX: WHO | WHAT | WHY | WHEN | WHERE | HOW] → Grounding intent & DAG.    |
 |  4. [TOOL_PATHWAY: CLI / MCP / API / Relays]      → Direct link to executable code.  |
@@ -44,13 +44,13 @@ goals.
 
 ### 1. Domain Scope & Multi-Tenant Boundary Markers
 
-- **Syntax:** `[DOMAIN_SCOPE: CORPORATE | AGENCY | PERSONAL]` and
+- **Syntax:** `[DOMAIN_SCOPE: CORE | AGENCY | PERSONAL]` and
   `[TENANT_BOUND: tenantId]`
 - **Pathway to Grounding:**
   - Placed at the top of protocol files, agent cards, and session context
     headers.
   - Informs the agent of the exact execution domain:
-    - **Corporate:** Enforces framework compliance, core performance, and strict
+    - **Core:** Enforces framework compliance, core performance, and strict
       protocol verification.
     - **Agency / Client:** Enforces client workspace isolation, custom
       SLAs/KPIs, and tenant-scoped credentials.

@@ -1,5 +1,7 @@
 ---
 name: planning-with-files
+category: engineering-practice
+department: tech
 version: '3.0.0-tnf'
 description: |
   Unified Manus-style + BMAD-inspired file-based planning for The New Fuse.

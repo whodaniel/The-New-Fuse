@@ -1,13 +1,25 @@
 ---
 name: tavily
-description: AI-optimized web search via Tavily API. Returns concise, relevant results for AI agents.
+department: tech
+description:
+  AI-optimized web search via Tavily API. Returns concise, relevant results for
+  AI agents.
 homepage: https://tavily.com
-metadata: {"clawdbot":{"emoji":"🔍","requires":{"bins":["node"],"env":["TAVILY_API_KEY"]},"primaryEnv":"TAVILY_API_KEY"}}
+metadata:
+  {
+    'clawdbot':
+      {
+        'emoji': '🔍',
+        'requires': { 'bins': ['node'], 'env': ['TAVILY_API_KEY'] },
+        'primaryEnv': 'TAVILY_API_KEY',
+      },
+  }
 ---
 
 # Tavily Search
 
-AI-optimized web search using Tavily API. Designed for AI agents - returns clean, relevant content.
+AI-optimized web search using Tavily API. Designed for AI agents - returns
+clean, relevant content.
 
 ## Search
 
@@ -32,6 +44,7 @@ node {baseDir}/scripts/extract.mjs "https://example.com/article"
 ```
 
 Notes:
+
 - Needs `TAVILY_API_KEY` from https://tavily.com
 - Tavily is optimized for AI - returns clean, relevant snippets
 - Use `--deep` for complex research questions

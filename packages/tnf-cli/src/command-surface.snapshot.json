@@ -105,6 +105,58 @@
           "commands": []
         },
         {
+          "name": "quotas",
+          "aliases": [],
+          "description": "Show refreshed per-agent usage quotas for delegation",
+          "options": [
+            {
+              "flags": "--capability <cap>",
+              "description": "Required capability hint (repeatable)"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--rank",
+              "description": "Include delegation ranking"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "state",
+          "aliases": [],
+          "description": "Show onboarded agent-state observation snapshot (not authoritative)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--refresh",
+              "description": "Rebuild observation snapshot (requires mutation authority)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "state-history",
+          "aliases": [],
+          "description": "List recent agent-state history snapshots",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max snapshots"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "status",
           "aliases": [],
           "description": "Report this tnf-agent CLI binary: version, branch, wiring, capabilities",
@@ -161,7 +213,7 @@
                 },
                 {
                   "flags": "--targets <list>",
-                  "description": "Comma-separated targets (antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, hermes, kilo, opencode, project, tnf, all)"
+                  "description": "Comma-separated targets (agy, antigravity, browser, claude, gemini, jules, pi, vscode, augment, codex, command-code, cursor, droid, hermes, kilo, opencode, pi, project, tnf, all)"
                 }
               ],
               "commands": []
@@ -261,6 +313,38 @@
           ]
         },
         {
+          "name": "match",
+          "aliases": [],
+          "description": "Capability broker: rank agent specs by requested capabilities, joined with live registry state",
+          "options": [
+            {
+              "flags": "--include-offline",
+              "description": "Keep registered-but-offline candidates (default: dropped)"
+            },
+            {
+              "flags": "--json",
+              "description": "Emit machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max candidates to show"
+            },
+            {
+              "flags": "--platform <platform>",
+              "description": "Restrict to candidates whose live row matches this platform"
+            },
+            {
+              "flags": "--require-capacity",
+              "description": "Only candidates that are live and not busy (declared capacity respected)"
+            },
+            {
+              "flags": "-c, --capabilities <list>",
+              "description": "Comma-separated capability tokens to match"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "orchestrate",
           "aliases": [],
           "description": "Alias for `tnf orchestrate`",
@@ -315,7 +399,7 @@
         {
           "name": "run",
           "aliases": [],
-          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool.",
+          "description": "Run an autonomous agent loop with the canonical TNF built-in toolset. Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_retain, memory_recall, department_route, mcp_list_tools, mcp_call_tool.",
           "options": [
             {
               "flags": "--cwd <path>",
@@ -365,6 +449,30 @@
           "aliases": [],
           "description": "Alias for `tnf send`",
           "options": [
+            {
+              "flags": "--await-ack [seconds]",
+              "description": "Wait for a delivery ack (bus contract v1)"
+            },
+            {
+              "flags": "--force",
+              "description": "Send even when the recipient is unknown"
+            },
+            {
+              "flags": "--idempotency-key <key>",
+              "description": "Dedup key for receiving agents (bus contract v1)"
+            },
+            {
+              "flags": "--json",
+              "description": "Emit the dispatch decision as JSON"
+            },
+            {
+              "flags": "--require-capacity",
+              "description": "Refuse delivery when the target declares itself busy (bus contract v1)"
+            },
+            {
+              "flags": "--require-live",
+              "description": "Refuse delivery when the target is not heartbeating"
+            },
             {
               "flags": "-n, --name <name>",
               "description": "Sender name"
@@ -526,13 +634,13 @@
     {
       "name": "assimilate",
       "aliases": [],
-      "description": "Manage integration and routing with external AI CLIs and SDKs.",
+      "description": "Discover, evaluate, and route external agent capabilities into TNF-native systems.",
       "options": [],
       "commands": [
         {
           "name": "link",
           "aliases": [],
-          "description": "Link a new external agent CLI to the TNF routing table.",
+          "description": "Verify an external CLI against existing TNF provider/host authorities and write a machine-local link receipt.",
           "options": [],
           "commands": []
         },
@@ -551,8 +659,13 @@
         {
           "name": "scan",
           "aliases": [],
-          "description": "Run the Self-Evolution Flywheel to discover & weigh network agent patterns.",
-          "options": [],
+          "description": "Scan current TNF assimilation, provider, skill, and Agent Resource Fabric surfaces without inventing a parallel registry.",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit the composed assimilation surface report as JSON"
+            }
+          ],
           "commands": []
         }
       ]
@@ -1693,6 +1806,100 @@
       ]
     },
     {
+      "name": "department",
+      "aliases": ["dept"],
+      "description": "Route TNF CLI work through operator-facing departments (HR, Marketing, Design, Legal, Tech, …)",
+      "options": [],
+      "commands": [
+        {
+          "name": "apply",
+          "aliases": [],
+          "description": "Add department tags without rewriting existing category values (dry-run default)",
+          "options": [
+            {
+              "flags": "--write",
+              "description": "Write department/category fields (otherwise dry-run)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "list",
+          "aliases": [],
+          "description": "List operator-facing departments and their clusters",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "route",
+          "aliases": [],
+          "description": "Resolve an operator utterance to a department",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "show",
+          "aliases": [],
+          "description": "Show one department card",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "dlq",
+      "aliases": [],
+      "description": "Dead-letter queue for unconfirmed bus frames (bus contract v1)",
+      "options": [],
+      "commands": [
+        {
+          "name": "clear",
+          "aliases": [],
+          "description": "Drop all dead-lettered frames",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "list",
+          "aliases": [],
+          "description": "List dead-lettered frames (newest first)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max entries to show"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "replay",
+          "aliases": [],
+          "description": "Re-publish one dead-lettered frame to its original channel",
+          "options": [],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "doctor",
       "aliases": [],
       "description": "Run TNF diagnostics",
@@ -1731,6 +1938,42 @@
             {
               "flags": "--json",
               "description": "Emit machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "ecosystem",
+      "aliases": [],
+      "description": "Authenticated ecosystem orientation / task-scoped hydration for control surfaces",
+      "options": [],
+      "commands": [
+        {
+          "name": "orient",
+          "aliases": [],
+          "description": "Cheap boot orientation snapshot (providers, health, authority refs, quota summary)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "show",
+          "aliases": [],
+          "description": "Task-scoped ecosystem hydration (lazy; use orient for boot)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--refresh",
+              "description": "Force re-hydrate"
             }
           ],
           "commands": []
@@ -2792,6 +3035,22 @@
           "commands": []
         },
         {
+          "name": "host-profiles",
+          "aliases": [],
+          "description": "Show which prompt files each enlisted host is expected to inject",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "JSON output"
+            },
+            {
+              "flags": "--verify",
+              "description": "Print enlisted/absent table (default)"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "inspect",
           "aliases": [],
           "description": "Inspect harness health: protocol, agents, and live agent loop",
@@ -2881,6 +3140,22 @@
             {
               "flags": "--out <path>",
               "description": "Output .sb path"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "scout-staff",
+          "aliases": [],
+          "description": "Assign due scout tasks to tnf-cli-agent (brief by default)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "JSON output"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max tasks in the brief"
             }
           ],
           "commands": []
@@ -3788,9 +4063,36 @@
     {
       "name": "memory",
       "aliases": [],
-      "description": "Memory provider management",
+      "description": "Memory provider and compaction management",
       "options": [],
       "commands": [
+        {
+          "name": "audit-drift",
+          "aliases": [],
+          "description": "Audit cross-agent memory congruence and verify claim attributions",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "compact",
+          "aliases": [],
+          "description": "Compact, distill, and prune raw multi-agent brain transcripts (Gemini, Claude, Codex)",
+          "options": [
+            {
+              "flags": "--dry-run",
+              "description": "Simulate compaction without writing or deleting files"
+            },
+            {
+              "flags": "--max-age-days <n>",
+              "description": "Age threshold in days for pruning raw logs"
+            },
+            {
+              "flags": "--prune-raw",
+              "description": "Remove raw uncompacted logs older than threshold"
+            }
+          ],
+          "commands": []
+        },
         {
           "name": "list",
           "aliases": [],
@@ -3839,7 +4141,7 @@
     {
       "name": "metaskills",
       "aliases": [],
-      "description": "Meta-skills audit utilities",
+      "description": "Meta-skills audit and governance utilities",
       "options": [],
       "commands": [
         {
@@ -3850,6 +4152,22 @@
             {
               "flags": "--json",
               "description": "Print JSON output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "govern",
+          "aliases": [],
+          "description": "Govern meta-skill completeness and layer authority",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print JSON output"
+            },
+            {
+              "flags": "--strict",
+              "description": "Fail if any governed meta-skill is audit-incomplete"
             }
           ],
           "commands": []
@@ -3881,7 +4199,7 @@
     {
       "name": "models",
       "aliases": [],
-      "description": "List all available models",
+      "description": "List or interactively select dynamically discovered models",
       "options": [
         {
           "flags": "--json",
@@ -3890,6 +4208,10 @@
         {
           "flags": "--refresh",
           "description": "Refresh the models cache"
+        },
+        {
+          "flags": "--select",
+          "description": "Choose provider/model with arrow keys and set it as the default"
         },
         {
           "flags": "--verbose",
@@ -4082,6 +4404,13 @@
       "name": "openclaw",
       "aliases": [],
       "description": "Optional adapter: pass through OpenClaw CLI if that harness is installed",
+      "options": [],
+      "commands": []
+    },
+    {
+      "name": "opencode",
+      "aliases": [],
+      "description": "Pass through any OpenCode CLI command with TNF harness MCP routing",
       "options": [],
       "commands": []
     },
@@ -4342,10 +4671,90 @@
       "options": [],
       "commands": [
         {
+          "name": "disable",
+          "aliases": [],
+          "description": "Disable an installed extension",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "enable",
+          "aliases": [],
+          "description": "Enable an installed extension",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "install",
+          "aliases": [],
+          "description": "Install a validated loadable extension from a local directory or Git URL",
+          "options": [
+            {
+              "flags": "--activate",
+              "description": "Activate after installation"
+            },
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            },
+            {
+              "flags": "--version <version>",
+              "description": "Git tag or branch to clone"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "list",
           "aliases": [],
           "description": "List all installed plugins/skills",
           "options": [],
+          "commands": []
+        },
+        {
+          "name": "remove",
+          "aliases": [],
+          "description": "Remove an installed extension",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Status an installed extension",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "update",
+          "aliases": [],
+          "description": "Update one or all installed loadable extensions from their recorded source",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Print machine-readable output"
+            }
+          ],
           "commands": []
         }
       ]
@@ -4356,6 +4765,98 @@
       "description": "Inspect and manage TNF development ports",
       "options": [],
       "commands": []
+    },
+    {
+      "name": "profile",
+      "aliases": [],
+      "description": "Manage local TNF user profiles and sessions",
+      "options": [],
+      "commands": [
+        {
+          "name": "list",
+          "aliases": ["ls"],
+          "description": "List local TNF profiles",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "login",
+          "aliases": [],
+          "description": "Authenticate a local (or optional cloud) TNF profile session",
+          "options": [
+            {
+              "flags": "--cloud",
+              "description": "Attempt cloud link to app.thenewfuse.com"
+            },
+            {
+              "flags": "--cloud-endpoint <url>",
+              "description": "Cloud endpoint override"
+            },
+            {
+              "flags": "--identity-mode <mode>",
+              "description": "local|cloud|sandbox|custom"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--passphrase <secret>",
+              "description": "Optional local passphrase"
+            },
+            {
+              "flags": "--profile <name>",
+              "description": "Profile name"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "logout",
+          "aliases": [],
+          "description": "End the active profile session",
+          "options": [
+            {
+              "flags": "--profile <name>",
+              "description": "Profile name"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "switch",
+          "aliases": [],
+          "description": "Switch active TNF profile",
+          "options": [
+            {
+              "flags": "--allow-logged-out",
+              "description": "Allow switch without an active session"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "whoami",
+          "aliases": [],
+          "description": "Show identity vs authentication vs capability vs authority distinctions",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
     },
     {
       "name": "project",
@@ -4565,7 +5066,7 @@
     {
       "name": "provider",
       "aliases": [],
-      "description": "Inspect built-in model providers (.pi custom-provider parity; add/remove deferred to Phase-2)",
+      "description": "Inspect canonical and user-configured model providers",
       "options": [],
       "commands": [
         {
@@ -4632,7 +5133,7 @@
         {
           "name": "list",
           "aliases": [],
-          "description": "",
+          "description": "List available context elements",
           "options": [],
           "commands": []
         }
@@ -4645,7 +5146,7 @@
       "options": [
         {
           "flags": "--dacc-role <role>",
-          "description": "DACC-v1 hierarchy position (director, orchestrator, broker, worker, participant)"
+          "description": "DACC-v1 hierarchy position (director, orchestrator, broker, worker, participant, local-subdirector)"
         },
         {
           "flags": "--dacc-role-from-config",
@@ -4721,6 +5222,62 @@
             {
               "flags": "--super-admin-token <token>",
               "description": "Super Admin authentication token (can also be set via TNF_SUPER_ADMIN_INPUT_TOKEN env var)"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "remember",
+      "aliases": [],
+      "description": "Retain or recall operator memory (harness layer + ~/.tnf/memory/notes.jsonl)",
+      "options": [],
+      "commands": [
+        {
+          "name": "recall",
+          "aliases": [],
+          "description": "Recall retained memory matching a query",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max results"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "retain",
+          "aliases": [],
+          "description": "Save a durable fact the operator asked TNF to remember",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--scope <scope>",
+              "description": "global | project | session"
+            },
+            {
+              "flags": "--tags <list>",
+              "description": "Comma-separated tags"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show harness memory status",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
             }
           ],
           "commands": []
@@ -4834,6 +5391,66 @@
         }
       ],
       "commands": []
+    },
+    {
+      "name": "scout",
+      "aliases": [],
+      "description": "Ecosystem scout queue and tnf-cli-agent mission staffing",
+      "options": [],
+      "commands": [
+        {
+          "name": "host-profiles",
+          "aliases": [],
+          "description": "Show which prompt files each enlisted host is expected to inject",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "queue",
+          "aliases": [],
+          "description": "Rebuild the local stale-aware scout queue (no paid inference)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "staff",
+          "aliases": [],
+          "description": "Assign due scout tasks to tnf-cli-agent (brief by default)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--limit <n>",
+              "description": "Max tasks in the brief"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show the current scout mission brief",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
     },
     {
       "name": "scripts",
@@ -5024,12 +5641,24 @@
       "description": "Send a single message (verifies the recipient exists and is heartbeating)",
       "options": [
         {
+          "flags": "--await-ack [seconds]",
+          "description": "Wait for a delivery ack from a live subscriber (bus contract v1). Unconfirmed pure-PUBLISH frames are dead-lettered to tnf:dlq. Optional value = timeout seconds (default 10). OPT-IN: without this flag send stays fire-and-forget."
+        },
+        {
           "flags": "--force",
           "description": "Send even when the recipient is unknown (records the id verbatim)"
         },
         {
+          "flags": "--idempotency-key <key>",
+          "description": "Dedup key: receiving agents skip frames whose key was already processed (24h receipt window)."
+        },
+        {
           "flags": "--json",
           "description": "Emit the dispatch decision as JSON"
+        },
+        {
+          "flags": "--require-capacity",
+          "description": "Refuse to send to an agent that declares itself busy or at max load (bus contract v1). Complements --require-live."
         },
         {
           "flags": "--require-live",
@@ -5634,6 +6263,34 @@
       "description": "Local Subdirector (tnf-cli-agent) control-plane utilities",
       "options": [],
       "commands": [
+        {
+          "name": "autonomy",
+          "aliases": [],
+          "description": "Manage Local Subdirector fleet autonomy",
+          "options": [
+            {
+              "flags": "--enable",
+              "description": "Enable autonomy"
+            },
+            {
+              "flags": "--grant <caps...>",
+              "description": "Grant specific capabilities (or \"all\")"
+            },
+            {
+              "flags": "--pause",
+              "description": "Pause autonomy"
+            },
+            {
+              "flags": "--revoke <caps...>",
+              "description": "Revoke specific capabilities"
+            },
+            {
+              "flags": "--status",
+              "description": "View effective authority status"
+            }
+          ],
+          "commands": []
+        },
         {
           "name": "cycle",
           "aliases": [],

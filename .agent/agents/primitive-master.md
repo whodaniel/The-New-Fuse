@@ -1,5 +1,6 @@
 ---
 category: Library
+department: product
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,11 +16,13 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: primitive-master
-description: Management of "LLM Primitives" and account-tier leverage. Use when you
-  need to coordinate switching between free-tier LLM accounts, manage model harnesses,
+description:
+  Management of "LLM Primitives" and account-tier leverage. Use when you need to
+  coordinate switching between free-tier LLM accounts, manage model harnesses,
   or optimize cost-leverage strategies across providers.
-skills: llm-provider-management, harness-coordination, leverage-optimization, fallback-strategies,
-  status-monitoring
+skills:
+  llm-provider-management, harness-coordination, leverage-optimization,
+  fallback-strategies, status-monitoring
 model: inherit
 ---
 

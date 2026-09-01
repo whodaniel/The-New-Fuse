@@ -89,6 +89,9 @@ export class MonitoringSystem extends EventEmitter implements IMonitoringSystem 
       this.logger.info('Shutting down monitoring system');
 
       if (!this.running) {
+        // Even when the system was never started, components may exist from
+        // lazy getters and own background timers; stop them before returning.
+        await this.stopComponents();
         this.logger.warn('Monitoring system is not running');
         return;
       }
@@ -352,6 +355,16 @@ export class MonitoringSystem extends EventEmitter implements IMonitoringSystem 
 
     if (this.performanceMonitor) {
       stopPromises.push(this.performanceMonitor.stop());
+    }
+
+    // Release background cleanup intervals owned by these monitors.
+    // Idempotent; safe if the monitors were never initialized.
+    if (this.cacheMonitor) {
+      this.cacheMonitor.stop();
+    }
+
+    if (this.connectionPoolMonitor) {
+      this.connectionPoolMonitor.stop();
     }
 
     await Promise.all(stopPromises);

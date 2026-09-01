@@ -6,6 +6,8 @@ assert.ok(names.includes('browser_interact'));
 assert.ok(names.includes('web_fetch'));
 assert.ok(names.includes('mcp_list_tools'));
 assert.ok(names.includes('mcp_call_tool'));
+assert.ok(names.includes('memory_retain'));
+assert.ok(names.includes('department_route'));
 
 const browser = BUILTIN_TOOLS.find((t) => t.name === 'browser_interact');
 assert.ok(browser);

@@ -1,5 +1,6 @@
 ---
 category: Library
+department: product
 domain: content
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: media-evidence-investigator
-description: Investigator focused on screenshots, videos, and other media evidence
-  that captures early experiments, interfaces, or milestone proofs.
+description:
+  Investigator focused on screenshots, videos, and other media evidence that
+  captures early experiments, interfaces, or milestone proofs.
 skills:
-- personal-historical-archaeology
+  - personal-historical-archaeology
 model: inherit
 ---
 

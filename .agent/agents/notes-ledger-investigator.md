@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: ops
 visibility: collective
 dacc_role: worker
@@ -15,10 +16,11 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: notes-ledger-investigator
-description: Investigator focused on Apple Notes, exported notes, TextEdit files,
-  and narrative fragments that anchor personal chronology.
+description:
+  Investigator focused on Apple Notes, exported notes, TextEdit files, and
+  narrative fragments that anchor personal chronology.
 skills:
-- personal-historical-archaeology
+  - personal-historical-archaeology
 model: inherit
 ---
 

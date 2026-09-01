@@ -1,5 +1,7 @@
 ---
 name: tnf-harness-completeness
+category: tnf-platform
+department: tech
 description: >-
   Verify and provision UNU-aligned TNF harness completeness (8 layers, host
   injection proof, permission berm, dynamic memory, trajectories, MCP

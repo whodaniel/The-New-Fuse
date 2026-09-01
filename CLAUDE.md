@@ -1,29 +1,49 @@
-# TNF / Claude project harness pointer
+# TNF / Claude Project Harness Pointer
 
-Canonical authority lives in-repo. Do not treat this file as a fork of Turn
-Zero.
+Canonical TNF authority lives in-repo. This file is a pointer, not a copied Turn
+Zero stack.
 
-## Required at session start
+## Required Session Entry
 
-1. Read `docs/protocols/TURN_ZERO_MANDATE.md`
-2. Read `docs/protocols/HARNESS_CONFIG.md`
-3. Run when orientation needed:
+From the TNF repository root:
 
 ```bash
-node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000
-node scripts/harness/verify-harness-completeness.cjs
+pnpm run tnf:onboard -- --task "<current task if known>"
 ```
 
-## Layers
+`docs/core/FRONTLOAD_MANIFEST.md` is the only Stage A rail inventory.
+`docs/protocols/TURN_ZERO_MANDATE.md` governs lifecycle/write readiness.
+`docs/protocols/TNF_RESOURCE_GOVERNANCE_MANDATE.md` governs CPU/memory/process
+management for any new cron/launchd job — route it through
+`scripts/runtime/tnf-launchd-guard.sh` before wiring it up, or it's unprotected.
 
-| Need                              | Use                                                           |
-| --------------------------------- | ------------------------------------------------------------- |
-| Static curated facts              | `docs/core/MEMORY.md`                                         |
-| Dynamic retain/recall             | `node scripts/harness/memory-layer.cjs`                       |
-| Permissions outside model         | `node scripts/harness/permission-berm.cjs evaluate`           |
-| Trajectories / compaction records | `scripts/harness/trajectory.cjs`, `compaction-record.cjs`     |
-| Persona workspace pack            | `docs/core/{SOUL,IDENTITY,USER,TOOLS,HEARTBEAT,BOOTSTRAP}.md` |
+Do not use `scripts/tnf-onboard.cjs` as the normal entrypoint; it is legacy
+diagnostics only.
 
-Operating loop: **Inspect → Act → Verify.**
+For nontrivial engineering, load
+`.agent/skills/tnf-engineering-context/SKILL.md`. Before overlapping code
+changes, inspect current branches/PRs/handoffs and respect active
+package/workstream ownership.
 
-See also `docs/claude.md` for broader project conventions.
+**This is a shared checkout other agent processes also write to.**
+`docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md` governs which
+workspace a task belongs in — it exists because a concurrent agent's
+branch-maintenance operation has silently discarded another agent's uncommitted
+work here twice (2026-08-09, 2026-08-27). Before any
+branch-maintenance/history-rewrite/release-build/large-refactor work — anything
+that moves HEAD or is broad/risky — run
+`node scripts/harness/resolve-workspace-tier.cjs --describe "<task>"` and follow
+its guidance (worktree via `EnterWorktree`, or a separate clone). It is advisory
+only; nothing currently blocks a forced checkout after the fact, so treat
+"uncommitted work is unprotected work" (R3) as literal and commit at every stage
+boundary regardless of tier.
+
+After context compaction/provider substitution/repo movement/rail-hash change,
+rerun onboarding.
+
+Operating discipline: **Inspect → Act → Verify**.
+
+Named operator departments and the remember write-path:
+`docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md`.
+
+See `docs/claude.md` for broader project conventions.

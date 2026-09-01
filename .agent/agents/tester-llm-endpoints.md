@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,12 +16,13 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: LLM Endpoint Tester Agent
-description: Continuous automated functional testing of all discovered LLM API endpoints
+description:
+  Continuous automated functional testing of all discovered LLM API endpoints
 tags:
-- tester
-- llm
-- validation
-- fleet
+  - tester
+  - llm
+  - validation
+  - fleet
 schedule: every 11 minutes
 supervisor: true
 depends_on: scout-llm-discovery

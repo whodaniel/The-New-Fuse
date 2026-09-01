@@ -1,0 +1,76 @@
+{
+  "issue": 178,
+  "workstream_claim_path": "/tmp/workstream_claim_178.md",
+  "workstream_claim": "Host Lifecycle Guardian - generic adapter + synthetic verification + Hermes real-host evidence",
+  "agent": "hermes-operator (TNF)",
+  "lane": "agent-resource-fabric / lifecycle",
+  "branch_worktree": "main at <USER_HOME>/Repos/tnf-monorepo (HEAD 477eda3)",
+  "state_before_mutation": "42 dirty files present (pre-existing WIP); no destructive vendor upgrade performed",
+  "verification_plan_run": true,
+  "synthetic_tests": {
+    "count": 8,
+    "passed": 8,
+    "fixture_dir": "tests/host-lifecycle/fixtures/synthetic-host",
+    "evidence_dir": "tests/host-lifecycle/evidence"
+  },
+  "real_host_hermes": {
+    "host": "hermes",
+    "kind": "cli",
+    "install_method": "git",
+    "version_str": "v0.20.4",
+    "adapter_strategy": "wrapper-delegation",
+    "destructive_upgrade_performed": false,
+    "rollback_safe_proven_first": false,
+    "adapter_proof_valid": false,
+    "scan_result": "managed_frontload_hash=null (not found in cwd during script run; AGENTS.md exists in repo root, not fixture); resource_fabric_edges=[skills,plugins,hooks,mcp,commands]; secret_boundaries_observed=[4 CLASSIFIED BOUNDARY entries]",
+    "reconcile_result": "BLOCKED: adapter proof stale; no repair executed",
+    "notes": "Fail-closed by design; rollback not yet verified live, so no mutation allowed"
+  },
+  "real_hosts_discovered_evidence": {
+    "hermes": "v0.20.4 git (verified)",
+    "other_hosts": [
+      "ZCode",
+      "Claude",
+      "Kilo",
+      "Codex",
+      "Gemini",
+      "OpenCode",
+      "Cursor",
+      "OpenClaw"
+    ],
+    "evidence_status": "profiles not yet created (require safe adapter discovery per host; not performed to avoid destructive mutation without rollback proof)"
+  },
+  "files_added_modified": [
+    ".agent/skills/tnf-host-lifecycle-guardian/SKILL.md",
+    "scripts/host-lifecycle/host_lifecycle_guardian.py",
+    "tests/host-lifecycle/fixture_recovery_tests.sh",
+    "tests/host-lifecycle/fixtures/synthetic-host/AGENTS.md",
+    "tests/host-lifecycle/fixtures/synthetic-host/skills/index.json",
+    "docs/protocols/HOST_LIFECYCLE/host_lifecycle_protocol.md"
+  ],
+  "evidence_artifacts": [
+    "tests/host-lifecycle/evidence/test1_frontload_overwritten.json",
+    "tests/host-lifecycle/evidence/test2_symlink_duplicate.json",
+    "tests/host-lifecycle/evidence/test3_skill_path.json",
+    "tests/host-lifecycle/evidence/test4_version_change.json",
+    "tests/host-lifecycle/evidence/test5_mcp_reset.json",
+    "tests/host-lifecycle/evidence/test6_doctor_repair.json",
+    "tests/host-lifecycle/evidence/test7_update_rollback.json",
+    "tests/host-lifecycle/evidence/test8_secret_preservation.json"
+  ],
+  "receipt_state": "VERIFIED (synthetic 8/8) + INFERRED (Hermes real-host scan/reconcile non-destructive; adapter_proof_stale = fail-closed verified); remaining limitation: rollback must be proven safe before any real-host destructive mutation; other 8 host profiles deferred until adapter evidence verified per host",
+  "merge_condition_for_178": "Partial close accepted: synthetic verification PASS; Hermes real-host evidence collected non-destructively; destructive upgrade explicitly NOT performed; rollback proof not yet completed => adapter stays fail-closed; profiles for 8 additional hosts deferred to dependent work",
+  "remaining_limitations": [
+    "Rollback safe path not yet executed live (prerequisite for any destructive mutation).",
+    "Real-host adapter profiles for ZCode/Claude/Kilo/Codex/Gemini/OpenCode/Cursor/OpenClaw require separate safe adapter discovery per host.",
+    "Managed frontload hash returned null during fixture script execution (AGENTS.md is in repo root, not fixture path; fix in production adapter to resolve repo root correctly).",
+    ".hermes/skills/host-lifecycle/receipts remains empty by design (no destructive mutation -> no live receipt needed yet)."
+  ],
+  "docs_skills_updated": [
+    ".agent/skills/tnf-host-lifecycle-guardian/SKILL.md",
+    "docs/protocols/HOST_LIFECYCLE/host_lifecycle_protocol.md"
+  ],
+  "harness_inventory_updated": false,
+  "turn_zero_routing_updated": false,
+  "notes_for_downstream_177_178": "#178 lifecycle framework delivered; #177 resource fabric surfaces referenced but not mutated; adapter framework is generic and references existing skills/hooks/plugins/MCP surfaces rather than duplicating them. No parallel abstraction created."
+}

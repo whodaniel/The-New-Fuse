@@ -1,5 +1,7 @@
 ---
 name: TNF Full Fleet Activation
+category: tnf-platform
+department: tech
 description:
   Standard operating procedure to spin up complete TNF agent testing fleet for
   full site validation
@@ -16,7 +18,7 @@ branch.
 
 ### Step 1: Pre-Flight
 
-1. Ensure working directory is `/Users/danielgoldberg` (TNF root)
+1. Ensure working directory is `<USER_HOME>` (TNF root)
 2. Verify `.tnf/bin/` directory exists and is populated
 3. Clear any stale running agents first:
 

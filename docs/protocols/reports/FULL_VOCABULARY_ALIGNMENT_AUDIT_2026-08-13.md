@@ -332,3 +332,7 @@ others are defensive/normalizer-resolved or well-documented.
 defensively normalized (GAP 2, 3), documented in canonical surfaces (GAP 4, 6,
 7, 8), versioned (GAP 5), or are non-drift between distinct axes (GAP 1). GAP 11
 (test-sync.ts) is a stale audit reference; no source file exists.
+
+1. **Gap Area**: Agent lifecycle management
+   - **Location**: Agent registry / health check system
+   - **Drift Risk**: Stale agents persist indefinitely without automatic deregistration - Old Broker, Old Director, Old Project Planner, Old Hermes Infra, Old Sub-Director, Gemini wrapper, News-Scout, and 5 onboarding agents all stale/offline for 20min-3.5hrs but still registered

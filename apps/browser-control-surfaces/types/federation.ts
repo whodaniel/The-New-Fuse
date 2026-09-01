@@ -9,6 +9,36 @@ export interface Channel {
   updatedAt?: string;
   messageCount?: number;
   unreadCount?: number;
+  members?: Set<string>;
+}
+
+/** Channel shape emitted by useTnfFederation (relay-core CHANNEL_LIST payloads) */
+export interface TnfChannel {
+  id: string;
+  name: string;
+  description?: string;
+  memberCount?: number;
+}
+
+/** Message shape buffered by useTnfFederation (relay-core CHANNEL_MESSAGE payloads) */
+export interface TnfChannelMessage {
+  id: string;
+  channelId: string;
+  senderId: string;
+  senderName?: string;
+  content: string;
+  timestamp: number;
+}
+
+/** Agent shape used by UI components (subset of relay AGENT_LIST entries) */
+export interface TnfAgent {
+  id?: string;
+  agentId?: string;
+  name?: string;
+  platform?: string;
+  status?: string;
+  capabilities?: string[];
+  [key: string]: unknown;
 }
 
 export interface Agent {

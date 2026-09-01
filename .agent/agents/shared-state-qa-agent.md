@@ -1,5 +1,6 @@
 ---
 category: Library
+department: product
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,20 +16,21 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: shared-state-qa-agent
-description: Specialized QA agent that tests the TNF shared-state layer — distributed
+description:
+  Specialized QA agent that tests the TNF shared-state layer — distributed
   key/value consistency, Redis-backed state, and cloudflare-sharedstate sync.
 version: 1.1.0
 tags:
-- qa
-- state
-- shared
-- redis
-- sync
+  - qa
+  - state
+  - shared
+  - redis
+  - sync
 capabilities:
-- shared_state_health
-- consistency_check
-- redis_probe
-- sync_trace
+  - shared_state_health
+  - consistency_check
+  - redis_probe
+  - sync_trace
 displayName: TNF Shared State QA
 agentType: testing
 ---

@@ -54,6 +54,11 @@ check('catalog resolves to a real file', fs.existsSync(catalogPath), catalogPath
 const raw = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
 const rows: any[] = raw.providers ?? [];
 check('catalog has providers', rows.length > 0);
+check(
+  'catalog covers the 22 directly discoverable TNF providers',
+  rows.length >= 22,
+  String(rows.length)
+);
 
 const ids = rows.map((r) => r.id);
 check('every provider has an id', ids.every(Boolean));
@@ -80,6 +85,15 @@ console.log('\nprovider catalog — TypeScript consumer');
 const loaded = loadProviderCatalog();
 check('loadProviderCatalog returns entries', (loaded?.providers.length ?? 0) > 0);
 check('no warning on a healthy catalog', !loaded?.warning, loaded?.warning ?? '');
+check(
+  'TypeScript consumer includes local providers',
+  loaded?.providers.some((provider) => provider.id === 'ollama' && provider.type === 'local') ??
+    false
+);
+check(
+  'TypeScript consumer hydrates the full NVIDIA registry',
+  (loaded?.providers.find((provider) => provider.id === 'nvidia')?.models.length ?? 0) >= 200
+);
 
 const cfg = loadProviderConfig();
 check(

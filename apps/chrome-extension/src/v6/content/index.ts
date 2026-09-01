@@ -3,9 +3,12 @@
  *
  * SIMPLIFIED VERSION - Uses SimpleChatBridge for direct Gemini interaction.
  *
- * The floating panel is NOT auto-injected. It only appears when:
- * 1. User clicks "Open Panel" button in popup
- * 2. User presses Ctrl+Shift+F keyboard shortcut
+ * The floating panel opens only on explicit user action:
+ * 1. User clicks "Open Panel" in the popup
+ * 2. User presses Ctrl+Shift+F
+ * 3. Session restore if the user already opened it in this browser session
+ *
+ * Federated messages inject into the page chat without opening the overlay.
  */
 
 import { EXTENSION_VERSION as FUSE_VERSION } from '../shared/constants';
@@ -17,11 +20,22 @@ import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable
 import { SelfPrompter } from './self-prompting';
 import { accessibilityTree } from './utils/AccessibilityTree';
 import { captchaHandler } from './utils/CaptchaHandler';
+import { consoleCapture } from './utils/ConsoleCapture';
 import { humanSimulator } from './utils/HumanBehaviorSimulator';
+
+// Install as early as possible so console activity from this page's own
+// scripts is captured from the start, not just from whenever a caller first
+// asks for logs.
+consoleCapture.install();
 
 /** Page-world <-> content-script test bridge event names (loopback origins only). */
 const FUSE_BRIDGE_REQUEST = 'fuse-connect:request';
 const FUSE_BRIDGE_RESPONSE = 'fuse-connect:response';
+
+function getSessionStore(): chrome.storage.StorageArea | null {
+  const session = (chrome.storage as { session?: chrome.storage.StorageArea }).session;
+  return session ?? null;
+}
 
 const shouldSkipForPage = (): boolean => {
   const host = window.location.hostname;
@@ -111,14 +125,16 @@ class FuseConnectContentScript {
     if (this.isInitialized) return;
     this.isInitialized = true;
 
-    console.debug('[FuseConnect v7] Content script initialized (panel AUTO-OPEN disabled)');
+    console.debug('[FuseConnect v7] Content script initialized');
 
-    // Auto-open panel disabled by default per user request
-    // try {
-    //   this.showPanel();
-    // } catch (e) {
-    //   console.error('[FuseConnect v7] Failed to auto-open panel:', e);
-    // }
+    document.getElementById('fuse-connect-panel-v7')?.remove();
+    document.getElementById('fuse-connect-styles-v7')?.remove();
+    document.documentElement.style.marginRight = '';
+    try {
+      void chrome.storage.local.remove('fuse_connect_panel_open');
+    } catch {
+      // ignore
+    }
 
     // Initialize the simple chat bridge with callbacks
     simpleChatBridge.init({
@@ -210,12 +226,36 @@ class FuseConnectContentScript {
     // Setup keyboard shortcuts
     this.setupKeyboardShortcuts();
 
+    // Auto-open disabled: panel should NOT automatically open on page load
+    // unless the user explicitly requested it in this browser session.
+    void this.maybeRestorePanel();
+
     // Notify background that content script is ready
     this.safeSendMessage({
       type: 'CONTENT_SCRIPT_READY',
       url: window.location.href,
       hostname: window.location.hostname,
     });
+  }
+
+  /**
+   * Re-open panel only if previously opened during this browser session.
+   * Site permission resets do not clear chrome.storage.session; a new browser
+   * session does. Never fall back to chrome.storage.local.
+   */
+  private async maybeRestorePanel(): Promise<void> {
+    if (window.self !== window.top) return;
+    try {
+      const store = getSessionStore();
+      if (!store) return;
+      const result = await store.get('fuse_connect_panel_open');
+      if (result.fuse_connect_panel_open === true) {
+        console.debug('[FuseConnect v7] Restoring panel (was open in this session)');
+        this.showPanel();
+      }
+    } catch (e) {
+      // ignore
+    }
   }
 
   /**
@@ -375,6 +415,54 @@ class FuseConnectContentScript {
         return;
       }
 
+      // Generic forward of any internal runtime message — the same
+      // chrome.runtime.sendMessage path setupMessageHandlers() itself
+      // listens on, reached from the loopback test bridge for whichever
+      // message type needs live verification (CHANNEL_JOIN, etc.), not
+      // just the browserAction case below. args = { message: {...} }.
+      if (detail.action === 'runtimeMessage') {
+        try {
+          chrome.runtime.sendMessage(detail.args?.message ?? {}, (response) => {
+            if (chrome.runtime.lastError) {
+              respond({ ok: false, error: chrome.runtime.lastError.message });
+              return;
+            }
+            respond({ ok: true, result: response });
+          });
+        } catch (e: any) {
+          respond({ ok: false, error: e?.message || String(e) });
+        }
+        return;
+      }
+
+      // Forwards to the real BROWSER_ACTION handler in background/index.ts
+      // (browser-automation.ts) — same real message path a relay-connected
+      // TNF agent uses, just reached from the page-world test bridge since
+      // loopback-only automation can't reach chrome-extension:// pages
+      // directly. args = { browserAction, tabId?, params? }.
+      if (detail.action === 'browserAction') {
+        try {
+          chrome.runtime.sendMessage(
+            {
+              type: 'BROWSER_ACTION',
+              browserAction: detail.args?.browserAction,
+              tabId: detail.args?.tabId,
+              params: detail.args?.params,
+            },
+            (response) => {
+              if (chrome.runtime.lastError) {
+                respond({ ok: false, error: chrome.runtime.lastError.message });
+                return;
+              }
+              respond({ ok: true, result: response });
+            }
+          );
+        } catch (e: any) {
+          respond({ ok: false, error: e?.message || String(e) });
+        }
+        return;
+      }
+
       try {
         respond({ ok: true, result: this.runBridgeAction(detail.action, detail.args || {}) });
       } catch (e: any) {
@@ -442,6 +530,12 @@ class FuseConnectContentScript {
     }
   }
 
+  private savePanelOpenState(isOpen: boolean): void {
+    const store = getSessionStore();
+    if (!store) return;
+    store.set({ fuse_connect_panel_open: isOpen }).catch(() => {});
+  }
+
   /**
    * Show or create the floating panel
    */
@@ -452,7 +546,13 @@ class FuseConnectContentScript {
     }
 
     if (!this.panel) {
-      this.panel = createEnhancedFloatingPanel();
+      this.panel = createEnhancedFloatingPanel({
+        onDismiss: () => {
+          this.panel = null;
+          this.panelVisible = false;
+          this.savePanelOpenState(false);
+        },
+      });
 
       // Update with current detection state
       const elements = simpleChatBridge.findElements();
@@ -476,6 +576,7 @@ class FuseConnectContentScript {
 
     this.panel.show();
     this.panelVisible = true;
+    this.savePanelOpenState(true);
     console.log('[FuseConnect v7] Panel shown');
   }
 
@@ -485,9 +586,11 @@ class FuseConnectContentScript {
   private hidePanel(): void {
     if (this.panel) {
       this.panel.hide();
-      this.panelVisible = false;
-      console.log('[FuseConnect v7] Panel hidden');
+      this.panel = null;
     }
+    this.panelVisible = false;
+    this.savePanelOpenState(false);
+    console.log('[FuseConnect v7] Panel hidden');
   }
 
   /**
@@ -701,6 +804,29 @@ class FuseConnectContentScript {
               safeSendResponse({ solved });
             });
             return true;
+
+          // Browser-automation parity commands (see background/browser-automation.ts)
+          case 'GET_CONSOLE_LOGS':
+            safeSendResponse({
+              success: true,
+              messages: consoleCapture.query({
+                pattern: message.pattern,
+                onlyErrors: message.onlyErrors,
+                limit: message.limit,
+              }),
+            });
+            return true;
+
+          case 'GET_PAGE_TEXT': {
+            // Prefer <article>/<main> when present — matches claude-in-chrome's
+            // get_page_text preference for article content over full-page
+            // chrome (nav bars, footers, ads).
+            const container =
+              document.querySelector('article') || document.querySelector('main') || document.body;
+            const text = (container as HTMLElement)?.innerText?.trim() ?? '';
+            safeSendResponse({ success: true, text, length: text.length });
+            return true;
+          }
 
           // Forward state updates to panel if it exists
           case 'CONNECTION_STATUS':
@@ -1187,13 +1313,6 @@ class FuseConnectContentScript {
     this.isProcessingQueue = true;
 
     const process = async () => {
-      if (!this.panelVisible) {
-        // Per-tab safety: never auto-inject relay queue while panel is hidden.
-        this.injectionQueue = [];
-        this.isProcessingQueue = false;
-        return;
-      }
-
       if (this.injectionQueue.length === 0) {
         this.isProcessingQueue = false;
         return;
@@ -1242,14 +1361,14 @@ class FuseConnectContentScript {
   }
 
   /**
-   * Auto relay injection is opt-in per tab: only when that tab's panel is open.
-   * Allows explicit override for system workflows by setting metadata.forceInject=true.
+   * Auto relay injection does not open the overlay. Page-chat injection can
+   * proceed while the panel is closed; forceInject still bypasses pause.
    */
   private canAutoInjectRelayMessage(msg: any): boolean {
     if (msg?.metadata?.forceInject === true) return true;
     const channelId = msg?.channel || msg?.metadata?.channel || this.currentChannel;
     if (channelId && this.isChannelPaused(String(channelId))) return false;
-    return this.panelVisible;
+    return true;
   }
 
   private isChannelPaused(channelId: string): boolean {

@@ -2,10 +2,10 @@
  * Unit tests for RBACManager
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals';
-import { RBACManager, Permission, Role, ResourceAccessPolicy } from './RBACManager.js';
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
+import { MCPErrorClass } from '../types/error.js';
 import { AuthContext } from './AuthenticationManager.js';
-import { MCPErrorClass, MCPErrorCode } from '../types/error.js';
+import { Permission, RBACManager, ResourceAccessPolicy, Role } from './RBACManager.js';
 
 describe('RBACManager', () => {
   let rbacManager: RBACManager;
@@ -14,8 +14,13 @@ describe('RBACManager', () => {
     rbacManager = new RBACManager({
       enableRoleHierarchy: true,
       defaultDeny: true, // Change to true for stricter testing
-      enableAuditLogging: true
+      enableAuditLogging: true,
     });
+  });
+
+  afterEach(() => {
+    // Release the background cache-cleanup interval owned by the manager.
+    rbacManager?.stop();
   });
 
   describe('Permission Management', () => {
@@ -24,13 +29,13 @@ describe('RBACManager', () => {
         name: 'test.permission',
         description: 'Test permission',
         resourceType: 'test',
-        operations: ['read', 'write']
+        operations: ['read', 'write'],
       };
 
       rbacManager.createPermission(permission);
 
       const permissions = rbacManager.getAllPermissions();
-      const testPermission = permissions.find(p => p.name === 'test.permission');
+      const testPermission = permissions.find((p) => p.name === 'test.permission');
 
       expect(testPermission).toBeDefined();
       expect(testPermission?.description).toBe('Test permission');
@@ -42,7 +47,7 @@ describe('RBACManager', () => {
         name: 'duplicate.permission',
         description: 'Duplicate permission',
         resourceType: 'test',
-        operations: ['read']
+        operations: ['read'],
       };
 
       rbacManager.createPermission(permission);
@@ -57,14 +62,14 @@ describe('RBACManager', () => {
         name: 'deletable.permission',
         description: 'Deletable permission',
         resourceType: 'test',
-        operations: ['read']
+        operations: ['read'],
       };
 
       rbacManager.createPermission(permission);
       rbacManager.deletePermission('deletable.permission');
 
       const permissions = rbacManager.getAllPermissions();
-      const deletedPermission = permissions.find(p => p.name === 'deletable.permission');
+      const deletedPermission = permissions.find((p) => p.name === 'deletable.permission');
 
       expect(deletedPermission).toBeUndefined();
     });
@@ -75,7 +80,7 @@ describe('RBACManager', () => {
         name: 'used.permission',
         description: 'Used permission',
         resourceType: 'test',
-        operations: ['read']
+        operations: ['read'],
       };
 
       rbacManager.createPermission(permission);
@@ -85,7 +90,7 @@ describe('RBACManager', () => {
         description: 'Test role',
         permissions: ['used.permission'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role);
@@ -104,17 +109,17 @@ describe('RBACManager', () => {
           name: 'test.read',
           description: 'Test read permission',
           resourceType: 'test',
-          operations: ['read']
+          operations: ['read'],
         },
         {
           name: 'test.write',
           description: 'Test write permission',
           resourceType: 'test',
-          operations: ['write']
-        }
+          operations: ['write'],
+        },
       ];
 
-      permissions.forEach(p => rbacManager.createPermission(p));
+      permissions.forEach((p) => rbacManager.createPermission(p));
     });
 
     it('should create and retrieve roles', () => {
@@ -123,13 +128,13 @@ describe('RBACManager', () => {
         description: 'Test role',
         permissions: ['test.read', 'test.write'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role);
 
       const roles = rbacManager.getAllRoles();
-      const testRole = roles.find(r => r.name === 'test.role');
+      const testRole = roles.find((r) => r.name === 'test.role');
 
       expect(testRole).toBeDefined();
       expect(testRole?.permissions).toEqual(['test.read', 'test.write']);
@@ -142,7 +147,7 @@ describe('RBACManager', () => {
         description: 'Parent role',
         permissions: ['test.read'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(parentRole);
@@ -154,7 +159,7 @@ describe('RBACManager', () => {
         permissions: ['test.write'],
         parentRoles: ['parent.role'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(childRole);
@@ -169,7 +174,7 @@ describe('RBACManager', () => {
 
       // Check inherited permissions
       const userPermissions = rbacManager.getUserPermissions('testuser');
-      const permissionNames = userPermissions.map(p => p.name);
+      const permissionNames = userPermissions.map((p) => p.name);
       expect(permissionNames).toContain('test.read'); // From parent
       expect(permissionNames).toContain('test.write'); // From child
     });
@@ -180,7 +185,7 @@ describe('RBACManager', () => {
         description: 'Role 1',
         permissions: ['test.read'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       const role2: Role = {
@@ -189,7 +194,7 @@ describe('RBACManager', () => {
         permissions: ['test.write'],
         parentRoles: ['role1'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role1);
@@ -203,7 +208,7 @@ describe('RBACManager', () => {
           permissions: ['test.read'],
           parentRoles: ['role2'], // This would create a cycle
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         };
         rbacManager.createRole(circularRole);
       }).toThrow(MCPErrorClass);
@@ -216,7 +221,7 @@ describe('RBACManager', () => {
           description: 'Invalid role',
           permissions: ['nonexistent.permission'],
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         };
         rbacManager.createRole(invalidRole);
       }).toThrow(MCPErrorClass);
@@ -230,7 +235,7 @@ describe('RBACManager', () => {
         name: 'test.permission',
         description: 'Test permission',
         resourceType: 'test',
-        operations: ['read']
+        operations: ['read'],
       };
 
       rbacManager.createPermission(permission);
@@ -240,7 +245,7 @@ describe('RBACManager', () => {
         description: 'Test role',
         permissions: ['test.permission'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role);
@@ -273,7 +278,7 @@ describe('RBACManager', () => {
         name: 'test.permission2',
         description: 'Test permission 2',
         resourceType: 'test',
-        operations: ['write']
+        operations: ['write'],
       };
 
       rbacManager.createPermission(permission2);
@@ -283,7 +288,7 @@ describe('RBACManager', () => {
         description: 'Test role 2',
         permissions: ['test.permission2'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role2);
@@ -292,7 +297,7 @@ describe('RBACManager', () => {
       rbacManager.assignRolesToUser('testuser', ['test.role', 'test.role2']);
 
       const userPermissions = rbacManager.getUserPermissions('testuser');
-      const permissionNames = userPermissions.map(p => p.name);
+      const permissionNames = userPermissions.map((p) => p.name);
 
       expect(permissionNames).toContain('test.permission');
       expect(permissionNames).toContain('test.permission2');
@@ -307,24 +312,24 @@ describe('RBACManager', () => {
           name: 'test.read',
           description: 'Test read permission',
           resourceType: 'test',
-          operations: ['read']
+          operations: ['read'],
         },
         {
           name: 'test.write',
           description: 'Test write permission',
           resourceType: 'test',
-          operations: ['write']
-        }
+          operations: ['write'],
+        },
       ];
 
-      permissions.forEach(p => rbacManager.createPermission(p));
+      permissions.forEach((p) => rbacManager.createPermission(p));
 
       const role: Role = {
         name: 'test.role',
         description: 'Test role',
         permissions: ['test.read', 'test.write'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role);
@@ -337,13 +342,13 @@ describe('RBACManager', () => {
         resourcePattern: 'test:*',
         requiredPermissions: ['test.read'],
         effect: 'allow',
-        priority: 100
+        priority: 100,
       };
 
       rbacManager.createPolicy(policy);
 
       const policies = rbacManager.getAllPolicies();
-      const testPolicy = policies.find(p => p.id === 'test-policy');
+      const testPolicy = policies.find((p) => p.id === 'test-policy');
 
       expect(testPolicy).toBeDefined();
       expect(testPolicy?.resourcePattern).toBe('test:*');
@@ -357,7 +362,7 @@ describe('RBACManager', () => {
           resourcePattern: 'test:*',
           requiredPermissions: ['nonexistent.permission'],
           effect: 'allow',
-          priority: 100
+          priority: 100,
         };
         rbacManager.createPolicy(invalidPolicy);
       }).toThrow(MCPErrorClass);
@@ -372,7 +377,7 @@ describe('RBACManager', () => {
           requiredPermissions: ['test.read'],
           requiredRoles: ['nonexistent.role'],
           effect: 'allow',
-          priority: 100
+          priority: 100,
         };
         rbacManager.createPolicy(invalidPolicy);
       }).toThrow(MCPErrorClass);
@@ -387,23 +392,23 @@ describe('RBACManager', () => {
           name: 'file.read',
           description: 'File read permission',
           resourceType: 'file',
-          operations: ['read']
+          operations: ['read'],
         },
         {
           name: 'file.write',
           description: 'File write permission',
           resourceType: 'file',
-          operations: ['write']
+          operations: ['write'],
         },
         {
           name: 'admin.manage',
           description: 'Admin management permission',
           resourceType: 'admin',
-          operations: ['manage']
-        }
+          operations: ['manage'],
+        },
       ];
 
-      permissions.forEach(p => rbacManager.createPermission(p));
+      permissions.forEach((p) => rbacManager.createPermission(p));
 
       const roles: Role[] = [
         {
@@ -411,25 +416,25 @@ describe('RBACManager', () => {
           description: 'File Reader',
           permissions: ['file.read'],
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           name: 'file.writer',
           description: 'File Writer',
           permissions: ['file.read', 'file.write'],
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           name: 'admin',
           description: 'Administrator',
           permissions: ['file.read', 'file.write', 'admin.manage'],
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
-      roles.forEach(r => rbacManager.createRole(r));
+      roles.forEach((r) => rbacManager.createRole(r));
 
       const policies: ResourceAccessPolicy[] = [
         {
@@ -438,7 +443,7 @@ describe('RBACManager', () => {
           resourcePattern: 'file:*',
           requiredPermissions: ['file.read'],
           effect: 'allow',
-          priority: 100
+          priority: 100,
         },
         {
           id: 'file-write-policy',
@@ -446,7 +451,7 @@ describe('RBACManager', () => {
           resourcePattern: 'file:*',
           requiredPermissions: ['file.write'],
           effect: 'allow',
-          priority: 200
+          priority: 200,
         },
         {
           id: 'admin-only-policy',
@@ -455,7 +460,7 @@ describe('RBACManager', () => {
           requiredPermissions: ['admin.manage'],
           requiredRoles: ['admin'],
           effect: 'allow',
-          priority: 300
+          priority: 300,
         },
         {
           id: 'sensitive-deny-policy',
@@ -464,11 +469,11 @@ describe('RBACManager', () => {
           requiredPermissions: [], // Add empty array for required permissions
           requiredRoles: ['admin'],
           effect: 'deny',
-          priority: 400
-        }
+          priority: 400,
+        },
       ];
 
-      policies.forEach(p => rbacManager.createPolicy(p));
+      policies.forEach((p) => rbacManager.createPolicy(p));
     });
 
     it('should grant access with proper permissions', async () => {
@@ -477,7 +482,7 @@ describe('RBACManager', () => {
       const authContext: AuthContext = {
         userId: 'reader',
         roles: rbacManager.getUserRoles('reader'),
-        permissions: rbacManager.getUserPermissions('reader').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('reader').map((p) => p.name),
       };
 
       const result = await rbacManager.checkAccess(authContext, 'file:document.txt', 'read');
@@ -492,7 +497,7 @@ describe('RBACManager', () => {
       const authContext: AuthContext = {
         userId: 'reader',
         roles: rbacManager.getUserRoles('reader'),
-        permissions: rbacManager.getUserPermissions('reader').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('reader').map((p) => p.name),
       };
 
       const result = await rbacManager.checkAccess(authContext, 'file:document.txt', 'write');
@@ -507,7 +512,7 @@ describe('RBACManager', () => {
       const authContext: AuthContext = {
         userId: 'writer',
         roles: rbacManager.getUserRoles('writer'),
-        permissions: rbacManager.getUserPermissions('writer').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('writer').map((p) => p.name),
       };
 
       // Should be denied by sensitive-deny-policy even though user has file permissions
@@ -523,7 +528,7 @@ describe('RBACManager', () => {
       const authContext: AuthContext = {
         userId: 'admin',
         roles: rbacManager.getUserRoles('admin'),
-        permissions: rbacManager.getUserPermissions('admin').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('admin').map((p) => p.name),
       };
 
       // Admin should still be denied access to sensitive resources
@@ -539,7 +544,7 @@ describe('RBACManager', () => {
       const authContext: AuthContext = {
         userId: 'reader',
         roles: rbacManager.getUserRoles('reader'),
-        permissions: rbacManager.getUserPermissions('reader').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('reader').map((p) => p.name),
       };
 
       // Test various resource patterns
@@ -547,7 +552,7 @@ describe('RBACManager', () => {
         { resource: 'file:document.txt', expected: true },
         { resource: 'file:folder/document.txt', expected: true },
         { resource: 'database:table', expected: false },
-        { resource: 'admin:config', expected: false }
+        { resource: 'admin:config', expected: false },
       ];
 
       for (const testCase of testCases) {
@@ -564,7 +569,7 @@ describe('RBACManager', () => {
         name: 'conditional.access',
         description: 'Conditional access permission',
         resourceType: 'conditional',
-        operations: ['access']
+        operations: ['access'],
       };
 
       rbacManager.createPermission(permission);
@@ -574,7 +579,7 @@ describe('RBACManager', () => {
         description: 'Conditional User',
         permissions: ['conditional.access'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role);
@@ -591,11 +596,11 @@ describe('RBACManager', () => {
             type: 'ip',
             operator: 'contains',
             field: 'clientIp',
-            value: '192.168.'
-          }
+            value: '192.168.',
+          },
         ],
         effect: 'allow',
-        priority: 100
+        priority: 100,
       };
 
       rbacManager.createPolicy(ipPolicy);
@@ -605,22 +610,30 @@ describe('RBACManager', () => {
       const internalContext: AuthContext = {
         userId: 'testuser',
         roles: rbacManager.getUserRoles('testuser'),
-        permissions: rbacManager.getUserPermissions('testuser').map(p => p.name),
-        clientIp: '192.168.1.100'
+        permissions: rbacManager.getUserPermissions('testuser').map((p) => p.name),
+        clientIp: '192.168.1.100',
       };
 
-      const internalResult = await rbacManager.checkAccess(internalContext, 'internal:resource', 'access');
+      const internalResult = await rbacManager.checkAccess(
+        internalContext,
+        'internal:resource',
+        'access'
+      );
       expect(internalResult.granted).toBe(true);
 
       // Test with external IP
       const externalContext: AuthContext = {
         userId: 'testuser',
         roles: rbacManager.getUserRoles('testuser'),
-        permissions: rbacManager.getUserPermissions('testuser').map(p => p.name),
-        clientIp: '203.0.113.1'
+        permissions: rbacManager.getUserPermissions('testuser').map((p) => p.name),
+        clientIp: '203.0.113.1',
       };
 
-      const externalResult = await rbacManager.checkAccess(externalContext, 'internal:resource', 'access');
+      const externalResult = await rbacManager.checkAccess(
+        externalContext,
+        'internal:resource',
+        'access'
+      );
       // The external access might still be granted if no explicit deny policy exists
       // and the user has the required permissions. This depends on the policy configuration.
       // In our test setup, since defaultDeny is false, access is granted by default
@@ -642,11 +655,11 @@ describe('RBACManager', () => {
             evaluate: async (context: AuthContext) => {
               // Custom logic: allow access only for specific user
               return context.userId === 'privileged-user';
-            }
-          }
+            },
+          },
         ],
         effect: 'allow',
-        priority: 100
+        priority: 100,
       };
 
       rbacManager.createPolicy(customPolicy);
@@ -656,19 +669,23 @@ describe('RBACManager', () => {
       const testContext: AuthContext = {
         userId: 'testuser',
         roles: rbacManager.getUserRoles('testuser'),
-        permissions: rbacManager.getUserPermissions('testuser').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('testuser').map((p) => p.name),
       };
 
       const privilegedContext: AuthContext = {
         userId: 'privileged-user',
         roles: rbacManager.getUserRoles('privileged-user'),
-        permissions: rbacManager.getUserPermissions('privileged-user').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('privileged-user').map((p) => p.name),
       };
 
       const testResult = await rbacManager.checkAccess(testContext, 'custom:resource', 'access');
       expect(testResult.granted).toBe(false);
 
-      const privilegedResult = await rbacManager.checkAccess(privilegedContext, 'custom:resource', 'access');
+      const privilegedResult = await rbacManager.checkAccess(
+        privilegedContext,
+        'custom:resource',
+        'access'
+      );
       expect(privilegedResult.granted).toBe(true);
     });
   });
@@ -680,7 +697,7 @@ describe('RBACManager', () => {
         name: 'cache.test',
         description: 'Cache test permission',
         resourceType: 'cache',
-        operations: ['test']
+        operations: ['test'],
       };
 
       rbacManager.createPermission(permission);
@@ -690,7 +707,7 @@ describe('RBACManager', () => {
         description: 'Cache User',
         permissions: ['cache.test'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role);
@@ -701,7 +718,7 @@ describe('RBACManager', () => {
         resourcePattern: 'cache:*',
         requiredPermissions: ['cache.test'],
         effect: 'allow',
-        priority: 100
+        priority: 100,
       };
 
       rbacManager.createPolicy(policy);
@@ -712,30 +729,31 @@ describe('RBACManager', () => {
       const authContext: AuthContext = {
         userId: 'cacheuser',
         roles: rbacManager.getUserRoles('cacheuser'),
-        permissions: rbacManager.getUserPermissions('cacheuser').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('cacheuser').map((p) => p.name),
       };
 
-      // First access - should be computed
-      const start1 = Date.now();
+      expect(rbacManager.getRBACStatistics().cacheSize).toBe(0);
+
+      // First access - should be computed and cached
       const result1 = await rbacManager.checkAccess(authContext, 'cache:resource', 'test');
-      const duration1 = Date.now() - start1;
 
       expect(result1.granted).toBe(true);
+      expect(rbacManager.getRBACStatistics().cacheSize).toBe(1);
 
-      // Second access - should be cached (faster)
-      const start2 = Date.now();
+      // Second access - should be served from cache (same result instance,
+      // which deterministically proves the compute path did not run again)
       const result2 = await rbacManager.checkAccess(authContext, 'cache:resource', 'test');
-      const duration2 = Date.now() - start2;
 
       expect(result2.granted).toBe(true);
-      expect(duration2).toBeLessThanOrEqual(duration1);
+      expect(result2).toBe(result1);
+      expect(rbacManager.getRBACStatistics().cacheSize).toBe(1);
     });
 
     it('should clear cache when user roles change', async () => {
       const authContext: AuthContext = {
         userId: 'cacheuser',
         roles: rbacManager.getUserRoles('cacheuser'),
-        permissions: rbacManager.getUserPermissions('cacheuser').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('cacheuser').map((p) => p.name),
       };
 
       // Initial access
@@ -749,7 +767,7 @@ describe('RBACManager', () => {
       const updatedContext: AuthContext = {
         userId: 'cacheuser',
         roles: rbacManager.getUserRoles('cacheuser'),
-        permissions: rbacManager.getUserPermissions('cacheuser').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('cacheuser').map((p) => p.name),
       };
 
       // Access should be denied now
@@ -780,7 +798,7 @@ describe('RBACManager', () => {
         name: 'audit.test',
         description: 'Audit test permission',
         resourceType: 'audit',
-        operations: ['test']
+        operations: ['test'],
       };
 
       rbacManager.createPermission(permission);
@@ -790,7 +808,7 @@ describe('RBACManager', () => {
         description: 'Audit User',
         permissions: ['audit.test'],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       rbacManager.createRole(role);
@@ -799,7 +817,7 @@ describe('RBACManager', () => {
       const authContext: AuthContext = {
         userId: 'audituser',
         roles: rbacManager.getUserRoles('audituser'),
-        permissions: rbacManager.getUserPermissions('audituser').map(p => p.name)
+        permissions: rbacManager.getUserPermissions('audituser').map((p) => p.name),
       };
 
       // Perform access check (should generate audit event)
@@ -809,7 +827,7 @@ describe('RBACManager', () => {
       const auditEvents = rbacManager.getAuditEvents();
       expect(auditEvents.length).toBeGreaterThan(0);
 
-      const accessEvent = auditEvents.find(e => e.userId === 'audituser');
+      const accessEvent = auditEvents.find((e) => e.userId === 'audituser');
       expect(accessEvent).toBeDefined();
       expect(accessEvent?.resource).toBe('audit:resource');
     });

@@ -113,7 +113,9 @@ describe('ConnectionManager', () => {
   });
 
   afterEach(async () => {
-    await connectionManager.closeAllConnections();
+    // shutdown() closes all connections AND stops the health-check interval
+    // and process-signal handlers owned by this instance.
+    await connectionManager.shutdown();
   });
 
   describe('Connection Creation', () => {

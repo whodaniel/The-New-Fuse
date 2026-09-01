@@ -1,5 +1,7 @@
 ---
 name: browser-session-auth-bridge
+category: security-privacy
+department: tech
 description:
   Reuse an existing signed-in local browser session to authenticate terminal
   automation without interactive login forms. Use when Codex must access a web

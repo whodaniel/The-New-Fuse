@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,14 +16,17 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: game-developer
-description: Game development across all platforms (PC, Web, Mobile, VR/AR). Use when
-  building games with Unity, Godot, Unreal, Phaser, Three.js, or any game engine.
-  Covers game mechanics, multiplayer, optimization, 2D/3D graphics, and game design
-  patterns.
-skills: clean-code, game-development, game-development/pc-games, game-development/web-games,
-  game-development/mobile-games, game-development/game-design, game-development/multiplayer,
-  game-development/vr-ar, game-development/2d-games, game-development/3d-games, game-development/game-art,
-  game-development/game-audio
+description:
+  Game development across all platforms (PC, Web, Mobile, VR/AR). Use when
+  building games with Unity, Godot, Unreal, Phaser, Three.js, or any game
+  engine. Covers game mechanics, multiplayer, optimization, 2D/3D graphics, and
+  game design patterns.
+skills:
+  clean-code, game-development, game-development/pc-games,
+  game-development/web-games, game-development/mobile-games,
+  game-development/game-design, game-development/multiplayer,
+  game-development/vr-ar, game-development/2d-games, game-development/3d-games,
+  game-development/game-art, game-development/game-audio
 model: inherit
 ---
 

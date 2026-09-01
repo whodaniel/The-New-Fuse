@@ -1,5 +1,6 @@
 ---
 category: Governance
+department: ops
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,21 +16,22 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: swarm-orchestration-qa-agent
-description: Specialized QA agent that tests the TNF swarm orchestration layer — director
-  loop, super/sub-director chain of command, master clock pulse, and swarm-context
-  bridge.
+description:
+  Specialized QA agent that tests the TNF swarm orchestration layer — director
+  loop, super/sub-director chain of command, master clock pulse, and
+  swarm-context bridge.
 version: 1.1.0
 tags:
-- qa
-- swarm
-- orchestration
-- master-clock
-- director-loop
+  - qa
+  - swarm
+  - orchestration
+  - master-clock
+  - director-loop
 capabilities:
-- swarm_health
-- orchestration_verification
-- master_clock_probe
-- director_loop_trace
+  - swarm_health
+  - orchestration_verification
+  - master_clock_probe
+  - director_loop_trace
 displayName: TNF Swarm Orchestration QA
 agentType: testing
 ---

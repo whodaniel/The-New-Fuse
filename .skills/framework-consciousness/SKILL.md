@@ -1,9 +1,13 @@
 ---
 name: framework-consciousness
-description: Meta-orchestration skill for holistic TNF system understanding and coordinated capability use.
+department: tech
+description:
+  Meta-orchestration skill for holistic TNF system understanding and coordinated
+  capability use.
 metadata:
   short-description: Coordinates TNF skills with system-level awareness
 ---
+
 # Framework Consciousness Skill
 
 **Skill ID**: `framework-consciousness` **Type**: Meta-Orchestration Skill
@@ -19,17 +23,20 @@ Out, and Provide Value**
 
 ## Concepts As Context Frames
 
-When user requests are abstract ("frontloading", "skills have types", "bridging skills"), treat concepts as the primary context carrier.
+When user requests are abstract ("frontloading", "skills have types", "bridging
+skills"), treat concepts as the primary context carrier.
 
 Apply this workflow:
 
 1. Extract top concepts (nouns, system objects, protocol names).
 2. Define each concept in 1-2 lines (no fluff).
-3. Declare relationships: `depends_on`, `implemented_by`, `refines`, `conflicts_with`.
+3. Declare relationships: `depends_on`, `implemented_by`, `refines`,
+   `conflicts_with`.
 4. Persist artifacts:
    - `CONCEPTS.md` (glossary)
    - `CONCEPTS.mmd` (mermaid graph)
-5. Require every implementation decision to link back to at least one concept node.
+5. Require every implementation decision to link back to at least one concept
+   node.
 
 Use `concept-context-frames.md` and `concepts-mermaid-template.mmd`.
 

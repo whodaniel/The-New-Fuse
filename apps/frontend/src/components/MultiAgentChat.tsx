@@ -278,10 +278,18 @@ export const MultiAgentChat: React.FC = () => {
               </h2>
             </div>
             <div className="flex gap-2">
-              <button className="p-2 text-muted-foreground hover:text-white transition-colors">
+              <button
+                className="p-2 text-muted-foreground hover:text-white transition-colors"
+                aria-label="Search conversation"
+                title="Search conversation"
+              >
                 <Search className="w-4 h-4" />
               </button>
-              <button className="p-2 text-muted-foreground hover:text-white transition-colors">
+              <button
+                className="p-2 text-muted-foreground hover:text-white transition-colors"
+                aria-label="Chat settings"
+                title="Chat settings"
+              >
                 <Settings className="w-4 h-4" />
               </button>
             </div>
@@ -340,6 +348,7 @@ export const MultiAgentChat: React.FC = () => {
                   <button
                     className="p-2 text-muted-foreground hover:text-white transition-colors"
                     title="Attach Context"
+                    aria-label="Attach Context"
                   >
                     <Zap className="w-4 h-4" />
                   </button>

@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,9 +16,10 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: cursor-watch-learn-operator
-description: Use proactively for live cursor-watch-learn sessions that need 1-second
-  screenshots, cursor-event correlation, rolling deletion enforcement, and actionable
-  full-summation reporting.
+description:
+  Use proactively for live cursor-watch-learn sessions that need 1-second
+  screenshots, cursor-event correlation, rolling deletion enforcement, and
+  actionable full-summation reporting.
 ---
 
 # Purpose

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://thenewfuse.com/schemas/agent-resource-fabric.schema.json",
+  "title": "TNF Agent Resource Fabric",
+  "type": "object",
+  "required": ["spec", "version", "centralRoot", "hosts"],
+  "properties": {
+    "spec": { "const": "tnf/agent-resource-fabric/0.1" },
+    "version": { "type": "string" },
+    "centralRoot": { "type": "string" },
+    "objectStore": { "type": "string" },
+    "indexPath": { "type": "string" },
+    "receiptPath": { "type": "string" },
+    "backupPath": { "type": "string" },
+    "hosts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "runtime", "discoveryState", "surfaces"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9._-]+$" },
+          "runtime": { "type": "string" },
+          "discoveryState": { "type": "string" },
+          "issue": { "type": "integer" },
+          "surfaces": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "path", "resourceKind", "mutability", "sensitivity", "centralization", "redirectStrategy", "redirectVerified"],
+              "properties": {
+                "id": { "type": "string" },
+                "path": { "type": "string" },
+                "resourceKind": { "type": "string" },
+                "publisher": { "type": "string" },
+                "mutability": { "enum": ["read-only", "read-mostly", "host-owned", "stateful", "unknown"] },
+                "sensitivity": { "enum": ["public", "internal", "private", "secret", "restricted-secret"] },
+                "centralization": { "enum": ["shared-copy", "host-local", "state-export", "secret-excluded", "opaque-manual"] },
+                "redirectStrategy": { "enum": ["observe", "symlink", "managed-pointer", "native-config", "mcp", "copy-required", "opaque-manual"] },
+                "redirectVerified": { "type": "boolean" },
+                "maxDepth": { "type": "integer", "minimum": 0, "maximum": 32 },
+                "maxBytes": { "type": "integer", "minimum": 1 },
+                "includeExtensions": { "type": "array", "items": { "type": "string" } },
+                "includeNames": { "type": "array", "items": { "type": "string" } },
+                "includeHidden": { "type": "boolean" },
+                "consumerTags": { "type": "array", "items": { "type": "string" } },
+                "statePolicy": { "type": ["string", "null"] }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

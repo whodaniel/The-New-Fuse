@@ -6,6 +6,7 @@ primary_type: construction
 secondary_tags:
   - deterministic
 category: engineering/deployment
+department: design
 risk_tier: low
 harmful_pattern_detection: false
 harmful_pattern_signals:
@@ -17,8 +18,10 @@ metadata:
   source_snapshot: .agent/skill-bank/snapshots/project-agent/vercel-react-best-practices-63786205/SKILL.md
   status: permanent
 ---
-> Promoted from TNF snapshot history into permanent skill inventory.
-> Category and risk metadata added for adaptive routing and harmful-pattern recognition.
+
+> Promoted from TNF snapshot history into permanent skill inventory. Category
+> and risk metadata added for adaptive routing and harmful-pattern recognition.
+
 # Vercel React Best Practices
 
 Comprehensive performance optimization guide for React and Next.js applications,

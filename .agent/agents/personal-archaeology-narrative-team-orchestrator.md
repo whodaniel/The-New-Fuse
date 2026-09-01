@@ -1,5 +1,6 @@
 ---
 category: Unified Orchestration
+department: ops
 domain: orchestration
 visibility: collective
 dacc_role: worker
@@ -15,11 +16,12 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: personal-archaeology-narrative-team-orchestrator
-description: Team Orchestrator for timeline synthesis, era clustering, and narrative
+description:
+  Team Orchestrator for timeline synthesis, era clustering, and narrative
   reconstruction grounded in evidence.
 skills:
-- personal-archaeology-orchestration
-- personal-historical-archaeology
+  - personal-archaeology-orchestration
+  - personal-historical-archaeology
 model: inherit
 ---
 

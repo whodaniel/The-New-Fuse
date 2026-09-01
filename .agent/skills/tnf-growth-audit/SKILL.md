@@ -1,5 +1,7 @@
 ---
 name: TNF Growth Audit
+category: tnf-platform
+department: marketing
 description:
   Read-only inventory of where AI agents and TNF runtime processes accumulate
   large data (Hermes state.db, logs, snapshots, runtime JSONL, IDE chat stores,

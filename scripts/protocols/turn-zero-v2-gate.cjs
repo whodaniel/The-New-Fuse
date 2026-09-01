@@ -4,17 +4,19 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
+const { hydrateStage } = require('./frontload-manifest.cjs');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const INTERNAL_CANONICAL = 'whodaniel/tnf-monorepo';
-const PUBLIC_RUNTIME = 'whodaniel/the-new-fuse';
-const PRIVATE_CONTROL_PLANE = 'whodaniel/fuse-control-plane';
+const CANONICAL = 'whodaniel/tnf-monorepo';
+const PUBLICATION_TARGETS = new Set(['whodaniel/the-new-fuse', 'whodaniel/fuse-control-plane']);
 const PRODUCT_MAP = 'data/distribution/product-repo-map.json';
 const OSS_BOUNDARY = 'data/distribution/oss-app-boundary.json';
 const PRODUCT_BOUNDARY = 'docs/product/TNF_PRODUCT_BOUNDARY.md';
 const REPO_SEPARATION = 'docs/REPO_SEPARATION.md';
-const INTEROP_KERNEL = 'docs/protocols/TNF_INTEROPERABILITY_KERNEL.md';
-const OPEN_AGENT_CORE = 'docs/protocols/TNF_OPEN_AGENT_CORE.md';
+const ONBOARDING_CONTRACT = 'data/harness/onboarding-contract.json';
+const HANDOFF = 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json';
+const LIVING_STATE = 'docs/protocols/LIVING_STATE.md';
+const RUNTIME_RECEIPT = '.agent/runtime-logs/turn-zero-stage-a.latest.json';
 
 function git(args) {
   try {
@@ -37,9 +39,8 @@ function normalizeOrigin(input) {
 
 function repositoryMode(normalizedOrigin) {
   const key = String(normalizedOrigin || '').toLowerCase();
-  if (key === INTERNAL_CANONICAL.toLowerCase()) return 'internal-canonical-development';
-  if (key === PUBLIC_RUNTIME) return 'public-runtime-source';
-  if (key === PRIVATE_CONTROL_PLANE) return 'private-control-plane-source';
+  if (key === CANONICAL.toLowerCase()) return 'canonical-development';
+  if (PUBLICATION_TARGETS.has(key)) return 'downstream-publication-target';
   if (key) return 'external-or-fork';
   return 'unknown';
 }
@@ -64,9 +65,8 @@ function repoReceipt() {
     origin,
     normalizedOrigin,
     mode,
-    internalCanonical: mode === 'internal-canonical-development',
-    publicRuntimeSource: mode === 'public-runtime-source',
-    privateControlPlaneSource: mode === 'private-control-plane-source',
+    canonical: mode === 'canonical-development',
+    publicationTarget: mode === 'downstream-publication-target',
     branch: git(['branch', '--show-current']) || 'detached',
     head: git(['rev-parse', 'HEAD']),
     dirty: Boolean(dirtyLines),
@@ -80,7 +80,6 @@ const VALID = {
   residency: new Set(['product_state', 'bounded_working', 'external_durable', 'secret_machine_local', 'unknown']),
   sensitivity: new Set(['public', 'internal', 'private', 'restricted', 'unknown']),
 };
-
 function envOrUnknown(name) { return String(process.env[name] || 'unknown').trim().toLowerCase(); }
 function classificationReceipt() {
   return {
@@ -90,7 +89,6 @@ function classificationReceipt() {
     sensitivity: envOrUnknown('TNF_DATA_SENSITIVITY'),
   };
 }
-
 function validateClassification(c) {
   const errors = [];
   if (!VALID.domain.has(c.workDomain)) errors.push(`invalid work domain: ${c.workDomain}`);
@@ -110,14 +108,81 @@ function capabilityReceipt() { return { required: csv('TNF_REQUIRED_CAPABILITIES
 
 function hydrationReceipt(task = '') {
   const q = String(task || '').toLowerCase();
-  const paths = [INTEROP_KERNEL, OPEN_AGENT_CORE, PRODUCT_MAP, OSS_BOUNDARY, PRODUCT_BOUNDARY, REPO_SEPARATION];
-  if (/relay|broker|websocket|context|intent/.test(q)) paths.push('packages/relay-core');
+  const paths = [PRODUCT_MAP, OSS_BOUNDARY, PRODUCT_BOUNDARY, REPO_SEPARATION];
+  if (/tnf|engineer|architect|implement|debug|review|refactor|code/.test(q)) {
+    paths.push('.agent/skills/tnf-engineering-context/SKILL.md');
+  }
+  if (/source|drive|ledger|taxonomy|concordance|gemini|multi-agent|multi agent/.test(q)) {
+    paths.push('docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md', '.agent/skills/tnf-source-concordance/SKILL.md');
+  }
+  if (/agent resource|resource fabric|resource convergence|consolidat|deduplicat|dedupe|host resource|local agent|shared skill|shared prompt|shared rule|zcode/.test(q)) {
+    paths.push(
+      'docs/protocols/TNF_AGENT_RESOURCE_CONVERGENCE_PROTOCOL.md',
+      '.agent/skills/tnf-agent-resource-convergence/SKILL.md',
+      'data/harness/agent-resource-fabric.json',
+    );
+  }
+  if (/user context|storage|profile|google drive|memory|context persistence/.test(q)) {
+    paths.push('docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md', '.agent/skills/tnf-user-context-storage/SKILL.md');
+  }
+  if (/relay|broker|websocket|intent/.test(q)) paths.push('packages/relay-core');
   if (/front|ui|react|vite/.test(q)) paths.push('apps/frontend');
   if (/api|nest|gateway/.test(q)) paths.push('apps/api', 'apps/api-gateway');
   if (/chrome|browser extension/.test(q)) paths.push('apps/chrome-extension');
   if (/vscode/.test(q)) paths.push('apps/vscode-extension');
   if (/tauri|desktop/.test(q)) paths.push('apps/tauri-desktop');
   return [...new Set(paths)];
+}
+
+function safeJson(relPath) {
+  try { return JSON.parse(fs.readFileSync(path.join(ROOT, relPath), 'utf8')); } catch { return null; }
+}
+function livingDirective() {
+  try {
+    const text = fs.readFileSync(path.join(ROOT, LIVING_STATE), 'utf8');
+    const m = text.match(/<!-- CURRENT_DIRECTIVE:START -->\s*([\s\S]*?)\s*<!-- CURRENT_DIRECTIVE:END -->/);
+    return m ? m[1].trim() : null;
+  } catch { return null; }
+}
+function handoffRelation(handoffHead, currentHead) {
+  if (!handoffHead || !currentHead) return { relation: 'unknown', commitsSince: null };
+  if (handoffHead === currentHead) return { relation: 'exact', commitsSince: 0 };
+  const mergeBase = git(['merge-base', handoffHead, currentHead]);
+  if (!mergeBase) return { relation: 'unknown', commitsSince: null };
+  if (mergeBase !== handoffHead) return { relation: 'diverged', commitsSince: null };
+  const rawCount = git(['rev-list', '--count', `${handoffHead}..${currentHead}`]);
+  const commitsSince = Number.parseInt(rawCount, 10);
+  return { relation: 'ancestor', commitsSince: Number.isFinite(commitsSince) ? commitsSince : null };
+}
+
+function orientationSummary(repository) {
+  const handoff = safeJson(HANDOFF);
+  const productMap = safeJson(PRODUCT_MAP);
+  const handoffHead = handoff?.head_sha || null;
+  const relation = handoffRelation(handoffHead, repository.head);
+  return {
+    currentDirective: livingDirective(),
+    handoff: handoff ? {
+      id: handoff.handoff_id || null,
+      createdAt: handoff.created_at || null,
+      branch: handoff.branch || null,
+      head: handoffHead,
+      relationToCurrentHead: relation.relation,
+      commitsSince: relation.commitsSince,
+      freshAgainstCurrentHead: relation.relation === 'exact' || relation.relation === 'ancestor',
+      nextActions: Array.isArray(handoff.next_actions) ? handoff.next_actions : [],
+      resumeChecklist: Array.isArray(handoff.continuation?.resume_checklist) ? handoff.continuation.resume_checklist : [],
+    } : null,
+    canonicalDevelopment: productMap?.policy?.canonicalDevelopment || CANONICAL,
+    onboardingContractPresent: fs.existsSync(path.join(ROOT, ONBOARDING_CONTRACT)),
+  };
+}
+
+function taskHydrationStatus(paths) {
+  return paths.map((relPath) => ({
+    path: relPath,
+    present: fs.existsSync(path.join(ROOT, relPath)),
+  }));
 }
 
 function printFreshness() {
@@ -129,7 +194,21 @@ function printFreshness() {
 
 function parseArgs(argv) {
   const idx = argv.indexOf('--task');
-  return { json: argv.includes('--json'), requireWriteReady: argv.includes('--require-write-ready'), task: idx >= 0 ? argv[idx + 1] || '' : '' };
+  const consumerIdx = argv.indexOf('--consumer');
+  return {
+    json: argv.includes('--json'),
+    requireWriteReady: argv.includes('--require-write-ready'),
+    writeReceipt: argv.includes('--write-receipt'),
+    task: idx >= 0 ? argv[idx + 1] || '' : '',
+    consumer: consumerIdx >= 0 ? argv[consumerIdx + 1] || 'unknown' : (process.env.TNF_HARNESS_CONSUMER || 'turn-zero-v2'),
+  };
+}
+
+function persistReceipt(payload) {
+  const abs = path.join(ROOT, RUNTIME_RECEIPT);
+  fs.mkdirSync(path.dirname(abs), { recursive: true });
+  fs.writeFileSync(abs, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+  return RUNTIME_RECEIPT;
 }
 
 function main() {
@@ -138,65 +217,91 @@ function main() {
   const classification = classificationReceipt();
   const classificationValidation = validateClassification(classification);
   const capabilities = capabilityReceipt();
-  const hydration = hydrationReceipt(args.task || process.env.TNF_TASK || '');
+  const stageA = hydrateStage({ root: ROOT, stage: 'A', consumer: args.consumer });
+  const taskHydration = hydrationReceipt(args.task || process.env.TNF_TASK || '');
+  const taskHydrationState = taskHydrationStatus(taskHydration);
+  const orientation = orientationSummary(repository);
   const blockers = [];
   const warnings = [];
 
-  // Repository role is relational. The official public runtime is a legitimate
-  // source/work surface for open-source users and contributors. It is only a
-  // downstream publication target from the internal TNF release perspective.
-  if (repository.privateControlPlaneSource) {
-    blockers.push(`origin ${repository.normalizedOrigin} is the private control-plane source; the open-runtime agent must not treat it as an OSS work surface`);
-  }
-  if (repository.publicRuntimeSource) {
-    warnings.push('public-runtime source mode: local OSS/public-contract work is valid; private-control-plane implementation is unavailable by design');
-  }
-  if (repository.mode === 'external-or-fork') {
-    warnings.push('external/fork mode: public TNF work is valid; upstream publication authority is not implied by the fork');
-  }
+  if (!stageA.ok) blockers.push('manifest-derived Stage A hydration is incomplete');
+  if (repository.publicationTarget) blockers.push(`origin ${repository.normalizedOrigin} is a downstream publication target; develop internally in ${CANONICAL} or work from an external fork`);
+  if (repository.mode === 'external-or-fork') warnings.push('external/fork mode: private monorepo state is not assumed; upstream placement must follow public contribution/product-boundary rules');
   if (repository.mode === 'unknown') warnings.push('repository origin could not be classified');
   if (repository.operationInProgress) blockers.push(`git ${repository.operationInProgress} is in progress`);
-
+  if (orientation.handoff?.relationToCurrentHead === 'diverged') warnings.push('SESSION_HANDOFF_LATEST diverges from current HEAD; treat it as historical continuation context until reconciled');
+  if (orientation.handoff?.relationToCurrentHead === 'unknown') warnings.push('SESSION_HANDOFF_LATEST relation to current HEAD could not be proven; treat freshness as unknown');
+  if (orientation.handoff?.relationToCurrentHead === 'ancestor' && (orientation.handoff.commitsSince || 0) > 0) warnings.push(`SESSION_HANDOFF_LATEST is an ancestor ${orientation.handoff.commitsSince} commit(s) behind current HEAD; inspect intervening commits before relying on continuation details`);
+  for (const item of taskHydrationState) {
+    if (!item.present && /USER_CONTEXT_STORAGE/.test(item.path)) warnings.push(`${item.path} is not on this branch; storage work may live on an active PR and must be reconciled before implementation`);
+  }
   if (args.requireWriteReady && !classificationValidation.ok) {
     blockers.push(...classificationValidation.errors);
     if (classificationValidation.unresolved) blockers.push('classification is unresolved');
   }
 
-  // Private-control-plane artifacts do not belong in the public runtime or an
-  // ordinary public fork. Keep the open agent useful while preserving boundary.
-  if (
-    args.requireWriteReady &&
-    ['public-runtime-source', 'external-or-fork'].includes(repository.mode) &&
-    classification.artifactDestination === 'private_control_plane'
-  ) {
-    blockers.push('private_control_plane artifacts must be developed/stored in an authorized private source, not the open runtime');
-  }
-
   const payload = {
-    protocol: 'TNF_TURN_ZERO_V2_PUBLIC',
-    internalCanonicalSource: INTERNAL_CANONICAL,
-    officialPublicRuntime: 'whodaniel/The-New-Fuse',
+    protocol: 'TNF_TURN_ZERO_V2',
+    canonicalSource: CANONICAL,
     lifecycle: ['RESPOND','ORIENT','CLASSIFY','HYDRATE','STAFF','ACT','VERIFY','PROPAGATE','HANDOFF'],
-    repository, classification, classificationValidation, capabilities, hydration,
-    writeReady: blockers.length === 0, blockers, warnings,
+    repository,
+    stageA,
+    orientation,
+    classification,
+    classificationValidation,
+    capabilities,
+    taskHydration,
+    taskHydrationState,
+    harnessed: stageA.ok,
+    writeReady: blockers.length === 0 && classificationValidation.ok,
+    blockers,
+    warnings,
   };
+  if (args.writeReceipt) payload.receiptPath = persistReceipt(payload);
 
   if (args.json) console.log(JSON.stringify(payload, null, 2));
   else {
-    console.log('=== Turn Zero V2 — Open Runtime ===');
+    console.log('=== Turn Zero V2 / Harness Receipt ===');
     console.log(`- repository: ${repository.normalizedOrigin || 'unknown'} @ ${repository.branch}:${repository.head.slice(0,12) || 'unknown'}`);
     console.log(`- repository mode: ${repository.mode}`);
-    console.log('- public runtime: whodaniel/The-New-Fuse (official OSS source/distribution)');
-    console.log(`- internal TNF upstream (not required for OSS operation): ${INTERNAL_CANONICAL}`);
+    console.log(`- Stage A manifest hydration: ${stageA.ok ? 'PASS' : 'FAIL'} (${stageA.entries.length} rails)`);
+    for (const rail of stageA.entries) console.log(`  ${rail.status === 'loaded' ? 'OK' : 'FAIL'} ${rail.path}${rail.sha256 ? ` @ ${rail.sha256.slice(0,12)}` : ''}`);
+    console.log(`- current directive: ${orientation.currentDirective || 'unknown'}`);
+    if (orientation.handoff) {
+      const relationLabel = orientation.handoff.relationToCurrentHead === 'ancestor'
+        ? `ancestor +${orientation.handoff.commitsSince ?? '?'} commit(s)`
+        : orientation.handoff.relationToCurrentHead;
+      console.log(`- handoff: ${orientation.handoff.id || 'unknown'} @ ${orientation.handoff.head ? orientation.handoff.head.slice(0,12) : 'unknown'} (${relationLabel || 'unknown'})`);
+      for (const action of orientation.handoff.nextActions.slice(0, 4)) console.log(`  next: ${action}`);
+    }
     console.log(`- classification: ${classification.workDomain} / ${classification.artifactDestination} / ${classification.dataResidency} / ${classification.sensitivity}`);
+    console.log('- task-scoped hydration plan:');
+    for (const item of taskHydrationState) console.log(`  ${item.present ? 'OK' : 'MISS'} ${item.path}`);
     warnings.forEach((w) => console.log(`▲ ${w}`));
-    console.log('- task-scoped hydration:'); hydration.forEach((p) => console.log(`  - ${p}`));
-    console.log('\n=== State Freshness ==='); console.log(printFreshness());
-    if (blockers.length) { console.log('\n=== Write Readiness ==='); blockers.forEach((b) => console.log(`! ${b}`)); }
-    else console.log('\n- write readiness: PASS');
+    console.log('\n=== State Freshness ===');
+    console.log(printFreshness());
+    if (blockers.length) {
+      console.log('\n=== Readiness Blockers ===');
+      blockers.forEach((b) => console.log(`! ${b}`));
+    } else {
+      console.log(`\n- harness state: ${payload.harnessed ? 'PASS' : 'FAIL'}`);
+      console.log(`- write readiness: ${payload.writeReady ? 'PASS' : 'UNRESOLVED (use --require-write-ready before mutation)'}`);
+    }
+    if (payload.receiptPath) console.log(`- receipt: ${payload.receiptPath}`);
   }
   if (args.requireWriteReady && blockers.length) process.exit(1);
+  if (!stageA.ok) process.exit(1);
 }
 
 if (require.main === module) main();
-module.exports = { normalizeOrigin, repositoryMode, validateClassification, hydrationReceipt, repoReceipt, classificationReceipt };
+module.exports = {
+  normalizeOrigin,
+  repositoryMode,
+  validateClassification,
+  hydrationReceipt,
+  repoReceipt,
+  classificationReceipt,
+  orientationSummary,
+  handoffRelation,
+  taskHydrationStatus,
+};

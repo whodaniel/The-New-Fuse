@@ -1,5 +1,7 @@
 ---
 name: tnf-cursor-harness-protocol
+category: tnf-platform
+department: tech
 description:
   Onboard and operate Cursor CLI agents under TNF harness protocol (Turn Zero,
   inspect-act-verify, MCP routing). Use when launching Cursor CLI from TNF,

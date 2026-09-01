@@ -6,6 +6,11 @@
 const SKIP_SELECTORS = [
   '[role="dialog"]',
   '[aria-modal="true"]',
+  'input[type="password"]',
+  '[data-privacy="sensitive"]',
+  '[data-testid="sensitive-data"]',
+  '.no-ai-context',
+  '[data-no-ai-snapshot]',
   'script',
   'style',
   'noscript',
@@ -13,6 +18,38 @@ const SKIP_SELECTORS = [
   'nav[aria-label="Main"]',
   '.sr-only',
 ];
+
+const SENSITIVE_PATTERNS: Array<{ pattern: RegExp; replacement: string }> = [
+  // JWT / Bearer tokens
+  {
+    pattern: /\beyJ[A-Za-z0-9-_]{10,}\.[A-Za-z0-9-_]{10,}\.[A-Za-z0-9-_]{10,}\b/g,
+    replacement: '[REDACTED_JWT]',
+  },
+  // Common API key formats (OpenAI, GitHub, Slack, Anthropic)
+  {
+    pattern:
+      /\b(?:sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9]{10,}|ant-[A-Za-z0-9_-]{20,})\b/g,
+    replacement: '[REDACTED_API_KEY]',
+  },
+  // Credit card numbers
+  { pattern: /\b(?:\d{4}[ -]?){3}\d{4}\b/g, replacement: '[REDACTED_CC]' },
+  // US SSN
+  { pattern: /\b\d{3}-\d{2}-\d{4}\b/g, replacement: '[REDACTED_SSN]' },
+];
+
+export function sanitizePageText(raw: string): { text: string; redactionCount: number } {
+  if (!raw) return { text: '', redactionCount: 0 };
+  let sanitized = raw;
+  let count = 0;
+  for (const { pattern, replacement } of SENSITIVE_PATTERNS) {
+    const matches = sanitized.match(pattern);
+    if (matches) {
+      count += matches.length;
+      sanitized = sanitized.replace(pattern, replacement);
+    }
+  }
+  return { text: sanitized, redactionCount: count };
+}
 
 const MAX_CHARS = 12_000;
 
@@ -36,6 +73,7 @@ export interface PageContentSnapshot {
   headings: string[];
   text: string;
   charCount: number;
+  redactionCount: number;
   capturedAt: string;
 }
 
@@ -102,12 +140,15 @@ export function capturePageContentSnapshot(options?: {
     text = `${text.slice(0, maxChars)}\n…[truncated]`;
   }
 
+  const { text: sanitizedText, redactionCount } = sanitizePageText(text);
+
   return {
     title: document.title || '',
     path: typeof window !== 'undefined' ? window.location.pathname : '',
     headings: headings.slice(0, 20),
-    text,
-    charCount: text.length,
+    text: sanitizedText,
+    charCount: sanitizedText.length,
+    redactionCount,
     capturedAt: new Date().toISOString(),
   };
 }

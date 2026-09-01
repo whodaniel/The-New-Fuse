@@ -8,7 +8,7 @@ interface SponsorBidPanelProps {
 }
 
 const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({
-  agentId,
+  agentId: _agentId,
   currentBid = 0,
   onPlaceBid,
 }) => {
@@ -54,13 +54,29 @@ const SponsorBidPanel: React.FC<SponsorBidPanelProps> = ({
         <button
           onClick={handleBid}
           disabled={loading || !bidAmount || parseFloat(bidAmount) <= currentBid}
-          className={`w-full py-2 rounded-md font-bold text-lg transition-all ${
+          title={
+            loading
+              ? 'Processing bid...'
+              : !bidAmount
+                ? 'Enter a bid amount'
+                : parseFloat(bidAmount) <= currentBid
+                  ? 'Bid must be higher than current bid'
+                  : 'Place your bid'
+          }
+          className={`w-full py-2 rounded-md font-bold text-lg transition-all focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none flex items-center justify-center gap-2 ${
             loading || !bidAmount || parseFloat(bidAmount) <= currentBid
               ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
               : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/20 shadow-none'
           }`}
         >
-          {loading ? 'Processing...' : 'Place Bid'}
+          {loading ? (
+            <>
+              <span className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></span>
+              Processing...
+            </>
+          ) : (
+            'Place Bid'
+          )}
         </button>
       </div>
 

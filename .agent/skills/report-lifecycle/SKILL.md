@@ -1,5 +1,7 @@
 ---
 name: report-lifecycle
+category: docs-writing
+department: product
 description: >
   Report lifecycle management skill for TNF agents. Provides report rotation,
   lifecycle metadata enrichment (aligned with Product Experience Architecture),

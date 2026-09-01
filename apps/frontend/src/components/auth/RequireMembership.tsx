@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from '@/config/api';
 import { authFetch } from '@/utils/authToken';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
@@ -53,19 +54,45 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
 
     const checkMembership = async () => {
       try {
-        const response = await authFetch('/api/billing/membership/me', {
+        // Use the centralized API endpoint (resolves to absolute VITE_API_URL in
+        // production) so this call never hits the broken Cloudflare Pages /api proxy.
+        const response = await authFetch(API_ENDPOINTS.BILLING.MEMBERSHIP_ME, {
           credentials: 'include',
         });
 
         if (!response.ok) {
           if (response.status === 401) {
+            // A 401 here means the JWT itself is invalid or expired — the token did
+            // not survive the trip to the canonical API origin.  Only then is a
+            // logout appropriate.  A network/proxy failure that happens to surface as
+            // 401 must not silently destroy a valid session, so we verify auth state
+            // with /auth/me before acting.
+            console.warn(
+              '[RequireMembership] 401 from membership endpoint – verifying auth before logout'
+            );
             if (!canceled) {
-              setMembership(null);
-              if (logout) {
-                console.warn('[RequireMembership] 401 received, logging out to prevent loop');
-                logout();
+              try {
+                const meResponse = await authFetch(API_ENDPOINTS.AUTH.ME, {
+                  credentials: 'include',
+                });
+                if (!meResponse.ok) {
+                  // /auth/me also rejected → the session is genuinely invalid.
+                  if (logout) logout();
+                  setMembership(null);
+                  setRedirectTo('/auth/login?error=auth_failed');
+                } else {
+                  // /auth/me is fine → membership endpoint had a transient problem.
+                  // Treat user as STARTER (unauthenticated from a membership POV)
+                  // and redirect to the membership onboarding page rather than logout.
+                  setMembership({ active: false, tier: 'STARTER' });
+                  setRedirectTo(fallback);
+                }
+              } catch {
+                // Network failure during the verification check – don't logout.
+                setMembership({ active: false, tier: 'STARTER' });
+                setRedirectTo(fallback);
               }
-              setRedirectTo('/auth/login?error=auth_failed');
+              setIsChecking(false);
             }
             return;
           }
@@ -96,6 +123,7 @@ export const RequireMembership: React.FC<RequireMembershipProps> = ({
         }
       } catch {
         if (!canceled) {
+          // Network or unexpected error — don't logout; redirect to membership page.
           setMembership({ active: false, tier: 'STARTER' });
           setRedirectTo(fallback);
         }

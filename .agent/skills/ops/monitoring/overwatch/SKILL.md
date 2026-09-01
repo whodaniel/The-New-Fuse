@@ -6,6 +6,7 @@ primary_type: operational
 secondary_tags:
   - continuous
 category: ops/monitoring
+department: tech
 risk_tier: medium
 harmful_pattern_detection: false
 harmful_pattern_signals:
@@ -16,8 +17,10 @@ metadata:
   source_snapshot: .agent/skill-bank/snapshots/picoclaw/overwatch-3581432c/SKILL.md
   status: permanent
 ---
-> Promoted from TNF snapshot history into permanent skill inventory.
-> Category and risk metadata added for adaptive routing and harmful-pattern recognition.
+
+> Promoted from TNF snapshot history into permanent skill inventory. Category
+> and risk metadata added for adaptive routing and harmful-pattern recognition.
+
 # Overwatch Skill
 
 Skill for mesh-wide synchronization and monitoring.

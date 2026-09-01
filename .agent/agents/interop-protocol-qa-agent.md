@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,20 +16,22 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: interop-protocol-qa-agent
-description: Specialized QA agent that tests the TNF interoperability protocol — agent
-  handshakes, Agent Card capability extraction, and cross-harness standardization.
+description:
+  Specialized QA agent that tests the TNF interoperability protocol — agent
+  handshakes, Agent Card capability extraction, and cross-harness
+  standardization.
 version: 1.1.0
 tags:
-- qa
-- interop
-- protocol
-- agent-card
-- handshake
+  - qa
+  - interop
+  - protocol
+  - agent-card
+  - handshake
 capabilities:
-- handshake_probe
-- agent_card_parse
-- capability_translate
-- cross_harness_check
+  - handshake_probe
+  - agent_card_parse
+  - capability_translate
+  - cross_harness_check
 displayName: TNF Interop Protocol QA
 agentType: testing
 ---

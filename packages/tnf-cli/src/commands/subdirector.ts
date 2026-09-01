@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import * as path from 'node:path';
+import { LocalSubdirectorAuthorityService } from '../services/LocalSubdirectorAuthorityService.js';
 
 type RunCommand = (
   cmd: string,
@@ -67,6 +68,53 @@ export function registerSubdirectorCommand(
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
         process.exit(1);
+      }
+    });
+
+  subdirector
+    .command('autonomy')
+    .description('Manage Local Subdirector fleet autonomy')
+    .option('--enable', 'Enable autonomy')
+    .option('--pause', 'Pause autonomy')
+    .option('--grant <caps...>', 'Grant specific capabilities (or "all")')
+    .option('--revoke <caps...>', 'Revoke specific capabilities')
+    .option('--status', 'View effective authority status')
+    .action((options: any) => {
+      // Lazy load service to avoid cyclic deps if any
+
+      const auth = new LocalSubdirectorAuthorityService(repoRoot);
+      const current = auth.getConfig();
+
+      if (options.enable) current.autonomyEnabled = true;
+      if (options.pause) current.autonomyEnabled = false;
+
+      if (options.grant) {
+        for (const cap of options.grant) {
+          if (!current.capabilities.includes(cap)) current.capabilities.push(cap);
+        }
+      }
+
+      if (options.revoke) {
+        current.capabilities = current.capabilities.filter(
+          (c: string) => !options.revoke.includes(c)
+        );
+      }
+
+      const updated = auth.updateConfig(current);
+
+      if (
+        options.status ||
+        (!options.enable && !options.pause && !options.grant && !options.revoke)
+      ) {
+        console.log(chalk.bold('Local Subdirector Authority:'));
+        console.log(
+          `  Autonomy: ${updated.autonomyEnabled ? chalk.green('Enabled') : chalk.yellow('Paused')}`
+        );
+        console.log(
+          `  Capabilities: ${updated.capabilities.length > 0 ? updated.capabilities.join(', ') : 'none'}`
+        );
+      } else {
+        console.log(chalk.green('✅ Local Subdirector authority updated'));
       }
     });
 }

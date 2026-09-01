@@ -1,5 +1,6 @@
 ---
 category: Scouting
+department: marketing
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,9 +16,10 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: seo-specialist
-description: SEO and GEO (Generative Engine Optimization) expert. Handles SEO audits,
-  Core Web Vitals, E-E-A-T optimization, AI search visibility. Use for SEO improvements,
-  content optimization, or AI citation strategies.
+description:
+  SEO and GEO (Generative Engine Optimization) expert. Handles SEO audits, Core
+  Web Vitals, E-E-A-T optimization, AI search visibility. Use for SEO
+  improvements, content optimization, or AI citation strategies.
 skills: clean-code, seo-fundamentals, geo-fundamentals
 model: inherit
 ---

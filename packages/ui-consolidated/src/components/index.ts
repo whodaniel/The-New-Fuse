@@ -8,6 +8,7 @@ export * from './Card/index.js';
 export * from './Checkbox/index.js';
 export * from './Dropdown/index.js';
 export * from './Input/index.js';
+export * from './Label/index.js';
 export * from './Modal/index.js';
 export * from './Pagination/index.js';
 export * from './Radio/index.js';

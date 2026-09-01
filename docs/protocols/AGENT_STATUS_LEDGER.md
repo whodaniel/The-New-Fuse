@@ -1,17 +1,60 @@
 `[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
 restored for Gate 3 compliance; reclassify on next vetting pass.
 
-**Updated: 2026-08-10T18:30:00-04:00** — Agent harness completion
+# Agent Status Ledger
+
+- **Updated: 2026-08-30T23:10:00.000Z** — Full
+  department/remember/scout/host-profile implementation: `department:` applied
+  on 196 agents + 326 TNF skills; `tnf harness host-profiles` + Pi installer
+  map; scout missions staffed to `tnf-cli-agent`; chronological catalog now
+  includes `tenant-knowledge-scout-sprint`.
+
+- **Updated: 2026-08-30T21:38:49.292ZZ** — Operator departments are first-class
+  CLI lanes (HR Marketing Design Legal Tech Finance Product Ops)
+
+- **Updated: 2026-08-30T21:31:00.000Z** — feat(agent-adapters): bootstrap
+  `@the-new-fuse/agent-adapters` package
+  (`c7f3a821-4e59-4b2d-a1d8-9f0e2b3c5d7e`). Reconstructed TS source from dist,
+  added package.json/tsconfig/vitest config, SKILL.md, 17 vitest tests (all
+  passing), pnpm-lock.yaml updated. Agent: antigravity.
+
+- **Updated: 2026-08-30T20:04:37.113ZZ** — docs(protocols): explicit turn end
+  mandate enforcement and automation
+
+- **Updated: 2026-08-30T20:01:24.847489Z** — [SUPER ADMIN OVERRIDE]: Pierced
+  repository bounds to inject ~/.tnf/lessons-learned.md into the Context
+  Broker.\n- **Updated: 2026-08-30T15:32:39-04:00** — Codify Synergistic
+  Alignment Protocol and Lexical Forgiveness Matrix.
+- **Updated: 2026-08-30T15:27:50-04:00** — Ensure Logic Sieve is actively
+  registered in Master Loop and align remaining Staff scripts to Swarm.
+- **Updated: 2026-08-30T15:21:09-04:00** — Implement Dynamic Context Broker
+- **Updated: 2026-08-30T15:17:58-04:00** — Execute Semantic Cohesion Sweep (V3 -
+  Fix Handoff Gate)
+- **Updated: 2026-08-30T15:16:51-04:00** — Ensure Locked Doc Compliance for
+  Lexicon Overhaul
+- **Updated: 2026-08-30T15:16:04-04:00** — Execute Semantic Cohesion Sweep (V2)
+- **Updated: 2026-08-30T15:06:02-04:00** — Integrate Skill Overlap Auditing Edge
+  UI Emission
+- **Updated: 2026-08-30T14:59:21-04:00** — Instantiate Recursive Logic Sieve
+  Protocol
+- **Updated: 2026-08-30T14:44:28-04:00** — Create Ontology Master Map and
+  Agentic Auditor
+- **Updated: 2026-08-30T14:32:32-04:00** — Codify Active Follow-Through Mandate
+- **Updated: 2026-08-30T14:15:55-04:00** — User-Data refactor
 
 # Agent Status Ledger
 
-Updated: **2026-08-16T22:56:00-04:00** — Google AI & Antigravity Personal
-Intelligence Platform, CLI Command Suite & Cloud Sync Integration
-(`b66700ba-745b-42fb-842b-2d8573fdb91a`). Updated: **2026-08-11T13:50:00.000Z**
-— validators + Claude/Pi/Codex peer parity on `fix/validators-peer-parity` (mean
-83%, Claude/Codex 100%, Pi 98%). Updated: **2026-08-11T13:48:54.685Z** — handoff
-`bb2f8da0-7e85-4cc9-969d-46c67f9887e8` (`e31dafec20b2`).
-`a535d786-f022-44ba-85d8-2e28923cc16d` (`2d75390d0df3`).
+**Updated: 2026-08-10T18:30:00-04:00** — Agent harness completion
+
+Updated: **2026-08-30T14:04:00-04:00** — Sovereign Distillation, Hierarchical
+Skill Tree, and Automated Storage Retention Protocols
+(`3155f586-c8fc-44cb-8b79-20245bca0447`). Updated: **2026-08-16T22:56:00-04:00**
+— Google AI & Antigravity Personal Intelligence Platform, CLI Command Suite &
+Cloud Sync Integration (`b66700ba-745b-42fb-842b-2d8573fdb91a`). Updated:
+**2026-08-11T13:50:00.000Z** — validators + Claude/Pi/Codex peer parity on
+`fix/validators-peer-parity` (mean 83%, Claude/Codex 100%, Pi 98%). Updated:
+**2026-08-11T13:48:54.685Z** — handoff `bb2f8da0-7e85-4cc9-969d-46c67f9887e8`
+(`e31dafec20b2`). `a535d786-f022-44ba-85d8-2e28923cc16d` (`2d75390d0df3`).
 `cfbe965f-c10f-4ee0-9afa-d88b2904e90d` (`585f72e35f5e`).
 `b1e88931-7ddf-492d-a097-36efb9bd4628` (`585f72e35f5e`).
 `e741e4bc-030b-41fe-8200-e53a3050c429` (`585f72e35f5e`).
@@ -71,7 +114,25 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-21T07:07:08.717Z** — handoff `e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9` (`9561fa7c1eb6`).
+Updated: **2026-09-01T17:18:19.999Z** — handoff
+`64bb992e-4379-42e4-ba26-284216403c6b` (`34b87570802b`).
+`3bb048df-301d-4944-8dd5-2c020ae9e0f5` (`92f3c2ed0594`).
+`d500dd27-320e-4e35-b766-5fed4dec4564` (`e0380981be8d`).
+`78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff` (`e0380981be8d`).
+`30f7bd2e-0ec7-4287-8745-0e80d9aef8ec` (`c426044841c0`).
+`7f246b53-b0d9-4974-878a-da066f51d766` (`5a20169d60ee`).
+`03b98dc2-44ba-46aa-9baa-9eeab96a0d15` (`5a20169d60ee`).
+`524ffbf1-6b3b-471f-ae45-5fedcbdadc7a` (`59e86d8e9c31`).
+`4c35929a-b298-401e-a6ff-3d7a69724bb7` (`6bd29b005bee`).
+`0b23b465-4757-4216-8e6d-61b251e31594` (`6bd29b005bee`).
+`d1c92e44-a836-4a3e-839f-a8a1d45228c0` (`901c2d2f098d`).
+`10b05184-48da-4c36-8607-120e738c0593` (`055c6d0e4301`).
+`ad3371f2-6d3c-4632-8b81-bef643c73838` (`055c6d0e4301`).
+`14e23d83-c540-4152-bdf9-1bd554112c4e` (`5e7e2c894feb`).
+`4283b14d-8b02-4347-adc8-d5f26a4b01fd` (`26be2886c104`).
+`e85d971f-770d-4cfe-98f6-4cd46280f557` (`f328e16919f8`).
+`883a32da-4f06-48ed-8efc-9013f70c7bfe` (`e169723bd328`).
+`dfd7f798-b0de-425d-85e5-93162b6668ce` (`b4511fcacea7`).
 `61f04423-b881-43fc-bfe3-a4ca73ec6099` (`b1eb732489bc`).
 `bad1d286-e2d9-4354-b3f1-5e53ad6f3632` (`a7d9551b63bb`).
 `b16b8568-acd2-4a1b-9eba-60658ece28cb` (`8f8c5ccbca8b`).
@@ -261,12 +322,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | After 21:30 EDT, verify the first canonical Jules schedule run and no public-overlay recurrence. |
-| **P0**   | Operator: resolve GitHub Actions account restriction or register a self-hosted runner through an approved credential flow. |
-| **P0**   | Review protected checkout candidate lanes individually against current main; do not bulk merge. |
-| **P0**   | Continue issues #113 and #114 only after their canonical ownership decisions. |
+| Priority | Action                                                                                                                                                                                                                                                                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Provision a real apps/api/.env from .env.example (JWT_SECRET, A2A_SECRET_KEY, DATABASE_URL, etc.) so a fresh nest start --watch boots cleanly in a worktree without ad-hoc env overrides; only .env.\*.example templates exist in this checkout.                                                                                                  |
+| **P0**   | Consider fixing the pre-existing (unrelated) TS strictness errors surfaced while force-rebuilding packages/web-scraping (WebScrapingService.ts:107, ProxyService.ts:97/109 -- axios header value typed as string\|number\|... used where string is required); build currently succeeds because noEmitOnError is not set, but the errors are real. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -278,16 +337,17 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
 ## Green Federation (Channel Green)
 
-| Component             | Identity                               | Status                               |
-| --------------------- | -------------------------------------- | ------------------------------------ |
-| BROKER-Green          | `TNF:LOCAL:AGENT:TNF:BROKER_GREEN:001` | Running (verified)                   |
-| Browser Agent         | `browser-*` + `ID#:` (deterministic)   | Extension background WS bridge       |
-| Claude tab            | `page-agent-*` + `ID#:`                | On Green when tab synced             |
-| ChatGPT tab           | `page-agent-*` + `ID#:`                | On Green; inbound confirmed          |
-| Gemini tab            | `page-agent-*` + `ID#:`                | On Green                             |
-| GLM tab (`chat.z.ai`) | `page-agent-*` + `ID#:`                | On Green; passive capture in dist-v7 |
-| Gemini compute        | `tnf-gemini-redis-wrapper`             | Running (verify with `pgrep`)        |
-| Relay                 | `ws://127.0.0.1:3007/ws`               | OK                                   |
+| Component               | Identity                                      | Status                                                                                       |
+| ----------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| BROKER-Green            | `TNF:LOCAL:AGENT:TNF:BROKER_GREEN:001`        | Running (verified)                                                                           |
+| Browser Agent           | `browser-*` + `ID#:` (deterministic)          | Extension background WS bridge                                                               |
+| Browser control surface | `TNF:LOCAL:AGENT:BROWSER-CONTROL-SURFACE:001` | Federation relay client (`apps/browser-control-surfaces`); not a staffed `.agent` definition |
+| Claude tab              | `page-agent-*` + `ID#:`                       | On Green when tab synced                                                                     |
+| ChatGPT tab             | `page-agent-*` + `ID#:`                       | On Green; inbound confirmed                                                                  |
+| Gemini tab              | `page-agent-*` + `ID#:`                       | On Green                                                                                     |
+| GLM tab (`chat.z.ai`)   | `page-agent-*` + `ID#:`                       | On Green; passive capture in dist-v7                                                         |
+| Gemini compute          | `tnf-gemini-redis-wrapper`                    | Running (verify with `pgrep`)                                                                |
+| Relay                   | `ws://127.0.0.1:3007/ws`                      | OK                                                                                           |
 
 ## Federated ID Coverage (2026-06-20)
 
@@ -478,6 +538,12 @@ equivalents.
 | `TNF:LOCAL:AGENT:CLAUDE-CODE:001`  | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
 | `TNF:LOCAL:AGENT:OPENCODE-CLI:001` | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
 | `TNF:LOCAL:AGENT:KILO-CLI:001`     | Heartbeat / Stall Defensive Stack | 2026-08-16 | no current definition; past edge case |
+
+### Newly Registered (This Session)
+
+| Agent | Identity                  | Status                                           |
+| ----- | ------------------------- | ------------------------------------------------ |
+| agy   | `TNF:LOCAL:AGENT:AGY:001` | **NEW** — registered at 2026-08-26T13:55:00.638Z |
 
 ## Session Logs
 
@@ -1411,4 +1477,118 @@ Orchestrator | Published SESSION_HANDOFF_LATEST
 | 2026-08-17 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (61f04423-b881-43fc-bfe3-a4ca73ec6099) | ✅ HANDOFF_READY |
 
-| 2026-08-21 | Orchestrator | Published SESSION_HANDOFF_LATEST (e1e21705-246f-4a5d-94fe-1b5b4a4e7ae9) | ✅ HANDOFF_READY |
+| 2026-08-20 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(34428501-58cc-4ec1-86fc-5546990301eb) | ✅ HANDOFF_READY |
+
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(dfd7f798-b0de-425d-85e5-93162b6668ce) | ✅ HANDOFF_READY |
+
+| 2026-08-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7a3f8e2b-1c4d-4e5f-9a2b-6c7d8e9f0a1b) | ✅ HANDOFF_READY |
+
+| 2026-08-26 | ox-alpha | Verified browser-control-surfaces federation relay
+integration: client rewritten to canonical TNFEnvelope protocol (REGISTER →
+REGISTRATION_CONFIRMED / REGISTRATION_ERROR, correlation IDs, HEARTBEAT), jest
+infra created, 12 integration tests green | ✅ VERIFIED |
+
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7ed22a03-1f63-4317-b2c4-78ecb00ab31b) | ✅ HANDOFF_READY |
+
+| 2026-08-26 | ox-alpha | Live smoke test vs standalone relay
+(ws://127.0.0.1:3007/ws): sent canonical RelayMessage REGISTER → received
+WELCOME / AGENT_LIST / CHANNEL_LIST → REGISTRATION_CONFIRMED
+(authenticated:false, no JWT supplied — expected). Wire protocol compatibility
+CONFIRMED | ✅ SMOKE_PASS |
+
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(20430337-45e3-4381-a3b6-171654b1ab30) | ✅ HANDOFF_READY |
+
+| 2026-08-26 | ox-alpha | Channel round-trip verified: client corrected to live
+wire contract (CHANNEL_CREATE/CHANNEL_JOIN/MESSAGE_SEND + top-level `channel`;
+type-based response correlation since relay does not echo correlationIds).
+Reverted payload.agent nesting regression (standalone-relay REGISTER mapper
+reads flat fields). Unit 15/15 green; live two-client round-trip 3/3
+(TNF_LIVE_RELAY=1) — bob→alice CHANNEL_MESSAGE delivered with correct
+from/content/channel | ✅ ROUNDTRIP_PASS |
+
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a72a4834-63d3-4652-a7cc-9210f03fda3b) | ✅ HANDOFF_READY |
+
+| 2026-08-26 | ox-alpha | Work unit batch complete: (1) useTnfFederation hook
+wired — registered/authenticated state, message buffer, heartbeat health,
+AGENT_LIST/CHANNEL_LIST unwrap; default relay URL corrected to :3007. (2) JWT
+path: live authenticated:true NOT exercisable — running relay (:3007) has no
+JWT_SECRET so authService=null (standalone-relay.ts:312-315); token flow covered
+by unit tests + documented. (3) BROWSER_README.md documents verified wire
+protocol + TNF_LIVE_RELAY=1 invocation. (4) Fixed ESM break: jest.config → .cjs
+after "type":"module" added to package.json. Final: unit 17/17, live 3/3, tsc
+clean | ✅ COMPLETE |
+
+| 2026-08-26 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(883a32da-4f06-48ed-8efc-9013f70c7bfe) | ✅ HANDOFF_READY |
+
+| 2026-08-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d93994d2-e5fd-4d51-94c5-b585f20fc2dc) | ✅ HANDOFF_READY |
+
+| 2026-08-27 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e85d971f-770d-4cfe-98f6-4cd46280f557) | ✅ HANDOFF_READY |
+
+| 2026-08-28 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f869f630-5962-4fc9-b9d3-6020c9afa016) | ✅ HANDOFF_READY |
+
+| 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(49c5009d-ffa5-4e61-9bbc-4274c5dcaad9) | ✅ HANDOFF_READY |
+
+| 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4283b14d-8b02-4347-adc8-d5f26a4b01fd) | ✅ HANDOFF_READY |
+
+| 2026-08-29 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(14e23d83-c540-4152-bdf9-1bd554112c4e) | ✅ HANDOFF_READY |
+
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ad3371f2-6d3c-4632-8b81-bef643c73838) | ✅ HANDOFF_READY |
+
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(10b05184-48da-4c36-8607-120e738c0593) | ✅ HANDOFF_READY |
+
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d1c92e44-a836-4a3e-839f-a8a1d45228c0) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(923f574b-d29c-48bc-8496-354f17488c2e) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0b23b465-4757-4216-8e6d-61b251e31594) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(27d90864-a832-4bcb-ab3f-87c274d062b0) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4c35929a-b298-401e-a6ff-3d7a69724bb7) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(524ffbf1-6b3b-471f-ae45-5fedcbdadc7a) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(03b98dc2-44ba-46aa-9baa-9eeab96a0d15) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7f246b53-b0d9-4974-878a-da066f51d766) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(30f7bd2e-0ec7-4287-8745-0e80d9aef8ec) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d500dd27-320e-4e35-b766-5fed4dec4564) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3bb048df-301d-4944-8dd5-2c020ae9e0f5) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(94192ce3-0e9a-4eb5-a605-f40f7cb5726a) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(64bb992e-4379-42e4-ba26-284216403c6b) | ✅ HANDOFF_READY |

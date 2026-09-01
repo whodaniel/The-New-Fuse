@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: ops
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,20 +16,21 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: state-governor-qa-agent
-description: Specialized QA agent that tests the TNF multi-agent state governor —
+description:
+  Specialized QA agent that tests the TNF multi-agent state governor —
   snapshot/retention policy, lock health, and cross-harness state consistency.
 version: 1.1.0
 tags:
-- qa
-- state
-- governor
-- retention
-- cron
+  - qa
+  - state
+  - governor
+  - retention
+  - cron
 capabilities:
-- governor_health
-- retention_policy_check
-- lock_probe
-- snapshot_consistency
+  - governor_health
+  - retention_policy_check
+  - lock_probe
+  - snapshot_consistency
 displayName: TNF State Governor QA
 agentType: testing
 ---

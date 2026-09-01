@@ -60,7 +60,30 @@ function markdown(h){ return [
 function main(){
   const args=process.argv.slice(2), noStage=args.includes('--no-stage'), legacyArgs=args.filter(x=>x!=='--no-stage'); legacyArgs.push('--no-stage');
   const legacy=spawnSync(process.execPath,[path.join(ROOT,'scripts/turn-end.cjs'),...legacyArgs],{cwd:ROOT,stdio:'inherit',env:process.env}); if(legacy.status!==0) process.exit(legacy.status||1);
-  const h=upgrade(JSON.parse(fs.readFileSync(JSON_PATH,'utf8'))); fs.writeFileSync(JSON_PATH,`${JSON.stringify(h,null,2)}\n`); fs.writeFileSync(MD_PATH,markdown(h));
+  const h=upgrade(JSON.parse(fs.readFileSync(JSON_PATH,'utf8')));
+
+  // Update AGENT_STATUS_LEDGER.md automatically
+  try {
+    const ledgerPath = path.join(ROOT, 'docs/protocols/AGENT_STATUS_LEDGER.md');
+    if (fs.existsSync(ledgerPath)) {
+      let ledger = fs.readFileSync(ledgerPath, 'utf8');
+      const lines = ledger.split('\n');
+      const insertIdx = lines.findIndex(l => l.startsWith('# Agent Status Ledger')) + 2;
+      if (insertIdx >= 2) {
+        const timestamp = new Date().toISOString() + 'Z';
+        const summaryText = (h.work_summary && h.work_summary[0]) ? h.work_summary[0] : 'Turn End Automated Handoff';
+        const entry = `- **Updated: ${timestamp}** — ${summaryText}\n`;
+        lines.splice(insertIdx, 0, entry);
+        fs.writeFileSync(ledgerPath, lines.join('\n'));
+        if (!noStage) {
+          spawnSync('git', ['add', 'docs/protocols/AGENT_STATUS_LEDGER.md'], {cwd: ROOT});
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Failed to update ledger automatically:', e.message);
+  }
+ fs.writeFileSync(JSON_PATH,`${JSON.stringify(h,null,2)}\n`); fs.writeFileSync(MD_PATH,markdown(h));
   if(!noStage) spawnSync('git',['add','docs/protocols/reports/SESSION_HANDOFF_LATEST.json','docs/protocols/reports/SESSION_HANDOFF_LATEST.md'],{cwd:ROOT,stdio:'inherit'});
   console.log(`Turn End V2 complete: ${h.handoff_id}`);
 }

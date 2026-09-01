@@ -1,5 +1,6 @@
 ---
 name: context-stall-diagnosis
+department: tech
 description:
   Diagnose and fix Hermes agent sessions that stall, become unresponsive, or die
   mid-conversation due to context window exhaustion.

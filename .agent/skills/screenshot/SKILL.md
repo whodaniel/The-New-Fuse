@@ -1,22 +1,31 @@
 ---
-name: "screenshot"
-description: "Use when the user explicitly asks for a desktop or system screenshot (full screen, specific app or window, or a pixel region), or when tool-specific capture capabilities are unavailable and an OS-level capture is needed."
+name: 'screenshot'
+department: tech
+description:
+  'Use when the user explicitly asks for a desktop or system screenshot (full
+  screen, specific app or window, or a pixel region), or when tool-specific
+  capture capabilities are unavailable and an OS-level capture is needed.'
 ---
-
 
 # Screenshot Capture
 
 Follow these save-location rules every time:
 
-1) If the user specifies a path, save there.
-2) If the user asks for a screenshot without a path, save to the OS default screenshot location.
-3) If Codex needs a screenshot for its own inspection, save to the temp directory.
+1. If the user specifies a path, save there.
+2. If the user asks for a screenshot without a path, save to the OS default
+   screenshot location.
+3. If Codex needs a screenshot for its own inspection, save to the temp
+   directory.
 
 ## Tool priority
 
-- Prefer tool-specific screenshot capabilities when available (for example: a Figma MCP/skill for Figma files, or Playwright/agent-browser tools for browsers and Electron apps).
-- Use this skill when explicitly asked, for whole-system desktop captures, or when a tool-specific capture cannot get what you need.
-- Otherwise, treat this skill as the default for desktop apps without a better-integrated capture tool.
+- Prefer tool-specific screenshot capabilities when available (for example: a
+  Figma MCP/skill for Figma files, or Playwright/agent-browser tools for
+  browsers and Electron apps).
+- Use this skill when explicitly asked, for whole-system desktop captures, or
+  when a tool-specific capture cannot get what you need.
+- Otherwise, treat this skill as the default for desktop apps without a
+  better-integrated capture tool.
 
 ## macOS permission preflight (reduce repeated prompts)
 
@@ -24,8 +33,8 @@ On macOS, run the preflight helper once before window/app capture. It checks
 Screen Recording permission, explains why it is needed, and requests it in one
 place.
 
-The helpers route Swift's module cache to `$TMPDIR/codex-swift-module-cache`
-to avoid extra sandbox module-cache prompts.
+The helpers route Swift's module cache to `$TMPDIR/codex-swift-module-cache` to
+avoid extra sandbox module-cache prompts.
 
 ```bash
 bash <path-to-skill>/scripts/ensure_macos_permissions.sh
@@ -76,7 +85,8 @@ python3 <path-to-skill>/scripts/take_screenshot.py --mode temp
 python3 <path-to-skill>/scripts/take_screenshot.py --path output/screen.png
 ```
 
-- App/window capture by app name (macOS only; substring match is OK; captures all matching windows):
+- App/window capture by app name (macOS only; substring match is OK; captures
+  all matching windows):
 
 ```bash
 python3 <path-to-skill>/scripts/take_screenshot.py --app "Codex"
@@ -100,7 +110,8 @@ python3 <path-to-skill>/scripts/take_screenshot.py --list-windows --app "Codex"
 python3 <path-to-skill>/scripts/take_screenshot.py --mode temp --region 100,200,800,600
 ```
 
-- Focused/active window (captures only the frontmost window; use `--app` to capture all windows):
+- Focused/active window (captures only the frontmost window; use `--app` to
+  capture all windows):
 
 ```bash
 python3 <path-to-skill>/scripts/take_screenshot.py --mode temp --active-window
@@ -112,31 +123,41 @@ python3 <path-to-skill>/scripts/take_screenshot.py --mode temp --active-window
 python3 <path-to-skill>/scripts/take_screenshot.py --window-id 12345
 ```
 
-The script prints one path per capture. When multiple windows or displays match, it prints multiple paths (one per line) and adds suffixes like `-w<windowId>` or `-d<display>`. View each path sequentially with the image viewer tool, and only manipulate images if needed or requested.
+The script prints one path per capture. When multiple windows or displays match,
+it prints multiple paths (one per line) and adds suffixes like `-w<windowId>` or
+`-d<display>`. View each path sequentially with the image viewer tool, and only
+manipulate images if needed or requested.
 
 ### Workflow examples
 
-- "Take a look at <App> and tell me what you see": capture to temp, then view each printed path in order.
+- "Take a look at <App> and tell me what you see": capture to temp, then view
+  each printed path in order.
 
 ```bash
 bash <path-to-skill>/scripts/ensure_macos_permissions.sh && \
 python3 <path-to-skill>/scripts/take_screenshot.py --app "<App>" --mode temp
 ```
 
-- "The design from Figma is not matching what is implemented": use a Figma MCP/skill to capture the design first, then capture the running app with this skill (typically to temp) and compare the raw screenshots before any manipulation.
+- "The design from Figma is not matching what is implemented": use a Figma
+  MCP/skill to capture the design first, then capture the running app with this
+  skill (typically to temp) and compare the raw screenshots before any
+  manipulation.
 
 ### Multi-display behavior
 
-- On macOS, full-screen captures save one file per display when multiple monitors are connected.
-- On Linux and Windows, full-screen captures use the virtual desktop (all monitors in one image); use `--region` to isolate a single display when needed.
+- On macOS, full-screen captures save one file per display when multiple
+  monitors are connected.
+- On Linux and Windows, full-screen captures use the virtual desktop (all
+  monitors in one image); use `--region` to isolate a single display when
+  needed.
 
 ### Linux prerequisites and selection logic
 
 The helper automatically selects the first available tool:
 
-1) `scrot`
-2) `gnome-screenshot`
-3) ImageMagick `import`
+1. `scrot`
+2. `gnome-screenshot`
+3. ImageMagick `import`
 
 If none are available, ask the user to install one of them and retry.
 
@@ -259,9 +280,16 @@ gnome-screenshot -w -f output/window.png
 
 ## Error handling
 
-- On macOS, run `bash <path-to-skill>/scripts/ensure_macos_permissions.sh` first to request Screen Recording in one place.
-- If you see "screen capture checks are blocked in the sandbox", "could not create image from display", or Swift `ModuleCache` permission errors in a sandboxed run, rerun the command with escalated permissions.
-- If macOS app/window capture returns no matches, run `--list-windows --app "AppName"` and retry with `--window-id`, and make sure the app is visible on screen.
-- If Linux region/window capture fails, check tool availability with `command -v scrot`, `command -v gnome-screenshot`, and `command -v import`.
-- If saving to the OS default location fails with permission errors in a sandbox, rerun the command with escalated permissions.
+- On macOS, run `bash <path-to-skill>/scripts/ensure_macos_permissions.sh` first
+  to request Screen Recording in one place.
+- If you see "screen capture checks are blocked in the sandbox", "could not
+  create image from display", or Swift `ModuleCache` permission errors in a
+  sandboxed run, rerun the command with escalated permissions.
+- If macOS app/window capture returns no matches, run
+  `--list-windows --app "AppName"` and retry with `--window-id`, and make sure
+  the app is visible on screen.
+- If Linux region/window capture fails, check tool availability with
+  `command -v scrot`, `command -v gnome-screenshot`, and `command -v import`.
+- If saving to the OS default location fails with permission errors in a
+  sandbox, rerun the command with escalated permissions.
 - Always report the saved file path in the response.

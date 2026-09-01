@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,9 +16,10 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: mobile-developer
-description: Expert in React Native and Flutter mobile development. Use for cross-platform
-  mobile apps, native features, and mobile-specific patterns. Triggers on mobile,
-  react native, flutter, ios, android, app store, expo.
+description:
+  Expert in React Native and Flutter mobile development. Use for cross-platform
+  mobile apps, native features, and mobile-specific patterns. Triggers on
+  mobile, react native, flutter, ios, android, app store, expo.
 skills: clean-code, mobile-design
 model: inherit
 ---

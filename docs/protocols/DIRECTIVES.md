@@ -35,9 +35,9 @@ crawl→synthesize loop that keeps this file repeatable & evolvable.
    Governance, Environment Adapter, Module Dependency Awareness, Document
    Vetting, Velocity-Integrity, Self-Sufficiency, Resource Strategy, Executable
    Intelligence Framework, Core System Prompt Architecture, Information
-   Intentions, Corporate Department Orchestration, MemPalace, Agent Targeted
-   Handoff v1.1, **Frontend IA Canon** `TNF_FRONTEND_IA_CANON.md`, **Agent Shell
-   Hygiene** `TNF_AGENT_SHELL_HYGIENE.md`)
+   Intentions, Cluster Orchestration, MemPalace, Agent Targeted Handoff v1.1,
+   **Frontend IA Canon** `TNF_FRONTEND_IA_CANON.md`, **Agent Shell Hygiene**
+   `TNF_AGENT_SHELL_HYGIENE.md`)
 7. **Normative schemas** (`docs/protocols/schemas/*.json`) — handoff, merkle,
    cron-governance, executable-intelligence, agent-self-edit, sgp/twip envelopes
 8. **Project rules** — `docs/CLAUDE.md`, `docs/core/AGENTS.md`, `IDENTITY.md`,
@@ -436,7 +436,7 @@ These are hard requirements. Violation is a protocol failure.
 - **A5 — Spawn subagents & specialized loops.** Orchestrate PicoClaw
   (analyzers), OpenClaw (fleet/executor), ZeroClaw (sandbox) per task shape;
   route across the Department chain (Scout→Library→Forge→Governance→Connective
-  Journaling). — `AGENTS.md`, `TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL.md`
+  Journaling). — `AGENTS.md`, `TNF_CLUSTER_ORCHESTRATION_PROTOCOL.md`
 - **A6 — Probe external surfaces (bounded).** Environment Adapter discovers/
   classifies/probes any local agent, infra, provider, app, info store with a
   ≤500ms bounded-deadline handshake; hang → `unreachable` (never failure).
@@ -575,11 +575,11 @@ federated hierarchy pick them up on next subscription tick.
 4. Honor Anti-Lobotomy exclusions; respect HITL gates; bear mandatory doc tags.
 5. Route work through the Department chain: Scout → Library → Forge → Governance
    → Connective Journaling (Perpetual Motion; handoff without record = systemic
-   failure). — `TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL.md`
+   failure). — `TNF_CLUSTER_ORCHESTRATION_PROTOCOL.md`
 
 **Adaptive branches (select by trigger):**
 
-- **Domain edge case** → Tri-Fold bar: Corporate (legacy rigor), Agency (client
+- **Domain edge case** → Tri-Fold bar: Core (legacy rigor), Agency (client
   balance), Personal (proactive). — `AGENTS.md`
 - **Failure edge case** → Self-Healing branches: module-resolution, daemon-down,
   heartbeat-stalled, redis-down, registration-410, cron-stopped. —
@@ -642,7 +642,7 @@ TNF_ENVIRONMENT_ADAPTER.md · TNF_DOCUMENT_VETTING_PROCEDURE.md ·
 THE_VELOCITY_INTEGRITY_BALANCE.md · TNF_SELF_SUFFICIENCY.md ·
 TNF_RESOURCE_STRATEGY.md · EXECUTABLE_INTELLIGENCE_FRAMEWORK.md ·
 CORE_SYSTEM_PROMPT_ARCHITECTURE.md · INFORMATION_INTENTIONS.md ·
-TNF_CORPORATE_DEPARTMENT_ORCHESTRATION_MANUAL.md · MEMPALACE_META_CHART.md ·
+TNF_CLUSTER_ORCHESTRATION_PROTOCOL.md · MEMPALACE_META_CHART.md ·
 AGENT_TARGETED_HANDOFF_V1.md · DIRECTIVE_CONVERSION_LEDGER.md ·
 docs/core/{AGENTS,SOUL,USER,IDENTITY,HEARTBEAT,SECURITY,TOOLS,ENGINEERING_PRINCIPLES}.md
 · docs/CLAUDE.md · docs/protocols/schemas/\*_

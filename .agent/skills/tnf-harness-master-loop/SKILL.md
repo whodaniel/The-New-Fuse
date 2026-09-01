@@ -1,5 +1,7 @@
 ---
 name: tnf-harness-master-loop
+category: tnf-platform
+department: tech
 description:
   Operate the TNF harness master loop (inspect → act → verify), autonomous
   interactive mode, handoff task queue, and live LLM loop verification. Use when

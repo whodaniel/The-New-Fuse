@@ -328,6 +328,8 @@ export interface ExtensionSettings {
   // Chat Detection
   chatDetection: ChatDetectionConfig;
   autoInject: boolean;
+  /** Auto-open the floating injectable panel when the content script loads. */
+  autoOpenPanel: boolean;
 
   // UI
   panel: {
@@ -407,7 +409,12 @@ export type MessageType =
   | 'NODE_STATUS'
   | 'SYNC_REQUEST'
   | 'SYNC_RESPONSE'
-  | 'TASK_ASSIGN';
+  | 'TASK_ASSIGN'
+
+  // Browser-automation parity (navigate/click/type/screenshot/eval/console/
+  // network/resize/tabs) — see background/browser-automation.ts
+  | 'BROWSER_ACTION'
+  | 'BROWSER_ACTION_RESULT';
 
 // ============================================
 // ORCHESTRATION TYPES

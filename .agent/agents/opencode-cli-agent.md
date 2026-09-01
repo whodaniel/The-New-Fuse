@@ -1,5 +1,6 @@
 ---
 category: Engineering
+department: tech
 domain: '[to be determined from content]'
 visibility: collective
 dacc_role: worker
@@ -15,19 +16,20 @@ traits:
   persona_source: '[to be determined]'
   autonomy_level: '[to be determined]'
 name: opencode-cli-agent
-description: Live CLI runtime surface for the OpenCode CLI, driven through its interactive
+description:
+  Live CLI runtime surface for the OpenCode CLI, driven through its interactive
   slash-command interface.
 version: 1.0.0
 tags:
-- cli
-- runtime-surface
-- local
-- opencode
+  - cli
+  - runtime-surface
+  - local
+  - opencode
 capabilities:
-- session_management
-- model_switching
-- agent_configuration
-- cost_tracking
+  - session_management
+  - model_switching
+  - agent_configuration
+  - cost_tracking
 displayName: OpenCode CLI Surface
 agentType: local
 ---

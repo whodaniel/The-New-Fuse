@@ -1,5 +1,7 @@
 ---
 name: tnf-fleet-delegation-governor
+category: tnf-platform
+department: tech
 description:
   Enforces Core Tenet 1 (Fleet Delegation) across the TNF harness framework.
   Instructs agents how to discover live fleet targets, partition multi-stage

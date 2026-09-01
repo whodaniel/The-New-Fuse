@@ -1,0 +1,67 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "9167f5fb-34f6-4dfb-a670-fce64fb3d471",
+  "created_at": "2026-08-28T15:38:08.950Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "fix/session-handoff-scoped-receipts-20260828",
+  "head_sha": "e159fb78b4a56f4288c563efab7ca85ae391c5af",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Implemented true lane binding in enforce-session-handoff.cjs.",
+    "Added hermetic repository isolation to adversarial test suite.",
+    "Decoupled critical-path commit evidence from global LATEST mutation.",
+    "Added executable proofs for concurrency, fail-closed logic, repo spoofing, and detached-mode."
+  ],
+  "changed_paths": [
+    "scripts/protocols/enforce-session-handoff.cjs",
+    "scripts/tests/session-handoff-gate.test.sh",
+    "docs/protocols/reports/SESSION_HANDOFF_GOVERNANCE_REPAIR_20260828.json",
+    "docs/protocols/reports/SESSION_HANDOFF_GOVERNANCE_REPAIR_20260828.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
+  },
+  "continuation": {
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": ["Verify remote bytes"]
+  },
+  "next_actions": ["Review draft PR for governance architecture repair."],
+  "artifacts": {
+    "commits": []
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": []
+}

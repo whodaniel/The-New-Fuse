@@ -12,6 +12,7 @@ secondary_tags:
   - deterministic
   - interoperability
 category: engineering/governance
+department: tech
 risk_tier: medium
 harmful_pattern_detection: true
 harmful_pattern_signals:
@@ -74,7 +75,8 @@ pnpm run skills:bank:supervisor:stop
 
 ## Adaptability Guardrails
 
-- Allow new persona/skill definitions by default when they follow `SKILL.md` format.
+- Allow new persona/skill definitions by default when they follow `SKILL.md`
+  format.
 - Do not hardcode closed allowlists for skill IDs or categories.
 - Validate shape and normalization, not static enumerations.
 - Warn on unknown categories/tags first; auto-register pending taxonomy updates.

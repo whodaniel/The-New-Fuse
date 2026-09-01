@@ -59,6 +59,12 @@ instead of deleting them. For task-specific traversal, load
 `node scripts/skills/skill-bank-query.cjs <term>`, then read one `SKILL.md` body
 only when invoking that skill.
 
+Department membership is additive and names-only. Existing `category` values
+stay authoritative for skill-chain / domain maps. Operator departments and the
+staffing index: `docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md` and
+`data/departments/staffing-index.json`. `tnf department show <id>` lists names;
+do not inject skill bodies from a department listing.
+
 ## Supervisor mode
 
 Run continuously:

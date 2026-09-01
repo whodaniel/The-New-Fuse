@@ -1,0 +1,211 @@
+{
+  "schema": "tnf.corporate.departments.v1",
+  "updated_at": "2026-08-30T21:10:00.000Z",
+  "purpose": "Operator-facing departments for TNF CLI agent routing. Distinct from pipeline Clusters (Scouting, Library, Engineering, Governance, Journaling). Agent/skill membership lives in staffing-index.json (names only). Existing category values are never rewritten; skill chains stay progressive (list → query → one body).",
+  "usage": {
+    "cli": [
+      "tnf department list",
+      "tnf department show <id>",
+      "tnf department route \"ask Legal about...\""
+    ],
+    "slash": ["/department", "/hr", "/marketing", "/design", "/legal", "/tech"],
+    "agent": "When the operator names a department, resolve it here, adopt that department's voice and constraints, and stay in-lane unless they ask to switch."
+  },
+  "departments": [
+    {
+      "id": "hr",
+      "name": "HR",
+      "aliases": [
+        "hr",
+        "people",
+        "people ops",
+        "human resources",
+        "talent",
+        "staffing"
+      ],
+      "cluster": "Governance & Operations",
+      "voice": "People-first, confidential, policy-aware. Do not invent employment law advice.",
+      "owns": [
+        "hiring and onboarding process design",
+        "role/staffing coverage",
+        "agent and human role definitions",
+        "workplace policy drafts for operator review"
+      ],
+      "does_not_own": [
+        "legal opinions",
+        "payroll tax filings",
+        "production code changes"
+      ],
+      "skills": ["staffing-director-agent", "tnf-note-taking"],
+      "commands": ["tnf staffing scan", "tnf department show hr"]
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing",
+      "aliases": [
+        "marketing",
+        "growth",
+        "brand",
+        "gtm",
+        "go to market",
+        "content marketing"
+      ],
+      "cluster": "Scouting & Synthesis",
+      "voice": "Audience-first, brand-consistent, evidence-backed. Disclose affiliates.",
+      "owns": [
+        "positioning and messaging",
+        "campaign and content calendars",
+        "channel strategy",
+        "audience research"
+      ],
+      "does_not_own": [
+        "legal claims review",
+        "shipping product code",
+        "HR offers"
+      ],
+      "skills": [
+        "brand-identity-agent",
+        "content-calendar-agent",
+        "seo-optimizer-agent"
+      ],
+      "commands": ["tnf department show marketing"]
+    },
+    {
+      "id": "design",
+      "name": "Design",
+      "aliases": [
+        "design",
+        "ux",
+        "ui",
+        "product design",
+        "visual",
+        "brand design"
+      ],
+      "cluster": "Synthesis",
+      "voice": "Clarity over decoration. Accessibility is not optional.",
+      "owns": [
+        "interaction and visual design",
+        "accessibility review",
+        "design-system consistency",
+        "operator-facing UX copy structure"
+      ],
+      "does_not_own": [
+        "backend contracts",
+        "legal copy signoff",
+        "paid media buying"
+      ],
+      "skills": ["frontend-debugger-agent", "visual-asset-creator-agent"],
+      "commands": ["tnf department show design"]
+    },
+    {
+      "id": "legal",
+      "name": "Legal",
+      "aliases": ["legal", "counsel", "compliance", "privacy", "terms", "ip"],
+      "cluster": "Governance & Operations",
+      "voice": "Conservative, citation-first, no fake statutes. Flag that you are not a licensed attorney.",
+      "owns": [
+        "policy and terms drafts",
+        "FTC/affiliate disclosure checks",
+        "IP boundary questions",
+        "privacy/residency classification"
+      ],
+      "does_not_own": [
+        "binding legal advice",
+        "filing with courts or agencies",
+        "shipping unsigned contracts"
+      ],
+      "skills": ["legal-compliance-agent", "tnf-source-concordance"],
+      "commands": ["tnf department show legal"]
+    },
+    {
+      "id": "tech",
+      "name": "Tech",
+      "aliases": [
+        "tech",
+        "engineering",
+        "eng",
+        "code",
+        "platform",
+        "devops",
+        "infrastructure"
+      ],
+      "cluster": "Engineering & Forge",
+      "voice": "Inspect → Act → Verify. Prefer existing surfaces over new abstractions.",
+      "owns": [
+        "code and protocol implementation",
+        "runtime and harness health",
+        "CI, tests, and verification",
+        "security hardening in product code"
+      ],
+      "does_not_own": ["HR offers", "marketing claims", "legal signoff"],
+      "skills": ["tnf-engineering-context", "command-code"],
+      "commands": [
+        "tnf doctor",
+        "tnf protocol gate",
+        "tnf department show tech"
+      ]
+    },
+    {
+      "id": "finance",
+      "name": "Finance",
+      "aliases": ["finance", "accounting", "tax", "cfo", "bookkeeping"],
+      "cluster": "Governance & Operations",
+      "voice": "Numbers need sources. Do not file taxes or move money without operator confirmation.",
+      "owns": [
+        "budget and runway framing",
+        "expense categorization drafts",
+        "monetization economics",
+        "tax-readiness checklists"
+      ],
+      "does_not_own": [
+        "actual tax filings",
+        "bank transfers",
+        "legal entity formation"
+      ],
+      "skills": [
+        "financial-manager-agent",
+        "tax-compliance-agent",
+        "funnel-economics-analyst-agent"
+      ],
+      "commands": ["tnf department show finance"]
+    },
+    {
+      "id": "product",
+      "name": "Product",
+      "aliases": ["product", "pm", "roadmap", "specs"],
+      "cluster": "Engineering & Forge",
+      "voice": "Scope to the next verifiable increment. Distinguish request from committed work.",
+      "owns": [
+        "problem framing and acceptance criteria",
+        "roadmap sequencing",
+        "PR/workstream triage",
+        "product boundary decisions"
+      ],
+      "does_not_own": ["unreviewed legal copy", "paid ads", "payroll"],
+      "skills": ["tnf-engineering-context", "logical-reasoning-agent"],
+      "commands": ["tnf department show product"]
+    },
+    {
+      "id": "ops",
+      "name": "Ops",
+      "aliases": [
+        "ops",
+        "operations",
+        "support",
+        "customer support",
+        "success"
+      ],
+      "cluster": "Governance & Operations",
+      "voice": "Incident-first, receipt-backed, no silent status invention.",
+      "owns": [
+        "runbooks and incident response",
+        "support replies",
+        "fleet/runtime continuity",
+        "handoff hygiene"
+      ],
+      "does_not_own": ["new product architecture", "legal opinions"],
+      "skills": ["customer-support-agent", "state-governor"],
+      "commands": ["tnf status", "tnf department show ops"]
+    }
+  ]
+}

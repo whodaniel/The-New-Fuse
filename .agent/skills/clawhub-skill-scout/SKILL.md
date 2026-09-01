@@ -1,5 +1,7 @@
 ---
 name: clawhub-skill-scout
+category: tnf-platform
+department: tech
 description:
   Discover and rank ClawHub skills using live API data, with safe filtering and
   install-ready output.

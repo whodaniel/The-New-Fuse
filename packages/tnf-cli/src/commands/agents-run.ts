@@ -31,6 +31,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import { buildTnfAgentOrientation } from '../agent-orientation.js';
+import { formatDepartmentCard, loadDepartmentStaffing, resolveDepartment } from '../departments.js';
+import { MCPToolRuntimeService } from '../services/MCPToolRuntimeService.js';
 import {
   AGENT_BROWSER_OPERATIONS,
   type AgentBrowserOperation,
@@ -38,7 +41,7 @@ import {
   runAgentBrowser,
 } from '../utils/browser-routing.js';
 import { resolvePrompt } from '../utils/prompt-input.js';
-import { MCPToolRuntimeService } from '../services/MCPToolRuntimeService.js';
+import { recallOperatorMemory, retainOperatorMemory } from './remember.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -78,6 +81,7 @@ interface JsonResult {
     resultSummary: string;
     durationMs: number;
     ok: boolean;
+    receipt?: any;
   }>;
   finishReason: string;
   durationMs: number;
@@ -241,11 +245,43 @@ export async function executeBuiltinTool(
         result = loadSkill(skillName);
         break;
       }
+      case 'memory_retain': {
+        const text = String(args.text ?? '');
+        if (!text.trim()) return { ok: false, error: 'memory_retain: empty text' };
+        if (!ctx.quiet) console.error(`[agents-run] memory_retain: ${text.slice(0, 80)}`);
+        result = {
+          ...retainOperatorMemory(ctx.cwd, text, {
+            tags: args.tags
+              ? String(args.tags)
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+              : undefined,
+            scope: args.scope ? String(args.scope) : undefined,
+          }),
+        };
+        break;
+      }
       case 'memory_recall': {
         const query = String(args.query ?? '');
         const limit = Math.min(Math.max(Number(args.limit ?? 10) || 10, 1), 100);
         if (!ctx.quiet) console.error(`[agents-run] memory_recall: "${query}" limit=${limit}`);
-        result = await recallMemory(query, limit);
+        const operator = recallOperatorMemory(ctx.cwd, query, limit);
+        const legacy = await recallMemory(query, limit);
+        result = { ...legacy, operator };
+        break;
+      }
+      case 'department_route': {
+        const utterance = String(args.utterance ?? '');
+        if (!ctx.quiet) console.error(`[agents-run] department_route: ${utterance}`);
+        const route = resolveDepartment(ctx.cwd, utterance);
+        result = {
+          ok: route.matched,
+          ...route,
+          card: route.department
+            ? formatDepartmentCard(route.department, loadDepartmentStaffing(ctx.cwd))
+            : null,
+        };
         break;
       }
       case 'mcp_list_tools': {
@@ -650,10 +686,44 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
     async (name: string, args: Record<string, unknown>) => {
       const tTool = Date.now();
       let response: string | Record<string, unknown>;
+      let authorized = true;
+      let denyReason = '';
+      let authoritySource = '';
       try {
+        const {
+          LocalSubdirectorAuthorityService,
+        } = require('../services/LocalSubdirectorAuthorityService.js');
+        const auth = new LocalSubdirectorAuthorityService(cwd);
+        const authConfig = auth.getConfig();
+
+        const isSubdirector = auth.verifyLocalSubdirectorIdentity(
+          process.env.TNF_SUBDIRECTOR_IDENTITY_TOKEN || ''
+        );
+
+        if (isSubdirector) {
+          authoritySource = 'LocalSubdirector (Verified Identity)';
+          if (!authConfig.autonomyEnabled) {
+            authorized = false;
+            denyReason = 'Fleet autonomy is paused.';
+          } else if (!auth.isAuthorized(name) && !auth.isAuthorized('all')) {
+            authorized = false;
+            denyReason = `Capability '${name}' is not granted to Local Subdirector.`;
+          }
+        } else {
+          // Subordinate agent uses cryptographically signed delegation
+          authoritySource = 'Delegated Subordinate';
+          const delegationToken = process.env.TNF_DELEGATED_AUTHORITY_TOKEN || '';
+          if (!auth.verifyDelegation(delegationToken, name)) {
+            authorized = false;
+            denyReason = `Subordinate agent lacks valid cryptographically signed delegated authority for '${name}'.`;
+          }
+        }
+
         // Plan/ask / --tools none: refuse tool execution even if the model asks.
         if (Array.isArray(enabledTools) && enabledTools.length === 0) {
           response = { ok: false, error: `tool '${name}' disabled (tools=none)` };
+        } else if (!authorized) {
+          response = { ok: false, error: `Authority Denied: ${denyReason}` };
         } else {
           response = await executeBuiltinTool(name, args, { cwd, quiet: !!opts.quiet });
         }
@@ -670,13 +740,28 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
           typeof response === 'string' ? truncate(response, 240) : summarizeObject(response),
         durationMs,
         ok,
+        receipt: {
+          actor: process.env.AGENT_NAME || 'tnf-subordinate',
+          realm: 'local',
+          requestedCapability: name,
+          authorized: authorized,
+          authoritySource: authoritySource,
+          denyReason: denyReason,
+        },
       });
       return response;
     },
     {
       maxIterations: opts.maxIterations, // undefined → unlimited (autonomy default)
       timeoutMs: opts.timeoutMs,
-      systemPrompt: opts.systemPrompt,
+      systemPrompt:
+        opts.systemPrompt ||
+        [
+          'You are an autonomous TNF agent. Use the available tools liberally.',
+          'When a task is complete, return a final assistant message — do not loop forever.',
+          'Prefer observing before acting; prefer acting before guessing.',
+          buildTnfAgentOrientation(cwd),
+        ].join('\n\n'),
       builtinTools:
         enabledTools === undefined
           ? undefined
@@ -740,7 +825,7 @@ export function registerAgentsRunCommand(program: Command): void {
     .description(
       'Run an autonomous agent loop with the canonical TNF built-in toolset. ' +
         'Uses the same multi-provider client and the Python daemon-style unlimited-iteration default. ' +
-        'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_recall, mcp_list_tools, mcp_call_tool.'
+        'Tools: bash, read_file, write_file, search_files, web_search, web_fetch, browser_interact, list_skills, load_skill, memory_retain, memory_recall, department_route, mcp_list_tools, mcp_call_tool.'
     )
     .argument(
       '[task...]',
