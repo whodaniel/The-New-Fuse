@@ -4,12 +4,10 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Live-verify navigate/goBack, click/type, human-behavior,
-and CAPTCHA-detection browserAction handlers end-to-end (blocked earlier this
-session by host CPU load driving CDP timeouts, never conclusively confirmed).
-Fix the content-script injection allowlist gap so browserAction works on
-arbitrary pages, not just the curated chat-site list. Address the
-native-messaging-host manifest path mismatch (po
+**Current Directive:** Re-verify /api/agents through the gateway now that
+apps/api can actually boot repeatedly; confirm no other packages in the monorepo
+share nest-cli.json's deleteOutDir+tsbuildinfo combination with the same latent
+bug.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1155,6 +1153,12 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-01T12:57:29.514Z handoff `3bb048df-301d-4944-8dd5-2c020ae9e0f5` head
+  `92f3c2ed0594` project `TNF-SESSION` — Re-verify /api/agents through the
+  gateway now that apps/api can actually boot repeatedly; confirm no other
+  packages in the monorepo share nest-cli.json's deleteOutDir+tsbuildinfo
+  combination with the same latent bug.
 
 - 2026-09-01T12:16:31.866Z handoff `d500dd27-320e-4e35-b766-5fed4dec4564` head
   `e0380981be8d` project `TNF-SESSION` — Live-verify navigate/goBack,

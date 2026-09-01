@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-01T12:16:31.064Z` Handoff ID: `d500dd27-320e-4e35-b766-5fed4dec4564`
+`2026-09-01T12:57:27.460Z` Handoff ID: `3bb048df-301d-4944-8dd5-2c020ae9e0f5`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `fix/fuse-connect-browser-parity`
-- Head SHA: `e0380981be8d6f2e819c20eedc73dd552382c08f`
+- Branch: `fix/api-dev-stale-tsbuildinfo`
+- Head SHA: `92f3c2ed05945357f140ed68dd05728426e75db2`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -20,22 +20,23 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Work Summary
 
-- Fuse Connect (chrome-extension v7): wired dormant
-  AccessibilityTree/HumanBehaviorSimulator/CaptchaHandler content-script
-  capabilities to a new background BrowserAutomation dispatcher + BROWSER_ACTION
-  relay message type, added real cross-JS-world console capture (MAIN-world
-  hook + CustomEvent bridge), GET_CONSOLE_LOGS/GET_PAGE_TEXT handlers, and
-  browserAction/runtimeMessage forwarding in the page-world test bridge. Also
-  fixed two pre-existing build-gate blockers unrelated to this feature: unbuilt
-  @the-new-fuse/llm-catalog package (rebuilt via turbo) and a missing WebWorker
-  lib in apps/chrome-extension/tsconfig.json
-  (ServiceWorkerGlobalScope/ExtendableEvent were always untyped there, confirmed
-  present verbatim on origin/main before this change). Verified live: real
-  extension reload, real test-fixture page, real cross-JS-world console capture
-  confirmed on an independent TNF page.
+- apps/api: fixed a real, 100%-reproducible dev-server crash. nest-cli.json's
+  deleteOutDir wipes dist/ on every 'nest start --watch', but
+  tsconfig.tsbuildinfo (tsc's incremental cache) is a sibling file outside dist/
+  and was never cleared alongside it — so the second and every subsequent 'pnpm
+  dev'/'start:dev' run has tsc trust a now-stale cache, report 0 errors, and
+  skip re-emitting dist/main.js, crashing with Cannot find module. Cleared
+  tsconfig.tsbuildinfo before nest start in dev/start:dev/start:debug, mirroring
+  what the existing clean script already does. Found while diagnosing a live,
+  real 502 on /api/agents through the gateway (apps/api simply wasn't running);
+  also found and fixed separately (not part of this commit): a corrupted root
+  node_modules (brace-expansion missing its real files under
+  node_modules/glob/node_modules/ and at top level) via pnpm install + removing
+  one leftover empty shadow directory.
 
 ## Changed Paths
 
+- apps/api/package.json
 - apps/chrome-extension/dist-v7/content/index.js
 - apps/chrome-extension/dist-v7/content/main-world-console-hook.js
 - apps/chrome-extension/dist-v7/manifest.json
@@ -57,12 +58,6 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- apps/api/src/controllers/workflow.controller.ts
-- apps/api/src/services/agent-api-grants.service.ts
-- apps/api/src/services/workflow/WorkflowExecutionService.spec.ts
-- apps/api/src/services/workflow/WorkflowExecutionService.ts
-- apps/api/src/services/workflow/safe-expression-evaluator.spec.ts
-- apps/api/src/services/workflow/safe-expression-evaluator.ts
 
 ## Verification
 
@@ -86,9 +81,6 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Next Actions
 
-- Live-verify navigate/goBack, click/type, human-behavior, and CAPTCHA-detection
-  browserAction handlers end-to-end (blocked earlier this session by host CPU
-  load driving CDP timeouts, never conclusively confirmed). Fix the
-  content-script injection allowlist gap so browserAction works on arbitrary
-  pages, not just the curated chat-site list. Address the native-messaging-host
-  manifest path mismatch (points at main checkout, not this worktree).
+- Re-verify /api/agents through the gateway now that apps/api can actually boot
+  repeatedly; confirm no other packages in the monorepo share nest-cli.json's
+  deleteOutDir+tsbuildinfo combination with the same latent bug.
