@@ -6344,9 +6344,7 @@ promptTemplateCommand
 // in the same way `pi custom-provider.md` describes.
 const providerCommand = program
   .command('provider')
-  .description(
-    'Inspect built-in model providers (.pi custom-provider parity; add/remove deferred to Phase-2)'
-  );
+  .description('Inspect canonical and user-configured model providers');
 
 providerCommand
   .command('list')
@@ -6370,11 +6368,16 @@ providerCommand
         );
         return;
       }
-      console.log(chalk.bold('\nModel Providers (.pi parity)\n'));
+      console.log(chalk.bold('\nModel Providers\n'));
       for (const p of providers) {
-        const status = p.configured
-          ? chalk.green(`configured${p.models.length ? ` (${p.models.length} models)` : ''}`)
-          : chalk.dim('not configured');
+        const status =
+          p.status === 'ok'
+            ? chalk.green(`live (${p.models.length} models)`)
+            : p.status === 'probe_failed'
+              ? chalk.yellow(`catalog fallback (${p.models.length} models; ${p.error})`)
+              : p.models.length
+                ? chalk.cyan(`catalog (${p.models.length} models; API key not configured)`)
+                : chalk.dim(p.type === 'local' ? 'local endpoint unavailable' : 'not configured');
         console.log(`  ${chalk.cyan(p.id.padEnd(14))} ${p.name.padEnd(18)} ${status}`);
       }
       console.log('');
@@ -6392,8 +6395,7 @@ providerCommand
   .action(async (id: string, options: { json?: boolean }) => {
     try {
       const svc = new ModelsService();
-      const providers = await svc.listProviders();
-      const found = providers.find((p) => p.id === id);
+      const found = await svc.getProvider(id);
       if (!found) {
         console.error(chalk.red(`Unknown provider: ${id}`));
         process.exit(1);
@@ -6406,6 +6408,9 @@ providerCommand
       console.log(`  ID:         ${chalk.cyan(found.id)}`);
       console.log(`  Type:       ${found.type}`);
       console.log(`  Configured: ${found.configured ? chalk.green('yes') : chalk.yellow('no')}`);
+      console.log(`  Discovery:  ${found.discovery}`);
+      if (found.defaultModel) console.log(`  Default:    ${chalk.cyan(found.defaultModel)}`);
+      if (found.error) console.log(`  Probe:      ${chalk.yellow(found.error)}`);
       if (found.models.length > 0) {
         console.log(chalk.bold('\n  Models:\n'));
         for (const m of found.models.slice(0, 10)) {
@@ -16661,6 +16666,7 @@ import { ServeService } from './services/ServeService.js';
 import { SessionManagerService } from './services/SessionManagerService.js';
 import { StatsService } from './services/StatsService.js';
 import { UpgradeService } from './services/UpgradeService.js';
+import { interactiveSelect } from './utils/interactive-select.js';
 
 interface AcpExternalAgentPlan {
   agent: string;
@@ -18225,19 +18231,80 @@ program
 // Models command
 program
   .command('models')
-  .description('List all available models')
+  .description('List or interactively select dynamically discovered models')
   .argument('[provider]', 'Provider ID to filter models by')
   .option('--verbose', 'Show detailed model information')
   .option('--refresh', 'Refresh the models cache')
+  .option('--select', 'Choose provider/model with arrow keys and set it as the default')
   .option('--json', 'Output machine-readable JSON')
   .action(
     async (
       provider?: string,
-      options?: { verbose?: boolean; refresh?: boolean; json?: boolean }
+      options?: { verbose?: boolean; refresh?: boolean; select?: boolean; json?: boolean }
     ) => {
       try {
         const modelsService = new ModelsService();
-        const models = await modelsService.listModels(provider, { refresh: options?.refresh });
+        let selectedProvider = provider;
+
+        if (options?.select) {
+          if (options.json) throw new Error('--select and --json cannot be used together');
+          if (!process.stdin.isTTY || !process.stdout.isTTY) {
+            throw new Error('--select requires an interactive terminal');
+          }
+          if (!selectedProvider) {
+            const providers = await modelsService.listProviders({ probe: false });
+            const selected = await interactiveSelect(
+              providers.map((candidate) => ({
+                value: candidate.id,
+                label: `${candidate.name} (${candidate.id})`,
+                description: candidate.models.length
+                  ? `${candidate.models.length} catalog models${candidate.configured ? ' · live discovery available' : ''}`
+                  : candidate.configured
+                    ? 'live discovery available'
+                    : 'API key required for live discovery',
+              })),
+              { title: 'Select an LLM provider' }
+            );
+            if (!selected) {
+              console.log(chalk.dim('Model selection cancelled.'));
+              return;
+            }
+            selectedProvider = selected.value;
+          }
+
+          // A menu selection is a freshness request: probe only the chosen
+          // provider and bypass the cache instead of making N slow calls.
+          const models = await modelsService.listModels(selectedProvider, { refresh: true });
+          if (models.length === 0) {
+            throw new Error(`No models are available for provider "${selectedProvider}"`);
+          }
+          const selected = await interactiveSelect(
+            models.map((model) => ({
+              value: model,
+              label: model.name === model.id ? model.id : `${model.name} (${model.id})`,
+              description: [
+                model.contextWindow ? `${model.contextWindow.toLocaleString()} context` : '',
+                model.source ?? '',
+              ]
+                .filter(Boolean)
+                .join(' · '),
+            })),
+            { title: `Select a ${selectedProvider} model` }
+          );
+          if (!selected) {
+            console.log(chalk.dim('Model selection cancelled.'));
+            return;
+          }
+          const result = await modelsService.setDefaultModel(selectedProvider, selected.value.id);
+          console.log(
+            result.success ? chalk.green(`✓ ${result.message}`) : chalk.red(result.message)
+          );
+          return;
+        }
+
+        const models = await modelsService.listModels(selectedProvider, {
+          refresh: options?.refresh,
+        });
 
         if (options?.json) {
           console.log(JSON.stringify(models, null, 2));
@@ -18250,7 +18317,7 @@ program
         } else {
           for (const m of models) {
             if (options?.verbose) {
-              console.log(`${chalk.cyan(m.id)} (${m.provider})`);
+              console.log(`${chalk.cyan(m.id)} (${m.provider}; ${m.source ?? 'unknown'})`);
               if (m.contextWindow)
                 console.log(`  Context: ${m.contextWindow.toLocaleString()} tokens`);
               if (m.inputCost !== undefined)
@@ -21948,7 +22015,13 @@ function isInteractiveSessionArgv(argv: string[]): boolean {
  * runSelfCli (env).
  */
 function wantsSilentPreflight(argv: string[]): boolean {
-  if (isTruthyEnv(process.env.TNF_SILENT_PREFLIGHT)) return true;
+  // An explicit value wins in either direction. This lets CI and redirected
+  // diagnostics request visible preflight receipts with
+  // TNF_SILENT_PREFLIGHT=0 instead of non-TTY detection silently overriding
+  // the operator. With no override, retain the low-noise defaults below.
+  if (process.env.TNF_SILENT_PREFLIGHT !== undefined) {
+    return isTruthyEnv(process.env.TNF_SILENT_PREFLIGHT);
+  }
   if (!process.stdout.isTTY) return true;
   if (argv.includes('--no-splash')) return true;
   if (argv.includes('--json')) return true;

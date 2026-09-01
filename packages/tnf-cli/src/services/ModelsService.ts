@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { loadProviderConfig, type ProviderConfig } from './provider-config.js';
+import { loadProviderConfig, type ProviderConfig, type ProviderDef } from './provider-config.js';
 
 export interface ModelInfo {
   id: string;
@@ -13,19 +13,11 @@ export interface ModelInfo {
   inputCost?: number;
   outputCost?: number;
   features?: string[];
+  source?: 'live' | 'catalog' | 'cache';
   metadata?: Record<string, unknown>;
 }
 
-/**
- * Outcome of probing a provider.
- *
- * `unconfigured` and `probe_failed` were previously indistinguishable: both
- * paths in fetchModels() returned `[]`, so a 401, a 429 and "this provider
- * genuinely lists no models" all looked identical to callers. A failover chain
- * cannot route around a failure it cannot see, so the distinction is carried
- * explicitly.
- */
-export type ProviderStatus = 'ok' | 'unconfigured' | 'probe_failed';
+export type ProviderStatus = 'ok' | 'catalog_only' | 'unconfigured' | 'probe_failed';
 
 export interface ModelProvider {
   id: string;
@@ -33,12 +25,121 @@ export interface ModelProvider {
   type: 'api' | 'oauth' | 'local';
   configured: boolean;
   models: ModelInfo[];
-  /** Optional so existing consumers keep compiling unchanged. */
   status?: ProviderStatus;
-  /** Human-readable reason, populated when status is 'probe_failed'. */
   error?: string;
-  /** Resolution order from provider config; lower is preferred. */
   tier?: number;
+  defaultModel?: string;
+  /** Credential variable actually selected; never contains credential material. */
+  credentialEnv?: string;
+  discovery: 'live' | 'catalog';
+}
+
+export interface ListProviderOptions {
+  /** Probe provider APIs. False returns the catalog immediately for menus. */
+  probe?: boolean;
+}
+
+interface ProviderProbe {
+  models: ModelInfo[];
+  error?: string;
+}
+
+function numberOrUndefined(...values: unknown[]): number | undefined {
+  for (const value of values) {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string' && value.trim() && Number.isFinite(Number(value))) {
+      return Number(value);
+    }
+  }
+  return undefined;
+}
+
+function pricePerMillion(value: unknown): number | undefined {
+  const parsed = numberOrUndefined(value);
+  return parsed === undefined ? undefined : parsed * 1_000_000;
+}
+
+function stringArray(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const strings = value.filter((item): item is string => typeof item === 'string');
+  return strings.length ? strings : undefined;
+}
+
+/** Normalize OpenAI-compatible, Google, Anthropic, Cohere, Ollama and Mistral
+ * model records into one menu-safe shape. */
+export function normalizeDiscoveredModel(raw: unknown, provider: string): ModelInfo | null {
+  if (typeof raw === 'string') {
+    return { id: raw, name: raw, provider, source: 'live' };
+  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const row = raw as Record<string, any>;
+  const resourceName = row.id ?? row.model ?? row.name;
+  if (typeof resourceName !== 'string' || !resourceName.trim()) return null;
+  const id = resourceName.replace(/^models\//, '');
+  const nameCandidate = row.display_name ?? row.displayName ?? row.name ?? row.model ?? row.id;
+  const capabilities =
+    row.capabilities && typeof row.capabilities === 'object'
+      ? Object.entries(row.capabilities)
+          .filter(
+            ([, value]) =>
+              value === true ||
+              (value && typeof value === 'object' && (value as { supported?: boolean }).supported)
+          )
+          .map(([key]) => key)
+      : undefined;
+
+  return {
+    id,
+    name: typeof nameCandidate === 'string' ? nameCandidate.replace(/^models\//, '') : id,
+    provider,
+    contextWindow: numberOrUndefined(
+      row.context_window,
+      row.context_length,
+      row.max_context_length,
+      row.inputTokenLimit,
+      row.max_input_tokens,
+      row.details?.context_length
+    ),
+    maxOutput: numberOrUndefined(
+      row.max_output_tokens,
+      row.max_completion_tokens,
+      row.outputTokenLimit,
+      row.max_tokens,
+      row.top_provider?.max_completion_tokens
+    ),
+    inputCost: pricePerMillion(row.pricing?.input ?? row.pricing?.prompt),
+    outputCost: pricePerMillion(row.pricing?.output ?? row.pricing?.completion),
+    features:
+      stringArray(row.features) ??
+      stringArray(row.supported_parameters) ??
+      stringArray(row.supportedGenerationMethods) ??
+      stringArray(row.endpoints) ??
+      capabilities,
+    source: 'live',
+    metadata: {
+      ...(row.owned_by ? { ownedBy: row.owned_by } : {}),
+      ...((row.created ?? row.created_at) ? { created: row.created ?? row.created_at } : {}),
+      ...(row.description ? { description: row.description } : {}),
+    },
+  };
+}
+
+function modelsFromPayload(payload: unknown): unknown[] | null {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return null;
+  const data = payload as Record<string, unknown>;
+  if (Array.isArray(data.data)) return data.data;
+  if (Array.isArray(data.models)) return data.models;
+  if (Array.isArray(data.model_list)) return data.model_list;
+  return null;
+}
+
+function mergeModels(primary: ModelInfo[], fallback: ModelInfo[]): ModelInfo[] {
+  const byId = new Map<string, ModelInfo>();
+  for (const model of [...primary, ...fallback]) {
+    if (!byId.has(model.id)) byId.set(model.id, model);
+  }
+  return [...byId.values()];
 }
 
 export class ModelsService {
@@ -50,57 +151,102 @@ export class ModelsService {
   constructor(cachePath?: string) {
     this.modelsCachePath = cachePath || path.join(os.homedir(), '.cache', 'tnf', 'models.json');
     this.defaultModelPath = path.join(os.homedir(), '.config', 'tnf', 'model.default.json');
-    // Provider list and resolver tolerances come from ~/.config/tnf/providers.json,
-    // falling back to the built-ins. See provider-config.ts.
     this.providerConfig = loadProviderConfig();
     this.cacheExpiry = this.providerConfig.tolerances.cacheExpiryMs;
   }
 
-  /** Warnings raised while loading provider config. Callers should surface these. */
   getConfigWarnings(): string[] {
     return this.providerConfig.warnings;
   }
 
-  /** Where the effective provider list came from, for diagnostics. */
   getConfigSource(): { source: string; path: string } {
     return { source: this.providerConfig.source, path: this.providerConfig.configPath };
   }
 
-  async listProviders(): Promise<ModelProvider[]> {
-    const providers: ModelProvider[] = [];
+  private catalogModels(config: ProviderDef): ModelInfo[] {
+    return config.models.map((id) => ({
+      id,
+      name: id,
+      provider: config.id,
+      source: 'catalog' as const,
+    }));
+  }
 
-    for (const config of this.providerConfig.providers) {
-      if (!config.enabled) continue;
+  private resolveCredential(config: ProviderDef): { value?: string; env?: string } {
+    for (const env of [config.envKey, ...config.altEnvKeys]) {
+      if (!env) continue;
+      const value = process.env[env];
+      if (value) return { value, env };
+    }
+    return {};
+  }
 
-      const apiKey = process.env[config.envKey];
-      if (!apiKey) {
-        // Absence of a credential is a coverage condition, not a failure.
-        providers.push({
-          id: config.id,
-          name: config.name,
-          type: 'api',
-          configured: false,
-          models: [],
-          status: 'unconfigured',
-          tier: config.tier,
-        });
-        continue;
-      }
+  private async resolveProvider(config: ProviderDef, probe: boolean): Promise<ModelProvider> {
+    const fallback = this.catalogModels(config);
+    const credential = this.resolveCredential(config);
+    const canProbe = config.type === 'local' || config.authOptional || Boolean(credential.value);
+    const type: ModelProvider['type'] = config.type === 'local' ? 'local' : 'api';
 
-      const probe = await this.fetchModels(config.id, config.baseUrl, apiKey);
-      providers.push({
+    if (!probe) {
+      return {
         id: config.id,
         name: config.name,
-        type: 'api',
-        configured: true,
-        models: probe.models,
-        status: probe.error ? 'probe_failed' : 'ok',
-        ...(probe.error ? { error: probe.error } : {}),
+        type,
+        configured: canProbe,
+        models: fallback,
+        status: canProbe ? 'catalog_only' : 'unconfigured',
         tier: config.tier,
-      });
+        defaultModel: config.defaultModel,
+        ...(credential.env ? { credentialEnv: credential.env } : {}),
+        discovery: 'catalog',
+      };
     }
 
-    return providers;
+    if (!canProbe) {
+      return {
+        id: config.id,
+        name: config.name,
+        type,
+        configured: false,
+        models: fallback,
+        status: 'unconfigured',
+        tier: config.tier,
+        defaultModel: config.defaultModel,
+        discovery: 'catalog',
+      };
+    }
+
+    const result = await this.fetchModels(config, credential.value);
+    return {
+      id: config.id,
+      name: config.name,
+      type,
+      configured: true,
+      models: mergeModels(result.models, fallback),
+      status: result.error ? 'probe_failed' : 'ok',
+      ...(result.error ? { error: result.error } : {}),
+      tier: config.tier,
+      defaultModel: config.defaultModel,
+      ...(credential.env ? { credentialEnv: credential.env } : {}),
+      discovery: result.error ? 'catalog' : 'live',
+    };
+  }
+
+  /** Probe in parallel so one slow endpoint costs one timeout, not N timeouts. */
+  async listProviders(options: ListProviderOptions = {}): Promise<ModelProvider[]> {
+    const configs = this.providerConfig.providers.filter((config) => config.enabled);
+    return Promise.all(
+      configs.map((config) => this.resolveProvider(config, options.probe !== false))
+    );
+  }
+
+  async getProvider(
+    providerId: string,
+    options: ListProviderOptions = {}
+  ): Promise<ModelProvider | null> {
+    const config = this.providerConfig.providers.find((candidate) => candidate.id === providerId);
+    if (!config || !config.enabled) return null;
+    return this.resolveProvider(config, options.probe !== false);
   }
 
   async listModels(
@@ -111,96 +257,79 @@ export class ModelsService {
       const cached = this.loadCache();
       if (
         cached &&
-        cached.provider === providerId &&
+        cached.provider === (providerId || 'all') &&
         Date.now() - cached.timestamp < this.cacheExpiry
       ) {
-        return cached.models;
+        return cached.models.map((model) => ({ ...model, source: 'cache' }));
       }
     }
 
-    const providers = await this.listProviders();
+    let models: ModelInfo[];
     if (providerId) {
-      const provider = providers.find((p) => p.id === providerId);
-      return provider?.models || [];
+      const provider = await this.getProvider(providerId);
+      models = provider?.models ?? [];
+    } else {
+      const providers = await this.listProviders();
+      models = providers.flatMap((provider) => provider.models);
     }
-
-    const allModels: ModelInfo[] = [];
-    for (const provider of providers) {
-      allModels.push(...provider.models);
-    }
-
-    this.saveCache(providerId || 'all', allModels);
-    return allModels;
+    this.saveCache(providerId || 'all', models);
+    return models;
   }
 
-  /**
-   * Probe a provider's model list.
-   *
-   * Returns the models alongside an optional `error`. Previously every failure
-   * path returned a bare `[]`, which made a dead provider look like an empty
-   * one and silently removed it from consideration instead of triggering
-   * failover. The probe is also time-boxed: an unbounded fetch against a
-   * hanging endpoint would stall every caller of listProviders().
-   */
-  private async fetchModels(
-    providerId: string,
-    baseUrl: string,
-    apiKey: string
-  ): Promise<{ models: ModelInfo[]; error?: string }> {
+  /** Live model discovery with provider-auth-aware headers and pagination. */
+  private async fetchModels(config: ProviderDef, apiKey?: string): Promise<ProviderProbe> {
     const timeoutMs = this.providerConfig.tolerances.fetchTimeoutMs;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const headers: Record<string, string> = { Accept: 'application/json' };
 
     try {
-      let url: string;
-      let headers: Record<string, string>;
-
-      if (providerId === 'google' || providerId === 'gemini') {
-        url = `${baseUrl}/models?key=${apiKey}`;
-        headers = {};
-      } else {
-        url = `${baseUrl}/models`;
-        headers = { Authorization: `Bearer ${apiKey}` };
+      const url = new URL(
+        `${config.baseUrl.replace(/\/$/, '')}/${config.modelsPath.replace(/^\//, '')}`
+      );
+      if (config.authStyle === 'query' && apiKey) url.searchParams.set('key', apiKey);
+      if (config.authStyle === 'bearer' && apiKey) headers.Authorization = `Bearer ${apiKey}`;
+      if (config.authStyle === 'x-api-key' && apiKey) {
+        headers['x-api-key'] = apiKey;
+        headers['anthropic-version'] = '2023-06-01';
       }
 
-      const response = await fetch(url, { headers, signal: controller.signal });
-      if (!response.ok) {
-        return { models: [], error: `HTTP ${response.status} ${response.statusText}`.trim() };
+      if (config.id === 'google') url.searchParams.set('pageSize', '1000');
+      if (config.id === 'anthropic') url.searchParams.set('limit', '1000');
+      if (config.id === 'cohere') url.searchParams.set('page_size', '1000');
+
+      const models: ModelInfo[] = [];
+      const seenTokens = new Set<string>();
+      for (let page = 0; page < 20; page += 1) {
+        const response = await fetch(url, { headers, signal: controller.signal });
+        if (!response.ok) {
+          return { models, error: `HTTP ${response.status} ${response.statusText}`.trim() };
+        }
+        const payload = (await response.json()) as Record<string, any>;
+        const rows = modelsFromPayload(payload);
+        if (!rows) return { models, error: 'unrecognized response shape' };
+        for (const row of rows) {
+          const normalized = normalizeDiscoveredModel(row, config.id);
+          if (normalized && !models.some((model) => model.id === normalized.id)) {
+            models.push(normalized);
+          }
+        }
+
+        const nextToken = payload.nextPageToken ?? payload.next_page_token;
+        if (typeof nextToken === 'string' && nextToken && !seenTokens.has(nextToken)) {
+          seenTokens.add(nextToken);
+          url.searchParams.set(config.id === 'google' ? 'pageToken' : 'page_token', nextToken);
+          continue;
+        }
+        if (payload.has_more === true && typeof payload.last_id === 'string') {
+          if (seenTokens.has(payload.last_id)) break;
+          seenTokens.add(payload.last_id);
+          url.searchParams.set('after_id', payload.last_id);
+          continue;
+        }
+        break;
       }
-
-      const data = (await response.json()) as any;
-
-      if (Array.isArray(data.data)) {
-        return {
-          models: data.data.map((m: any) => ({
-            id: m.id,
-            name: m.id,
-            provider: providerId,
-            contextWindow: m.context_window,
-            maxOutput: m.max_output_tokens,
-            inputCost: m.pricing?.input ? parseFloat(m.pricing.input) * 1000000 : undefined,
-            outputCost: m.pricing?.output ? parseFloat(m.pricing.output) * 1000000 : undefined,
-            features: m.features,
-          })),
-        };
-      }
-
-      if (Array.isArray(data.models)) {
-        return {
-          models: data.models.map((m: any) => ({
-            id: m.name.replace('models/', ''),
-            name: m.displayName || m.name.replace('models/', ''),
-            provider: providerId,
-            contextWindow: m.inputTokenLimit,
-            maxOutput: m.outputTokenLimit,
-            features: m.supportedGenerationMethods,
-          })),
-        };
-      }
-
-      // Reachable, authenticated, but the payload matched no known shape —
-      // that is a contract drift worth reporting, not an empty catalogue.
-      return { models: [], error: 'unrecognized response shape' };
+      return { models };
     } catch (err) {
       const reason =
         (err as Error)?.name === 'AbortError'
@@ -223,20 +352,10 @@ export class ModelsService {
 
   private saveCache(provider: string, models: ModelInfo[]): void {
     const dir = path.dirname(this.modelsCachePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
       this.modelsCachePath,
-      JSON.stringify(
-        {
-          provider,
-          models,
-          timestamp: Date.now(),
-        },
-        null,
-        2
-      )
+      JSON.stringify({ provider, models, timestamp: Date.now() }, null, 2)
     );
   }
 
@@ -253,22 +372,22 @@ export class ModelsService {
     if (!normalizedProvider || !normalizedModel) {
       return { success: false, message: 'Both provider and model are required' };
     }
-
     const dir = path.dirname(this.defaultModelPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    const payload = {
-      provider: normalizedProvider,
-      model: normalizedModel,
-      updatedAt: Date.now(),
-      id: randomUUID(),
-    };
-
-    fs.writeFileSync(this.defaultModelPath, JSON.stringify(payload, null, 2));
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      this.defaultModelPath,
+      JSON.stringify(
+        {
+          provider: normalizedProvider,
+          model: normalizedModel,
+          updatedAt: Date.now(),
+          id: randomUUID(),
+        },
+        null,
+        2
+      )
+    );
     process.env.TNF_LLM_MODEL = `${normalizedProvider}/${normalizedModel}`;
-
     return {
       success: true,
       message: `Default model set to ${normalizedProvider}:${normalizedModel}`,
@@ -282,12 +401,11 @@ export class ModelsService {
           provider?: string;
           model?: string;
         };
-        if (parsed.provider && parsed.model) {
+        if (parsed.provider && parsed.model)
           return { provider: parsed.provider, model: parsed.model };
-        }
       }
     } catch {
-      // fall through to env defaults
+      // Fall through to environment defaults.
     }
 
     const envModel = process.env.TNF_LLM_MODEL || process.env.OPENAI_MODEL || '';
@@ -299,9 +417,7 @@ export class ModelsService {
       const [provider, ...rest] = envModel.split('/');
       return { provider, model: rest.join('/') };
     }
-    if (envModel) {
-      return { provider: 'openai', model: envModel };
-    }
-    return { provider: 'openrouter', model: 'google/gemini-2.0-flash' };
+    if (envModel) return { provider: 'openai', model: envModel };
+    return { provider: 'openrouter', model: 'openrouter/auto' };
   }
 }

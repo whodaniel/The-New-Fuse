@@ -1,6 +1,6 @@
 {
   "$schema": "./catalog.schema.md",
-  "version": 1,
+  "version": 2,
   "generatedBy": "hand-maintained \u2014 this file is the source, not an output",
   "note": "Single source of truth for LLM providers across ALL TNF lanes. See docs/protocols/TNF_PROVIDER_RESOLUTION_COHERENCE.md. Consumers merge this over their built-in fallbacks; they must not add providers inline.",
   "providers": [
@@ -11,7 +11,10 @@
       "tier": 1,
       "enabled": true,
       "envKey": null,
-      "baseUrl": "http://localhost:11434/v1",
+      "baseUrl": "http://localhost:11434",
+      "modelsPath": "/api/tags",
+      "authStyle": "none",
+      "authOptional": true,
       "healthUrl": "http://localhost:11434/api/tags",
       "defaultModel": "qwen2.5-coder:7b",
       "openaiCompatible": true
@@ -24,6 +27,9 @@
       "enabled": true,
       "envKey": null,
       "baseUrl": "http://127.0.0.1:8081/v1",
+      "modelsPath": "/models",
+      "authStyle": "none",
+      "authOptional": true,
       "healthUrl": "http://127.0.0.1:8081/health",
       "defaultModel": "qwen2.5-coder-3b-instruct",
       "openaiCompatible": true
@@ -38,7 +44,14 @@
       "envKey": "GOOGLE_API_KEY",
       "altEnvKeys": ["GEMINI_API_KEY", "GOOGLE_AI_API_KEY"],
       "baseUrl": "https://generativelanguage.googleapis.com/v1beta",
-      "defaultModel": "gemini-pro",
+      "defaultModel": "gemini-3.7-flash",
+      "models": [
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-pro-preview"
+      ],
       "openaiCompatible": false,
       "authStyle": "query"
     },
@@ -50,7 +63,15 @@
       "enabled": true,
       "envKey": "GROQ_API_KEY",
       "baseUrl": "https://api.groq.com/openai/v1",
-      "defaultModel": "llama3-8b-8192",
+      "defaultModel": "openai/gpt-oss-120b",
+      "models": [
+        "groq/compound",
+        "groq/compound-mini",
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
+        "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant"
+      ],
       "openaiCompatible": true
     },
     {
@@ -181,6 +202,71 @@
       "envKey": "OPENROUTER_API_KEY",
       "baseUrl": "https://openrouter.ai/api/v1",
       "defaultModel": "openrouter/auto",
+      "authOptional": true,
+      "openaiCompatible": true
+    },
+    {
+      "id": "togetherai",
+      "name": "Together AI",
+      "aliases": ["together"],
+      "type": "cloud",
+      "tier": 51,
+      "enabled": true,
+      "envKey": "TOGETHER_API_KEY",
+      "baseUrl": "https://api.together.xyz/v1",
+      "defaultModel": "openai/gpt-oss-120b",
+      "openaiCompatible": true
+    },
+    {
+      "id": "fireworksai",
+      "name": "Fireworks AI",
+      "aliases": ["fireworks"],
+      "type": "cloud",
+      "tier": 52,
+      "enabled": true,
+      "envKey": "FIREWORKS_API_KEY",
+      "baseUrl": "https://api.fireworks.ai/inference/v1",
+      "defaultModel": "accounts/fireworks/models/llama-v3p1-70b-instruct",
+      "openaiCompatible": true
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "type": "cloud",
+      "tier": 53,
+      "enabled": true,
+      "envKey": "PERPLEXITY_API_KEY",
+      "baseUrl": "https://api.perplexity.ai",
+      "defaultModel": "sonar",
+      "models": [
+        "sonar",
+        "sonar-pro",
+        "sonar-reasoning-pro",
+        "sonar-deep-research"
+      ],
+      "openaiCompatible": true
+    },
+    {
+      "id": "cohere",
+      "name": "Cohere",
+      "type": "cloud",
+      "tier": 54,
+      "enabled": true,
+      "envKey": "COHERE_API_KEY",
+      "baseUrl": "https://api.cohere.ai/v1",
+      "defaultModel": "command-a-03-2025",
+      "models": ["command-a-03-2025", "command-r7b-12-2024"],
+      "openaiCompatible": false
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral AI",
+      "type": "cloud",
+      "tier": 54,
+      "enabled": true,
+      "envKey": "MISTRAL_API_KEY",
+      "baseUrl": "https://api.mistral.ai/v1",
+      "defaultModel": "mistral-large-latest",
       "openaiCompatible": true
     },
     {
@@ -207,6 +293,29 @@
       "openaiCompatible": true
     },
     {
+      "id": "qwen",
+      "name": "Qwen (DashScope)",
+      "type": "cloud",
+      "tier": 56,
+      "enabled": true,
+      "envKey": "DASHSCOPE_API_KEY",
+      "altEnvKeys": ["QWEN_API_KEY"],
+      "baseUrl": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "defaultModel": "qwen-max",
+      "openaiCompatible": true
+    },
+    {
+      "id": "novita",
+      "name": "Novita AI",
+      "type": "cloud",
+      "tier": 57,
+      "enabled": true,
+      "envKey": "NOVITA_API_KEY",
+      "baseUrl": "https://api.novita.ai/v3/openai",
+      "defaultModel": "deepseek/deepseek-v3-0324",
+      "openaiCompatible": true
+    },
+    {
       "id": "moonshot",
       "name": "Moonshot",
       "type": "cloud",
@@ -225,7 +334,17 @@
       "enabled": true,
       "envKey": "ANTHROPIC_API_KEY",
       "baseUrl": "https://api.anthropic.com/v1",
-      "defaultModel": "claude-3-haiku-20240307",
+      "defaultModel": "claude-sonnet-5",
+      "models": [
+        "claude-opus-5",
+        "claude-sonnet-5",
+        "claude-fable-5",
+        "claude-opus-4-8",
+        "claude-opus-4-7",
+        "claude-opus-4-6",
+        "claude-sonnet-4-6",
+        "claude-haiku-4-5-20251001"
+      ],
       "openaiCompatible": false,
       "authStyle": "x-api-key"
     },
@@ -237,7 +356,55 @@
       "enabled": true,
       "envKey": "OPENAI_API_KEY",
       "baseUrl": "https://api.openai.com/v1",
-      "defaultModel": "gpt-4o-mini",
+      "defaultModel": "gpt-5.6-sol",
+      "models": [
+        "gpt-5.6-sol",
+        "gpt-5.6-terra",
+        "gpt-5.6-luna",
+        "gpt-5.2",
+        "gpt-5.1-codex-max",
+        "gpt-4.1",
+        "gpt-4o-mini"
+      ],
+      "openaiCompatible": true
+    },
+    {
+      "id": "lmstudio",
+      "name": "LM Studio",
+      "type": "local",
+      "tier": 80,
+      "enabled": true,
+      "envKey": null,
+      "baseUrl": "http://localhost:1234/v1",
+      "healthUrl": "http://localhost:1234/v1/models",
+      "authStyle": "none",
+      "authOptional": true,
+      "openaiCompatible": true
+    },
+    {
+      "id": "localai",
+      "name": "LocalAI",
+      "type": "local",
+      "tier": 81,
+      "enabled": true,
+      "envKey": null,
+      "baseUrl": "http://localhost:8080/v1",
+      "healthUrl": "http://localhost:8080/readyz",
+      "authStyle": "none",
+      "authOptional": true,
+      "openaiCompatible": true
+    },
+    {
+      "id": "textgenwebui",
+      "name": "Text Generation WebUI",
+      "type": "local",
+      "tier": 82,
+      "enabled": true,
+      "envKey": null,
+      "baseUrl": "http://localhost:5000/v1",
+      "healthUrl": "http://localhost:5000/v1/models",
+      "authStyle": "none",
+      "authOptional": true,
       "openaiCompatible": true
     }
   ]

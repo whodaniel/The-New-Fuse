@@ -24,10 +24,10 @@ published a new model, or Groq expanded, each surface had to be manually updated
 
 ## Canonical data files
 
-| File                 | Location          | Contents                                                                                          |
-| -------------------- | ----------------- | ------------------------------------------------------------------------------------------------- |
-| `catalog.json`       | `data/providers/` | 12 non-NVIDIA providers with OpenAI-compatible base URLs, default models, env keys, tier rankings |
-| `nvidia-models.json` | `data/providers/` | 202 NVIDIA NIM free models with metadata (category, callable status, context window, description) |
+| File                 | Location          | Contents                                                                                              |
+| -------------------- | ----------------- | ----------------------------------------------------------------------------------------------------- |
+| `catalog.json`       | `data/providers/` | 22 directly discoverable cloud/local providers with auth, endpoint, fallback-model, and tier metadata |
+| `nvidia-models.json` | `data/providers/` | 202 NVIDIA NIM free models with metadata (category, callable status, context window, description)     |
 
 Either file can be edited by hand. There is no database dependency — the catalog
 is file-backed so it works in dev, in Docker, and on Cloud Run without a
@@ -53,7 +53,7 @@ import {
 | Function                   | Returns                                | Notes                                                                                                                                                                |
 | -------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `loadCatalog()`            | `Promise<{ providers, nvidiaModels }>` | Async; walks up from CWD to find `data/providers/`. Falls back to `BUILTIN_PROVIDERS` if files are missing. Memoized — call `clearCatalogCache()` to force a reload. |
-| `getProviders()`           | `CatalogProvider[]`                    | Synchronous (after `loadCatalog` has resolved). All 12 non-NVIDIA providers.                                                                                         |
+| `getProviders()`           | `Promise<CatalogProvider[]>`           | All enabled providers from the canonical catalog.                                                                                                                    |
 | `getProviderById(id)`      | `CatalogProvider \| null`              | e.g. `getProviderById('groq')`                                                                                                                                       |
 | `getModelsForProvider(id)` | `string[]`                             | Model IDs for a given provider. Returns `BUILTIN_PROVIDERS` fallback if the provider has no `models[]` array in catalog.json.                                        |
 | `getNvidiaModels()`        | `NvidiaModel[]`                        | All 202 NVIDIA NIM free models.                                                                                                                                      |
@@ -79,18 +79,44 @@ Cloud: `https://app.thenewfuse.com/api/llm/models` (returns 401 without auth).
 
 ## Edge surfaces consuming the catalog
 
-| Surface                     | Import path                                                       | What it does                                                                                                                   |
-| --------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **VSCode extension**        | `apps/vscode-extension/src/core/models.ts`                        | `initProviderModels()` on activate; `/model` picker reads cached catalog                                                       |
-| **VSCode extension types**  | `apps/vscode-extension/src/core/types.ts`                         | `LLMProviderType` union includes all 12 providers + nvidia, groq, sambanova, deepseek, xai, moonshot, google, ollama, llamacpp |
-| **VSCode extension config** | `apps/vscode-extension/src/core/config.ts`                        | Default provider = `nvidia`, default model = `nvidia/nemotron-470b-instruct`                                                   |
-| **Tauri Desktop**           | `apps/tauri-desktop/src/config/verifiedModels.ts`                 | Re-exports `VERIFIED_PROVIDER_CATALOG`, `defaultProviderId`, `modelsForProvider` from shared catalog                           |
-| **Tauri Desktop Settings**  | `apps/tauri-desktop/src/pages/Settings.tsx`                       | Default/Fallback Provider `<select>` iterates `VERIFIED_PROVIDER_CATALOG`                                                      |
-| **Web control panel**       | `apps/frontend/src/services/llm/providers.ts`                     | 14-provider registry aligned with catalog                                                                                      |
-| **Web control panel**       | `apps/frontend/src/shared/features/settings/LLMConfigManager.tsx` | Model field is a `<Select>` populated from `loadCatalog()`                                                                     |
-| **Web control panel**       | `apps/frontend/src/hooks/useModels.tsx`                           | Fetches `/api/llm/models` first, falls back to `/api/models`                                                                   |
-| **API gateway**             | `apps/api-gateway/src/gateway/ide-gateway.controller.ts`          | `getConfig()` builds the `ai:` block from `loadCatalog()` — 12 OpenAI-compatible providers                                     |
-| **Chrome extension**        | `apps/chrome-extension/src/v6/shared/catalog.ts`                  | Helper that fetches `/api/llm/models` + `/api/llm/nvidia-catalog` with 5-min TTL cache                                         |
+| Surface                     | Import path                                                       | What it does                                                                                                                           |
+| --------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **VSCode extension**        | `apps/vscode-extension/src/core/models.ts`                        | `initProviderModels()` on activate; `/model` picker reads cached catalog                                                               |
+| **VSCode extension types**  | `apps/vscode-extension/src/core/types.ts`                         | `LLMProviderType` union includes all 12 providers + nvidia, groq, sambanova, deepseek, xai, moonshot, google, ollama, llamacpp         |
+| **VSCode extension config** | `apps/vscode-extension/src/core/config.ts`                        | Default provider = `nvidia`, default model = `nvidia/nemotron-470b-instruct`                                                           |
+| **Tauri Desktop**           | `apps/tauri-desktop/src/config/verifiedModels.ts`                 | Re-exports `VERIFIED_PROVIDER_CATALOG`, `defaultProviderId`, `modelsForProvider` from shared catalog                                   |
+| **Tauri Desktop Settings**  | `apps/tauri-desktop/src/pages/Settings.tsx`                       | Default/Fallback Provider `<select>` iterates `VERIFIED_PROVIDER_CATALOG`                                                              |
+| **Web control panel**       | `apps/frontend/src/services/llm/providers.ts`                     | 14-provider registry aligned with catalog                                                                                              |
+| **Web control panel**       | `apps/frontend/src/shared/features/settings/LLMConfigManager.tsx` | Model field is a `<Select>` populated from `loadCatalog()`                                                                             |
+| **Web control panel**       | `apps/frontend/src/hooks/useModels.tsx`                           | Fetches `/api/llm/models` first, falls back to `/api/models`                                                                           |
+| **API gateway**             | `apps/api-gateway/src/gateway/ide-gateway.controller.ts`          | `getConfig()` builds the `ai:` block from `loadCatalog()` — 12 OpenAI-compatible providers                                             |
+| **Chrome extension**        | `apps/chrome-extension/src/v6/shared/catalog.ts`                  | Helper that fetches `/api/llm/models` + `/api/llm/nvidia-catalog` with 5-min TTL cache                                                 |
+| **TNF CLI**                 | `packages/tnf-cli/src/services/ModelsService.ts`                  | Merges catalog fallbacks with live provider `/models` discovery; handles provider auth/pagination, status, caching, and local runtimes |
+
+## TNF CLI discovery and menus
+
+`tnf` is the most complete executable consumer of the catalog. Its provider
+service supports OpenAI-compatible `data[]` responses, Google `models[]`,
+Anthropic cursor pagination and headers, Cohere token pagination, Mistral array
+responses, and Ollama `/api/tags`. Provider probes run concurrently; the
+interactive picker probes only the selected provider.
+
+```bash
+tnf provider list                 # live/catalog/error status per provider
+tnf provider show anthropic       # provider detail and current models
+tnf models openrouter --refresh   # bypass the 24-hour cache
+tnf models --select               # provider menu, then model menu; persists default
+```
+
+The selector supports Up/Down, PageUp/PageDown, Home/End, Enter, Escape, and
+type-to-filter. Non-interactive/JSON invocations retain deterministic list
+behavior. A missing credential is not treated as an empty provider: durable
+catalog models remain visible with `source: catalog`; successful refreshes are
+marked `source: live`.
+
+The CLI build copies `catalog.json` and `nvidia-models.json` into
+`dist/catalog/`, so the installable package retains all providers and the full
+NVIDIA registry outside a monorepo checkout.
 
 ## Adding a new provider
 

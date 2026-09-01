@@ -1,0 +1,70 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "56734bdc-d56a-4403-a273-2ae729f73317",
+  "created_at": "2026-09-01T06:27:27Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
+  "head_sha": "2ba3d3f5292a20e659be50788886d2681ac9816d",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node", "pnpm", "terminal"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-CLI-LLM-CATALOG"],
+  "work_summary": [
+    "Released stdin after interactive model selection when the selector resumed a previously dormant stream.",
+    "Preserved already-flowing input streams for embedded selector callers.",
+    "Added a stream-level regression proving Escape restores raw mode, pauses stdin, and resolves cancellation."
+  ],
+  "changed_paths": [
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_SELECTOR_CLEANUP_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_SELECTOR_CLEANUP_20260901.md",
+    "packages/tnf-cli/src/utils/interactive-select.test.ts",
+    "packages/tnf-cli/src/utils/interactive-select.ts"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "interactive-select regression test passed 13 assertions and @the-new-fuse/tnf-cli type-check passed."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Rebuild and reinstall the canonical local TNF CLI.",
+      "Confirm Escape closes the real PATH-resolved model selector process without leaving a live Node process."
+    ]
+  },
+  "next_actions": [
+    "Commit the selector lifecycle cleanup through the normal TNF gates.",
+    "Reinstall and repeat the real PTY navigation and cancellation smoke test.",
+    "Do not push without a separate explicit publication instruction."
+  ]
+}

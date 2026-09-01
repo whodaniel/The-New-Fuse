@@ -18,6 +18,7 @@
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 let pass = 0;
 let fail = 0;
@@ -48,8 +49,24 @@ async function loadWith(contents: string | null): Promise<any> {
 }
 
 async function main(): Promise<void> {
-  const { DEFAULT_PROVIDERS, DEFAULT_TOLERANCES, loadProviderCatalog } =
+  const { DEFAULT_PROVIDERS, DEFAULT_TOLERANCES, loadProviderCatalog, providerCatalogPath } =
     await import('./provider-config.js');
+
+  // --- execution form factors --------------------------------------------
+  const packageRoot = path.join(tmpRoot, 'package');
+  const copiedCatalog = path.join(packageRoot, 'dist', 'catalog', 'catalog.json');
+  fs.mkdirSync(path.dirname(copiedCatalog), { recursive: true });
+  fs.writeFileSync(copiedCatalog, '{"providers":[]}');
+  const bundledEntryUrl = pathToFileURL(path.join(packageRoot, 'dist', 'cli.js'));
+  const splitChunkUrl = pathToFileURL(path.join(packageRoot, 'dist', 'chunks', 'models.js'));
+  check(
+    'bundled entry resolves the copied provider catalog',
+    providerCatalogPath(bundledEntryUrl) === copiedCatalog
+  );
+  check(
+    'split chunk resolves the copied provider catalog',
+    providerCatalogPath(splitChunkUrl) === copiedCatalog
+  );
 
   // The effective floor is the shared catalog when it is readable, and the
   // built-in array otherwise. These assertions are about that floor being
@@ -104,7 +121,13 @@ async function main(): Promise<void> {
     'overridden provider keeps built-in fields it did not set',
     partial.providers.find((p: any) => p.id === 'openai')?.envKey === 'OPENAI_API_KEY'
   );
-  check('providers are sorted by tier', partial.providers[0].id === 'openai');
+  check(
+    'providers are sorted by tier',
+    partial.providers.every(
+      (provider: any, index: number, all: any[]) =>
+        index === 0 || all[index - 1].tier <= provider.tier
+    )
+  );
 
   // --- new provider -------------------------------------------------------
   const added = await loadWith(
@@ -124,7 +147,11 @@ async function main(): Promise<void> {
     'user can add a provider',
     added.providers.some((p: any) => p.id === 'localllm')
   );
-  check('added provider sorts by its tier', added.providers[0].id === 'localllm');
+  check(
+    'added provider sorts by its tier',
+    added.providers.findIndex((p: any) => p.id === 'localllm') <
+      added.providers.findIndex((p: any) => p.id === 'google')
+  );
 
   // --- unprobeable provider is rejected loudly ----------------------------
   const bad = await loadWith(JSON.stringify({ providers: [{ id: 'ghost', name: 'Ghost' }] }));

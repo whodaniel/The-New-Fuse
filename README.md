@@ -57,6 +57,22 @@ Use `.tnf.local.env` for machine-specific assets such as `TNF_ROOT`,
 `TNF_RELAY_URL`, custom `TNF_PORTS`, and intentional occupied-port allowances.
 See `docs/reference/local-runtime-profile.md`.
 
+### Current LLM provider/model selection
+
+The CLI reads TNF's canonical 22-provider catalog, bundles that catalog in the
+installable package, and refreshes model lists from provider APIs where the
+provider exposes one. Use the interactive picker to choose and persist a default
+model:
+
+```bash
+tnf provider list
+tnf models openrouter --refresh
+tnf models --select # arrows, PageUp/PageDown, type-to-filter, Enter
+```
+
+If a provider is offline or has no configured key, TNF keeps its durable catalog
+entries visible and reports that live discovery was unavailable rather than
+silently presenting an empty menu. See `docs/UNIFIED_LLM_CATALOG.md`.
 For using the **local open-source install** together with a **thenewfuse.com
 account**, see `docs/reference/local-oss-with-hosted-account.md`.
 

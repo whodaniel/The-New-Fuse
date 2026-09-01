@@ -4199,7 +4199,7 @@
     {
       "name": "models",
       "aliases": [],
-      "description": "List all available models",
+      "description": "List or interactively select dynamically discovered models",
       "options": [
         {
           "flags": "--json",
@@ -4208,6 +4208,10 @@
         {
           "flags": "--refresh",
           "description": "Refresh the models cache"
+        },
+        {
+          "flags": "--select",
+          "description": "Choose provider/model with arrow keys and set it as the default"
         },
         {
           "flags": "--verbose",
@@ -5062,7 +5066,7 @@
     {
       "name": "provider",
       "aliases": [],
-      "description": "Inspect built-in model providers (.pi custom-provider parity; add/remove deferred to Phase-2)",
+      "description": "Inspect canonical and user-configured model providers",
       "options": [],
       "commands": [
         {
