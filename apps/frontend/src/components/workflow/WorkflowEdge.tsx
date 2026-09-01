@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui';
-import { useWorkflow } from '@/contexts/WorkflowContext';
+import { useWorkflow } from '@the-new-fuse/workflow-builder';
 import { X } from 'lucide-react';
 import React from 'react';
 import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath } from 'reactflow';

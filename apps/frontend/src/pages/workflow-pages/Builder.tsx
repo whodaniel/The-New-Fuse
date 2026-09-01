@@ -8,7 +8,8 @@ import {
 } from '@/components/ui';
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
-import { WorkflowProvider } from '@/contexts/WorkflowContext';
+import { WorkflowHostProvider, WorkflowProvider } from '@the-new-fuse/workflow-builder';
+import { saasWorkflowHost } from '@/workflow/saas-workflow-host';
 import { useWorkflow } from '@/hooks';
 import {
   ChevronLeft,
@@ -453,16 +454,21 @@ const WorkflowBuilderContent: React.FC = () => {
 
 /**
  * Workflow Builder page component (outer wrapper)
- * Provides ReactFlowProvider + WorkflowProvider so that
- * WorkflowBuilderContent can safely call useWorkflowContext().
+ *
+ * WorkflowHostProvider is outermost: WorkflowProvider itself now reads the
+ * persistence port from it, as do the nodes and the properties panel. The
+ * ReactFlow/Workflow nesting is unchanged so WorkflowBuilderContent can still
+ * call useWorkflowContext().
  */
 const WorkflowBuilder: React.FC = () => {
   return (
-    <ReactFlowProvider>
-      <WorkflowProvider>
-        <WorkflowBuilderContent />
-      </WorkflowProvider>
-    </ReactFlowProvider>
+    <WorkflowHostProvider host={saasWorkflowHost}>
+      <ReactFlowProvider>
+        <WorkflowProvider>
+          <WorkflowBuilderContent />
+        </WorkflowProvider>
+      </ReactFlowProvider>
+    </WorkflowHostProvider>
   );
 };
 

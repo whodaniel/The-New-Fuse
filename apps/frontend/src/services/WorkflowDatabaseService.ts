@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Workflow, WorkflowExecution } from '@/utils/workflow-schema-validator';
+import type { Workflow, WorkflowExecution } from '@the-new-fuse/workflow-builder';
 
 /**
  * Service for interacting with the workflow database

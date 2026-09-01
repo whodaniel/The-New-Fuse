@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-08-31T05:24:03.543Z` Handoff ID: `d1c92e44-a836-4a3e-839f-a8a1d45228c0`
+`2026-09-01T04:10:13.916Z` Handoff ID: `7f246b53-b0d9-4974-878a-da066f51d766`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `main`
-- Head SHA: `901c2d2f098d7a8b8b2cb4d65705456414ae3668`
+- Branch: `worktree-workflow-builder-consolidation`
+- Head SHA: `5a20169d60ee57801dbda1ece8fdfe4391de1117`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -20,89 +20,69 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Work Summary
 
-- Swarm busy-lifecycle increment: recomputeAgentStatus drives busy state
-  (currentLoad >= maxLoad) with agent.status.changed events, wired at
-  assignment/completion/failure; completion driver made reachable via
-  completeExecution/failExecution + execution.complete/execution.fail event
-  handlers + PUT swarm/executions/:executionId/status controller; getSwarmStatus
-  counts busy as online; behavioral spec 7/7
-- Onboarding automation: scripts/agents/onboard-cli-platform.cjs idempotently
-  wires any CLI platform into tnf cli.ts dispatch (codex + command-code
-  verified)
+- Workflow builder consolidation Stage 1: revived abandoned branch, deleted dead
+  code (with one correction), folded /workflows/advanced-builder, both apps
+  typecheck clean.
+- Found and fixed a real bundler-level API drift: the 9 node components in
+  packages/workflow-builder import a Radix-style compound Select that does not
+  exist in @the-new-fuse/ui-consolidated. tsc never caught this because every
+  node file starts with // @ts-nocheck; only the real vite/rollup build's
+  runtime export resolution caught it.
+- Fixed with a compat shim (packages/workflow-builder/src/ui/select-compat.tsx)
+  implementing the compound API on top of the real component. Also fixed a
+  Dialog->Modal rename via aliased imports in subworkflow-node.tsx.
+- apps/frontend production build (vite build, not just typecheck) now passes
+  end-to-end: BUILD_EXIT=0.
 
 ## Changed Paths
 
-- apps/api/src/modules/agency-hub/controllers/swarm.controller.ts
-- apps/api/src/modules/agency-hub/services/agent-swarm-orchestration.service.spec.ts
-- apps/api/src/modules/agency-hub/services/agent-swarm-orchestration.service.ts
-- scripts/agents/onboard-cli-platform.cjs
-- docs/protocols/AGENT_BUS_CONTRACT.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- packages/tnf-cli/src/RedisAgentClient.ts
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/command-surface.snapshot.json
-- packages/tnf-cli/src/commands/agents-match.ts
-- packages/tnf-cli/src/orchestration.ts
-- packages/tnf-cli/src/services/DispatchGuard.test.ts
-- packages/tnf-cli/src/services/DispatchGuard.ts
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
-- apps/frontend/src/data/codebase_map.json
-- apps/relay-server/src/mcp-server.mjs
-- data/llm-provider-status.json
-- data/marketplace/catalog-items.json
-- data/protocols/system-processes.json
-- docs/operations/TNF_SWARM_MASTER_SCHEDULE.md
-- docs/operations/tnf-master-reconciliation-report-latest.json
-- docs/operations/tnf-master-reconciliation-report-latest.md
-- docs/protocols/AGENT_WHO_IS_WHO.md
-- docs/protocols/CHALLENGE_RATIONALE_LOG.md
-- docs/protocols/DIRECTIVES.md
-- docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md
-- docs/protocols/reports/twip-terminal-macro-board-latest.md
-- docs/protocols/twip-operator-runbook.md
-- docs/tnf-tmux-setup-guide.md
-- scripts/lib/tnf-terminal-attention.cjs
-- scripts/protocols/check-operator-terminal-inviolability.cjs
-- scripts/runtime/launch-agent-wrapper.sh
-- scripts/runtime/terminal-heartbeat-cron.sh
-- scripts/runtime/terminal-heartbeat-pulse.cjs
-- scripts/start-agent-network.sh
-- data/harness/ANOMALY_PAYLOAD.md
-- data/harness/active-sieve-manifest.json
-- data/harness/injected-context.md
-- data/llm-intel/
-- docs/operations/TNF_TMUX_MULTIPLEXER_CONVENTION_PLAN.md
-- docs/protocols/challenge-rationales/2026-08-30-d24-tmux-send-keys.md
-- packages/tnf-cli/src/commands/tmux.ts
-- scripts/lib/tnf-tmux-inject.cjs
-- scripts/lib/tnf-tmux-inject.test.cjs
-- scripts/runtime/tnf-tmux.cjs
-- scripts/runtime/tnf-tmux.test.cjs
+- packages/workflow-builder/src/nodes/a2a-node.tsx
+- packages/workflow-builder/src/nodes/agent-node.tsx
+- packages/workflow-builder/src/nodes/input-node.tsx
+- packages/workflow-builder/src/nodes/loop-node.tsx
+- packages/workflow-builder/src/nodes/mcp-tool-node.tsx
+- packages/workflow-builder/src/nodes/notification-node.tsx
+- packages/workflow-builder/src/nodes/prompt-node.tsx
+- packages/workflow-builder/src/nodes/subworkflow-node.tsx
+- packages/workflow-builder/src/nodes/transform-node.tsx
+- packages/workflow-builder/src/ui/select-compat.tsx
+- apps/frontend/src/components/WorkflowBuilder/NodeToolbar.tsx
+- apps/frontend/src/components/WorkflowBuilder/WorkflowCanvas.tsx
+- apps/frontend/src/components/WorkflowBuilder/nodes.tsx
+- apps/tauri-desktop/src/workflow/tauri-workflow-host.ts
 
 ## Verification
 
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation
 
-- Owner: `pi-coding-agent`
-- Targets: `tnf-orchestrator`, `story-architect`
-- Priority: `high`
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `medium`
 
 ### Resume Checklist
 
-- Run npx jest agent-swarm-orchestration from apps/api (7 tests)
-- Re-verify onboarding script idempotency: node
-  scripts/agents/onboard-cli-platform.cjs --check --platform codex
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
 ## Next Actions
 
-- Tier 2 roadmap: telemetry feedback into routing,
-  verification-before-completion flag, lexical forgiveness in agents match
+- Commit the Select shim + 9 node-file import fixes.
+- Smoke-test /workflows/builder, /workflows/nexus, and the advanced-builder
+  redirect via claude-in-chrome — specifically exercise every dropdown in the
+  shimmed nodes since the shim is new code with no test coverage yet.
+- Run apps/tauri-desktop type-check once more to confirm no regression.
+- /workflows-enhanced (6th surface, see plan addendum) still needs its own
+  follow-up decision.
+- Then open PR 1 per ~/.claude/plans/glimmering-weaving-noodle.md. Stage 2
+  (Tauri) and Stage 3 (N8N) remain separate follow-on PRs.

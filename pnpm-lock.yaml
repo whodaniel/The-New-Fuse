@@ -1209,6 +1209,9 @@ importers:
       '@the-new-fuse/ui-consolidated':
         specifier: workspace:*
         version: link:../../packages/ui-consolidated
+      '@the-new-fuse/workflow-builder':
+        specifier: workspace:*
+        version: link:../../packages/workflow-builder
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
@@ -1688,6 +1691,9 @@ importers:
       '@the-new-fuse/ui-consolidated':
         specifier: workspace:*
         version: link:../../packages/ui-consolidated
+      '@the-new-fuse/workflow-builder':
+        specifier: workspace:*
+        version: link:../../packages/workflow-builder
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
@@ -5242,6 +5248,34 @@ importers:
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
+
+  packages/workflow-builder:
+    dependencies:
+      '@the-new-fuse/ui-consolidated':
+        specifier: workspace:*
+        version: link:../ui-consolidated
+      lucide-react:
+        specifier: ^0.263.0
+        version: 0.263.1(react@19.2.7)
+      react:
+        specifier: '>=18'
+        version: 19.2.7
+      react-dom:
+        specifier: '>=18'
+        version: 19.2.7(react@19.2.7)
+      reactflow:
+        specifier: ^11.11.4
+        version: 11.11.4(@types/react@19.2.14)(immer@11.1.7)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      zod:
+        specifier: ^4.2.0
+        version: 4.4.3
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.14
+      typescript:
+        specifier: ^5.4.0
+        version: 5.9.3
 
   packages/workflow-engine:
     dependencies:
@@ -19022,6 +19056,11 @@ packages:
 
   lru_map@0.3.3:
     resolution: {integrity: sha512-Pn9cox5CsMYngeDbmChANltQl+5pi6XmTrraMSzhPmMBbmgcxmqWry0U3PGapCU1yB4/LqCcom7qhHZiF/jGfQ==}
+
+  lucide-react@0.263.1:
+    resolution: {integrity: sha512-keqxAx97PlaEN89PXZ6ki1N8nRjGWtDa4021GFYLNj0RgruM5odbpl8GHTExj0hhPq3sF6Up0gnxt6TSHu+ovw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0
 
   lucide-react@0.546.0:
     resolution: {integrity: sha512-Z94u6fKT43lKeYHiVyvyR8fT7pwCzDu7RyMPpTvh054+xahSgj4HFQ+NmflvzdXsoAjYGdCguGaFKYuvq0ThCQ==}
@@ -42237,6 +42276,10 @@ snapshots:
   lru.min@1.1.4: {}
 
   lru_map@0.3.3: {}
+
+  lucide-react@0.263.1(react@19.2.7):
+    dependencies:
+      react: 19.2.7
 
   lucide-react@0.546.0(react@19.2.7):
     dependencies:

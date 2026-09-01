@@ -4,8 +4,7 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Tier 2 roadmap: telemetry feedback into routing,
-verification-before-completion flag, lexical forgiveness in agents match
+**Current Directive:** Commit the Select shim + 9 node-file import fixes.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1151,6 +1150,36 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-01T04:10:17.909Z handoff `7f246b53-b0d9-4974-878a-da066f51d766` head
+  `5a20169d60ee` project `TNF-SESSION` — Commit the Select shim + 9 node-file
+  import fixes.
+
+- 2026-09-01T04:05:23.313Z handoff `03b98dc2-44ba-46aa-9baa-9eeab96a0d15` head
+  `5a20169d60ee` project `TNF-SESSION` — Commit the Select shim + 9 node-file
+  import fixes.
+
+- 2026-09-01T03:18:46.289Z handoff `524ffbf1-6b3b-471f-ae45-5fedcbdadc7a` head
+  `59e86d8e9c31` project `TNF-SESSION` — Commit this correction, then run
+  apps/frontend build (not just typecheck) and apps/tauri-desktop typecheck as
+  final Stage 1 verification.
+
+- 2026-09-01T00:38:38.721Z handoff `4c35929a-b298-401e-a6ff-3d7a69724bb7` head
+  `6bd29b005bee` project `TNF-SESSION` — pnpm install completed,
+  @the-new-fuse/workflow-builder confirmed registered via pnpm list --filter.
+
+- 2026-09-01T00:38:09.447Z handoff `27d90864-a832-4bcb-ab3f-87c274d062b0` head
+  `6bd29b005bee` project `TNF-SESSION` — pnpm install completed,
+  @the-new-fuse/workflow-builder confirmed registered via pnpm list --filter.
+
+- 2026-09-01T00:14:19.875Z handoff `0b23b465-4757-4216-8e6d-61b251e31594` head
+  `6bd29b005bee` project `TNF-SESSION` — pnpm install still running in
+  background (task bnq0fkc5x) to register the new packages/workflow-builder
+  workspace package.
+
+- 2026-09-01T00:13:40.619Z handoff `923f574b-d29c-48bc-8496-354f17488c2e` head
+  `6bd29b005bee` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-31T05:24:06.952Z handoff `d1c92e44-a836-4a3e-839f-a8a1d45228c0` head
   `901c2d2f098d` project `TNF-SESSION` — Tier 2 roadmap: telemetry feedback into

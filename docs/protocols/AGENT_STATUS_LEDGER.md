@@ -114,7 +114,12 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-08-31T05:24:03.543Z** — handoff
+Updated: **2026-09-01T04:10:13.916Z** — handoff
+`7f246b53-b0d9-4974-878a-da066f51d766` (`5a20169d60ee`).
+`03b98dc2-44ba-46aa-9baa-9eeab96a0d15` (`5a20169d60ee`).
+`524ffbf1-6b3b-471f-ae45-5fedcbdadc7a` (`59e86d8e9c31`).
+`4c35929a-b298-401e-a6ff-3d7a69724bb7` (`6bd29b005bee`).
+`0b23b465-4757-4216-8e6d-61b251e31594` (`6bd29b005bee`).
 `d1c92e44-a836-4a3e-839f-a8a1d45228c0` (`901c2d2f098d`).
 `10b05184-48da-4c36-8607-120e738c0593` (`055c6d0e4301`).
 `ad3371f2-6d3c-4632-8b81-bef643c73838` (`055c6d0e4301`).
@@ -312,9 +317,13 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                    |
-| -------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Tier 2 roadmap: telemetry feedback into routing, verification-before-completion flag, lexical forgiveness in agents match |
+| Priority | Action                                                                                                                                                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**   | Commit the Select shim + 9 node-file import fixes.                                                                                                                                                                        |
+| **P0**   | Smoke-test /workflows/builder, /workflows/nexus, and the advanced-builder redirect via claude-in-chrome — specifically exercise every dropdown in the shimmed nodes since the shim is new code with no test coverage yet. |
+| **P0**   | Run apps/tauri-desktop type-check once more to confirm no regression.                                                                                                                                                     |
+| **P0**   | /workflows-enhanced (6th surface, see plan addendum) still needs its own follow-up decision.                                                                                                                              |
+| **P1**   | Then open PR 1 per ~/.claude/plans/glimmering-weaving-noodle.md. Stage 2 (Tauri) and Stage 3 (N8N) remain separate follow-on PRs.                                                                                         |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1542,3 +1551,24 @@ clean | ✅ COMPLETE |
 
 | 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (d1c92e44-a836-4a3e-839f-a8a1d45228c0) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(923f574b-d29c-48bc-8496-354f17488c2e) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0b23b465-4757-4216-8e6d-61b251e31594) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(27d90864-a832-4bcb-ab3f-87c274d062b0) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4c35929a-b298-401e-a6ff-3d7a69724bb7) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(524ffbf1-6b3b-471f-ae45-5fedcbdadc7a) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(03b98dc2-44ba-46aa-9baa-9eeab96a0d15) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7f246b53-b0d9-4974-878a-da066f51d766) | ✅ HANDOFF_READY |

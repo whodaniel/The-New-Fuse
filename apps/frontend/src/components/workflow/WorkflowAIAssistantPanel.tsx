@@ -1,5 +1,5 @@
 import AISourceSelector from '@/components/ai/AISourceSelector';
-import { useWorkflow } from '@/contexts/WorkflowContext';
+import { useWorkflow } from '@the-new-fuse/workflow-builder';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import { useWorkspace } from '@/hooks/useWorkspace';
 import { useAuth } from '@/providers/AuthProvider';

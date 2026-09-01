@@ -58,7 +58,6 @@ const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows.tsx'));
 const WorkflowBuilder = lazy(() => import('./pages/workflow-pages/Builder'));
 const WorkflowNexus = lazy(() => import('./pages/SynapticNexus'));
-const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
 const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() => import('./pages/dashboard/TNFConsoleDashboard'));
 const ComputerUsePage = lazy(() => import('./pages/ComputerUsePage'));
@@ -1010,13 +1009,14 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </RequireMemberAccess>
                 }
               />
+              {/* /workflows/advanced-builder folded into /workflows/builder: its Redux
+                  canvas read from a `workflow` store slice that doesn't exist in this
+                  app (state is Zustand, no `workflow` slice registered anywhere), and
+                  its real-time-collaboration hook read a CRA-style env var this Vite
+                  app never populates. Both were verified inert, not just redundant. */}
               <Route
                 path="/workflows/advanced-builder"
-                element={
-                  <RequireMemberAccess>
-                    <WorkflowEditorWrapper />
-                  </RequireMemberAccess>
-                }
+                element={<Navigate to="/workflows/builder" replace />}
               />
               <Route
                 path="/workflows/builder-enhanced"
