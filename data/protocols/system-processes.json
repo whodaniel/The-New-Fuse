@@ -609,11 +609,7 @@
       "description": "Reaps idle unattached tnf-a-* sessions on the dedicated TNF tmux socket. Never kills tnf-o-* operator sessions or attached clients.",
       "runNow": {
         "command": "node",
-        "args": [
-          "scripts/runtime/tnf-tmux.cjs",
-          "reap",
-          "--json"
-        ],
+        "args": ["scripts/runtime/tnf-tmux.cjs", "reap", "--json"],
         "timeoutMs": 30000
       },
       "provenance": "restored-2026-08-30",

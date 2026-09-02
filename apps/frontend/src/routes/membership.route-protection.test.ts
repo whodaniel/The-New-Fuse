@@ -37,6 +37,13 @@ describe('Membership route protection contracts', () => {
   });
 
   it('keeps /membership route public and direct', () => {
-    expect(routerSource).toContain('<Route path="/membership" element={<MembershipPage />} />');
+    // Formatting-tolerant: the route may be laid out across multiple lines.
+    const routeMatch = routerSource.match(
+      /<Route\s+path="\/membership"\s+element=\{([\s\S]*?)\}\s*\/>/
+    );
+    expect(routeMatch).not.toBeNull();
+    const routeElement = routeMatch?.[1] ?? '';
+    expect(routeElement).toContain('Membership');
+    expect(routeElement).not.toContain('RequireMemberAccess');
   });
 });

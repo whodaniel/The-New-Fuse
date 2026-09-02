@@ -106,12 +106,18 @@ const RELAY_DISCOVERY_BUDGET_MS = 2500;
 // can finish install/activate even if later init I/O is slow.
 try {
   console.warn('[FuseConnect v7] service worker script evaluating');
+  // Structural types instead of ServiceWorkerGlobalScope/ExtendableEvent so the
+  // DOM-lib tsconfig (no "webworker" lib) still type-checks the SW entry.
+  const swScope = self as unknown as {
+    skipWaiting(): Promise<void>;
+    clients: { claim(): Promise<void> };
+  };
   self.addEventListener('install', () => {
-    void (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
+    void swScope.skipWaiting();
   });
   self.addEventListener('activate', (event) => {
-    const claim = (self as unknown as ServiceWorkerGlobalScope).clients.claim();
-    (event as ExtendableEvent).waitUntil(claim);
+    const claim = swScope.clients.claim();
+    (event as unknown as { waitUntil(promise: Promise<unknown>): void }).waitUntil(claim);
   });
 } catch {
   // ignore — classic-script workers still expose skipWaiting on self in Chrome
@@ -1865,14 +1871,19 @@ class BackgroundService {
         });
         break;
 
-      case 'ERROR':
-        console.error('[FuseConnect v7] Relay error:', message.payload);
+      case 'ERROR': {
+        const relayError = message.payload as { message?: string; error?: unknown } | null;
+        const relayErrorDetail =
+          relayError?.message ||
+          (relayError ? JSON.stringify(relayError).slice(0, 500) : 'Unknown error');
+        console.error('[FuseConnect v7] Relay error:', relayErrorDetail, relayError ?? '');
         this.createNotification(
           'error',
           'Error',
           (message.payload as any).message || 'Unknown error'
         );
         break;
+      }
 
       case 'TASK_ASSIGN':
         this.broadcastToTabs({

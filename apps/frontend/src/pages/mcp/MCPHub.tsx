@@ -29,7 +29,7 @@ interface MCPServer {
 }
 
 export const MCPHub: React.FC = () => {
-  const api = useApi();
+  const { api } = useApi();
   const [servers, setServers] = useState<MCPServer[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

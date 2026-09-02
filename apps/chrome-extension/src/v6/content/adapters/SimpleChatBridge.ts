@@ -90,6 +90,8 @@ class SimpleChatBridge {
     'kimi.moonshot.cn',
     'moonshot.cn',
     'openclaw-gateway.workers.dev',
+    'thenewfuse.com',
+    'app.thenewfuse.com',
     'localhost:3000',
     'localhost:3001',
   ];
@@ -586,6 +588,24 @@ class SimpleChatBridge {
       }
     }
 
+    // Accessible-name fallback: match buttons whose aria-label / title / text content is
+    // a send-like action. Handles shadcn-style icon buttons whose label lives in an
+    // sr-only span (e.g. the send button on app.thenewfuse.com/chat).
+    if (!sendButton) {
+      const candidateButtons = this.queryAllIncludingShadow('button, [role="button"]');
+      for (const el of candidateButtons) {
+        if (this.isExtensionUiElement(el)) continue;
+        if (!this.isVisible(el)) continue;
+        if (this.looksLikeSendButton(el)) {
+          sendButton = el;
+          if (DEBUG) {
+            console.log('[SimpleChatBridge] Send button found via accessible-name fallback');
+          }
+          break;
+        }
+      }
+    }
+
     // Non-debug fallback: accept any visible textarea outside extension UI.
     if (!input) {
       const allTextareas = this.queryAllIncludingShadow('textarea');
@@ -771,6 +791,22 @@ class SimpleChatBridge {
   /**
    * Check if element is visible (relaxed check with multiple strategies)
    */
+  /**
+   * Matches buttons by accessible name (aria-label, then title, then text content)
+   * against common send/submit vocabulary.
+   */
+  private looksLikeSendButton(el: HTMLElement): boolean {
+    if (el instanceof HTMLButtonElement && el.disabled) return false;
+    const name = (el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent || '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+    if (!name || name.length > 40) return false;
+    return /^(send|submit|send message|send chat|send reply|submit prompt|send prompt)\b/.test(
+      name
+    );
+  }
+
   private isVisible(el: HTMLElement): boolean {
     // Strategy 1: Check if element is connected to DOM and has offsetParent
     // (offsetParent is null for display:none or detached elements)

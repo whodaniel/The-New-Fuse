@@ -1,11 +1,12 @@
 import react from '@vitejs/plugin-react';
+import { promises as fsp } from 'fs';
 import { createRequire } from 'module';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv, Plugin } from 'vite';
-import compression from 'vite-plugin-compression';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { brotliCompressSync, gzipSync, constants as zlibConstants } from 'zlib';
 
 // Create require for ESM context
 const require = createRequire(import.meta.url);
@@ -28,6 +29,89 @@ function ethersBrowserResolve(): Plugin {
         return path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts');
       }
       return null;
+    },
+  };
+}
+
+const COMPRESSIBLE_FILE_RE = /\.(js|mjs|css|html|svg)$/i;
+// Matches vite-plugin-compression's default threshold so artifacts stay comparable.
+const COMPRESS_THRESHOLD_BYTES = 1025;
+
+async function walkBuildOutput(dir: string, collected: string[] = []): Promise<string[]> {
+  for (const entry of await fsp.readdir(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      await walkBuildOutput(full, collected);
+    } else {
+      collected.push(full);
+    }
+  }
+  return collected;
+}
+
+/**
+ * Deterministic precompression (.gz / .br sidecars) replacing
+ * vite-plugin-compression@0.5.1. The upstream plugin fires unawaited
+ * concurrent fs writes for every file inside closeBundle, which intermittently
+ * aborts large builds with "ENOENT ... .gz". This implementation compresses
+ * strictly sequentially and produces the same sidecar artifacts (origin file
+ * kept, same filter, same 1025-byte threshold, same zlib settings).
+ */
+function deterministicCompression(algorithm: 'gzip' | 'brotliCompress'): Plugin {
+  let outputDir = '';
+  const ext = algorithm === 'gzip' ? '.gz' : '.br';
+  let configLogger: { warn: (msg: string) => void } = console;
+  return {
+    name: `tnf:precompression-${algorithm}`,
+    apply: 'build',
+    enforce: 'post',
+    configResolved(resolvedConfig) {
+      outputDir = path.isAbsolute(resolvedConfig.build.outDir)
+        ? resolvedConfig.build.outDir
+        : path.resolve(resolvedConfig.root, resolvedConfig.build.outDir);
+      configLogger = resolvedConfig.logger;
+    },
+    async closeBundle() {
+      let files: string[];
+      try {
+        files = (await walkBuildOutput(outputDir)).filter((file) =>
+          COMPRESSIBLE_FILE_RE.test(file)
+        );
+      } catch {
+        return;
+      }
+      let written = 0;
+      let savedKb = 0;
+      for (const file of files) {
+        // Per-file fault tolerance: in this environment other TNF jobs may
+        // build into the same dist concurrently; a vanished file must log a
+        // warning, never abort the build.
+        try {
+          const stat = await fsp.stat(file);
+          if (stat.size < COMPRESS_THRESHOLD_BYTES) continue;
+          const content = await fsp.readFile(file);
+          const compressed =
+            algorithm === 'gzip'
+              ? gzipSync(content, { level: zlibConstants.Z_BEST_COMPRESSION })
+              : brotliCompressSync(content, {
+                  params: {
+                    [zlibConstants.BROTLI_PARAM_QUALITY]: zlibConstants.BROTLI_MAX_QUALITY,
+                    [zlibConstants.BROTLI_PARAM_MODE]: zlibConstants.BROTLI_MODE_TEXT,
+                  },
+                });
+          await fsp.writeFile(`${file}${ext}`, compressed);
+          written += 1;
+          savedKb += (stat.size - compressed.byteLength) / 1024;
+        } catch (fileError) {
+          configLogger.warn(
+            `[tnf:precompression-${algorithm}] skipped ${path.basename(file)}: ${String(fileError)}`
+          );
+        }
+      }
+      // eslint-disable-next-line no-console
+      console.log(
+        `[tnf:precompression-${algorithm}] ${written} sidecars written, saved ~${savedKb.toFixed(0)} KB`
+      );
     },
   };
 }
@@ -153,21 +237,10 @@ export default defineConfig(({ mode }) => {
           gzipSize: true,
           brotliSize: true,
         }),
-      // Compression plugins for better performance
-      enableBuildCompression &&
-        compression({
-          algorithm: 'gzip',
-          ext: '.gz',
-          // Keep compression deterministic and avoid JSON artifact edge cases.
-          filter: /\.(js|mjs|css|html|svg)$/i,
-        }),
-      enableBuildCompression &&
-        compression({
-          algorithm: 'brotliCompress',
-          ext: '.br',
-          // Keep compression deterministic and avoid JSON artifact edge cases.
-          filter: /\.(js|mjs|css|html|svg)$/i,
-        }),
+      // Compression for better performance — deterministic replacement for
+      // vite-plugin-compression (see deterministicCompression docstring).
+      enableBuildCompression && deterministicCompression('gzip'),
+      enableBuildCompression && deterministicCompression('brotliCompress'),
     ].filter(Boolean),
     resolve: {
       // Force all packages to use the same React instance to prevent

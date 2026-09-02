@@ -51,6 +51,7 @@ import { registerSparkCommand } from './commands/spark.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
 import { registerSubdirectorCommand } from './commands/subdirector.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
+import { registerVideoCommands } from './commands/video.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
 // NOTE: ./orchestration.js is intentionally NOT statically imported — it pulls
 // @the-new-fuse/infrastructure + ioredis chains (~2.1s module eval). It is
@@ -20078,6 +20079,7 @@ registerFleetCommands(program);
 registerCatalogCommand(program);
 registerSubdirectorCommand(program, { repoRoot, runCommand });
 registerHaltCommand(program, repoRoot);
+registerVideoCommands(program, repoRoot);
 
 // Hermes parity: `hermes sync` → TNF CLI↔Hermes surface audit.
 // Nested `protocol sync` / `mcp sync` remain unchanged; this is the top-level verb.

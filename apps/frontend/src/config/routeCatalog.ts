@@ -793,6 +793,37 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     path: '/workspace/projects',
     description: 'Workspace projects route',
   },
+  // Router pages missing from the catalog (navigation-route audit gap fix)
+  {
+    name: 'OpenClaw Security',
+    path: '/admin/openclaw-security',
+    description: 'Harness credentials and security controls',
+  },
+  {
+    name: 'Admin Database API',
+    path: '/api/admin/database',
+    description: 'Database administration API console',
+  },
+  {
+    name: 'Admin Features API',
+    path: '/api/admin/features',
+    description: 'Feature flag administration API console',
+  },
+  {
+    name: 'Dashboard Overview',
+    path: '/dashboard/overview',
+    description: 'Dashboard overview route',
+  },
+  {
+    name: 'Dashboard Audit',
+    path: '/dashboard/audit',
+    description: 'Dashboard audit route',
+  },
+  {
+    name: 'Terminal Mirror',
+    path: '/terminals/mirror',
+    description: 'Terminal mirror route',
+  },
 ];
 
 const experienceByPath = new Map<

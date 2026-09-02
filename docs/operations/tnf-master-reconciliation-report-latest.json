@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-01T18:02:24.335Z",
+  "timestamp": "2026-09-01T16:02:16.628Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 558,
+      "durationMs": 692,
       "data": {
         "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
-        "commit": "c890272e2",
+        "commit": "12254455b",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 1091,
+      "durationMs": 562,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -25,7 +25,7 @@
     "selfEvolution": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 0,
+      "durationMs": 35,
       "data": {
         "status": "skipped"
       }
@@ -41,31 +41,29 @@
     "processHealth": {
       "ok": false,
       "verdict": "findings",
-      "findings": 5,
-      "durationMs": 2361,
+      "findings": 3,
+      "durationMs": 405,
       "data": {
-        "findings": 5,
-        "healthy": 15,
+        "findings": 3,
+        "healthy": 17,
         "detail": [
           "error: tnf-growth-blocker-audit",
-          "error: tnf-llm-arena-intel-collector",
-          "error: tnf-marketplace-curation-cycle",
-          "error: tnf-swarm-role-call-and-scheduling",
-          "error: tnf-swarm-stress-test"
+          "stale: tnf-self-improvement-scorecard",
+          "error: tnf-swarm-role-call-and-scheduling"
         ]
       }
     },
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 3537,
+      "durationMs": 4,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 7646,
+  "totalDurationMs": 1708,
   "summary": {
     "clean": 3,
     "findings": 1,

@@ -35,6 +35,24 @@ function extractRouterPaths(src) {
   return uniqueSorted(out);
 }
 
+// Routes whose element is a bare <Navigate .../> are redirect stubs, not pages:
+// they must not be flagged for missing all-pages catalog entries.
+function extractRouterRedirectOnlyPaths(src) {
+  const out = [];
+  const re = /<Route\s+path="([^"]+)"\s+element=\{\s*<Navigate[\s>/]/g;
+  let m;
+  while ((m = re.exec(src)) !== null) out.push(m[1]);
+  return uniqueSorted(out);
+}
+
+// Sidebar hrefs may carry deep-link query params (e.g. /command-center?tab=streams,
+// /workflows/nexus?layer=lexicon) that the target pages consume via useSearchParams.
+// Route matching is on the pathname only, so strip the query before diffing.
+function stripQuery(p) {
+  const q = p.indexOf('?');
+  return q === -1 ? p : p.slice(0, q);
+}
+
 function extractRedirectFromPaths(src) {
   const out = [];
   const re = /from:\s*'([^']+)'/g;
@@ -80,6 +98,7 @@ function main() {
   const allPagesSrc = read(FILES.allPages);
 
   const routerPaths = extractRouterPaths(routerSrc);
+  const routerRedirectOnlyPaths = extractRouterRedirectOnlyPaths(routerSrc);
   const redirectFromPaths = extractRedirectFromPaths(read(FILES.legacyRedirects));
   const effectiveRouterPaths = uniqueSorted([...routerPaths, ...redirectFromPaths]);
   const allPagesPaths = extractAllPagesPaths(allPagesSrc);
@@ -92,10 +111,17 @@ function main() {
   const legacySidebarPaths = uniqueSorted(Object.values(sidebarByFile).flat());
   const sidebarPaths = uniqueSorted([...canonicalSidebarPaths, ...legacySidebarPaths]);
 
-  const canonicalSidebarNotInRouter = diff(canonicalSidebarPaths, effectiveRouterPaths);
-  const sidebarNotInRouter = diff(sidebarPaths, effectiveRouterPaths);
+  const canonicalSidebarNotInRouter = diff(
+    uniqueSorted(canonicalSidebarPaths.map(stripQuery)),
+    effectiveRouterPaths
+  );
+  const sidebarNotInRouter = diff(uniqueSorted(sidebarPaths.map(stripQuery)), effectiveRouterPaths);
   const allPagesNotInRouter = diff(allPagesPaths, effectiveRouterPaths);
-  const routerNotInAllPages = diff(routerPaths.filter((p) => p !== '*'), allPagesPaths);
+  const pageRouterPaths = diff(
+    routerPaths.filter((p) => p !== '*'),
+    routerRedirectOnlyPaths
+  );
+  const routerNotInAllPages = diff(pageRouterPaths, allPagesPaths);
 
   const payload = {
     generatedAt: new Date().toISOString(),
@@ -123,6 +149,7 @@ function main() {
       sidebarNotInRouter,
       allPagesNotInRouter,
       routerNotInAllPages,
+      routerRedirectOnlyPaths,
     },
   };
 
@@ -146,6 +173,9 @@ function main() {
     `- sidebar paths not in router: ${payload.counts.sidebarNotInRouter}`,
     `- all-pages paths not in router: ${payload.counts.allPagesNotInRouter}`,
     `- router paths not in all-pages: ${payload.counts.routerNotInAllPages}`,
+    `- router redirect-only paths (excluded from all-pages diff): ${routerRedirectOnlyPaths.length}`,
+    '',
+    toSection('Router Redirect-Only Paths (Excluded From All-Pages Diff)', routerRedirectOnlyPaths),
     '',
     toSection('Canonical Sidebar Paths Not In Router', canonicalSidebarNotInRouter),
     '',

@@ -1,5 +1,5 @@
-import { ApiClient } from '../client/ApiClient.js';
 import { BaseService } from './BaseService.js';
+import type { IApiClient } from './IApiClient.js';
 
 /**
  * Agent capability interface
@@ -17,7 +17,7 @@ export enum AgentStatus {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
   PENDING = 'PENDING',
-  ERROR = 'ERROR'
+  ERROR = 'ERROR',
 }
 
 /**
@@ -34,6 +34,8 @@ export interface Agent {
   createdAt: string;
   updatedAt: string;
   createdBy: string;
+  /** Tenant/agency that owns the agent (returned by the backend). */
+  tenantId?: string;
 }
 
 /**
@@ -82,7 +84,7 @@ export class AgentService extends BaseService {
    * Create a new agent service
    * @param api API client instance
    */
-  constructor(api: ApiClient) {
+  constructor(api: IApiClient) {
     super(api, '/agents');
   }
 
@@ -110,7 +112,11 @@ export class AgentService extends BaseService {
    * @returns Promise with created agent data
    */
   async createAgent(data: AgentCreateData): Promise<Agent> {
-    this.validateRequired({ name: data.name, type: data.type, capabilities: data.capabilities }, ['name', 'type', 'capabilities']);
+    this.validateRequired({ name: data.name, type: data.type, capabilities: data.capabilities }, [
+      'name',
+      'type',
+      'capabilities',
+    ]);
     return this.create<Agent>(data);
   }
 
@@ -139,7 +145,10 @@ export class AgentService extends BaseService {
    * @param options Query options (page, limit, etc.)
    * @returns Promise with agents list
    */
-  async getAgentsByCapability(capability: string, options: Record<string, any> = {}): Promise<Agent[]> {
+  async getAgentsByCapability(
+    capability: string,
+    options: Record<string, any> = {}
+  ): Promise<Agent[]> {
     this.validateRequired({ capability }, ['capability']);
     const queryString = this.buildQueryString(options);
     return this.get<Agent[]>(`/capability/${capability}${queryString}`);
@@ -152,7 +161,11 @@ export class AgentService extends BaseService {
    * @param params Action parameters
    * @returns Promise with execution response
    */
-  async executeAction(id: string, action: string, params: Record<string, any> = {}): Promise<AgentExecutionResult> {
+  async executeAction(
+    id: string,
+    action: string,
+    params: Record<string, any> = {}
+  ): Promise<AgentExecutionResult> {
     this.validateRequired({ id, action }, ['id', 'action']);
     return this.post<AgentExecutionResult>(`/${id}/execute`, { action, params });
   }
@@ -163,7 +176,10 @@ export class AgentService extends BaseService {
    * @param options Query options (page, limit, status, etc.)
    * @returns Promise with execution history
    */
-  async getExecutionHistory(id: string, options: Record<string, any> = {}): Promise<AgentExecutionResult[]> {
+  async getExecutionHistory(
+    id: string,
+    options: Record<string, any> = {}
+  ): Promise<AgentExecutionResult[]> {
     this.validateRequired({ id }, ['id']);
     const queryString = this.buildQueryString(options);
     return this.get<AgentExecutionResult[]>(`/${id}/executions${queryString}`);
@@ -238,6 +254,6 @@ export class AgentService extends BaseService {
  * );
  * ```
  */
-export function createAgentService(api: ApiClient): AgentService {
+export function createAgentService(api: IApiClient): AgentService {
   return new AgentService(api);
 }

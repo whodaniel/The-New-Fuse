@@ -45,6 +45,99 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
   // State for advanced toggle
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // State for grouped sub-page navigation (parent items with children)
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const toggleGroup = (name: string) =>
+    setExpandedGroups((prev) => ({ ...prev, [name]: !prev[name] }));
+
+  const visibleChildren = (item: SidebarNavItem) =>
+    (item.children ?? []).filter(
+      (child) =>
+        !child.requiredRoles || child.requiredRoles.length === 0 || hasRole(child.requiredRoles)
+    );
+
+  const renderNavItem = (item: SidebarNavItem, collapsed: boolean) => {
+    const isActive =
+      item.href === '/'
+        ? pathname === '/'
+        : pathname === item.href || pathname.startsWith(`${item.href}/`);
+    const children = visibleChildren(item);
+    const hasChildren = children.length > 0;
+    const isExpanded = !!expandedGroups[item.name];
+
+    const link = (
+      <NavLink
+        to={item.href}
+        onClick={() => setIsOpen(false)}
+        className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150 group ${
+          isActive
+            ? 'bg-slate-800 text-slate-100 border border-slate-700'
+            : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
+        } ${collapsed ? 'justify-center' : ''} ${hasChildren && !collapsed ? 'flex-1 min-w-0' : ''}`}
+        title={collapsed ? item.name : undefined}
+        aria-label={collapsed ? item.name : undefined}
+      >
+        <item.icon
+          className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-400 group-hover:text-slate-300'}`}
+        />
+        {!collapsed && <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>}
+      </NavLink>
+    );
+
+    if (!hasChildren) return <React.Fragment key={item.name}>{link}</React.Fragment>;
+
+    return (
+      <div key={item.name}>
+        <div className={`flex items-center gap-1 ${collapsed ? 'justify-center' : ''}`}>
+          {link}
+          {!collapsed && (
+            <button
+              type="button"
+              onClick={() => toggleGroup(item.name)}
+              aria-expanded={isExpanded}
+              aria-controls={`nav-group-${item.name.replace(/\s+/g, '-')}`}
+              aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.name} navigation`}
+              className="shrink-0 p-1.5 rounded-md text-slate-500 hover:text-slate-200 hover:bg-slate-800/60 transition-colors"
+            >
+              {isExpanded ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+          )}
+        </div>
+        {!collapsed && isExpanded && (
+          <div
+            id={`nav-group-${item.name.replace(/\s+/g, '-')}`}
+            className="mt-1 ml-4 pl-3 border-l border-slate-800 space-y-0.5"
+          >
+            {children.map((child) => {
+              const childActive = pathname === child.href || pathname.startsWith(`${child.href}/`);
+              return (
+                <NavLink
+                  key={child.name}
+                  to={child.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md text-sm transition-colors duration-150 ${
+                    childActive
+                      ? 'text-slate-100 bg-slate-800/70'
+                      : 'text-slate-500 hover:text-white hover:bg-slate-800/40'
+                  }`}
+                >
+                  <child.icon
+                    className={`w-4 h-4 shrink-0 ${childActive ? 'text-slate-200' : 'text-slate-500'}`}
+                  />
+                  <span className="whitespace-nowrap truncate">{child.name}</span>
+                </NavLink>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -110,35 +203,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                     </div>
                   )}
                   <div className="space-y-1">
-                    {sectionItems.map((item) => {
-                      const isActive =
-                        item.href === '/'
-                          ? pathname === '/'
-                          : pathname === item.href || pathname.startsWith(`${item.href}/`);
-                      return (
-                        <NavLink
-                          key={item.name}
-                          to={item.href}
-                          onClick={() => setIsOpen(false)}
-                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150 group ${
-                            isActive
-                              ? 'bg-slate-800 text-slate-100 border border-slate-700'
-                              : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
-                          } ${isCollapsed ? 'justify-center' : ''}`}
-                          title={isCollapsed ? item.name : undefined}
-                          aria-label={isCollapsed ? item.name : undefined}
-                        >
-                          <item.icon
-                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-400 group-hover:text-slate-300'}`}
-                          />
-                          {!isCollapsed && (
-                            <span className="text-sm font-medium whitespace-nowrap">
-                              {item.name}
-                            </span>
-                          )}
-                        </NavLink>
-                      );
-                    })}
+                    {sectionItems.map((item) => renderNavItem(item, isCollapsed))}
                   </div>
                 </div>
               );
@@ -162,29 +227,7 @@ export const PremiumSidebar: React.FC<PremiumSidebarProps> = ({
                 </button>
                 {showAdvanced && (
                   <div id="advanced-nav-items" className="space-y-1">
-                    {advancedItems.map((item) => {
-                      const isActive =
-                        item.href === '/'
-                          ? pathname === '/'
-                          : pathname === item.href || pathname.startsWith(`${item.href}/`);
-                      return (
-                        <NavLink
-                          key={item.name}
-                          to={item.href}
-                          onClick={() => setIsOpen(false)}
-                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-150 group ${
-                            isActive
-                              ? 'bg-slate-800 text-slate-100 border border-slate-700'
-                              : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
-                          }`}
-                        >
-                          <item.icon
-                            className={`w-5 h-5 shrink-0 ${isActive ? 'text-slate-100' : 'text-slate-400 group-hover:text-slate-300'}`}
-                          />
-                          <span className="text-sm font-medium whitespace-nowrap">{item.name}</span>
-                        </NavLink>
-                      );
-                    })}
+                    {advancedItems.map((item) => renderNavItem(item, false))}
                   </div>
                 )}
               </div>

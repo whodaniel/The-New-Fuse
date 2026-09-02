@@ -2,7 +2,7 @@
 
 Human-friendly running record of **what people call an agent** vs **what it actually is**.
 
-_Last refreshed: **2026-09-01 15:29:49 EDT**_
+_Last refreshed: **2026-09-01 19:41:16 EDT**_
 
 Refresh anytime:
 
@@ -37,9 +37,13 @@ python3 scripts/system/tnf-agent-who-is-who.py --write
 
 ## Live right now
 
-| Name | Window (tty) | PID | Note |
-|---|---|---|---|
-| **Codex** (`codex`) | `ttys000` | 13435 | — |
+| Name                      | Window (tty) | PID   | Note |
+| ------------------------- | ------------ | ----- | ---- |
+| **Hermes** (`hermes`)     | `ttys002`    | 87450 | —    |
+| **OpenCode** (`opencode`) | `ttys003`    | 28125 | —    |
+| **Pi** (`pi`)             | `ttys000`    | 49262 | —    |
+| **Pi** (`pi`)             | `ttys001`    | 7036  | —    |
+| **TNF** (`tnf-cli`)       | `ttys002`    | 87250 | —    |
 
 ## Voice beam anchor
 

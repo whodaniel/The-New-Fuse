@@ -155,8 +155,7 @@
     "alarms",
     "contextMenus",
     "webRequest",
-    "sidePanel",
-    "windows"
+    "sidePanel"
   ],
   "oauth2": {
     "client_id": "637776200146-pa5fs3eggfmh5gr92gvrp955keg0lrah.apps.googleusercontent.com",

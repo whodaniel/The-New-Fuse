@@ -1,53 +1,53 @@
 {
-  "id": "intel_1788285620314",
-  "collectedAt": "2026-09-01T18:00:20.307Z",
+  "id": "intel_1788307240107",
+  "collectedAt": "2026-09-02T00:00:40.100Z",
   "arenaData": [
     {
       "source": "lm-arena-leaderboard",
       "sourceName": "LM Arena (Chatbot Arena)",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard",
-      "collectedAt": "2026-09-01T18:00:21.979Z",
+      "collectedAt": "2026-09-02T00:00:41.079Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 530216
+      "rawLength": 532700
     },
     {
       "source": "lm-arena-vision",
       "sourceName": "LM Arena Vision",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=vision",
-      "collectedAt": "2026-09-01T18:00:22.607Z",
+      "collectedAt": "2026-09-02T00:00:41.969Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 530278
+      "rawLength": 532766
     },
     {
       "source": "lm-arena-hard",
       "sourceName": "LM Arena Hard Prompts",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=hard",
-      "collectedAt": "2026-09-01T18:00:23.474Z",
+      "collectedAt": "2026-09-02T00:00:42.916Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 530276
+      "rawLength": 532760
     },
     {
       "source": "lm-arena-code",
       "sourceName": "LM Arena Coding",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=coding",
-      "collectedAt": "2026-09-01T18:00:24.593Z",
+      "collectedAt": "2026-09-02T00:00:43.673Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 530275
+      "rawLength": 532766
     },
     {
       "source": "agent-arena",
       "sourceName": "Agent Arena",
       "sourceType": "arena",
       "url": "https://agent-arena.com/leaderboard",
-      "collectedAt": "2026-09-01T18:00:25.289Z",
+      "collectedAt": "2026-09-02T00:00:43.984Z",
       "status": "success",
       "rankings": [],
       "rawLength": 862
@@ -57,7 +57,7 @@
       "sourceName": "Artificial Analysis",
       "sourceType": "benchmark",
       "url": "https://artificialanalysis.ai/leaderboard",
-      "collectedAt": "2026-09-01T18:00:25.808Z",
+      "collectedAt": "2026-09-02T00:00:44.124Z",
       "status": "partial",
       "rankings": [],
       "rawLength": 14640
@@ -67,7 +67,7 @@
       "sourceName": "Open LLM Leaderboard (HuggingFace)",
       "sourceType": "benchmark",
       "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
-      "collectedAt": "2026-09-01T18:00:26.125Z",
+      "collectedAt": "2026-09-02T00:00:44.313Z",
       "status": "success",
       "rankings": [
         {
@@ -88,7 +88,7 @@
       "sourceName": "Aider Coding Leaderboard",
       "sourceType": "benchmark",
       "url": "https://aider.chat/docs/leaderboards/",
-      "collectedAt": "2026-09-01T18:00:26.831Z",
+      "collectedAt": "2026-09-02T00:00:44.873Z",
       "status": "success",
       "rankings": [
         {
@@ -109,7 +109,7 @@
       "sourceName": "SWE-bench Leaderboard",
       "sourceType": "benchmark",
       "url": "https://www.swebench.com/",
-      "collectedAt": "2026-09-01T18:00:33.214Z",
+      "collectedAt": "2026-09-02T00:00:46.802Z",
       "status": "success",
       "rankings": [
         {
@@ -130,14 +130,14 @@
     {
       "feed": "HuggingFace Blog",
       "url": "https://huggingface.co/blog/feed.xml",
-      "collectedAt": "2026-09-01T18:00:34.051Z",
+      "collectedAt": "2026-09-02T00:00:47.067Z",
       "status": "success",
       "articles": []
     },
     {
       "feed": "OpenAI Blog",
       "url": "https://openai.com/blog/rss.xml",
-      "collectedAt": "2026-09-01T18:00:34.316Z",
+      "collectedAt": "2026-09-02T00:00:47.226Z",
       "status": "error",
       "error": "Invalid URL",
       "articles": []
@@ -145,7 +145,7 @@
     {
       "feed": "Anthropic News",
       "url": "https://www.anthropic.com/rss.xml",
-      "collectedAt": "2026-09-01T18:00:34.708Z",
+      "collectedAt": "2026-09-02T00:00:47.625Z",
       "status": "error",
       "error": "HTTP 404",
       "articles": []
@@ -153,7 +153,7 @@
     {
       "feed": "r/LocalLLaMA",
       "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
-      "collectedAt": "2026-09-01T18:00:35.100Z",
+      "collectedAt": "2026-09-02T00:00:47.711Z",
       "status": "error",
       "error": "HTTP 403",
       "articles": []
@@ -161,7 +161,7 @@
     {
       "feed": "r/MachineLearning",
       "url": "https://www.reddit.com/r/MachineLearning/new/.json",
-      "collectedAt": "2026-09-01T18:00:35.273Z",
+      "collectedAt": "2026-09-02T00:00:47.831Z",
       "status": "error",
       "error": "HTTP 403",
       "articles": []
@@ -286,7 +286,7 @@
       "model": "meta/llama-3.2-90b-vision-instruct",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 717
+      "latencyMs": 2316
     },
     {
       "model": "meta/llama-guard-4-12b",
@@ -298,13 +298,13 @@
       "model": "openai/gpt-oss-120b",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 7368
+      "latencyMs": 12486
     },
     {
       "model": "openai/gpt-oss-20b",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 786
+      "latencyMs": 342
     },
     {
       "model": "microsoft/phi-4-multimodal-instruct",
@@ -403,5 +403,5 @@
     "nvidiaSlow": 2,
     "nvidiaEol": 27
   },
-  "completedAt": "2026-09-01T18:01:06.959Z"
+  "completedAt": "2026-09-02T00:01:20.603Z"
 }

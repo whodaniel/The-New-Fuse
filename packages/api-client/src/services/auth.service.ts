@@ -1,5 +1,5 @@
-import { ApiClient } from '../client/ApiClient.js';
 import { BaseService } from './BaseService.js';
+import type { IApiClient } from './IApiClient.js';
 
 /**
  * Authentication response interface
@@ -30,7 +30,7 @@ export class AuthService extends BaseService {
    * Create a new authentication service
    * @param api API client instance
    */
-  constructor(api: ApiClient) {
+  constructor(api: IApiClient) {
     super(api, '/auth');
   }
 
@@ -81,7 +81,10 @@ export class AuthService extends BaseService {
    * @param password New password
    * @returns Promise with password reset response
    */
-  async resetPassword(token: string, password: string): Promise<{ success: boolean; message: string }> {
+  async resetPassword(
+    token: string,
+    password: string
+  ): Promise<{ success: boolean; message: string }> {
     this.validateRequired({ token, password }, ['token', 'password']);
     return this.post<{ success: boolean; message: string }>('/reset-password', { token, password });
   }
@@ -136,6 +139,6 @@ export class AuthService extends BaseService {
  * console.log(`Logged in as ${authResponse.user.name}`);
  * ```
  */
-export function createAuthService(api: ApiClient): AuthService {
+export function createAuthService(api: IApiClient): AuthService {
   return new AuthService(api);
 }

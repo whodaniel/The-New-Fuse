@@ -6,13 +6,18 @@
  * It includes authentication, workflow management, agent management, and user management services.
  */
 
-// Core client exports
+// Core client exports — the synchronous ApiClient that owns token handling
+// (Authorization header injection, auto-refresh via `refreshToken`, and
+// `onUnauthorized` handling). Services extend BaseService against the same
+// HTTP surface (get/post/put/patch/delete).
 export {
   ApiClient,
-  type ApiClientOptions,
-  type ApiError,
+  createApiClient,
+  type ApiClientConfig,
   type ApiResponse,
-} from './client/ApiClient.js';
+} from './api-client.js';
+// Shared error type from the client lineage
+export type { ApiError } from './client/ApiClient.js';
 
 // Token storage exports
 export { TokenStorage, type TokenStorage as TokenStorageInterface } from './auth/TokenStorage.js';
@@ -77,34 +82,8 @@ export {
 } from './services/BackupService.js';
 
 /**
- * Create a new API client with the given configuration
- * @param config API client configuration
- * @returns API client instance
- *
- * @example
- * ```typescript
- * import { createApiClient } from '@the-new-fuse/api-client';
- *
- * const api = createApiClient({
- *   baseURL: 'https://api.example.com',
- *   timeout: 5000,
- * });
- * ```
+ * `createApiClient` is re-exported above from `./api-client.js` — a
+ * synchronous factory that returns the client directly (no dynamic import),
+ * so `useApi`-style consumers can create it inside `useMemo` and call
+ * `api.get(...)` immediately.
  */
-export async function createApiClient(config: {
-  baseURL: string;
-  timeout?: number;
-  headers?: Record<string, string>;
-  options?: Record<string, any>;
-  tokenStorage?: import('./auth/TokenStorage.js').TokenStorage;
-}) {
-  const { baseURL, timeout, headers, options, tokenStorage } = config;
-  const ApiClientModule = await import('./client/ApiClient.js');
-  return new ApiClientModule.ApiClient({
-    baseURL,
-    timeout,
-    headers,
-    tokenStorage,
-    ...options,
-  });
-}

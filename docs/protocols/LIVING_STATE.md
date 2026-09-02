@@ -3,7 +3,9 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Prove the sync/open-runtime dry-run PR path against restored public main, then re-enable Repo Separation Sync (PRODUCT_REPO_MAP.md prerequisite)
+
+**Current Directive:** Merge to main
+
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-30 Operator departments, remember write-path, staffing index**:
@@ -306,7 +308,12 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-30T19:21:11.827Z New script(s) created: tnf-context-broker.cjs
 - [✅] 2026-08-31T17:22:59.854Z New script(s) created:
 - [✅] 2026-08-31T22:52:45.474Z Fix MEMORY.md drift: canonicalize § delimiter
+- [✅] 2026-09-01T23:44:01.072Z New script(s) created: sync-dist.cjs
+- [✅] 2026-09-01T23:44:01.072Z Fix MEMORY.md drift: canonicalize § delimiter
   format, split oversized entry
+
+  format, split oversized entry
+
 - [✅] 2026-09-01T00:09:26.831Z New script(s) created: copy-provider-catalog.cjs
 - [✅] 2026-09-01T00:09:26.831Z Fix MEMORY.md drift: canonicalize § delimiter
   format, split oversized entry
@@ -1173,7 +1180,31 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-09-01T16:16:48.926Z handoff `7ee66eff-40dc-40f2-a813-2735ed48c6df` head `12254455be7b` project `TNF-SESSION` — Prove the sync/open-runtime dry-run PR path against restored public main, then re-enable Repo Separation Sync (PRODUCT_REPO_MAP.md prerequisite)
+- 2026-09-02T01:18:17.461Z handoff `6bc10366-c1ed-4d30-8109-f3c617a39310` head
+  `feb6a50e0abb` project `TNF-SESSION` — Merge to main
+
+- 2026-09-02T01:15:13.188Z handoff `09e2dc69-909b-49ef-b284-8dc1fb692e8e` head
+  `2a9963dcf08f` project `TNF-SESSION` — Merge branches to main via PRs
+
+- 2026-09-02T01:09:45.834Z handoff `3cd19e37-bec3-4154-a954-894caf1c3aa9` head
+  `5c1baed3b7fe` project `TNF-SESSION` — Merge branches to main via PRs
+
+- 2026-09-02T01:04:41.148Z handoff `672bdc47-9de9-491f-bcdf-e63b4cb7d644` head
+  `5c1baed3b7fe` project `TNF-SESSION` — Merge branches to main via PRs
+
+- 2026-09-02T00:50:24.699Z handoff `c6c28621-4688-4577-a81c-e7f775dc5068` head
+  `f76d44b2992c` project `TNF-SESSION` — Merge branches to main via PRs
+
+- 2026-09-02T00:43:05.968Z handoff `8ea270ce-f2fd-4603-869b-beccbe7c17d7` head
+  `712b1c75c012` project `TNF-SESSION` — Merge branches to main via PRs
+
+- 2026-09-02T00:26:46.701Z handoff `70f186d4-5fe0-44f9-a0ea-f8d62eb3b814` head
+  `1bccd45da526` project `TNF-SESSION` — Merge tier2 branch to main via PR
+
+- 2026-09-01T16:16:48.926Z handoff `7ee66eff-40dc-40f2-a813-2735ed48c6df` head
+  `12254455be7b` project `TNF-SESSION` — Prove the sync/open-runtime dry-run PR
+  path against restored public main, then re-enable Repo Separation Sync
+  (PRODUCT_REPO_MAP.md prerequisite)
 
 - 2026-08-31T20:35:07.993Z handoff `0fa0c871-bb22-45d7-a21f-b6b49d39b651` head
   `eafdadf1411f` project `TNF-SESSION` — Phase 2 is the reachability gate and

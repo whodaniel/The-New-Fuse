@@ -6,6 +6,12 @@
 
 # Agent Status Ledger
 
+- **Updated: 2026-09-01T23:44:04.266ZZ** — Added 1 new script file(s)
+
+- **Updated: 2026-09-01T20:36:27.801ZZ** — Restored documented publication
+  remotes split-open-runtime and split-control-plane to the local monorepo
+  checkout (git config only; no push performed)
+
 - **Updated: 2026-09-01T06:28:29.731ZZ** — Fixed the installed TNF model
   selector stdin lifecycle after a real PATH-resolved PTY smoke test exposed
   lingering processes; added a 13-assertion stream cleanup regression and passed
@@ -147,7 +153,14 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-01T16:16:47.643Z** — handoff `7ee66eff-40dc-40f2-a813-2735ed48c6df` (`12254455be7b`).
+Updated: **2026-09-02T01:18:07.125Z** — handoff
+`6bc10366-c1ed-4d30-8109-f3c617a39310` (`feb6a50e0abb`).
+`09e2dc69-909b-49ef-b284-8dc1fb692e8e` (`2a9963dcf08f`).
+`3cd19e37-bec3-4154-a954-894caf1c3aa9` (`5c1baed3b7fe`).
+`c6c28621-4688-4577-a81c-e7f775dc5068` (`f76d44b2992c`).
+`8ea270ce-f2fd-4603-869b-beccbe7c17d7` (`712b1c75c012`).
+`70f186d4-5fe0-44f9-a0ea-f8d62eb3b814` (`1bccd45da526`).
+`7ee66eff-40dc-40f2-a813-2735ed48c6df` (`12254455be7b`).
 `0fa0c871-bb22-45d7-a21f-b6b49d39b651` (`eafdadf1411f`).
 `ca4e5069-49c7-448d-b209-e081e251fc03` (`cac2a4245522`).
 `fe512a4e-57df-4bac-85a4-23abf62347a4` (`a6fa7e8d77ba`).
@@ -355,11 +368,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Prove the sync/open-runtime dry-run PR path against restored public main, then re-enable Repo Separation Sync (PRODUCT_REPO_MAP.md prerequisite) |
-| **P0**   | Reclassify satellites vs standalone products (ai-arcade, casin8-games, poker-room, myphoneremote-api) in TNF_PRODUCT_BOUNDARY.md and oss-app-boundary.json |
-| **P0**   | Add CI and deployment wiring to the four standalone satellite repos (single 'Initial import' commit each) |
+| Priority | Action        |
+| -------- | ------------- |
+| **P0**   | Merge to main |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1633,4 +1644,26 @@ clean | ✅ COMPLETE |
 | 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (0fa0c871-bb22-45d7-a21f-b6b49d39b651) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST (7ee66eff-40dc-40f2-a813-2735ed48c6df) | ✅ HANDOFF_READY |
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(7ee66eff-40dc-40f2-a813-2735ed48c6df) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(70f186d4-5fe0-44f9-a0ea-f8d62eb3b814) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(8ea270ce-f2fd-4603-869b-beccbe7c17d7) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c6c28621-4688-4577-a81c-e7f775dc5068) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(672bdc47-9de9-491f-bcdf-e63b4cb7d644) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(3cd19e37-bec3-4154-a954-894caf1c3aa9) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(09e2dc69-909b-49ef-b284-8dc1fb692e8e) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(6bc10366-c1ed-4d30-8109-f3c617a39310) | ✅ HANDOFF_READY |

@@ -557,3 +557,6 @@ packages/rust-relay/target/
 replace_*.py
 apps/frontend/coverage/
 apps/api/logs/
+
+# Ephemeral video-frame recovery artifacts (interpret-then-delete; never commit)
+data/video-frames/

@@ -454,7 +454,14 @@ function ChatPage() {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
-    if (!browserAgentMode && !recipientAgentId) return;
+    if (!browserAgentMode && !recipientAgentId) {
+      setSendError(
+        agents && agents.length > 0
+          ? 'Select a recipient agent before sending.'
+          : 'No agents available to receive messages yet.'
+      );
+      return;
+    }
 
     const userContent = newMessage;
     setNewMessage('');
@@ -486,7 +493,10 @@ function ChatPage() {
     }
 
     const respondingAgent = getAgentById(recipientAgentId);
-    if (!respondingAgent) return;
+    if (!respondingAgent) {
+      setSendError(`Recipient agent '${recipientAgentId}' could not be found.`);
+      return;
+    }
 
     const userMessage: Omit<Message, 'id'> = {
       content: userContent,
@@ -871,6 +881,9 @@ function ChatPage() {
                 />
                 <button
                   onClick={handleSendMessage}
+                  type="button"
+                  aria-label="Send"
+                  data-testid="chat-send"
                   disabled={
                     !newMessage.trim() ||
                     isGenerating ||

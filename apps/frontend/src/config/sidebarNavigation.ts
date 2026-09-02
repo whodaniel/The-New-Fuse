@@ -5,6 +5,7 @@ import {
   Bot,
   Boxes,
   Brain,
+  Briefcase,
   Bug,
   ClipboardList,
   Compass,
@@ -88,6 +89,39 @@ export const SIDEBAR_NAVIGATION: SidebarNavItem[] = [
     icon: MessageSquare,
     section: 'workspace',
     access: 'authenticated',
+  },
+  {
+    name: 'Workspace',
+    href: '/workspace/overview',
+    icon: Briefcase,
+    section: 'workspace',
+    access: 'authenticated',
+    children: [
+      {
+        name: 'Overview',
+        href: '/workspace/overview',
+        icon: LayoutDashboard,
+        access: 'authenticated',
+      },
+      {
+        name: 'Members',
+        href: '/workspace/members',
+        icon: Users,
+        access: 'authenticated',
+      },
+      {
+        name: 'Analytics',
+        href: '/workspace/analytics',
+        icon: BarChart3,
+        access: 'authenticated',
+      },
+      {
+        name: 'Settings',
+        href: '/workspace/settings',
+        icon: Settings,
+        access: 'authenticated',
+      },
+    ],
   },
   {
     name: 'Projects & Threads',

@@ -129,11 +129,20 @@ class FuseConnectPopup {
     setTimeout(run, 0);
   }
 
-  wakeBackground() {
+  wakeBackground(attempt = 0) {
+    // MV3 cold-starts the service worker on the first message; the wake
+    // handshake can outlast a single round-trip, so retry before declaring
+    // the background degraded.
+    const MAX_ATTEMPTS = 3;
+    const RETRY_DELAY_MS = 350;
     try {
       chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
         const err = chrome.runtime.lastError;
         if (err) {
+          if (attempt + 1 < MAX_ATTEMPTS) {
+            setTimeout(() => this.wakeBackground(attempt + 1), RETRY_DELAY_MS);
+            return;
+          }
           console.error('Background PING failed:', err.message);
           this.state.backgroundReachable = false;
           this.markBackgroundDegraded(err.message);
@@ -2269,17 +2278,25 @@ class FuseConnectPopup {
   }
 
   async loadState() {
-    const first = await this.requestState(250);
-    if (first.response) {
-      this.applyStateResponse(first.response);
-      return;
+    // MV3 cold-starts the service worker on the first message; the wake race
+    // can take ~1s. Retry with backoff before giving up so a healthy SW is
+    // not reported as dead just because it was asleep.
+    const RETRY_DELAYS_MS = [0, 400, 900];
+    for (let attempt = 0; attempt < RETRY_DELAYS_MS.length; attempt++) {
+      if (RETRY_DELAYS_MS[attempt] > 0) {
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAYS_MS[attempt]));
+      }
+      const result = await this.requestState(800);
+      if (result.response) {
+        this.applyStateResponse(result.response);
+        return;
+      }
+      const retryable = /Receiving end does not exist|timeout/i.test(String(result.err || ''));
+      if (!retryable || attempt === RETRY_DELAYS_MS.length - 1) {
+        console.error('[FuseConnect] GET_STATE unavailable:', result.err || 'no response');
+        return;
+      }
     }
-
-    const shouldRetry = /Receiving end does not exist|timeout/i.test(String(first.err || ''));
-    if (!shouldRetry) return;
-
-    const second = await this.requestState(250);
-    this.applyStateResponse(second.response);
   }
 
   async loadSettings() {
