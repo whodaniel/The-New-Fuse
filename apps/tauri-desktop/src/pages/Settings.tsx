@@ -1,5 +1,16 @@
-import { Bell, Bot, Copy, Eye, EyeOff, Info, Palette, ShieldCheck, Wifi } from 'lucide-react';
-import React, { useState, type ComponentType } from 'react';
+import {
+  AlertTriangle,
+  Bell,
+  Bot,
+  Copy,
+  Eye,
+  EyeOff,
+  Info,
+  Palette,
+  ShieldCheck,
+  Wifi,
+} from 'lucide-react';
+import React, { useEffect, useRef, useState, type ComponentType } from 'react';
 import TnfLogo from '../components/brand/TnfLogo';
 import PageShell from '../components/layout/PageShell';
 import { useTheme } from '../providers/ThemeProvider';
@@ -9,6 +20,7 @@ import { getVoicePort } from '../config/voiceBridge';
 import { resolveWebAppBaseUrl } from '../config/webSurfaces';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
+import { relayAuthHint } from '../lib/relayAuthHint';
 import { useSettingsStore } from '../stores/settingsStore';
 
 type SettingsSection = {
@@ -89,8 +101,51 @@ const Settings: React.FC = () => {
     }
   };
 
+  const authHint = relayAuthHint(synergy);
+
+  // A click sets activeSection directly, then scrollIntoView animates the
+  // content under it — but that's the only writer of activeSection, so a
+  // user scrolling manually (or landing here via a deep link) leaves the
+  // left nav highlighting whatever was last clicked, or nothing at all,
+  // regardless of which section is actually on screen. The observer below
+  // keeps the highlight honest without fighting the click-driven scroll.
+  const sectionIds = settingsSections.map((s) => s.id);
+  const suppressObserverUntil = useRef(0);
+
+  useEffect(() => {
+    const targets = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+    if (targets.length === 0) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (Date.now() < suppressObserverUntil.current) {
+          return;
+        }
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target.id) {
+          setActiveSection(visible.target.id);
+        }
+      },
+      { root: null, rootMargin: '-15% 0px -70% 0px', threshold: [0, 0.25, 0.5, 1] }
+    );
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const scrollToSection = (id: string) => {
     setActiveSection(id);
+    // Ignore the observer for a moment so the smooth-scroll's transit through
+    // intermediate sections doesn't flicker the highlight onto them. Only
+    // ever called from a nav-button onClick, never during render.
+    // eslint-disable-next-line react-hooks/purity
+    suppressObserverUntil.current = Date.now() + 700;
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
@@ -221,6 +276,40 @@ const Settings: React.FC = () => {
               </button>
             </div>
 
+            <div className="setting-item setting-item-stacked">
+              <div className="setting-info">
+                <label>Relay / federation authentication</label>
+                <p>
+                  Why agents, channels, and Mission Control's terminal mirror show "offline" even
+                  when the relay process is up.
+                </p>
+              </div>
+              {authHint ? (
+                <div className="auth-hint-box">
+                  <AlertTriangle size={16} />
+                  <div>
+                    <p>{authHint}</p>
+                    <div className="auth-hint-actions">
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={() => copyToClipboard('RELAY_ALLOW_ANONYMOUS=1')}
+                      >
+                        <Copy size={12} style={{ marginRight: '4px' }} />
+                        Copy RELAY_ALLOW_ANONYMOUS=1
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="auth-hint-ok">
+                  {synergy.relayRegistered
+                    ? 'Registered with the relay — no auth issue.'
+                    : 'No auth error reported yet — waiting on a relay connection.'}
+                </p>
+              )}
+            </div>
+
             <div className="setting-item">
               <div className="setting-info">
                 <label>Web App (thenewfuse.com parity)</label>
@@ -284,27 +373,6 @@ const Settings: React.FC = () => {
                 <input type="checkbox" defaultChecked />
                 <span className="slider"></span>
               </label>
-            </div>
-          </section>
-
-          {/* Advanced / Experimental Section */}
-          <section id="advanced" className="settings-section">
-            <h2 className="section-title">Advanced / Experimental</h2>
-
-            <div className="setting-item">
-              <div className="setting-info">
-                <label>Retro Phosphor TUI Mode (Swarm Terminal)</label>
-                <p>Enhance the vibrancy of terminal output in the Swarm Terminal surface.</p>
-              </div>
-              <input type="range" min="0" max="100" defaultValue="75" className="range-input" />
-            </div>
-
-            <div className="setting-item">
-              <div className="setting-info">
-                <label>Terminal Mirror Contrast</label>
-                <p>Adjust the contrast of the live terminal mirror in Mission Control.</p>
-              </div>
-              <input type="range" min="0" max="100" defaultValue="50" className="range-input" />
             </div>
           </section>
 
@@ -418,6 +486,27 @@ const Settings: React.FC = () => {
                 <input type="checkbox" />
                 <span className="slider"></span>
               </label>
+            </div>
+          </section>
+
+          {/* Advanced / Experimental Section */}
+          <section id="advanced" className="settings-section">
+            <h2 className="section-title">Advanced / Experimental</h2>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Retro Phosphor TUI Mode (Swarm Terminal)</label>
+                <p>Enhance the vibrancy of terminal output in the Swarm Terminal surface.</p>
+              </div>
+              <input type="range" min="0" max="100" defaultValue="75" className="range-input" />
+            </div>
+
+            <div className="setting-item">
+              <div className="setting-info">
+                <label>Terminal Mirror Contrast</label>
+                <p>Adjust the contrast of the live terminal mirror in Mission Control.</p>
+              </div>
+              <input type="range" min="0" max="100" defaultValue="50" className="range-input" />
             </div>
           </section>
 
@@ -798,6 +887,40 @@ const Settings: React.FC = () => {
 
         .endpoint-row p {
           margin-bottom: 0 !important;
+        }
+
+        .setting-item-stacked {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 12px;
+        }
+
+        .auth-hint-box {
+          display: flex;
+          gap: 10px;
+          align-items: flex-start;
+          padding: 12px 14px;
+          border-radius: 10px;
+          border: 1px solid rgba(245, 158, 11, 0.4);
+          background: rgba(245, 158, 11, 0.08);
+          color: #fbbf24;
+        }
+
+        .auth-hint-box p {
+          margin: 0 0 10px;
+          font-size: 13px;
+          color: var(--tnf-text-primary, #f8fafc);
+        }
+
+        .auth-hint-actions {
+          display: flex;
+          gap: 8px;
+        }
+
+        .auth-hint-ok {
+          font-size: 13px;
+          color: var(--tnf-text-muted);
+          margin: 0;
         }
         
         .password-input-wrapper {
