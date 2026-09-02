@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh" || true
+
+node scripts/security/post-checkout-observability.cjs "$@"

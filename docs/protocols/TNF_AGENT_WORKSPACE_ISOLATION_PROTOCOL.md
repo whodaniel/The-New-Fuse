@@ -172,7 +172,7 @@ well-formed commit.
 
 | Point              | Check                                                             | Status                                                                                                                                                                                                                                                                    |
 | ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Turn Zero          | resolve task class → tier; refuse Tier 4 work in a shared tree    | **live via `scripts/harness/resolve-workspace-tier.cjs`** — advisory / called manually, not yet auto-invoked by the onboarder                                                                                                                                             |
+| Turn Zero          | resolve task class → tier; refuse Tier 4 work in a shared tree    | **live via `scripts/harness/resolve-workspace-tier.cjs`** — advisory / called manually, not yet auto-invoked by the onboarder. Third R1 violation (2026-09-01) confirms this gap is load-bearing: the agent that violated R1 had correctly used `git worktree add` to create its workspace, proving it has the capability — the failure is that nothing re-invoked tier resolution when the task changed. |
 | pre-mutation guard | block `stash`/`checkout`/`reset`/`clean` when foreign paths dirty | **live for stash/reset/merge/rebase** (`workspace-mutation-guard.cjs`); `checkout -f`/`clean -f` are undetectable by any git hook (see that script's own COVERAGE comment) — Turn Zero tier resolution is the complementary control for exactly that gap, not a fix to it |
 | pre-commit         | existing handoff / secret / build / authority gates               | **live**                                                                                                                                                                                                                                                                  |
 | lease check        | warn on writes outside a declared lease                           | proposed                                                                                                                                                                                                                                                                  |
@@ -190,6 +190,25 @@ It is advisory, not a hook: it cannot retroactively block a forced checkout, and
 it does not yet run automatically at every session's Turn Zero — wiring it into
 the onboarder is real future work, deliberately left undone here because that
 flow is complex enough that changing it blind risks more than today's gap costs.
+
+**2026-09-01 incident (third occurrence; serial worktree reuse).** A Claude
+session's Tier-3 worktree (`.claude/worktrees/workflow-builder-consolidation`,
+locked to pid 22464) was repurposed for four additional, unrelated tasks via
+plain `git checkout <branch>` over ~14 hours — without spinning up fresh
+worktrees, re-onboarding, or re-evaluating task class. Reflog:
+`worktree-workflow-builder-consolidation` → `feat/workflow-builder-tauri-migration`
+(01:03) → `fix/workflow-execution-engine` (01:34) → `fix/fuse-connect-browser-parity`
+(06:47) → `fix/api-dev-stale-tsbuildinfo` (08:56). Each checkout is
+branch-maintenance class per `agent-workspace-policy.json` and should have been
+Tier 4 (separate clone) per R1. No work was lost because each task's commits
+landed before the next checkout — but the violation is structural: the lock file
+continued to declare `workflow-builder-consolidation` as the purpose, the tier
+was never re-evaluated, and any concurrent agent trusting the lock or the
+worktree name would have been misled. This is the same failure mode as
+2026-08-09 (§1) and 2026-08-27, now recurring against an agent that created the
+worktree correctly in the first place. The gap is the same: `checkout <branch>`
+is not interceptable by `workspace-mutation-guard.cjs` (it is not a hook
+trigger), and tier resolution at Turn Zero is still advisory, not automatic.
 
 ---
 

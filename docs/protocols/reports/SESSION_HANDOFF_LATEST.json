@@ -7,7 +7,9 @@
   "head_sha": "34b87570802b19007a52912b074738225f937600",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [
+    "TNF-SESSION"
+  ],
   "work_summary": [
     "Extended the apps/api stale-tsbuildinfo fix (34b875708) to the two sibling Nest packages that share the same deleteOutDir:true + incremental-compile combination and were exposed to the identical latent bug: packages/api (composite:true via tsconfig.base.json) and apps/api-gateway (incremental:true explicit). Cleared tsconfig.tsbuildinfo before nest start in each package's dev/start:dev/start:debug scripts, mirroring apps/api's fix. Checked apps/backend: not affected, its tsconfig.json does not extend the base config and sets neither incremental nor composite, so no tsbuildinfo is ever produced.",
     "Also fixed an unrelated real bug found while re-verifying: packages/web-scraping/tsconfig.json's exclude array contained a bogus \"***\" glob that matches every path, so tsc silently compiled zero files (exit 0, empty dist/) even though apps/api depends on this package at runtime. Removed it.",
@@ -32,8 +34,11 @@
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
-    "priority": "medium",
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
+    "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
       "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
@@ -45,7 +50,9 @@
     "Consider fixing the pre-existing (unrelated) TS strictness errors surfaced while force-rebuilding packages/web-scraping (WebScrapingService.ts:107, ProxyService.ts:97/109 -- axios header value typed as string|number|... used where string is required); build currently succeeds because noEmitOnError is not set, but the errors are real."
   ],
   "artifacts": {
-    "commits": ["34b87570802b19007a52912b074738225f937600"]
+    "commits": [
+      "34b87570802b19007a52912b074738225f937600"
+    ]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
