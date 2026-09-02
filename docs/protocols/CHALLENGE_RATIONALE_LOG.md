@@ -578,3 +578,60 @@ with no dependency on the commit landing first. Existing entries with
   Operator.
 - **Authorizer:** Operator (via explicit directive to define synergistic
   alignment and the creative review process).
+
+### [2026-08-30] Named operator departments in the lexicon
+
+- file: docs/protocols/TNF_SYSTEM_LEXICON.md
+- doc_hash:
+  sha256:bc49e1fa846533f39962841918e4c2d9f4d838fea56c0c5e612e474b358efe5b
+- rationale: Operator asked that people talking to the TNF CLI agent can refer
+  to named corporate departments (HR, Marketing, Design, Legal, Tech, Finance,
+  Product, Ops). Informal "team/staff/department" still maps to Cluster. Named
+  departments are first-class routing lanes, not Clusters. Lexical forgiveness
+  is unchanged for generic usage.
+- attributed_to: Daniel Goldberg (operator), 2026-08-30 chat: departments +
+  remember-this write path + log/docs follow-through
+- ledger_event_id: bab3b5f7-27bc-4653-b606-e931062a5b57
+
+### [2026-08-30] Department staffing tags and remember write-path
+
+- file: docs/operations/TNF_DEPARTMENTS_AND_MEMORY.md
+- doc_hash:
+  sha256:c48ed2190b7089eba426ffa4a404a7c29f6018aaa27974ca5e0b748598fd8270
+- rationale: Logged the additive `department` field on TNF-owned agents/skills,
+  the staffing index, progressive-injection rule (names only), and the
+  `tnf remember retain` write path. Existing `category` values were not
+  rewritten. Vendor skill packs remain indexed only. Super Admin multi-receipt
+  override is documented; `--no-verify` is forbidden.
+- attributed_to: Daniel Goldberg (operator), 2026-08-30 chat
+- ledger_event_id: 044b47b1-5df7-4a82-abb1-333cd4d70af2
+
+### [2026-08-30] D24 covers tmux send-keys
+
+- file: docs/protocols/DIRECTIVES.md
+- file: docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md
+- doc_hash:
+  sha256:481e779d218b29a1ca50a10062807bc78fb814f52442bb8122cf7b6a6437d9ce
+- rationale: Operator approved reintroducing tmux as TWIP infrastructure.
+  send-keys is a write with no Accessibility checkpoint, so D24 and the CI guard
+  now treat it as a keystroke path. Only scripts/lib/tnf-tmux-inject.cjs may
+  issue it, after shouldInjectTmuxPane. Enter remains opt-in. Operator-class
+  tnf-o-\* panes are never injectable.
+- attributed_to: Daniel Goldberg (operator), 2026-08-30 chat: proceed after
+  Phase A
+- ledger_event_id: 7c3e1a90-4b2d-4f11-9a6e-d24tmuxsendkeys30
+
+### [2026-08-30] Heartbeat prompt injection opt-in
+
+- file: docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md
+- doc_hash:
+  sha256:fb4eed63d0a69ccd853606112ca640d66f374170f49131cf46a4e1e7fdc38d66
+- rationale: Operator requested enabling heartbeat injection. Crontab sets
+  `TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="true"` so the pulse may submit
+  prompts via the gated tmux path (`tnf-tmux-inject.cjs` /
+  `shouldInjectTmuxPane`) or the legacy Terminal.app fallback. Operator-class
+  `tnf-o-*` panes, attached-active panes, recently active TTYs, and
+  composer-in-progress panes remain hard skips. No `activate` / `set frontmost`.
+- attributed_to: Daniel Goldberg (operator), 2026-08-30 chat: enable heartbeat
+  injection
+- ledger_event_id: a8f2c4e1-9b3d-4a7f-8e12-0d5b6c7e8f90

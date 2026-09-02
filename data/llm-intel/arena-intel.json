@@ -1,0 +1,5233 @@
+{
+  "spec": "tnf/llm-arena-intel/0.1",
+  "lastUpdated": "2026-09-01T18:01:06.959Z",
+  "snapshots": [
+    {
+      "id": "intel_1788285620314",
+      "collectedAt": "2026-09-01T18:00:20.307Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-09-01T18:00:21.979Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530216
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-09-01T18:00:22.607Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530278
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-09-01T18:00:23.474Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530276
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-09-01T18:00:24.593Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530275
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-09-01T18:00:25.289Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-09-01T18:00:25.808Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14640
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-09-01T18:00:26.125Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-09-01T18:00:26.831Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-09-01T18:00:33.214Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 105,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 2392484
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-09-01T18:00:34.051Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-09-01T18:00:34.316Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-09-01T18:00:34.708Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-09-01T18:00:35.100Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-09-01T18:00:35.273Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 717
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 7368
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 786
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 3,
+        "nvidiaSlow": 2,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-09-01T18:01:06.959Z"
+    },
+    {
+      "id": "intel_1788264042762",
+      "collectedAt": "2026-09-01T12:00:42.755Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-09-01T12:00:47.230Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530216
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-09-01T12:00:51.482Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530279
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-09-01T12:00:56.632Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530272
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-09-01T12:01:01.426Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530278
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-09-01T12:01:01.953Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-09-01T12:01:04.339Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14640
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-09-01T12:01:04.671Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-09-01T12:01:07.020Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-09-01T12:01:15.737Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 105,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 2392484
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-09-01T12:01:16.582Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-09-01T12:01:16.797Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-09-01T12:01:17.630Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-09-01T12:01:17.930Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-09-01T12:01:18.108Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 3340
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 3122
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 2,
+        "nvidiaSlow": 3,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-09-01T12:01:53.379Z"
+    },
+    {
+      "id": "intel_1788249625545",
+      "collectedAt": "2026-09-01T08:00:25.538Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-09-01T08:00:27.791Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530324
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-09-01T08:00:28.954Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530387
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-09-01T08:00:32.719Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530384
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-09-01T08:00:33.864Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 530390
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-09-01T08:00:34.691Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-09-01T08:00:35.374Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14607
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-09-01T08:00:35.864Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-09-01T08:00:36.519Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-09-01T08:00:41.538Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 105,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 2392484
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-09-01T08:00:42.305Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-09-01T08:00:42.568Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-09-01T08:00:43.019Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-09-01T08:00:43.383Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-09-01T08:00:43.587Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 4824
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 1275
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 2,
+        "nvidiaSlow": 3,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-09-01T08:01:19.424Z"
+    },
+    {
+      "id": "intel_1788192022471",
+      "collectedAt": "2026-08-31T16:00:22.468Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-31T16:00:23.554Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534883
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-31T16:00:24.657Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534949
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-31T16:00:25.428Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534947
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-31T16:00:26.434Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 535142
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-31T16:00:27.148Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-31T16:00:27.335Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14661
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-31T16:00:27.727Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-31T16:00:28.342Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-31T16:00:40.199Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 376,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4194459
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-31T16:00:40.929Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-31T16:00:41.127Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-31T16:00:41.449Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-31T16:00:41.647Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-31T16:00:41.810Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 6102
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 1,
+        "nvidiaSlow": 4,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-08-31T16:01:18.968Z"
+    },
+    {
+      "id": "intel_1788177642416",
+      "collectedAt": "2026-08-31T12:00:42.413Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-31T12:00:43.658Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534568
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-31T12:00:44.513Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534634
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-31T12:00:45.221Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534632
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-31T12:00:47.031Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534638
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-31T12:00:47.548Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-31T12:00:47.718Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14661
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-31T12:00:47.980Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-31T12:00:48.520Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-31T12:00:59.561Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 376,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4194459
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-31T12:01:00.277Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-31T12:01:00.510Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-31T12:01:00.882Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-31T12:01:01.020Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-31T12:01:01.199Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 10782
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 686
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 2,
+        "nvidiaSlow": 3,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-08-31T12:01:42.839Z"
+    },
+    {
+      "id": "intel_1788170402590",
+      "collectedAt": "2026-08-31T10:00:02.581Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-31T10:00:05.004Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534568
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-31T10:00:07.055Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534635
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-31T10:00:07.768Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534628
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-31T10:00:08.499Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534631
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-31T10:00:09.038Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-31T10:00:09.507Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14661
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-31T10:00:10.030Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-31T10:00:10.606Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-31T10:00:22.017Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 376,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4194459
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-31T10:00:22.631Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-31T10:00:22.943Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-31T10:00:23.226Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-31T10:00:23.427Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-31T10:00:23.557Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 4834
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 3182
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 2,
+        "nvidiaSlow": 3,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-08-31T10:00:59.307Z"
+    },
+    {
+      "id": "intel_1788163216882",
+      "collectedAt": "2026-08-31T08:00:16.878Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-31T08:00:18.125Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534761
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-31T08:00:18.754Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534634
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-31T08:00:19.574Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534628
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-31T08:00:20.836Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534634
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-31T08:00:21.574Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-31T08:00:22.071Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14713
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-31T08:00:22.390Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-31T08:00:23.414Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-31T08:00:34.695Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 376,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4194459
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-31T08:00:35.322Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-31T08:00:35.584Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-31T08:00:35.918Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-31T08:00:36.116Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-31T08:00:36.294Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 314
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 390
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 2,
+        "nvidiaSlow": 3,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-08-31T08:01:07.616Z"
+    },
+    {
+      "id": "intel_1788156011641",
+      "collectedAt": "2026-08-31T06:00:11.636Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-31T06:00:13.929Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534572
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-31T06:00:14.933Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534634
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-31T06:00:15.887Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534632
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-31T06:00:16.897Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534638
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-31T06:00:17.762Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-31T06:00:18.188Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14713
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-31T06:00:18.596Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-31T06:00:19.199Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-31T06:00:30.094Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 376,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4194459
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-31T06:00:30.787Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-31T06:00:31.032Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-31T06:00:31.318Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-31T06:00:31.532Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-31T06:00:31.671Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 772
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 1143
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 2,
+        "nvidiaSlow": 3,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-08-31T06:01:03.266Z"
+    },
+    {
+      "id": "intel_1788148811323",
+      "collectedAt": "2026-08-31T04:00:11.319Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-31T04:00:21.063Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534572
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-31T04:00:26.390Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534638
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-31T04:00:29.906Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534628
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-31T04:00:31.548Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534634
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-31T04:00:32.363Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-31T04:00:32.574Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14713
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-31T04:00:32.901Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-31T04:00:33.337Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-31T04:00:45.692Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 376,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4194459
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-31T04:00:46.093Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-31T04:00:46.326Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-31T04:00:46.649Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-31T04:00:46.833Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-31T04:00:47.017Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 11791
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 1,
+        "nvidiaSlow": 4,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-08-31T04:01:29.963Z"
+    },
+    {
+      "id": "intel_1788134410606",
+      "collectedAt": "2026-08-31T00:00:10.601Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-31T00:00:10.623Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND lmarena.ai",
+          "rankings": []
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-31T00:00:10.626Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND lmarena.ai",
+          "rankings": []
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-31T00:00:10.628Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND lmarena.ai",
+          "rankings": []
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-31T00:00:10.629Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND lmarena.ai",
+          "rankings": []
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-31T00:00:10.631Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND agent-arena.com",
+          "rankings": []
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-31T00:00:10.633Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND artificialanalysis.ai",
+          "rankings": []
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-31T00:00:10.635Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND huggingface.co",
+          "rankings": []
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-31T00:00:10.637Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND aider.chat",
+          "rankings": []
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-31T00:00:10.640Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND www.swebench.com",
+          "rankings": []
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-31T00:00:10.643Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND huggingface.co",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-31T00:00:10.644Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND openai.com",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-31T00:00:10.646Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND www.anthropic.com",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-31T00:00:10.648Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND www.reddit.com",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-31T00:00:10.649Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND www.reddit.com",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 0,
+        "totalRankings": 0,
+        "newsFeeds": 5,
+        "newsFeedsOk": 0,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 0,
+        "nvidiaSlow": 0,
+        "nvidiaEol": 0
+      },
+      "completedAt": "2026-08-31T00:00:10.691Z"
+    },
+    {
+      "id": "intel_1788134410251",
+      "collectedAt": "2026-08-31T00:00:10.245Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-31T00:00:10.272Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND lmarena.ai",
+          "rankings": []
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-31T00:00:10.276Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND lmarena.ai",
+          "rankings": []
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-31T00:00:10.278Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND lmarena.ai",
+          "rankings": []
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-31T00:00:10.280Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND lmarena.ai",
+          "rankings": []
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-31T00:00:10.282Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND agent-arena.com",
+          "rankings": []
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-31T00:00:10.284Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND artificialanalysis.ai",
+          "rankings": []
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-31T00:00:10.286Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND huggingface.co",
+          "rankings": []
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-31T00:00:10.288Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND aider.chat",
+          "rankings": []
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-31T00:00:10.291Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND www.swebench.com",
+          "rankings": []
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-31T00:00:10.294Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND huggingface.co",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-31T00:00:10.296Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND openai.com",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-31T00:00:10.297Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND www.anthropic.com",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-31T00:00:10.299Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND www.reddit.com",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-31T00:00:10.300Z",
+          "status": "error",
+          "error": "getaddrinfo ENOTFOUND www.reddit.com",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "error",
+          "httpStatus": 0,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 0,
+        "totalRankings": 0,
+        "newsFeeds": 5,
+        "newsFeedsOk": 0,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 0,
+        "nvidiaSlow": 0,
+        "nvidiaEol": 0
+      },
+      "completedAt": "2026-08-31T00:00:10.343Z"
+    },
+    {
+      "id": "intel_1788127201529",
+      "collectedAt": "2026-08-30T22:00:01.521Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-30T22:00:03.458Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 533936
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-30T22:00:04.881Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534006
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-30T22:00:11.085Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534269
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-30T22:00:12.988Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534006
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-30T22:00:14.106Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-30T22:00:14.448Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14713
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-30T22:00:15.406Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-30T22:00:16.883Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-30T22:00:28.175Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 376,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4194459
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-30T22:00:28.863Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-30T22:00:29.202Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-30T22:00:29.566Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-30T22:00:29.916Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-30T22:00:30.114Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 384
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 11119
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 411
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 3,
+        "nvidiaSlow": 2,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-08-30T22:01:01.393Z"
+    },
+    {
+      "id": "intel_1788120012201",
+      "collectedAt": "2026-08-30T20:00:12.196Z",
+      "arenaData": [
+        {
+          "source": "lm-arena-leaderboard",
+          "sourceName": "LM Arena (Chatbot Arena)",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard",
+          "collectedAt": "2026-08-30T20:00:14.002Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 533940
+        },
+        {
+          "source": "lm-arena-vision",
+          "sourceName": "LM Arena Vision",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=vision",
+          "collectedAt": "2026-08-30T20:00:15.085Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534006
+        },
+        {
+          "source": "lm-arena-hard",
+          "sourceName": "LM Arena Hard Prompts",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=hard",
+          "collectedAt": "2026-08-30T20:00:16.079Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 533997
+        },
+        {
+          "source": "lm-arena-code",
+          "sourceName": "LM Arena Coding",
+          "sourceType": "arena",
+          "url": "https://lmarena.ai/?leaderboard&category=coding",
+          "collectedAt": "2026-08-30T20:00:16.970Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 534006
+        },
+        {
+          "source": "agent-arena",
+          "sourceName": "Agent Arena",
+          "sourceType": "arena",
+          "url": "https://agent-arena.com/leaderboard",
+          "collectedAt": "2026-08-30T20:00:18.009Z",
+          "status": "success",
+          "rankings": [],
+          "rawLength": 862
+        },
+        {
+          "source": "artificial-analysis",
+          "sourceName": "Artificial Analysis",
+          "sourceType": "benchmark",
+          "url": "https://artificialanalysis.ai/leaderboard",
+          "collectedAt": "2026-08-30T20:00:18.477Z",
+          "status": "partial",
+          "rankings": [],
+          "rawLength": 14713
+        },
+        {
+          "source": "open-llm-leaderboard",
+          "sourceName": "Open LLM Leaderboard (HuggingFace)",
+          "sourceType": "benchmark",
+          "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
+          "collectedAt": "2026-08-30T20:00:18.903Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "open-llm-leaderboard",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "open_llm_leaderboard",
+              "score": 600,
+              "rank": 2
+            }
+          ],
+          "rawLength": 44037
+        },
+        {
+          "source": "aider-leaderboard",
+          "sourceName": "Aider Coding Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://aider.chat/docs/leaderboards/",
+          "collectedAt": "2026-08-30T20:00:19.590Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "score": 400,
+              "rank": 1
+            },
+            {
+              "model": "gpt-4.5-preview",
+              "score": 56,
+              "rank": 2
+            }
+          ],
+          "rawLength": 569700
+        },
+        {
+          "source": "swebench",
+          "sourceName": "SWE-bench Leaderboard",
+          "sourceType": "benchmark",
+          "url": "https://www.swebench.com/",
+          "collectedAt": "2026-08-30T20:00:31.066Z",
+          "status": "success",
+          "rankings": [
+            {
+              "model": "mini-SWE-agent",
+              "score": 376,
+              "rank": 1
+            },
+            {
+              "model": "mini-SWE-agent",
+              "score": 2025,
+              "rank": 2
+            }
+          ],
+          "rawLength": 4194459
+        }
+      ],
+      "newsData": [
+        {
+          "feed": "HuggingFace Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "collectedAt": "2026-08-30T20:00:32.234Z",
+          "status": "success",
+          "articles": []
+        },
+        {
+          "feed": "OpenAI Blog",
+          "url": "https://openai.com/blog/rss.xml",
+          "collectedAt": "2026-08-30T20:00:32.872Z",
+          "status": "error",
+          "error": "Invalid URL",
+          "articles": []
+        },
+        {
+          "feed": "Anthropic News",
+          "url": "https://www.anthropic.com/rss.xml",
+          "collectedAt": "2026-08-30T20:00:33.558Z",
+          "status": "error",
+          "error": "HTTP 404",
+          "articles": []
+        },
+        {
+          "feed": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
+          "collectedAt": "2026-08-30T20:00:34.167Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        },
+        {
+          "feed": "r/MachineLearning",
+          "url": "https://www.reddit.com/r/MachineLearning/new/.json",
+          "collectedAt": "2026-08-30T20:00:34.484Z",
+          "status": "error",
+          "error": "HTTP 403",
+          "articles": []
+        }
+      ],
+      "nvidiaHealth": [
+        {
+          "model": "z-ai/glm-5.1",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2.6",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "minimaxai/minimax-m2.5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-flash",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "deepseek-ai/deepseek-v4-pro",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-397b-a17b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3.5-122b-a10b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-large-3-675b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-medium-3.5-128b",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/devstral-2-123b-instruct-2512",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/mistral-small-4-119b-2603",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/magistral-small-2506",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "mistralai/ministral-14b-instruct-2512",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3n-e4b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-3-27b-it",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-4-maverick-17b-128e-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.3-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.1-405b-instruct",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "meta/llama-3.2-90b-vision-instruct",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 1328
+        },
+        {
+          "model": "meta/llama-guard-4-12b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-120b",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "openai/gpt-oss-20b",
+          "status": "live",
+          "httpStatus": 200,
+          "latencyMs": 400
+        },
+        {
+          "model": "microsoft/phi-4-multimodal-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "microsoft/phi-4-mini-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "bytedance/seed-oss-36b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "stockmark/stockmark-2-100b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "abacusai/dracarys-llama-3.1-70b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "google/gemma-4-31b-it",
+          "status": "timeout",
+          "httpStatus": 0,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct-0905",
+          "status": "error",
+          "httpStatus": 404,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "moonshotai/kimi-k2-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm5",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "z-ai/glm4.7",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-coder-480b-a35b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-instruct",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        },
+        {
+          "model": "qwen/qwen3-next-80b-a3b-thinking",
+          "status": "eol",
+          "httpStatus": 410,
+          "latencyMs": null
+        }
+      ],
+      "summary": {
+        "arenaSources": 9,
+        "arenaSourcesOk": 8,
+        "totalRankings": 6,
+        "newsFeeds": 5,
+        "newsFeedsOk": 1,
+        "totalArticles": 0,
+        "nvidiaModelsProbed": 37,
+        "nvidiaLive": 2,
+        "nvidiaSlow": 3,
+        "nvidiaEol": 27
+      },
+      "completedAt": "2026-08-30T20:01:07.216Z"
+    }
+  ]
+}

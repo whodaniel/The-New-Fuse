@@ -56,9 +56,12 @@ product lives in `docs/lineage/PRODUCT_REPO_MAP.md` and
 Related products that are **not** the TNF runtime download:
 
 - `SkIDEancer` — TNF-adjacent Cloud IDE (own public repo)
-- `MyPhone-Remote` — public client; API satellite is `tnf-myphoneremote-api`
 - `EXTREAMIX` — standalone streaming product
 - `LPM-Standalone` — localhost port monitor
+- `MyPhone-Remote` — standalone product satellite; API is `tnf-myphoneremote-api`
+- `ai-arcade` — standalone product satellite
+- `casin8-games` — standalone product satellite
+- `poker-room` — standalone product satellite
 
 Do not fold those into `apps/` or into a packed TNF-Extensions GitHub repo.
 

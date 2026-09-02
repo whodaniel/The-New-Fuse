@@ -48,7 +48,7 @@ write_plist() {
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
-    <string>${HOME}/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${HOME}/Library/pnpm:${HOME}/.local/bin:${HOME}/.nvm/versions/node/*/bin</string>
+    <string>${HOME}/.hermes/node/bin:${HOME}/.nvm/versions/node/v20.20.2/bin:${HOME}/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${HOME}/Library/pnpm:${HOME}/.local/bin</string>
     <key>HOME</key>
     <string>${HOME}</string>
   </dict>
@@ -83,8 +83,10 @@ write_plist "com.thenewfuse.factory-supercycle" \
   "SUPERCYCLE_CONTINUOUS=true SUPERCYCLE_INTERVAL_MS=180000 pnpm run factory:supercycle:loop"
 write_plist "com.thenewfuse.factory-supervisor" \
   "scripts/orchestrator/factory-supervisor.sh"
-write_plist "com.thenewfuse.web-experience-swarm" \
-  ".agent/runtime-logs/run-web-experience-continuous.sh"
+# com.thenewfuse.web-experience-swarm intentionally retired 2026-08-31:
+# its program (.agent/runtime-logs/run-web-experience-continuous.sh) was removed
+# in the runtime-artifact privacy cleanup and its target
+# (scripts/railway/launch-openclaw-qa-swarm.mjs) no longer exists.
 write_plist "com.thenewfuse.qa-swarm" \
   "TEST_ENABLE_IMPROVER=1 TEST_LOOP_INTERVAL=180000 TEST_TARGET_SCORE=100 TEST_CONTINUE_AFTER_TARGET=1 TEST_AGENT_TIMEOUT_MS=900000 TEST_STRICT_TYPECHECK=0 TEST_TIMEOUT_TYPECHECK_MS=180000 TEST_TIMEOUT_LINT_MS=180000 TEST_TIMEOUT_BUILD_MS=300000 TEST_TIMEOUT_UNIT_MS=180000 TEST_HEARTBEAT_INTERVAL_SEC=15 scripts/swarm/run-qa-loop-service.sh"
 write_plist "com.thenewfuse.jules-followup" \
@@ -92,9 +94,8 @@ write_plist "com.thenewfuse.jules-followup" \
 
 reload_service "com.thenewfuse.factory-supercycle"
 reload_service "com.thenewfuse.factory-supervisor"
-reload_service "com.thenewfuse.web-experience-swarm"
 reload_service "com.thenewfuse.qa-swarm"
 reload_service "com.thenewfuse.jules-followup"
 
 echo "Repaired services:"
-launchctl list | rg 'com.thenewfuse.(factory-supercycle|factory-supervisor|web-experience-swarm|qa-swarm|jules-followup)' || true
+launchctl list | rg 'com.thenewfuse.(factory-supercycle|factory-supervisor|qa-swarm|jules-followup)' || true

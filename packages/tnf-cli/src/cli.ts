@@ -33,6 +33,7 @@ import { registerCatalogCommand } from './commands/catalog.js';
 import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerDepartmentCommands } from './commands/department.js';
+import { registerVideoIngestCommand } from './commands/video-ingest.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerFleetCommands } from './commands/fleet/index.js';
 import { registerGoogleAiCommand } from './commands/google-ai.js';
@@ -51,7 +52,9 @@ import { registerStaffingCommands } from './commands/staffing/index.js';
 import { registerSubdirectorCommand } from './commands/subdirector.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
-import { Orchestrator } from './orchestration.js';
+// NOTE: ./orchestration.js is intentionally NOT statically imported — it pulls
+// @the-new-fuse/infrastructure + ioredis chains (~2.1s module eval). It is
+// dynamically imported by the `orchestrate` command below instead.
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
 import {
   describeAgentFocus,
@@ -67,9 +70,11 @@ import { KanbanService } from './services/KanbanService.js';
 import { MemoryCompactorEngine } from './services/MemoryCompactorEngine.js';
 import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { ParityService } from './services/ParityService.js';
-import { PluginsService } from './services/PluginsService.js';
+// Lazy-loaded services: PluginsService (~125ms), StoryService (supabase,
+// ~230ms), MCPToolRuntimeService (MCP SDK + zod, ~770ms) are imported
+// dynamically inside their command actions below.
 import { ServiceHealthService } from './services/ServiceHealthService.js';
-import { StoryService } from './services/StoryService.js';
+// (StoryService lazily imported by the `story` command actions below)
 import {
   KNOWN_TOOLS,
   PERMISSION_MODES,
@@ -5749,9 +5754,11 @@ program
           process.exit(2);
         }
 
-        const {
-          LocalSubdirectorAuthorityService,
-        } = require('./services/LocalSubdirectorAuthorityService.js');
+        // ESM package: `require` is not defined at runtime. Same latent bug as
+        // the one in commands/agents-run.ts — here it is not inside a catch, so
+        // it would abort the command outright rather than degrade quietly.
+        const { LocalSubdirectorAuthorityService } =
+          await import('./services/LocalSubdirectorAuthorityService.js');
         const authService = new LocalSubdirectorAuthorityService(repoRoot);
         const authConfig = authService.getConfig();
 
@@ -5759,7 +5766,7 @@ program
         let autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
 
-        if (DEFAULT_AGENT_IDENTITY.role === 'local-subdirector' && authConfig.autonomyEnabled) {
+        if (isLocalSubdirectorIdentity(DEFAULT_AGENT_IDENTITY) && authConfig.autonomyEnabled) {
           autonomous = true;
         }
 
@@ -6871,6 +6878,28 @@ function loadDefaultAgentIdentity(): {
 
 const DEFAULT_AGENT_IDENTITY = loadDefaultAgentIdentity();
 
+/**
+ * Does this identity describe the machine's local subdirector?
+ *
+ * A literal `role === 'local-subdirector'` comparison silently never matched.
+ * `establish-core-federated-fleet` writes `~/.tnf/agent.yaml` with
+ * `role: director`, `dacc_role: director`, `director_tier: sub` and
+ * `embodiment: sub-director` — four spellings of the same fact, none of which
+ * is the string the code tested for. The autonomy elevation that depended on
+ * it was therefore dead on every machine provisioned that way.
+ *
+ * Accept the vocabulary the writer actually emits rather than editing the
+ * operator's identity file to satisfy the reader. `role` itself is left
+ * untouched because `tnf register` validates it against the role taxonomy.
+ */
+function isLocalSubdirectorIdentity(identity: { role?: string; directorTier?: string }): boolean {
+  const role = (identity.role || '').toLowerCase();
+  if (role === 'local-subdirector' || role === 'sub-director' || role === 'subdirector') {
+    return true;
+  }
+  return role === 'director' && (identity.directorTier || '').toLowerCase() === 'sub';
+}
+
 program
   .command('register')
   .description('Register and listen as an agent')
@@ -7789,7 +7818,7 @@ authority
   .option('--rotate', 'Replace existing private keys (invalidates prior signatures)')
   .action(async (agentIds: string[], options: { rotate?: boolean }) => {
     try {
-      const identity = require(path.join(repoRoot, 'scripts/lib/tnf-identity.cjs')) as {
+      const identity = (await import(path.join(repoRoot, 'scripts/lib/tnf-identity.cjs'))) as {
         ensureAgentKeypair: (
           id: string,
           opts?: { rotate?: boolean }
@@ -8527,7 +8556,7 @@ harness
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
       }
-      const { setFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const { setFleetMode, FLEET_MODE_FILE } = await import(fleetModeScript);
       const mode = options.injectionOnly ? 'injection-paused' : 'paused';
       const reason =
         options.reason || `paused via tnf harness pause at ${new Date().toISOString()}`;
@@ -8554,7 +8583,7 @@ harness
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
       }
-      const { clearFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const { clearFleetMode, FLEET_MODE_FILE } = await import(fleetModeScript);
       const result = clearFleetMode();
       if (!result.ok) {
         throw new Error(`Resume failed: ${result.error}`);
@@ -8580,7 +8609,7 @@ harness
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
       }
-      const { readFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const { readFleetMode, FLEET_MODE_FILE } = await import(fleetModeScript);
       const state = readFleetMode();
 
       // Lightweight fleet health snapshot — last heartbeat + cron control-plane state age
@@ -9285,7 +9314,7 @@ mcp
   .option('--timeout-ms <n>', 'Per-server MCP request timeout in milliseconds', '15000')
   .action(async (server: string | undefined, options: { json?: boolean; timeoutMs?: string }) => {
     try {
-      const runtime = new MCPToolRuntimeService(repoRoot);
+      const runtime = new (await loadMCPToolRuntimeService())(repoRoot);
       const results = await runtime.listTools(server, Number(options.timeoutMs || 15000));
       if (options.json) {
         console.log(JSON.stringify(results, null, 2));
@@ -9331,7 +9360,7 @@ mcp
         if (!parsedArgs || typeof parsedArgs !== 'object' || Array.isArray(parsedArgs)) {
           throw new Error('argumentsJson must be a JSON object');
         }
-        const runtime = new MCPToolRuntimeService(repoRoot);
+        const runtime = new (await loadMCPToolRuntimeService())(repoRoot);
         const result = await runtime.callTool(
           server,
           tool,
@@ -14976,7 +15005,7 @@ agents
     ) => {
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { RedisAgentClient } = require(path.join(repoRoot, 'scripts/tnf-agent-cli.cjs'));
+        const { RedisAgentClient } = await import(path.join(repoRoot, 'scripts/tnf-agent-cli.cjs'));
         const client = new RedisAgentClient();
         await client.initialize();
         try {
@@ -16096,6 +16125,7 @@ program
         await client.register(process.env.AGENT_NAME || 'orchestrator-cli', 'orchestrator', 'tnf');
 
         const repoRoot = path.resolve(_dirname, '../../..');
+        const { Orchestrator } = await import('./orchestration.js');
         const orchestrator = new Orchestrator(client, repoRoot);
 
         // --status: Show system status
@@ -16160,6 +16190,22 @@ program
       } finally {
         await client.cleanup();
       }
+      // Exit explicitly, the way `convo` already does after its own cleanup.
+      //
+      // Every error path here exits; only the success path fell through and
+      // relied on the event loop draining. It does not — `cleanup()` leaves at
+      // least one handle open (the orchestrator's own bus subscriptions outlive
+      // the client), so the process finished all of its work and then sat idle
+      // until something killed it.
+      //
+      // That is not theoretical. `full-auto --broadcast` runs this as a
+      // post-step under a 600s ceiling, and cycles 2-5 on 2026-08-31 each
+      // logged "broadcast: pnpm timed out after 600s and was killed" AFTER the
+      // workflow had already printed "Workflow completed". Roughly ten minutes
+      // of every ~37 minute cycle was this process doing nothing: cycle 1,
+      // which ran without --broadcast, took 24.1 min against 34-40 min for the
+      // cycles that used it.
+      process.exit(0);
     }
   );
 
@@ -16653,7 +16699,7 @@ import {
 import { DatabaseService } from './services/DatabaseService.js';
 import { DebugService, redactSensitiveConfig } from './services/DebugService.js';
 import { MCPManagerService } from './services/MCPManagerService.js';
-import { MCPToolRuntimeService } from './services/MCPToolRuntimeService.js';
+// (MCPToolRuntimeService lazily imported by the mcp command actions below)
 import { ModelsService } from './services/ModelsService.js';
 import { PermissionService } from './services/PermissionService.js';
 import {
@@ -18555,7 +18601,7 @@ story
   .description('Verify Story Architect auth and database access')
   .action(async () => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       console.log(chalk.bold.magenta('\n  Story Architect Preflight Diagnostics'));
       console.log('  ' + '-'.repeat(60));
 
@@ -18596,7 +18642,7 @@ story
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
   .action(async (title: string, options: { description?: string; owner?: string }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       const session = await storyService.createSession({
         title,
         description: options.description,
@@ -18620,7 +18666,7 @@ story
   .option('--all', 'Include already answered questions', false)
   .action(async (options: { session?: string; owner?: string; all?: boolean }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       let sessionId = options.session;
       if (!sessionId) {
         const active = await storyService.getActiveSession(options.owner);
@@ -18694,7 +18740,7 @@ story
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
   .action(async (options: { owner?: string }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       const sessions = await storyService.listSessions(options.owner);
       if (sessions.length === 0) {
         console.log(chalk.yellow('No story sessions found.'));
@@ -18720,7 +18766,7 @@ story
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
   .action(async (options: { owner?: string }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       const session = await storyService.getActiveSession(options.owner);
       if (!session) {
         console.log(chalk.yellow('No active story session.'));
@@ -18744,7 +18790,7 @@ story
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
   .action(async (options: { owner?: string }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       const events = await storyService.listTimelineEvents(options.owner);
       if (events.length === 0) {
         console.log(chalk.yellow('No story timeline events found.'));
@@ -18784,7 +18830,7 @@ story
       options: { question: string; session?: string; ring: string; shelf: string; owner?: string }
     ) => {
       try {
-        const storyService = new StoryService();
+        const storyService = new (await loadStoryService())();
         let sessionId = options.session;
         if (!sessionId) {
           const active = await storyService.getActiveSession(options.owner);
@@ -19910,7 +19956,7 @@ pluginsCommand
   .command('list')
   .description('List all installed plugins/skills')
   .action(async () => {
-    const service = new PluginsService();
+    const service = new (await loadPluginsService())();
     const plugins = await service.list();
     console.log(chalk.bold('\nInstalled Plugins & Skills:\n'));
     for (const plugin of plugins) {
@@ -19928,7 +19974,7 @@ pluginsCommand
   .option('--json', 'Print machine-readable output')
   .action(
     async (source: string, options: { version?: string; activate?: boolean; json?: boolean }) => {
-      const service = new PluginsService();
+      const service = new (await loadPluginsService())();
       let plugin = await service.install(source, options.version);
       if (options.activate) plugin = await service.enable(plugin.name);
       console.log(
@@ -19944,7 +19990,7 @@ pluginsCommand
   .description('Update one or all installed loadable extensions from their recorded source')
   .option('--json', 'Print machine-readable output')
   .action(async (name: string | undefined, options: { json?: boolean }) => {
-    const updated = await new PluginsService().update(name);
+    const updated = await new (await loadPluginsService())().update(name);
     console.log(
       options.json
         ? JSON.stringify(updated, null, 2)
@@ -19958,7 +20004,7 @@ for (const action of ['enable', 'disable', 'remove', 'status'] as const) {
     .description(`${action[0].toUpperCase()}${action.slice(1)} an installed extension`)
     .option('--json', 'Print machine-readable output')
     .action(async (name: string, options: { json?: boolean }) => {
-      const service = new PluginsService();
+      const service = new (await loadPluginsService())();
       if (action === 'remove') {
         await service.remove(name);
         console.log(
@@ -20022,6 +20068,7 @@ registerRefreshContextCommand(program, repoRoot);
 registerAgentStateQuotaEcosystemCommands(program, repoRoot);
 registerStaffingCommands(program);
 registerDepartmentCommands(program, repoRoot);
+registerVideoIngestCommand(program, repoRoot);
 registerRememberCommands(program, repoRoot);
 registerScoutCommands(program, repoRoot);
 registerFleetCommands(program);
@@ -21987,6 +22034,43 @@ async function loadRedisAgentClient(): Promise<
     ({ RedisAgentClient: redisAgentClientCtor } = await import('./RedisAgentClient.js'));
   }
   return redisAgentClientCtor;
+}
+
+// Lazy accessors for heavy services, same pattern as loadRedisAgentClient
+// above: keep their module eval cost off the startup path. Measured isolated
+// import costs: MCPToolRuntimeService ~770ms (MCP SDK + zod), StoryService
+// ~230ms (supabase), PluginsService ~125ms.
+let mcpToolRuntimeCtor:
+  | typeof import('./services/MCPToolRuntimeService.js').MCPToolRuntimeService
+  | null = null;
+async function loadMCPToolRuntimeService(): Promise<
+  typeof import('./services/MCPToolRuntimeService.js').MCPToolRuntimeService
+> {
+  if (!mcpToolRuntimeCtor) {
+    ({ MCPToolRuntimeService: mcpToolRuntimeCtor } =
+      await import('./services/MCPToolRuntimeService.js'));
+  }
+  return mcpToolRuntimeCtor;
+}
+
+let storyServiceCtor: typeof import('./services/StoryService.js').StoryService | null = null;
+async function loadStoryService(): Promise<
+  typeof import('./services/StoryService.js').StoryService
+> {
+  if (!storyServiceCtor) {
+    ({ StoryService: storyServiceCtor } = await import('./services/StoryService.js'));
+  }
+  return storyServiceCtor;
+}
+
+let pluginsServiceCtor: typeof import('./services/PluginsService.js').PluginsService | null = null;
+async function loadPluginsService(): Promise<
+  typeof import('./services/PluginsService.js').PluginsService
+> {
+  if (!pluginsServiceCtor) {
+    ({ PluginsService: pluginsServiceCtor } = await import('./services/PluginsService.js'));
+  }
+  return pluginsServiceCtor;
 }
 
 /** Interactive session entrypoints that should not dump protocol walls first. */

@@ -23,6 +23,11 @@ const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
+const TMUX_SEND_KEYS_ALLOWLIST = new Set([
+  'scripts/lib/tnf-tmux-inject.cjs',
+  'scripts/lib/tnf-tmux-inject.test.cjs',
+]);
+
 // Scope: never scan .git, node_modules, dist, build outputs, generated docs,
 // or the audit log this guard is supposed to defend.
 const SKIP_DIRS = new Set([
@@ -124,6 +129,29 @@ const RULES = [
       'D24 §3.1 — crontab-writing scripts MUST default to "false". A ' +
       'hardcoded "true" literal is only allowed inside an explicit ' +
       'opt-in escape hatch with a sibling challenge_rationale.',
+  },
+  {
+    id: 'tmux-send-keys-unallowlisted',
+    appliesTo: (p) =>
+      /\.(cjs|js|mjs|ts|sh)$/.test(p) &&
+      !TMUX_SEND_KEYS_ALLOWLIST.has(p) &&
+      !p.startsWith('scripts/archive/') &&
+      p !== 'scripts/protocols/check-operator-terminal-inviolability.cjs',
+    matches: (content) => {
+      const findings = [];
+      const lines = content.split(/\r?\n/);
+      lines.forEach((line, i) => {
+        const code = line.replace(/\/\/.*$/, '').replace(/#.*$/, '');
+        if (/send-keys/.test(code)) {
+          findings.push({ line: i + 1, snippet: line.trim() });
+        }
+      });
+      return findings;
+    },
+    severity: 'block',
+    rationale:
+      'D24 treats tmux send-keys as a keystroke path. Only scripts/lib/tnf-tmux-inject.cjs ' +
+      'may issue it, and only after shouldInjectTmuxPane.',
   },
 ];
 

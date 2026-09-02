@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T19:01:55.024Z",
+  "generatedAt": "2026-08-31T21:10:00.091Z",
   "overall": {
     "passed": true,
     "requiredAuditsPresent": true
@@ -7,10 +7,10 @@
   "live": {
     "available": true,
     "passed": true,
-    "totalChecked": 176,
+    "totalChecked": 103,
     "totalBroken": 0,
     "semanticBroken": 0,
-    "generatedAt": "2026-08-10T18:54:15.524Z"
+    "generatedAt": "2026-08-31T20:53:44.102Z"
   },
   "semantic": {
     "available": true,
@@ -19,8 +19,8 @@
     "hardBroken": 0,
     "networkBroken": 0,
     "sameAsRoot": 0,
-    "duplicateFingerprintGroups": 13,
-    "generatedAt": "2026-08-10T19:01:42.030Z"
+    "duplicateFingerprintGroups": 14,
+    "generatedAt": "2026-08-31T21:09:55.611Z"
   },
   "auth": {
     "available": true,
@@ -28,6 +28,6 @@
     "totalChecks": 4,
     "passedChecks": 4,
     "failedChecks": 0,
-    "generatedAt": "2026-08-10T19:01:50.315Z"
+    "generatedAt": "2026-08-31T21:09:58.945Z"
   }
 }

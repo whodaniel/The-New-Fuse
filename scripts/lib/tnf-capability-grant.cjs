@@ -144,6 +144,9 @@ function attenuate(held, requested) {
  * @param {number} [opts.ttlSeconds]
  * @param {Array}  [opts.proof]    parent grant JWS strings
  * @param {Array}  [opts.parentCapabilities] what the issuer holds, when sub-delegating
+ * @param {string} [opts.rootTaskId] the originating task, constant down the whole chain
+ * @param {string} [opts.returnTo]   DID this delegate reports to (default: the issuer)
+ * @param {Array|string} [opts.reportOn] conditions that oblige a report
  */
 async function issueGrant(opts) {
   const {
@@ -155,6 +158,9 @@ async function issueGrant(opts) {
     ttlSeconds = DEFAULT_TTL_SECONDS,
     proof = [],
     parentCapabilities = null,
+    rootTaskId,
+    returnTo,
+    reportOn,
   } = opts;
 
   if (!trustRoot || typeof trustRoot.sign !== 'function') {
@@ -194,6 +200,20 @@ async function issueGrant(opts) {
     ...(proof.length ? { prf: proof } : {}),
     ...(boundTask ? { boundTask } : {}),
     ...(purpose ? { purpose } : {}),
+    // Routing fields. The grant already answers "who may do what"; these make it
+    // also answer "on whose behalf, reporting back to whom, and when" — which is
+    // what turns a chain of permissions into a traceable delegation tree.
+    //
+    // They are covered by the signature for free: canonicalize() sorts whatever
+    // keys are present, so no signing change is needed, and verifyGrant()
+    // validates named fields without rejecting unknown ones.
+    //
+    // `returnTo` defaults to the issuer because the overwhelmingly common case
+    // is a delegate reporting to whoever delegated to it. Making that implicit
+    // keeps callers from having to restate the parent they already named.
+    ...(rootTaskId ? { rootTaskId } : {}),
+    ...(returnTo ? { returnTo } : { returnTo: rootKey.did }),
+    ...(reportOn ? { reportOn: Array.isArray(reportOn) ? reportOn : [reportOn] } : {}),
   };
 
   const signature = await trustRoot.sign(Buffer.from(canonicalize(grant), 'utf8'), {
@@ -310,6 +330,10 @@ function verifyGrant(signed, opts) {
   // what the child claims — the check that keeps delegation narrowing.
   const chain = [grant.iss];
   let effective = grant.att;
+  // A grant that declares no rootTaskId inherits its parent's, so only the root
+  // of a delegation has to name the task and every descendant still resolves to
+  // it. Resolved during the same walk that verifies the chain.
+  let rootTaskId = grant.rootTaskId || null;
   if (Array.isArray(grant.prf) && grant.prf.length > 0) {
     for (const parentRaw of grant.prf) {
       let parent;
@@ -331,11 +355,26 @@ function verifyGrant(signed, opts) {
       if (parent.grant.aud !== grant.iss) {
         return fail('chain-broken', `parent audience ${parent.grant.aud} is not this issuer ${grant.iss}`);
       }
+      // The root task must be constant down the whole chain, or the tree has no
+      // usable key: a sub-delegate could silently reattribute its work to a
+      // different root and the ledger would reconstruct two trees from one.
+      // Declaring nothing is allowed and inherits; declaring a conflict is not.
+      if (
+        grant.rootTaskId &&
+        parent.grant.rootTaskId &&
+        grant.rootTaskId !== parent.grant.rootTaskId
+      ) {
+        return fail(
+          'chain-broken',
+          `rootTaskId ${grant.rootTaskId} conflicts with parent ${parent.grant.rootTaskId}`
+        );
+      }
       const narrowed = attenuate(parentResult.effective, effective);
       if (narrowed.length !== effective.length) {
         return fail('exceeds-parent', 'child claims capabilities the parent does not hold');
       }
       effective = narrowed;
+      if (!rootTaskId && parent.grant.rootTaskId) rootTaskId = parent.grant.rootTaskId;
       chain.unshift(parent.grant.iss);
     }
   }
@@ -352,7 +391,21 @@ function verifyGrant(signed, opts) {
   }
   if (consume) consumeNonce(grant.nnc, grant.exp);
 
-  return { verdict: 'valid', authorized: true, effective, chain };
+  return {
+    verdict: 'valid',
+    authorized: true,
+    effective,
+    chain,
+    // Routing, surfaced so a caller can act on a verified grant without
+    // re-parsing the envelope. `depth` is the ancestry length the chain walk
+    // already computed: 0 for a root grant, N for an Nth-level sub-delegate.
+    rootTaskId,
+    returnTo: grant.returnTo || grant.iss,
+    reportOn: Array.isArray(grant.reportOn) ? grant.reportOn : [],
+    depth: chain.length - 1,
+    audience: grant.aud,
+    boundTask: grant.boundTask || null,
+  };
 }
 
 /** Does a verified grant authorize this specific action? */

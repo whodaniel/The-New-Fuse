@@ -3,12 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-
-**Current Directive:** Provision a real apps/api/.env from .env.example
-(JWT_SECRET, A2A_SECRET_KEY, DATABASE_URL, etc.) so a fresh nest start --watch
-boots cleanly in a worktree without ad-hoc env overrides; only .env.\*.example
-templates exist in this checkout.
-
+**Current Directive:** Prove the sync/open-runtime dry-run PR path against restored public main, then re-enable Repo Separation Sync (PRODUCT_REPO_MAP.md prerequisite)
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-30 Operator departments, remember write-path, staffing index**:
@@ -309,6 +304,30 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-30T18:44:31.300Z New script(s) created: agentic-ontology-audit.sh
 - [✅] 2026-08-30T18:59:23.279Z New script(s) created:
 - [✅] 2026-08-30T19:21:11.827Z New script(s) created: tnf-context-broker.cjs
+- [✅] 2026-08-31T17:22:59.854Z New script(s) created:
+- [✅] 2026-08-31T22:52:45.474Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+- [✅] 2026-09-01T00:09:26.831Z New script(s) created: copy-provider-catalog.cjs
+- [✅] 2026-09-01T00:09:26.831Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+- [✅] 2026-09-01T05:15:59.902Z New script(s) created: copy-provider-catalog.cjs
+- [✅] 2026-09-01T05:15:59.902Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+- [✅] 2026-09-01T05:59:51.350Z New script(s) created: copy-provider-catalog.cjs
+- [✅] 2026-09-01T05:59:51.350Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+- [✅] 2026-09-01T06:28:20.937Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+- [✅] 2026-09-01T09:20:50.790Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+- [✅] 2026-09-01T10:25:10.554Z New script(s) created: bundle-cli.cjs
+- [✅] 2026-09-01T10:25:10.554Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+
+  upload_wordcount_dataset.sh
+
+- [✅] 2026-08-31T17:30:10.505Z New script(s) created:
+  upload_wordcount_dataset.sh
 
   tnf-recursive-logic-sieve.sh
 
@@ -1154,70 +1173,94 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-09-01T17:18:20.961Z handoff `64bb992e-4379-42e4-ba26-284216403c6b` head
-  `34b87570802b` project `TNF-SESSION` — Provision a real apps/api/.env from
-  .env.example (JWT_SECRET, A2A_SECRET_KEY, DATABASE_URL, etc.) so a fresh nest
-  start --watch boots cleanly in a worktree without ad-hoc env overrides; only
-  .env.\*.example templates exist in this checkout.
+- 2026-09-01T16:16:48.926Z handoff `7ee66eff-40dc-40f2-a813-2735ed48c6df` head `12254455be7b` project `TNF-SESSION` — Prove the sync/open-runtime dry-run PR path against restored public main, then re-enable Repo Separation Sync (PRODUCT_REPO_MAP.md prerequisite)
 
-- 2026-09-01T17:17:50.933Z handoff `94192ce3-0e9a-4eb5-a605-f40f7cb5726a` head
-  `34b87570802b` project `TNF-SESSION` — Continue priority queue from
+- 2026-08-31T20:35:07.993Z handoff `0fa0c871-bb22-45d7-a21f-b6b49d39b651` head
+  `eafdadf1411f` project `TNF-SESSION` — Phase 2 is the reachability gate and
+  must follow promptly: tnf-delegation-record.cjs currently has only its test as
+  a caller, and shipping it unwired would make it the FIFTH dormant primitive
+  found in this session. Wire it at the agents-run authority seam using
+  verifyHeldGrant from scripts/lib/tnf-authority-client.cjs, which already
+  supplies the operator-root resolvePublicKeyPem. Open design choic
+
+- 2026-08-31T19:58:27.316Z handoff `ca4e5069-49c7-448d-b209-e081e251fc03` head
+  `cac2a4245522` project `TNF-SESSION` — Plan the delegation-tree program:
+  extend the tnf-capability-grant payload with rootTaskId, returnTo and reportOn
+  (canonicalize sorts keys generically so new fields are signature-covered
+  automatically, and verifyGrant does not reject unknown fields, making this
+  purely additive); wire grant issue/verify into the agents-run authority seam;
+  make handoffs address a parent instead of the single global S
+
+- 2026-08-31T19:51:57.280Z handoff `fe512a4e-57df-4bac-85a4-23abf62347a4` head
+  `a6fa7e8d77ba` project `TNF-SESSION` — Plan the delegation-tree program:
+  extend the tnf-capability-grant payload with rootTaskId, returnTo and reportOn
+  so the existing attenuating proof chain becomes the delegation tree; wire
+  grant issue/verify into the agents-run authority seam; make handoffs address a
+  parent instead of the single global SESSION_HANDOFF_LATEST slot; scope Turn
+  Zero to the grant envelope; add a generated budget-bounded
+
+- 2026-08-31T19:50:02.923Z handoff `14f497c1-e7cf-445a-acf7-300007749631` head
+  `a6fa7e8d77ba` project `TNF-SESSION` — Plan the delegation-tree program as its
+  own work unit: extend the tnf-capability-grant payload with rootTaskId,
+  returnTo and reportOn so the existing attenuating proof chain becomes the
+  delegation tree; wire grant issue/verify into the agents-run authority seam;
+  make handoffs address a parent instead of the single global
+  SESSION_HANDOFF_LATEST slot; scope Turn Zero to the grant envelope; add a gen
+
+- 2026-08-31T19:15:05.510Z handoff `279d87e2-1c6f-4259-97d3-281be4fa94b7` head
+  `43818b77fef5` project `TNF-SESSION` — Build the operator-authority feature: a
+  config naming tnf-cli-agent as the default delegate, enabled by default,
+  enforced through the existing scripts/lib/tnf-capability-grant.cjs attenuating
+  chain so authority is per-agent instead of blanket, plus an interactive
+  onboarding step that offers the defaults. This replaces a prose-only grant
+  with an actual control.
+
+- 2026-08-31T18:56:00.227Z handoff `e50c36b6-1fbe-4aff-bc42-c2706e7e161e` head
+  `cb0a4504fd4a` project `TNF-SESSION` — P0 video intelligence: re-run AI 6
+  playlist extraction by durable video ID for new additions, then complete the
+  pipeline transcript -> modality-gap pass -> factoids/plans -> action-queue
+  reconciliation; fail any run whose downstream source accounting is zero.
+
+- 2026-08-31T18:41:06.157Z handoff `c2f1905b-2393-4160-8596-d636b3eab3af` head
+  `3ece7db6bc65` project `TNF-SESSION` — P0 video intelligence: re-run AI 6
+  playlist extraction by durable video ID for new additions, then complete the
+  pipeline transcript -> modality-gap pass -> factoids/plans -> action-queue
+  reconciliation; fail any run whose downstream source accounting is zero.
+
+- 2026-08-31T18:40:17.338Z handoff `23c68afb-03f7-4d61-be74-2ea40a3f108a` head
+  `3ece7db6bc65` project `TNF-SESSION` — P0 video intelligence: re-run AI 6
+  playlist extraction by durable video ID for new additions, then complete the
+  pipeline transcript -> modality-gap pass -> factoids/plans -> action-queue
+  reconciliation; fail any run whose downstream source accounting is zero.
+
+- 2026-08-31T18:39:28.924Z handoff `bdc292a2-7008-4b8f-88a4-5e72fea69b19` head
+  `3ece7db6bc65` project `TNF-SESSION` — NEEDS LIVE OPERATOR CONFIRMATION (do
+  not auto-commit): the managed-MCP-runtime, progressive-skill, scout and
+  manifest changes are uncommitted.
+
+- 2026-08-31T18:37:59.370Z handoff `c202e12c-70dd-4770-9d06-fef61ae0a810` head
+  `3ece7db6bc65` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
-- 2026-09-01T12:57:29.514Z handoff `3bb048df-301d-4944-8dd5-2c020ae9e0f5` head
-  `92f3c2ed0594` project `TNF-SESSION` — Re-verify /api/agents through the
-  gateway now that apps/api can actually boot repeatedly; confirm no other
-  packages in the monorepo share nest-cli.json's deleteOutDir+tsbuildinfo
-  combination with the same latent bug.
+- 2026-08-31T14:16:20.352Z handoff `6bda911b-cf4d-4fcc-95ab-46c663490ddb` head
+  `9fea50a62331` project `TNF-SESSION` — Monitor
+  docs/operations/tnf-full-auto-daemon.log and tnf full-auto status; parity gaps
+  230 across 5/13 unreachable agents.
 
-- 2026-09-01T12:16:31.866Z handoff `d500dd27-320e-4e35-b766-5fed4dec4564` head
-  `e0380981be8d` project `TNF-SESSION` — Live-verify navigate/goBack,
-  click/type, human-behavior, and CAPTCHA-detection browserAction handlers
-  end-to-end (blocked earlier this session by host CPU load driving CDP
-  timeouts, never conclusively confirmed). Fix the content-script injection
-  allowlist gap so browserAction works on arbitrary pages, not just the curated
-  chat-site list. Address the native-messaging-host manifest path mismatch (po
+- 2026-08-31T13:42:05.354Z handoff `d6ef493e-4d58-4358-8076-d78bc0eec9ca` head
+  `414c7508623d` project `TNF-SESSION` — Monitor extreamix.com +
+  app.extreamix.com for return-to-service (operator bench since 2026-08-06).
 
-- 2026-09-01T10:48:57.964Z handoff `78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff` head
-  `e0380981be8d` project `TNF-SESSION` — Live-verify navigate/goBack,
-  click/type, human-behavior, and CAPTCHA-detection browserAction handlers
-  end-to-end (blocked earlier this session by host CPU load driving CDP
-  timeouts, never conclusively confirmed). Fix the content-script injection
-  allowlist gap so browserAction works on arbitrary pages, not just the curated
-  chat-site list. Address the native-messaging-host manifest path mismatch (po
+- 2026-08-31T08:30:00.784Z handoff `119eb100-92d2-462d-8b8d-2d6878b995f4` head
+  `414c7508623d` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
-- 2026-09-01T06:00:26.770Z handoff `30f7bd2e-0ec7-4287-8745-0e80d9aef8ec` head
-  `c426044841c0` project `TNF-SESSION` — Open a PR for this Workstream A Phase 1
-  commit against main.
+- 2026-08-31T08:27:52.075Z handoff `0a249954-8eff-4f18-9803-f7f46ae8bd27` head
+  `414c7508623d` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
-- 2026-09-01T04:10:17.909Z handoff `7f246b53-b0d9-4974-878a-da066f51d766` head
-  `5a20169d60ee` project `TNF-SESSION` — Commit the Select shim + 9 node-file
-  import fixes.
-
-- 2026-09-01T04:05:23.313Z handoff `03b98dc2-44ba-46aa-9baa-9eeab96a0d15` head
-  `5a20169d60ee` project `TNF-SESSION` — Commit the Select shim + 9 node-file
-  import fixes.
-
-- 2026-09-01T03:18:46.289Z handoff `524ffbf1-6b3b-471f-ae45-5fedcbdadc7a` head
-  `59e86d8e9c31` project `TNF-SESSION` — Commit this correction, then run
-  apps/frontend build (not just typecheck) and apps/tauri-desktop typecheck as
-  final Stage 1 verification.
-
-- 2026-09-01T00:38:38.721Z handoff `4c35929a-b298-401e-a6ff-3d7a69724bb7` head
-  `6bd29b005bee` project `TNF-SESSION` — pnpm install completed,
-  @the-new-fuse/workflow-builder confirmed registered via pnpm list --filter.
-
-- 2026-09-01T00:38:09.447Z handoff `27d90864-a832-4bcb-ab3f-87c274d062b0` head
-  `6bd29b005bee` project `TNF-SESSION` — pnpm install completed,
-  @the-new-fuse/workflow-builder confirmed registered via pnpm list --filter.
-
-- 2026-09-01T00:14:19.875Z handoff `0b23b465-4757-4216-8e6d-61b251e31594` head
-  `6bd29b005bee` project `TNF-SESSION` — pnpm install still running in
-  background (task bnq0fkc5x) to register the new packages/workflow-builder
-  workspace package.
-
-- 2026-09-01T00:13:40.619Z handoff `923f574b-d29c-48bc-8496-354f17488c2e` head
-  `6bd29b005bee` project `TNF-SESSION` — Continue priority queue from
+- 2026-08-31T07:44:17.369Z handoff `e8899aad-5eba-4b1e-9be1-00e7e4c68017` head
+  `9e9584913fd3` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-08-31T05:24:06.952Z handoff `d1c92e44-a836-4a3e-839f-a8a1d45228c0` head
@@ -2224,4 +2267,28 @@ continuation
   self-improvement cycle and capture learnings
 
 - [✅] 2026-08-12T02:11:02.011Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-31T14:45:36.735Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-31T15:51:37.878Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-31T16:58:49.535Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-31T18:02:49.166Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-31T19:10:03.755Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-31T19:12:59.002Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-31T19:40:18.310Z Orchestrator: Completed: Goal: Run
+  self-improvement cycle and capture learnings
+
+- [✅] 2026-08-31T21:10:20.658Z Orchestrator: Completed: Goal: Run
   self-improvement cycle and capture learnings

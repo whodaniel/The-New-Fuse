@@ -1,0 +1,76 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "b4e25c07-1d93-4a86-9c02-7f14e3d85a91",
+  "created_at": "2026-09-01T11:55:00Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
+  "head_sha": "370644d322fc30b1907ed80d29d8744ab48038fa",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-FLEET-SAFETY"],
+  "work_summary": [
+    "Root-caused the recurring self-inflicted build breakage: commit authors are LLM agents running in terminal sessions, woken by scripts/runtime/terminal-heartbeat-pulse.cjs injections, editing and committing the shared live checkout. Commits bf04b72a2 (zeroed cli.ts), e2271e7c3/dce732ccc (half-landed authority-service rewrite) all share this origin; no --no-verify bypass exists — the gates passed because they were vacuous for those failure shapes.",
+    "Shipped scripts/security/zero-file-guard.cjs: blocks any staged commit that reduces a previously-substantial tracked file (>1KiB at HEAD) to 0 bytes. Wired into .husky/pre-commit after secret:sweep:staged and exposed as pnpm zero-file:guard:staged. Escape hatch: TNF_ALLOW_EMPTY_COMMIT_FILE=1 with loud logging, matching house gate style.",
+    "Verified both directions with a synthetic index: truncating cli.ts is BLOCKED (exit 1), the real clean index passes (exit 0).",
+    "Identified remaining hole for policy-level treatment (not code): heartbeat-injected sessions need a stronger instruction that shared-checkout fleet work belongs on task branches, and 'chore: routine updates' sweeps must not include source files.",
+    "Also carries the prettier normalization residue left by the lint-staged pass of the lazy-registration commit (cli.ts, whatsapp/index.ts) so worktree and HEAD agree."
+  ],
+  "changed_paths": [
+    ".husky/pre-commit",
+    "docs/protocols/reports/SESSION_HANDOFF_ZERO_FILE_GUARD_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_ZERO_FILE_GUARD_20260901.md",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_LAZY_20260901.md",
+    "package.json",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/commands/whatsapp/index.ts",
+    "scripts/security/zero-file-guard.cjs"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "Guard verified on synthetic index: truncation blocked (exit 1), clean index passes (exit 0). tnf-cli type-check clean. No agent bypass of husky found in scripts/; the vacuous-gate hole is what this closes."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "high",
+    "resume_checklist": [
+      "Add the policy-side instruction for heartbeat-driven agents: no source files in automated sweep commits; work on branches.",
+      "Keep com.tnf.subdirector-autopilot unloaded until its writer is audited."
+    ]
+  },
+  "next_actions": [
+    "Commit the guard through the normal gates.",
+    "Monitor the next few fleet routine commits to confirm the guard fires or stays silent appropriately.",
+    "Do not push without a separate explicit publication instruction."
+  ]
+}

@@ -1,5 +1,17 @@
 import { Command } from 'commander';
-import { TelegramService } from '../../telegram/TelegramService.js';
+
+// Lazy: ../../telegram/TelegramService.js pulls telegraf (~240ms module eval);
+// keep that cost off the startup path for every non-telegram command.
+let telegramServiceCtor: typeof import('../../telegram/TelegramService.js').TelegramService | null =
+  null;
+async function loadTelegramService(): Promise<
+  typeof import('../../telegram/TelegramService.js').TelegramService
+> {
+  if (!telegramServiceCtor) {
+    ({ TelegramService: telegramServiceCtor } = await import('../../telegram/TelegramService.js'));
+  }
+  return telegramServiceCtor;
+}
 
 export function registerTelegramCommands(program: Command, repoRoot: string): void {
   const telegram = program.command('telegram').description('TNF Telegram bot integration');
@@ -12,7 +24,7 @@ export function registerTelegramCommands(program: Command, repoRoot: string): vo
     .option('--port <port>', 'Port for webhook mode', '3000')
     .action(async (options: { polling?: boolean; webhook?: boolean; port?: string }) => {
       try {
-        const service = new TelegramService(repoRoot);
+        const service = new (await loadTelegramService())(repoRoot);
         if (options.webhook) {
           await service.startWebhook(parseInt(options.port || '3000', 10));
           console.log(
@@ -33,7 +45,7 @@ export function registerTelegramCommands(program: Command, repoRoot: string): vo
     .description('Stop the TNF Telegram bot service')
     .action(async () => {
       try {
-        const service = new TelegramService(repoRoot);
+        const service = new (await loadTelegramService())(repoRoot);
         await service.stop();
         console.log('⏹️  TNF Telegram bot stopped');
       } catch (error: any) {
@@ -47,7 +59,7 @@ export function registerTelegramCommands(program: Command, repoRoot: string): vo
     .description('Get the status of the TNF Telegram bot service')
     .action(async () => {
       try {
-        const service = new TelegramService(repoRoot);
+        const service = new (await loadTelegramService())(repoRoot);
         const statusInfo = await service.getStatus();
         console.log('📊 TNF Telegram Bot Status:');
         console.log(`  Status: ${statusInfo.isRunning ? '🟢 Running' : '🔴 Stopped'}`);
@@ -69,7 +81,7 @@ export function registerTelegramCommands(program: Command, repoRoot: string): vo
     .option('--parse-mode <mode>', 'Parse mode (MarkdownV2, HTML, etc.)', 'MarkdownV2')
     .action(async (chatId: string, message: string, options: { parseMode?: string }) => {
       try {
-        const service = new TelegramService(repoRoot);
+        const service = new (await loadTelegramService())(repoRoot);
         await service.sendMessage(chatId, message, options.parseMode);
         console.log('✅ Message sent successfully');
       } catch (error: any) {

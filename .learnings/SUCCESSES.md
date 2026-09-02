@@ -110,3 +110,59 @@
 - **Details**: Federated WS channel check pass; `tnf send` LPUSH to sub-director
   workers; `TNF_TRANSPORT_LANE_SPEC`; `HARNESS_CONFIG` §7; handoff emitted;
   `pnpm test` green in tnf-cli
+
+## 2026-08-31T14:45:36.741Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1788187536721-bs4iq
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-31T15:51:37.880Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1788191497863-tichn
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-31T16:58:49.538Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1788195529521-hv47x
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-31T18:02:49.168Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1788199369147-qmqia
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-31T19:10:03.758Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1788203403731-s6s1n
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-31T19:12:59.005Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1788203578986-v1plr
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-31T19:40:18.315Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1788205218290-jy6su
+- **Category**: success
+- **Details**: Workflow completed successfully
+
+## 2026-08-31T21:10:20.664Z
+
+- **Goal**: Run self-improvement cycle and capture learnings
+- **Task**: wf-1788210620645-dvckv
+- **Category**: success
+- **Details**: Workflow completed successfully

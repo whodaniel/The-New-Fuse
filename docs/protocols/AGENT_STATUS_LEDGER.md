@@ -1,7 +1,40 @@
-`[CLASS:INTEL] [STATUS:PENDING]` `[DOC_AUDIT_BACKFILL:2026-07-14]` — header
-restored for Gate 3 compliance; reclassify on next vetting pass.
+- **Updated: 2026-08-31T06:57:19.3NZ** — handoff
+  95b232d2-d0be-49c9-9375-db6f68c8f0bc (2daabef2): selective commit of handoff
+  artifacts (excl. catalog reformat) `[CLASS:INTEL] [STATUS:PENDING]`
+  `[DOC_AUDIT_BACKFILL:2026-07-14]` — header restored for Gate 3 compliance;
+  reclassify on next vetting pass.
 
 # Agent Status Ledger
+
+- **Updated: 2026-09-01T06:28:29.731ZZ** — Fixed the installed TNF model
+  selector stdin lifecycle after a real PATH-resolved PTY smoke test exposed
+  lingering processes; added a 13-assertion stream cleanup regression and passed
+  tnf-cli type-check
+
+- **Updated: 2026-09-01T05:59:58.080ZZ** — Prepared the scoped TNF LLM
+  provider/model CLI upgrade for commit after full package tests
+
+- **Updated: 2026-09-01T05:16:07.831ZZ** — Closed TNF CLI model-menu validation
+  gaps: reconciled the 512-path command-surface snapshot
+
+- **Updated: 2026-09-01T00:09:36.371ZZ** — Audited TNF LLM provider/model
+  surfaces; upgraded tnf CLI to 22-provider live discovery with bundled catalogs
+  and arrow-key provider/model selection; verified build
+
+- **Updated: 2026-08-31T17:30:12.402ZZ** — Designed durable agent-wide MCP
+  startup remediation: replace runtime npx installs with version-pinned atomic
+  host releases
+
+- **Updated: 2026-08-31T17:23:02.659ZZ** — Reauthenticated Codex Supabase MCP
+  OAuth and verified live read-only access; diagnosed Apple Notes and Exa npx
+  cache startup failures without changing their configuration
+
+- **Updated: 2026-08-31T06:57:35.3NZ** — handoff
+  95b232d2-d0be-49c9-9375-db6f68c8f0bc (2daabef2): selective commit of handoff
+  artifacts (excl. catalog reformat)
+- **Updated: 2026-08-31T07:47:13.362ZZ** — Completed task-scoped TNF Turn Zero
+  hydration and classified write-readiness verification; no implementation
+  changes made.
 
 - **Updated: 2026-08-30T23:10:00.000Z** — Full
   department/remember/scout/host-profile implementation: `department:` applied
@@ -114,17 +147,17 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-01T17:18:19.999Z** — handoff
-`64bb992e-4379-42e4-ba26-284216403c6b` (`34b87570802b`).
-`3bb048df-301d-4944-8dd5-2c020ae9e0f5` (`92f3c2ed0594`).
-`d500dd27-320e-4e35-b766-5fed4dec4564` (`e0380981be8d`).
-`78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff` (`e0380981be8d`).
-`30f7bd2e-0ec7-4287-8745-0e80d9aef8ec` (`c426044841c0`).
-`7f246b53-b0d9-4974-878a-da066f51d766` (`5a20169d60ee`).
-`03b98dc2-44ba-46aa-9baa-9eeab96a0d15` (`5a20169d60ee`).
-`524ffbf1-6b3b-471f-ae45-5fedcbdadc7a` (`59e86d8e9c31`).
-`4c35929a-b298-401e-a6ff-3d7a69724bb7` (`6bd29b005bee`).
-`0b23b465-4757-4216-8e6d-61b251e31594` (`6bd29b005bee`).
+Updated: **2026-09-01T16:16:47.643Z** — handoff `7ee66eff-40dc-40f2-a813-2735ed48c6df` (`12254455be7b`).
+`0fa0c871-bb22-45d7-a21f-b6b49d39b651` (`eafdadf1411f`).
+`ca4e5069-49c7-448d-b209-e081e251fc03` (`cac2a4245522`).
+`fe512a4e-57df-4bac-85a4-23abf62347a4` (`a6fa7e8d77ba`).
+`14f497c1-e7cf-445a-acf7-300007749631` (`a6fa7e8d77ba`).
+`279d87e2-1c6f-4259-97d3-281be4fa94b7` (`43818b77fef5`).
+`e50c36b6-1fbe-4aff-bc42-c2706e7e161e` (`cb0a4504fd4a`).
+`c2f1905b-2393-4160-8596-d636b3eab3af` (`3ece7db6bc65`).
+`6bda911b-cf4d-4fcc-95ab-46c663490ddb` (`9fea50a62331`).
+`d6ef493e-4d58-4358-8076-d78bc0eec9ca` (`414c7508623d`).
+`119eb100-92d2-462d-8b8d-2d6878b995f4` (`414c7508623d`).
 `d1c92e44-a836-4a3e-839f-a8a1d45228c0` (`901c2d2f098d`).
 `10b05184-48da-4c36-8607-120e738c0593` (`055c6d0e4301`).
 `ad3371f2-6d3c-4632-8b81-bef643c73838` (`055c6d0e4301`).
@@ -322,10 +355,11 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                                                                                                                                                            |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Provision a real apps/api/.env from .env.example (JWT_SECRET, A2A_SECRET_KEY, DATABASE_URL, etc.) so a fresh nest start --watch boots cleanly in a worktree without ad-hoc env overrides; only .env.\*.example templates exist in this checkout.                                                                                                  |
-| **P0**   | Consider fixing the pre-existing (unrelated) TS strictness errors surfaced while force-rebuilding packages/web-scraping (WebScrapingService.ts:107, ProxyService.ts:97/109 -- axios header value typed as string\|number\|... used where string is required); build currently succeeds because noEmitOnError is not set, but the errors are real. |
+| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| **P0**   | Prove the sync/open-runtime dry-run PR path against restored public main, then re-enable Repo Separation Sync (PRODUCT_REPO_MAP.md prerequisite) |
+| **P0**   | Reclassify satellites vs standalone products (ai-arcade, casin8-games, poker-room, myphoneremote-api) in TNF_PRODUCT_BOUNDARY.md and oss-app-boundary.json |
+| **P0**   | Add CI and deployment wiring to the four standalone satellite repos (single 'Initial import' commit each) |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1554,41 +1588,49 @@ clean | ✅ COMPLETE |
 | 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (d1c92e44-a836-4a3e-839f-a8a1d45228c0) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(923f574b-d29c-48bc-8496-354f17488c2e) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e8899aad-5eba-4b1e-9be1-00e7e4c68017) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(0b23b465-4757-4216-8e6d-61b251e31594) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0a249954-8eff-4f18-9803-f7f46ae8bd27) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(27d90864-a832-4bcb-ab3f-87c274d062b0) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(119eb100-92d2-462d-8b8d-2d6878b995f4) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(4c35929a-b298-401e-a6ff-3d7a69724bb7) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(d6ef493e-4d58-4358-8076-d78bc0eec9ca) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(524ffbf1-6b3b-471f-ae45-5fedcbdadc7a) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(6bda911b-cf4d-4fcc-95ab-46c663490ddb) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(03b98dc2-44ba-46aa-9baa-9eeab96a0d15) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c202e12c-70dd-4770-9d06-fef61ae0a810) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(7f246b53-b0d9-4974-878a-da066f51d766) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(bdc292a2-7008-4b8f-88a4-5e72fea69b19) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(30f7bd2e-0ec7-4287-8745-0e80d9aef8ec) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(23c68afb-03f7-4d61-be74-2ea40a3f108a) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(78e0afd3-5f93-4ef3-bddf-1b9b2bbde4ff) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c2f1905b-2393-4160-8596-d636b3eab3af) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(d500dd27-320e-4e35-b766-5fed4dec4564) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(e50c36b6-1fbe-4aff-bc42-c2706e7e161e) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(3bb048df-301d-4944-8dd5-2c020ae9e0f5) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(279d87e2-1c6f-4259-97d3-281be4fa94b7) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(94192ce3-0e9a-4eb5-a605-f40f7cb5726a) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(14f497c1-e7cf-445a-acf7-300007749631) | ✅ HANDOFF_READY |
 
-| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(64bb992e-4379-42e4-ba26-284216403c6b) | ✅ HANDOFF_READY |
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(fe512a4e-57df-4bac-85a4-23abf62347a4) | ✅ HANDOFF_READY |
+
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ca4e5069-49c7-448d-b209-e081e251fc03) | ✅ HANDOFF_READY |
+
+| 2026-08-31 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0fa0c871-bb22-45d7-a21f-b6b49d39b651) | ✅ HANDOFF_READY |
+
+| 2026-09-01 | Orchestrator | Published SESSION_HANDOFF_LATEST (7ee66eff-40dc-40f2-a813-2735ed48c6df) | ✅ HANDOFF_READY |

@@ -264,6 +264,19 @@
       "provenance": "calendar"
     },
     {
+      "schedule_id": "tnf-tmux-reap",
+      "scope": "system_framework",
+      "category": "system_terminal_awareness",
+      "owner_agent_id": "tnf-master-clock",
+      "owner_user_id": null,
+      "locked": false,
+      "active": true,
+      "auto_accept": true,
+      "cadence": "15 * * * *",
+      "timezone": "UTC",
+      "provenance": "restored-2026-08-30"
+    },
+    {
       "schedule_id": "tnf-twip-macro-board-refresh",
       "scope": "system_framework",
       "category": "observability",
@@ -275,6 +288,19 @@
       "cadence": "*/10 * * * *",
       "timezone": "UTC",
       "provenance": "calendar"
+    },
+    {
+      "schedule_id": "tnf-continuous-correction-flywheel",
+      "scope": "system_framework",
+      "category": "infrastructure_monitoring",
+      "owner_agent_id": "tnf-flywheel-monitor",
+      "owner_user_id": null,
+      "locked": false,
+      "active": true,
+      "auto_accept": true,
+      "cadence": "15 * * * *",
+      "timezone": "UTC",
+      "provenance": "session"
     }
   ],
   "catalog": {
@@ -285,7 +311,9 @@
       "description": "Pushes queued local commits on the working branch.",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/orchestrator/auto-git-push.sh"],
+        "args": [
+          "scripts/orchestrator/auto-git-push.sh"
+        ],
         "timeoutMs": 120000
       },
       "provenance": "recovered"
@@ -319,7 +347,9 @@
       "description": "Collects LLM intelligence from arena rankings and provider status feeds.",
       "runNow": {
         "command": "node",
-        "args": ["scripts/llm-intel/llm-arena-intel-collector.cjs"],
+        "args": [
+          "scripts/llm-intel/llm-arena-intel-collector.cjs"
+        ],
         "timeoutMs": 180000
       },
       "provenance": "derived"
@@ -331,7 +361,9 @@
       "description": "Recomputes provider/model ranking preferences from collected arena intelligence.",
       "runNow": {
         "command": "node",
-        "args": ["scripts/llm-intel/llm-ranking-optimizer.cjs"],
+        "args": [
+          "scripts/llm-intel/llm-ranking-optimizer.cjs"
+        ],
         "timeoutMs": 180000
       },
       "provenance": "derived"
@@ -343,7 +375,9 @@
       "description": "TNF-first scout \u2192 capability tester \u2192 subject agent validation \u2192 apply verified winners to ~/.tnf model-providers + provider-config. Live /v1/models only; no hardcoded preference authority.",
       "runNow": {
         "command": "node",
-        "args": ["scripts/llm-intel/tnf-llm-verified-fleet-cycle.cjs"],
+        "args": [
+          "scripts/llm-intel/tnf-llm-verified-fleet-cycle.cjs"
+        ],
         "timeoutMs": 900000,
         "env": {
           "TNF_LLM_VERIFY_APPLY": "1",
@@ -360,7 +394,9 @@
       "description": "Curates marketplace listings and refreshes catalog metadata.",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/orchestrator/marketplace-curation-agent.sh"],
+        "args": [
+          "scripts/orchestrator/marketplace-curation-agent.sh"
+        ],
         "timeoutMs": 120000
       },
       "provenance": "recovered"
@@ -409,7 +445,9 @@
       "description": "Surfaces chronological processes that are failing or have silently stopped running, and writes findings to ~/.tnf/alerts.json (read at every session start per Turn Zero).",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/verify-process-health.cjs"],
+        "args": [
+          "scripts/protocols/verify-process-health.cjs"
+        ],
         "timeoutMs": 45000
       },
       "provenance": "derived",
@@ -424,7 +462,9 @@
       "description": "Protocol and schema conformance loop that keeps the canonical reliability and self-improvement envelope healthy.",
       "runNow": {
         "command": "node",
-        "args": ["scripts/validate-protocol-schemas.cjs"],
+        "args": [
+          "scripts/validate-protocol-schemas.cjs"
+        ],
         "timeoutMs": 30000
       },
       "provenance": "api",
@@ -457,7 +497,9 @@
       "description": "Roll-call of registered agents and reconciliation of the master schedule.",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/swarmops-role-call.cjs"],
+        "args": [
+          "scripts/protocols/swarmops-role-call.cjs"
+        ],
         "timeoutMs": 45000
       },
       "provenance": "calendar",
@@ -489,7 +531,9 @@
       "description": "Drains the codegen work queue for the subdirector fleet.",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/agents/subdirector-codegen-worker-cycle.sh"],
+        "args": [
+          "scripts/agents/subdirector-codegen-worker-cycle.sh"
+        ],
         "timeoutMs": 300000
       },
       "provenance": "recovered"
@@ -501,7 +545,9 @@
       "description": "Drains the infrastructure work queue for the subdirector fleet.",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/agents/subdirector-infra-worker-cycle.sh"],
+        "args": [
+          "scripts/agents/subdirector-infra-worker-cycle.sh"
+        ],
         "timeoutMs": 300000
       },
       "provenance": "recovered"
@@ -513,7 +559,9 @@
       "description": "Exercises the agent swarm under load and records reliability signals.",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/orchestrator/swarm-stress-test.sh"],
+        "args": [
+          "scripts/orchestrator/swarm-stress-test.sh"
+        ],
         "timeoutMs": 120000
       },
       "provenance": "recovered"
@@ -525,7 +573,10 @@
       "description": "Procedural frontload/terminal context reminder loop that validates handoff and shell-start context hygiene.",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/verify_frontload_state.sh", "--json"],
+        "args": [
+          "scripts/verify_frontload_state.sh",
+          "--json"
+        ],
         "timeoutMs": 20000
       },
       "provenance": "api",
@@ -541,12 +592,34 @@
       "description": "Minute-cadence terminal heartbeat under the Operator Terminal Inviolability Protocol (D24).",
       "runNow": {
         "command": "node",
-        "args": ["scripts/runtime/terminal-heartbeat-pulse.cjs"],
+        "args": [
+          "scripts/runtime/terminal-heartbeat-pulse.cjs"
+        ],
         "timeoutMs": 20000
       },
       "provenance": "calendar",
       "docs": {
         "protocol": "docs/protocols/TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL.md"
+      }
+    },
+    "tnf-tmux-reap": {
+      "title": "TNF tmux idle session reaper",
+      "cadence": "15 * * * *",
+      "timezone": "UTC",
+      "description": "Reaps idle unattached tnf-a-* sessions on the dedicated TNF tmux socket. Never kills tnf-o-* operator sessions or attached clients.",
+      "runNow": {
+        "command": "node",
+        "args": [
+          "scripts/runtime/tnf-tmux.cjs",
+          "reap",
+          "--json"
+        ],
+        "timeoutMs": 30000
+      },
+      "provenance": "restored-2026-08-30",
+      "docs": {
+        "protocol": "docs/operations/TNF_TMUX_MULTIPLEXER_CONVENTION_PLAN.md",
+        "runbook": "docs/tnf-tmux-setup-guide.md"
       }
     },
     "tnf-twip-macro-board-refresh": {
@@ -556,7 +629,10 @@
       "description": "Procedural scan and refresh loop that updates terminal macro-board state and visualization artifacts.",
       "runNow": {
         "command": "node",
-        "args": ["scripts/protocols/twip-macro-board.cjs", "--json"],
+        "args": [
+          "scripts/protocols/twip-macro-board.cjs",
+          "--json"
+        ],
         "timeoutMs": 180000
       },
       "provenance": "api",
@@ -572,7 +648,9 @@
       "description": "Background loop ensuring logical cohesion and pruning ontology overlap.",
       "runNow": {
         "command": "bash",
-        "args": ["scripts/autonomy/tnf-recursive-logic-sieve.sh"],
+        "args": [
+          "scripts/autonomy/tnf-recursive-logic-sieve.sh"
+        ],
         "timeoutMs": 180000
       },
       "provenance": "recovered"

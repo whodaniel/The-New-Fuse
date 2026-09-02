@@ -26,6 +26,34 @@ function parseArgs(argv) {
 }
 
 const LOCK_PATH = path.join(ROOT, 'data/harness/mcp-supply-chain.lock.json');
+const MANAGED_RUNTIME_PATH = path.join(ROOT, 'data/harness/managed-mcp-runtime.json');
+
+function attestManagedRuntimePolicy() {
+  if (!fs.existsSync(MANAGED_RUNTIME_PATH)) {
+    return { ok: false, errors: ['managed runtime policy missing'], packages: [] };
+  }
+  let policy;
+  try {
+    policy = JSON.parse(fs.readFileSync(MANAGED_RUNTIME_PATH, 'utf8'));
+  } catch (error) {
+    return { ok: false, errors: [`managed runtime policy parse error: ${error.message}`], packages: [] };
+  }
+  const errors = [];
+  const wrappers = new Set();
+  const packages = [];
+  for (const pkg of policy.packages || []) {
+    const exact = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(String(pkg.version || ''));
+    const integrity = String(pkg.integrity || '').startsWith('sha512-');
+    const duplicateWrapper = wrappers.has(pkg.wrapper);
+    wrappers.add(pkg.wrapper);
+    if (!exact) errors.push(`${pkg.name}: package version must be exact semver`);
+    if (!integrity) errors.push(`${pkg.name}: sha512 registry integrity missing`);
+    if (duplicateWrapper) errors.push(`${pkg.wrapper}: duplicate managed wrapper`);
+    packages.push({ name: pkg.name, version: pkg.version, wrapper: pkg.wrapper, exact, integrity });
+  }
+  if (!packages.length) errors.push('managed runtime package list is empty');
+  return { ok: errors.length === 0, errors, packages, path: path.relative(ROOT, MANAGED_RUNTIME_PATH) };
+}
 
 function loadLock() {
   if (!fs.existsSync(LOCK_PATH)) return null;
@@ -151,6 +179,7 @@ function attestServer(name, def) {
 function main() {
   const opts = parseArgs(process.argv.slice(2));
   const configs = loadMcpConfig();
+  const managedRuntime = attestManagedRuntimePolicy();
   const servers = [];
   for (const item of configs) {
     if (item.error) {
@@ -216,10 +245,10 @@ function main() {
 
   const ok =
     (opts.strict
-      ? missing.length === 0 && lockCheck.ok
+      ? missing.length === 0 && lockCheck.ok && managedRuntime.ok
       : opts.checkLock
         ? lockCheck.ok
-        : true) && (skillAttest ? skillAttest.ok : true);
+        : managedRuntime.ok) && (skillAttest ? skillAttest.ok : true);
   const payload = {
     ok,
     softMode: !opts.strict && !opts.checkLock && !opts.strictSkills,
@@ -228,13 +257,14 @@ function main() {
     servers,
     skills,
     skillPublisher: skillAttest,
+    managedRuntime,
     failed: missing.map((s) => s.name),
     lockPath: path.relative(ROOT, LOCK_PATH),
     lockUpdated: Boolean(opts.writeLock),
     lockOk: lockCheck.ok,
     lockDrifts: lockCheck.drifts,
     guidance:
-      'Use --write-lock / --check-lock for MCP entrypoints. Add --skills or --write-skill-lock / --check-skill-lock for publisher registry + skill hash lock (optional cosign). --strict-skills fails on skill lock drift or failed cosign.',
+      'Use --write-lock / --check-lock for MCP entrypoints. Managed runtime package versions and sha512 integrity are always checked. Add --skills or --write-skill-lock / --check-skill-lock for publisher registry + skill hash lock (optional cosign). --strict-skills fails on skill lock drift or failed cosign.',
   };
 
   fs.mkdirSync(RECEIPT_DIR, { recursive: true });
@@ -254,6 +284,7 @@ function main() {
         `${sk.present ? 'OK' : 'SKIP'}: skills ${sk.root} — ${sk.present ? `${sk.skillMdCount} SKILL.md` : 'absent'}`
       );
     }
+    console.log(`${managedRuntime.ok ? 'OK' : 'FAIL'}: managed MCP runtime policy — ${managedRuntime.packages.length} exact package(s)`);
     if (opts.writeLock) console.log(`lock written: ${payload.lockPath}`);
     if (opts.checkLock || opts.writeLock) {
       console.log(

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "updated": "2026-08-13",
+  "updated": "2026-09-01",
   "regularOpenSourceDownload": [
     {
       "path": "apps/api",
@@ -13,6 +13,10 @@
     {
       "path": "apps/backend",
       "role": "backend shell; proprietary orchestrator module is stubbed in OSS export"
+    },
+    {
+      "path": "apps/browser-control-surfaces",
+      "role": "browser automation and agent orchestration surfaces shipped with the open runtime"
     },
     {
       "path": "apps/chrome-extension",
@@ -47,8 +51,8 @@
   "excludedTopLevelApps": [
     {
       "path": "apps/ai-arcade",
-      "classification": "separate-open-source-satellite",
-      "reason": "game/demo satellite, not part of the default TNF runtime"
+      "classification": "standalone-satellite",
+      "reason": "standalone product/satellite; own private repo"
     },
     {
       "path": "apps/cloud-sandbox",
@@ -62,8 +66,8 @@
     },
     {
       "path": "apps/myphoneremote-api",
-      "classification": "non-oss-or-personal",
-      "reason": "standalone product, tracked outside TNF distribution"
+      "classification": "standalone-satellite",
+      "reason": "standalone product/satellite; own private repo"
     },
     {
       "path": "apps/nexus-orchestrator",
@@ -72,8 +76,8 @@
     },
     {
       "path": "apps/poker-room",
-      "classification": "separate-open-source-satellite",
-      "reason": "game/demo satellite, not part of the default TNF runtime"
+      "classification": "standalone-satellite",
+      "reason": "standalone product/satellite; own private repo"
     },
     {
       "path": "apps/stripe-provider-bridge",
@@ -94,6 +98,11 @@
       "path": "apps/visualization-hub",
       "classification": "separate-open-source-satellite",
       "reason": "observability/visualization satellite, not default runtime"
+    },
+    {
+      "path": "apps/casin8-games",
+      "classification": "standalone-satellite",
+      "reason": "standalone product/satellite; own private repo"
     }
   ],
   "coreRationale": {
@@ -113,34 +122,16 @@
       "reason": "agent-development satellite; own repo, not a packaged TNF offering"
     },
     {
-      "path": "ai-arcade",
-      "root": "TNF-Extensions",
-      "github": "https://github.com/whodaniel/tnf-ai-arcade",
-      "reason": "game/demo satellite; own repo, not a packaged TNF offering"
-    },
-    {
       "path": "audio-trigger-kws-mvp",
       "root": "TNF-Extensions",
       "github": "https://github.com/whodaniel/tnf-audio-trigger-kws-mvp",
       "reason": "voice/KWS pilot; own repo, not a packaged TNF offering"
     },
     {
-      "path": "casin8-games",
-      "root": "TNF-Extensions",
-      "github": "https://github.com/whodaniel/tnf-casin8-games",
-      "reason": "game/demo satellite; own repo, not a packaged TNF offering"
-    },
-    {
       "path": "openclaw",
       "root": "TNF-Extensions",
       "github": "https://github.com/whodaniel/tnf-openclaw",
       "reason": "optional harness adapter; own repo, not required to staff TNF capabilities"
-    },
-    {
-      "path": "poker-room",
-      "root": "TNF-Extensions",
-      "github": "https://github.com/whodaniel/tnf-poker-room",
-      "reason": "game/demo satellite; own repo, not a packaged TNF offering"
     },
     {
       "path": "telegram-mcp",
@@ -169,12 +160,6 @@
       "reason": "vendored and research checkouts; not TNF source; no TNF GitHub repo"
     },
     {
-      "path": "myphoneremote-api",
-      "root": "TNF-Extensions",
-      "github": "https://github.com/whodaniel/tnf-myphoneremote-api",
-      "reason": "standalone product; own private repo"
-    },
-    {
       "path": "nexus-orchestrator",
       "root": "TNF-Extensions",
       "github": "https://github.com/whodaniel/tnf-nexus-orchestrator",
@@ -192,5 +177,6 @@
       "github": "https://github.com/whodaniel/virtual-library-blueprints",
       "reason": "operator/library intake workstream; already its own private repo"
     }
-  ]
+  ],
+  "standaloneSatelliteRepos": []
 }

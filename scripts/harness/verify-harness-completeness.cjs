@@ -94,6 +94,11 @@ function main() {
     'scripts/harness/materialize-sandbox-profile.cjs',
     'scripts/harness/provision-injection-surfaces.cjs',
     'scripts/harness/host-prompt-profiles.cjs',
+    'scripts/harness/mcp-runtime-provision.cjs',
+    'scripts/harness/mcp-runtime-live-probe.cjs',
+    'scripts/skills/universal-skill-disclosure-guard.cjs',
+    'data/harness/managed-mcp-runtime.json',
+    'schemas/managed-mcp-runtime.schema.json',
     'data/harness/host-prompt-profiles.json',
     'scripts/forge_sandbox.sb',
   ];

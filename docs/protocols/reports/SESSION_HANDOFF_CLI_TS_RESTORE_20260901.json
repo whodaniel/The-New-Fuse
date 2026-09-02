@@ -1,0 +1,68 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "3a9e2b14-6c7d-4f51-a8e9-b2d4f6a81c03",
+  "created_at": "2026-09-01T10:45:00Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
+  "head_sha": "e2271e7c35d5091be19b63d49cd4c9f0b4c5b700",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-DOCTOR-PERF"],
+  "work_summary": [
+    "Detected that packages/tnf-cli/src/cli.ts (814508 bytes, 22264 lines) was truncated to 0 bytes and committed by autonomous fleet commit bf04b72a2 (08:09) while the working tree was shared with fleet automation.",
+    "Audited every path changed between 5e2caf328 (last good) and HEAD: cli.ts was the only zeroed artifact.",
+    "Restored cli.ts byte-for-byte from 5e2caf328 (git checkout of that path); verified 22264 lines restored; all prior model-selector and bundling artifacts confirmed intact."
+  ],
+  "changed_paths": [
+    "docs/protocols/reports/SESSION_HANDOFF_CLI_TS_RESTORE_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_CLI_TS_RESTORE_20260901.md",
+    "packages/tnf-cli/src/cli.ts"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "wc -l confirms 22264 lines restored; dist/cli.js bundle (built from this source) verified functional before and after; scan for other zeroed files across the diff range found none."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "high",
+    "resume_checklist": [
+      "Investigate which fleet process truncated cli.ts (candidates: subdirector-autopilot, master-reconciliation) before it recurs.",
+      "Resume lazy command-registration refactor of cli.ts on a quiesced tree."
+    ]
+  },
+  "next_actions": [
+    "Commit the restore immediately so HEAD is buildable again.",
+    "Do not push without a separate explicit publication instruction."
+  ]
+}

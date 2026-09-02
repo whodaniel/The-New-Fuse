@@ -1,233 +1,127 @@
-# TNF Terminal Multiplexer Setup Documentation
+# TNF tmux convention
 
-## Overview
-Terminal multiplexer integration for The New Fuse (TNF) relay system providing comprehensive process management, monitoring, and development environment orchestration.
+**Status:** Phase A (wrap, naming, reaper, capture) plus gated Phase C keystroke
+transport. Enter stays opt-in.  
+**Plan:** `docs/operations/TNF_TMUX_MULTIPLEXER_CONVENTION_PLAN.md`  
+**Archived dashboard:** `scripts/archive/tnf-tmux-setup.sh` — do not revive.
 
-## Installation & Setup
+tmux is infrastructure TWIP already specified (`multiplexer.*`,
+`tmux-capture-pane`). TNF-launched CLI agents start inside a dedicated tmux
+server so a closed Terminal.app window does not kill the process, and so
+`getTmuxTtyMap()` / `capture-pane` can become the primary inventory path.
 
-### Prerequisites
+This is not a new protocol and not a fixed six-window layout.
+
+## Prerequisites
+
 ```bash
-# Install tmux if not already installed
-brew install tmux  # macOS
+brew install tmux   # macOS
 # or
-sudo apt-get install tmux  # Ubuntu/Debian
+sudo apt-get install tmux
 ```
 
-### Quick Start
-```bash
-# Make the script executable
-chmod +x tnf-tmux-setup.sh
+TNF looks for `tmux` on `PATH`, then `/usr/local/bin/tmux` and
+`/opt/homebrew/bin/tmux`. Override with `TNF_TMUX_BIN`. If tmux is missing,
+launch falls back to Terminal.app `do script` / `nohup` as before.
 
-# Start the complete TNF environment
-./tnf-tmux-setup.sh start
+## Socket and names
 
-# Detach from session (keeps running)
-# Press: Ctrl+b then d
+| Item             | Value                                                                          |
+| ---------------- | ------------------------------------------------------------------------------ |
+| Socket           | `${TNF_TMUX_SOCKET:-$HOME/.tnf/tmux/tnf.sock}`                                 |
+| Registry         | `~/.tnf/tmux/sessions.jsonl`                                                   |
+| Agent session    | `tnf-a-<shortHost>-<agentId>`                                                  |
+| Operator session | `tnf-o-<shortHost>-<slug>`                                                     |
+| Logical address  | `tnf/agent/<hostId>/<agentId>/<incarnation>` or `tnf/operator/<hostId>/<slug>` |
 
-# Reattach to running session
-./tnf-tmux-setup.sh attach
-```
+Never use the operator’s default tmux server. Operator-class sessions are never
+reaped and never eligible for heartbeat injection.
 
-## Session Layout
+## Commands
 
-### Window 0: Relay Server
-- **Purpose**: Main TNF relay server
-- **Command**: `node enhanced-tnf-relay.js start`
-- **Monitors**: HTTP (3000) and WebSocket (3001) servers
-
-### Window 1: Log Monitoring (4 panes)
-- **Pane 0**: `enhanced-relay.log`
-- **Pane 1**: `relay.log`
-- **Pane 2**: `relay-startup.log`
-- **Pane 3**: `logs/relay.log`
-
-### Window 2: MCP Agents (2 panes)
-- **Pane 0**: Process monitoring (`ps aux | grep mcp`)
-- **Pane 1**: Port monitoring (`lsof -i :3000,3001,3772`)
-
-### Window 3: Chrome Extension (2 panes)
-- **Pane 0**: Extension development environment
-- **Pane 1**: Build and development commands
-
-### Window 4: API Testing (2 panes)
-- **Pane 0**: HTTP API testing with curl
-- **Pane 1**: WebSocket testing with wscat
-
-### Window 5: File Operations
-- **Purpose**: General file management and project navigation
-
-## Management Commands
+Source of truth: `scripts/runtime/tnf-tmux.cjs`. CLI is a thin dispatcher.
 
 ```bash
-# Session Management
-./tnf-tmux-setup.sh start      # Create new session
-./tnf-tmux-setup.sh stop       # Terminate session
-./tnf-tmux-setup.sh restart    # Stop and start
-./tnf-tmux-setup.sh attach     # Attach to existing
-./tnf-tmux-setup.sh status     # Show session info
-./tnf-tmux-setup.sh list       # List all sessions
-
-# Remote Command Execution
-./tnf-tmux-setup.sh send relay-server "curl http://localhost:3000/status"
-./tnf-tmux-setup.sh send api-test "wscat -c ws://localhost:3001"
+tnf tmux status
+tnf tmux list
+tnf tmux attach tnf-a-<host>-<agentId>
+tnf tmux reap --dry-run
+tnf tmux wrap --class agent --agent-id pi --detach -- -- <command>
+# optional, not a mandate — persistence for your own interactive session:
+tnf tmux wrap --class operator --slug pi -- -- pi
 ```
 
-## Key Benefits
+`tnf tmux reap` only considers `tnf-a-*` sessions with no attached client, idle
+longer than `TNF_TMUX_REAP_IDLE_SECONDS` (default 6h), whose pane command is
+gone. It never kills `tnf-o-*`.
 
-### 1. Process Persistence
-- Relay server continues running after terminal closure
-- AI automation sessions remain active
-- MCP agent processes maintained
+Governed cadence: chronological process `tnf-tmux-reap` (`15 * * * *`, via
+`chronological-dispatch.cjs`). Install/update local crontab with
+`node scripts/setup/provision-local-cron.cjs` when you want the slot on this
+host. Ad-hoc: `tnf tmux reap --dry-run`.
 
-### 2. Real-time Monitoring
-- Multiple log files monitored simultaneously
-- Process status visibility
-- Port usage tracking
-- Visual activity alerts
+## How agents are launched
 
-### 3. Development Efficiency
-- Instant context switching between components
-- Parallel development and testing workflows
-- Centralized command execution
+`scripts/start-agent-network.sh` wraps TNF CLI agents on the dedicated socket
+first. Terminal.app, when opened, is a **client** (`tmux attach`), not the
+process parent. `scripts/runtime/launch-agent-wrapper.sh` also wraps when
+`TNF_TMUX_WRAP=1` (default) and the process is not already on the TNF socket.
 
-### 4. Session Management
-- Detach/reattach capabilities
-- Remote session access via SSH
-- Multiple developer collaboration
+Disable wrap: `TNF_TMUX_WRAP=0`.  
+Skip opening a Terminal.app client: `TNF_TMUX_OPEN_CLIENT=0`.
 
-## Tmux Navigation
+Cursor IDE and this chat stay outside the wrap.
 
-### Essential Shortcuts
-```
-Ctrl+b + c        # Create new window
-Ctrl+b + n        # Next window
-Ctrl+b + p        # Previous window
-Ctrl+b + 0-9      # Switch to window number
-Ctrl+b + d        # Detach session
-Ctrl+b + %        # Split pane vertically
-Ctrl+b + "        # Split pane horizontally
-Ctrl+b + arrow    # Navigate between panes
-Ctrl+b + x        # Close current pane
-Ctrl+b + &        # Close current window
-```
+## Two tracks
 
-### Window-specific Actions
-```
-# From any terminal
-tmux attach-session -t tnf-relay
+| Track                | Who                               | Mandate         | `send-keys`       |
+| -------------------- | --------------------------------- | --------------- | ----------------- |
+| TNF-launched agents  | Wrappers / start-agent-network    | Yes             | Not in this phase |
+| Operator interactive | You running `pi` / Claude / Codex | Optional helper | Never             |
 
-# Send commands to specific windows
-tmux send-keys -t tnf-relay:relay-server "node --version" C-m
-tmux send-keys -t tnf-relay:api-test "curl localhost:3000/status" C-m
-```
+Tonight’s “I was in `pi` and the window died” case is Track 2: wrap your own
+invocation. Track 1 does not change operator-attended tabs.
 
-## Monitoring & Alerts
+## TWIP
 
-### Activity Monitoring
-- Visual alerts when log files update
-- Process state change notifications
-- Port availability changes
+No schema change. Once a pane exists, `apps/relay-server/src/mcp-server.mjs`
+`getTmuxTtyMap()` fills `multiplexer` and prefers `tmux capture-pane`. Verify:
 
-### Performance Tracking
-- Real-time process monitoring
-- Memory and CPU usage via `top`/`htop`
-- Network connection status
-
-## Integration with TNF Components
-
-### Relay Server Integration
-- Automatic startup of enhanced-tnf-relay.js
-- HTTP and WebSocket server monitoring
-- Agent discovery and registration tracking
-
-### Chrome Extension Development
-- Build process automation
-- Development server management
-- Extension reload triggers
-
-### MCP Agent Coordination
-- AppleScript MCP monitoring
-- Browser MCP process tracking
-- Inter-agent communication logging
-
-### AI Session Management
-- Session lifecycle tracking
-- Element mapping updates
-- Automation workflow monitoring
-
-## Troubleshooting
-
-### Common Issues
 ```bash
-# Session not starting
-tmux kill-server  # Kill all tmux processes
-./tnf-tmux-setup.sh start
-
-# Can't attach to session
-tmux list-sessions  # Check existing sessions
-tmux attach -t tnf-relay
-
-# Pane not responding
-# Ctrl+b + & to close window
-# Ctrl+b + c to create new window
+node scripts/runtime/tnf-tmux.cjs status
+node scripts/protocols/twip-macro-board.cjs --tenant tnf-local --include-content --json
 ```
 
-### Log Analysis
+Expect `multiplexer.kind === "tmux"` and
+`context_excerpt.source === "tmux-capture-pane"` on wrapped sessions. The relay
+scanner reads the dedicated TNF socket (`TNF_TMUX_SOCKET` /
+`~/.tnf/tmux/tnf.sock`) first, then the default tmux server.
+
+## Heartbeat transport (Phase C)
+
+`scripts/lib/tnf-tmux-inject.cjs` is the only allowlisted pane writer. Heartbeat
+prefers it for `tnf-a-*` panes that pass `shouldInjectTmuxPane`, then falls back
+to AppleScript when no pane maps. `tnf-o-*` is never injectable. Enter still
+requires `TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION=true` plus a challenge
+rationale. Default cron stays on the structured bus.
+
+## What this does not do
+
+- Reboot / logout survival (`tmux-resurrect`, launchd)
+- Reviving `tnf-tmux-setup.sh` or any shared window layout
+- Wrapping Cursor IDE, this chat, or login shells by default
+- Auto-submit into operator-attended panes
+
+## Navigation (operator attach)
+
+```
+Ctrl+b d     detach (session keeps running)
+Ctrl+b c     new window
+Ctrl+b n / p next / previous window
+```
+
 ```bash
-# Check specific logs in tmux
-tmux send-keys -t tnf-relay:logs.0 "grep ERROR enhanced-relay.log" C-m
-
-# Monitor process status
-tmux send-keys -t tnf-relay:mcp-agents.0 "ps aux | grep node" C-m
+tmux -S "$HOME/.tnf/tmux/tnf.sock" attach -t <session>
+# or
+tnf tmux attach <session>
 ```
-
-## Advanced Configuration
-
-### Custom Window Layout
-```bash
-# Add custom windows to existing session
-tmux new-window -t tnf-relay -n 'custom' -c "$PROJECT_DIR"
-tmux send-keys -t tnf-relay:custom "your-command-here" C-m
-```
-
-### Automated Alerts
-```bash
-# Set up alerts for specific log patterns
-tmux send-keys -t tnf-relay:logs.0 "tail -f enhanced-relay.log | grep --line-buffered ERROR" C-m
-```
-
-## Best Practices
-
-### Session Management
-1. Always use `./tnf-tmux-setup.sh start` for initialization
-2. Detach rather than closing terminal windows
-3. Use descriptive window names for custom additions
-4. Monitor session status regularly
-
-### Development Workflow
-1. Start session at beginning of work day
-2. Use separate windows for different components
-3. Keep logs visible in background
-4. Detach during breaks/meetings
-
-### Monitoring Strategy
-1. Check relay server window first for overall health
-2. Monitor MCP agents for process stability
-3. Watch logs for error patterns
-4. Test API endpoints regularly
-
-## Security Considerations
-
-### Network Security
-- WebSocket server limited to localhost
-- HTTP API restricted to local access
-- No external network exposure by default
-
-### Process Security
-- Scripts run with user permissions
-- No elevated privileges required
-- Isolated session environment
-
----
-
-**Setup Complete**: TNF Terminal Multiplexer environment ready for development and monitoring operations.

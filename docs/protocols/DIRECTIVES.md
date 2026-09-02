@@ -320,7 +320,11 @@ These are hard requirements. Violation is a protocol failure.
   via `TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="true"` AND the crontab
   entry carries a sibling `challenge_rationale` AND a corresponding entry exists
   in `CHALLENGE_RATIONALE_LOG.md`. A frontmost-window pre-check is mandatory
-  before any keystroke path runs. The CI guard
+  before any keystroke path runs. `tmux send-keys` is the same keystroke path:
+  it may exist only in `scripts/lib/tnf-tmux-inject.cjs`, must pass
+  `shouldInjectTmuxPane` (operator-class `tnf-o-*` hard deny, attached-active
+  pane skip, boxed-composer / typing skip), and must not send Enter unless the
+  same opt-in flag is set. The CI guard
   `scripts/protocols/check-operator-terminal-inviolability.cjs` fails any merge
   that violates these rules. The canonical heartbeat channel is `tnf:heartbeat`
   (not `tnf:bus:heartbeat`); envelopes are signed via

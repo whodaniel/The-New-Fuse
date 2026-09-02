@@ -279,6 +279,8 @@ write_relay_plist() {
     <string>${ENABLE_ACTIVITY_PERSISTENCE:-false}</string>
     <key>ACTIVITY_PERSISTENCE_REQUIRED</key>
     <string>${ACTIVITY_PERSISTENCE_REQUIRED:-false}</string>
+    <key>RELAY_ALLOW_ANONYMOUS</key>
+    <string>${RELAY_ALLOW_ANONYMOUS:-1}</string>
     <key>PATH</key>
     <string>$(dirname "$NODE_BIN"):/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     <key>HOME</key>

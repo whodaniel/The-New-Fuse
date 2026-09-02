@@ -25,16 +25,16 @@ are optional **host harness surfaces**. Docs in `docs/core/` are artefacts;
 
 ## 2. Eight layers (UNU anatomy → TNF evidence)
 
-| Layer                           | TNF mapping                                                                           | Verify                                                              |
-| ------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------- |
-| Interface / override            | Turn Zero, harness pause/resume, agent modes                                          | `tnf harness inspect`                                               |
-| Provider routing                | Assimilation routes + failover policy + harness context                               | `provider-failover.cjs` / harness-config                            |
-| Context + compaction            | FRONTLOAD + compaction records + host-compaction adapter                              | `host-compaction-adapter.cjs status                                 | verify` |
-| Sandbox / isolation             | D11 + materialized seatbelt + `sandbox-run`                                           | `scripts/harness/sandbox-run.cjs`                                   |
-| Permissions / approvals / hooks | Permission berm + USER_CONFIRMATION + self-edit gate                                  | `scripts/harness/permission-berm.cjs`                               |
-| Orchestration + budgets         | harness cycle/loop, full-auto, D10                                                    | `tnf harness cycle`                                                 |
-| Memory / session / trajectories | MEMORY.md (static) + `tnf remember` / memory-layer (dynamic) + trajectories + handoff | `tnf remember retain\|recall`, `memory-layer.cjs`, `trajectory.cjs` |
-| Tools / MCP / skills            | mcp lock + skill publisher registry/lock + optional cosign                            | `skill-publisher-attest.cjs` / `supply-chain --skills`              |
+| Layer                           | TNF mapping                                                                                | Verify                                                              |
+| ------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------- |
+| Interface / override            | Turn Zero, harness pause/resume, agent modes                                               | `tnf harness inspect`                                               |
+| Provider routing                | Assimilation routes + failover policy + harness context                                    | `provider-failover.cjs` / harness-config                            |
+| Context + compaction            | FRONTLOAD + compaction records + host-compaction adapter                                   | `host-compaction-adapter.cjs status                                 | verify` |
+| Sandbox / isolation             | D11 + materialized seatbelt + `sandbox-run`                                                | `scripts/harness/sandbox-run.cjs`                                   |
+| Permissions / approvals / hooks | Permission berm + USER_CONFIRMATION + self-edit gate                                       | `scripts/harness/permission-berm.cjs`                               |
+| Orchestration + budgets         | harness cycle/loop, full-auto, D10                                                         | `tnf harness cycle`                                                 |
+| Memory / session / trajectories | MEMORY.md (static) + `tnf remember` / memory-layer (dynamic) + trajectories + handoff      | `tnf remember retain\|recall`, `memory-layer.cjs`, `trajectory.cjs` |
+| Tools / MCP / skills            | pinned managed MCP runtime + mcp lock + progressive skill publisher/lock + optional cosign | `mcp-runtime-provision.cjs verify` / `supply-chain --skills`        |
 
 Machine-readable status + evidence paths live in
 `data/harness/harness-config.json`. Update that file when a layer’s evidence or
@@ -77,6 +77,9 @@ tnf remember recall "redis"
 tnf harness memory recall --query "redis" --limit 5
 tnf harness berm evaluate --action-class git_push --json
 tnf harness supply-chain
+pnpm run tnf:harness:mcp-runtime -- verify
+pnpm run tnf:harness:mcp-runtime:probe -- --concurrent 2 --smoke-readonly
+pnpm run skills:progressive:guard
 tnf harness host-compaction record --host cursor
 tnf harness cycle --skip-live-loop
 
@@ -84,6 +87,12 @@ tnf harness cycle --skip-live-loop
 node scripts/install-agent-frontload.cjs --verify
 tnf harness host-profiles
 ```
+
+Harness provisioning also enforces the active-skill budget. Specialized agent
+packs remain in inactive vaults and are discovered through
+`.agent/SKILL_MANIFEST.md` → `skill-bank-query` → one selected `SKILL.md` body.
+Republishing an imported pack into every active global skill root is a harness
+regression even if the skill-bank index itself is healthy.
 
 ---
 
@@ -113,6 +122,12 @@ failed handoff (see `TURN_END_MANDATE.md`).
 | 4. Handoff          | Emit fresh session handoff with `TNF_PROTOCOL_ACK`                                         | `pnpm run handoff:emit:verified` or `node scripts/turn-end.cjs`                   |
 | 5. Resume checklist | `continuation.resume_checklist` must list concrete next steps — not "continue queue" alone | `SESSION_HANDOFF_LATEST.json`                                                     |
 | 6. Commit           | Stage **only** intentional paths (no daemon noise, vitest caches, auto macro boards)       | `git add` scoped paths; then commit                                               |
+
+If the session created a branch or worktree and delivery is authorized, closure
+continues through push, PR review/CI resolution, merge verification, and safe
+worktree/branch cleanup. If external authorization is missing, the required end
+state is a precise durable handoff—not a silently orphaned worktree. Use
+`.agent/skills/tnf-development-workcycle-closure/SKILL.md`.
 
 ### Staging order matters (hardened 2026-08-12)
 

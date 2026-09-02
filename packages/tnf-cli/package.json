@@ -14,7 +14,7 @@
     "tnf-agent": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsc --build && node scripts/copy-provider-catalog.cjs",
+    "build": "tsc --build && node scripts/copy-provider-catalog.cjs && node scripts/bundle-cli.cjs && node -e \"require('node:fs').utimesSync('dist/cli.js', new Date(), new Date())\"",
     "clean": "rm -rf dist .turbo .tsbuildinfo tsconfig.tsbuildinfo",
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",

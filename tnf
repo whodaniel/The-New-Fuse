@@ -27,11 +27,60 @@ if [ -z "$(command -v pnpm 2>/dev/null)" ] && [ -n "$(command -v corepack 2>/dev
   corepack enable pnpm 2>/dev/null || true
 fi
 
-if [ -z "$(command -v pnpm 2>/dev/null)" ]; then
-  echo "Error: pnpm not found. Install via: corepack enable pnpm" >&2
-  exit 1
+# Prefer the built dist bundle when it is current — tsx transpiles a
+# 22k-line cli.ts plus its full import graph on every invocation (≈10s warm,
+# ≈50s cold), while the installed launcher is rebuilt by
+# scripts/install-tnf-cli.sh. A stale dist is detected by mtime comparison
+# against the CLI sources; operators can force the source path with
+# TNF_CLI_USE_TSX=1.
+CLI_DIST="$ROOT_DIR/packages/tnf-cli/dist/cli.js"
+CLI_SRC="$ROOT_DIR/packages/tnf-cli/src/cli.ts"
+
+_tnf_dist_current() {
+  [ -f "$CLI_DIST" ] || return 1
+  # dist must be newer than the newest CLI source file, not just cli.ts —
+  # services/utils edits must not be silently ignored. Only scan paths that
+  # exist, and group the name alternatives so the -o binds inside the path set.
+  local -a scan_paths=()
+  [ -d "$ROOT_DIR/packages/tnf-cli/src" ] && scan_paths+=("$ROOT_DIR/packages/tnf-cli/src")
+  [ -f "$ROOT_DIR/data/providers/catalog.json" ] && scan_paths+=("$ROOT_DIR/data/providers/catalog.json")
+  [ ${#scan_paths[@]} -gt 0 ] || return 1
+  local dist_mtime newest_src
+  dist_mtime="$(stat -f '%m' "$CLI_DIST" 2>/dev/null || echo 0)"
+  newest_src="$(find "${scan_paths[@]}" \( -name '*.ts' -o -name '*.json' \) -exec stat -f '%m' {} + 2>/dev/null | sort -rn | head -1)"
+  [ -n "$newest_src" ] || return 1
+  [ "$dist_mtime" -ge "$newest_src" ]
+}
+
+if [ "${TNF_CLI_USE_TSX:-0}" = "1" ]; then
+  if [ -z "$(command -v pnpm 2>/dev/null)" ]; then
+    echo "Error: pnpm not found. Install via: corepack enable pnpm" >&2
+    exit 1
+  fi
+  cd "$ROOT_DIR"
+  exec pnpm exec tsx "$CLI_SRC" "$@"
 fi
 
-# Resolve from repo root so pnpm does not inspect unrelated package.json files.
-cd "$ROOT_DIR"
-exec pnpm exec tsx "$ROOT_DIR/packages/tnf-cli/src/cli.ts" "$@"
+if _tnf_dist_current; then
+  cd "$ROOT_DIR"
+  exec node "$CLI_DIST" "$@"
+fi
+
+# dist missing or stale: rebuild once, then use it; fall back to tsx if the
+# build is unavailable (e.g. partial checkout).
+if [ -n "$(command -v pnpm 2>/dev/null)" ]; then
+  if (cd "$ROOT_DIR" && pnpm --filter @the-new-fuse/tnf-cli build >/dev/null 2>&1) && [ -f "$CLI_DIST" ]; then
+    cd "$ROOT_DIR"
+    exec node "$CLI_DIST" "$@"
+  fi
+  echo "tnf: dist build unavailable/failed — falling back to tsx (slow); run 'pnpm --filter @the-new-fuse/tnf-cli build'." >&2
+  cd "$ROOT_DIR"
+  exec pnpm exec tsx "$CLI_SRC" "$@"
+fi
+
+if [ -f "$CLI_DIST" ]; then
+  cd "$ROOT_DIR"
+  exec node "$CLI_DIST" "$@"
+fi
+echo "Error: neither pnpm nor a built packages/tnf-cli/dist/cli.js is available." >&2
+exit 1

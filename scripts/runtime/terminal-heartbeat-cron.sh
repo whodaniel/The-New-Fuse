@@ -64,6 +64,14 @@ sync_lib() {
       cp -f "$f" "$SERVICE_LIB_DIR/"
     done
   fi
+  # tnf-tmux-inject.cjs resolves ../runtime/tnf-tmux.cjs when mirrored under
+  # ~/.tnf/terminal-heartbeat/lib; mirror the helper alongside lib copies.
+  local tmux_helper="${REPO_ROOT_DIR}/scripts/runtime/tnf-tmux.cjs"
+  if [ -f "$tmux_helper" ]; then
+    mkdir -p "$HOME/.tnf/runtime" "$SERVICE_HOME/runtime"
+    cp -f "$tmux_helper" "$HOME/.tnf/runtime/tnf-tmux.cjs"
+    cp -f "$tmux_helper" "$SERVICE_HOME/runtime/tnf-tmux.cjs"
+  fi
 }
 
 sync_script() {
@@ -100,6 +108,9 @@ cron_line() {
   # CI guard `scripts/protocols/check-operator-terminal-inviolability.cjs`
   # refuses any new cron entry that flips this flag without one.
   local allow_injection_value="${TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION:-false}"
+  if [ "$allow_injection_value" = "true" ]; then
+    printf '# challenge_rationale: docs/protocols/CHALLENGE_RATIONALE_LOG.md [2026-08-30] heartbeat prompt injection opt-in (D24 §3.1; tmux shouldInjectTmuxPane gate)\n'
+  fi
   printf '%s cd "%s" && PATH="%s:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" NODE_PATH="%s/node_modules:%s/packages/tnf-cli/node_modules" TNF_TERMINAL_HEARTBEAT_STATE_DIR="%s" TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="%s" TNF_INTERACTIVE_SAFE_MODE="false" "%s" "%s" >> "%s" 2>&1 %s\n' \
     "$SCHEDULE_VALUE" \
     "$SERVICE_HOME" \

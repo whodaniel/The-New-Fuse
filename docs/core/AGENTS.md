@@ -117,6 +117,29 @@ session evidence: the operator explicitly requested protocol changes to allow
 all agents to commit and push autonomously, after repeated friction with the
 manual confirmation gate blocking progress on routine (non-authority) changes.
 
+### Sweep Discipline (added 2026-09-01, operator-approved)
+
+Autonomous commits stay safe only with two more constraints, learned from the
+2026-09-01 incidents in which routine-sweep commits (`bf04b72a2`, `e2271e7c3`,
+`dce732ccc`) zeroed and half-broke `packages/tnf-cli` sources by sweeping
+unrelated in-progress work:
+
+6. **Routine sweep commits never stage source code.** A routine/maintenance
+   commit stages only the data/docs/report paths it deliberately wrote, by
+   explicit path list. It never uses `git add -A` or `git commit -a`, and it
+   must not stage anything under `packages/**/src`, `scripts/`, `apps/**`,
+   `.husky/`, or any `*.ts`/`*.cjs`/`*.sh` that the sweep did not itself author.
+7. **Behavioral changes ride task branches.** Any change that alters source
+   behavior goes on a dedicated task branch with its own scoped receipt, never
+   into a periodic sweep. If the tree the sweep encounters is inconsistent
+   (failing type-check, empty source files), the sweep stops and reports — it
+   does not commit its way past.
+
+These constraints ride in the heartbeat prompt template
+(`scripts/runtime/terminal-heartbeat-pulse.cjs`) that woken sessions receive,
+and are enforced at the mechanical layer by
+`scripts/security/zero-file-guard.cjs`.
+
 ## Build Before You Merge
 
 Do not merge to `main` on the strength of review alone. Run the build.

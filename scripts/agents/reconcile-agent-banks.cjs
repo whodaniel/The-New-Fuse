@@ -291,20 +291,20 @@ function main() {
   );
 
   const targetMap = {
-    agy: [path.join(home, '.agy', 'skills', 'imported-claude-agents')],
-    codex: [path.join(home, '.codex', 'skills', 'imported-claude-agents')],
-    claude: [path.join(home, '.claude', 'skills', 'imported-claude-agents')],
-    gemini: [path.join(home, '.gemini', 'skills', 'imported-claude-agents')],
-    cursor: [path.join(home, '.cursor', 'skills-cursor', 'imported-claude-agents')],
-    opencode: [path.join(home, '.opencode', 'skills', 'imported-claude-agents')],
-    kilo: [path.join(home, '.kilo', 'skills', 'imported-claude-agents')],
-    augment: [path.join(home, '.augment', 'skills', 'imported-claude-agents')],
-    tnf: [path.join(home, '.tnf', 'skills', 'imported-claude-agents')],
+    agy: [path.join(home, '.agy', 'skills_inactive', 'imported-claude-agents')],
+    codex: [path.join(home, '.codex', 'skills_inactive', 'imported-claude-agents')],
+    claude: [path.join(home, '.claude', 'skills_inactive', 'imported-claude-agents')],
+    gemini: [path.join(home, '.gemini', 'skills_inactive', 'imported-claude-agents')],
+    cursor: [path.join(home, '.cursor', 'skills-inactive', 'imported-claude-agents')],
+    opencode: [path.join(home, '.opencode', 'skills_inactive', 'imported-claude-agents')],
+    kilo: [path.join(home, '.kilo', 'skills_inactive', 'imported-claude-agents')],
+    augment: [path.join(home, '.augment', 'skills_inactive', 'imported-claude-agents')],
+    tnf: [path.join(home, '.tnf', 'skills_inactive', 'imported-claude-agents')],
     hermes: [
-      path.join(home, '.hermes', 'skills', 'imported-claude-agents'),
-      path.join(home, '.hermes', 'hermes-agent', 'skills', 'imported-claude-agents'),
+      path.join(home, '.hermes', 'skills_inactive', 'imported-claude-agents'),
+      path.join(home, '.hermes', 'hermes-agent', 'skills_inactive', 'imported-claude-agents'),
     ],
-    project: [path.join(repoRoot, '.agent', 'skills', 'imported-claude-agents')],
+    project: [path.join(repoRoot, '.agent', 'skills-inactive', 'imported-claude-agents')],
   };
 
   const requestedTargets =

@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-08-10T19:01:50.315Z",
+    "generatedAt": "2026-08-31T21:09:58.945Z",
     "total": 4,
     "passed": 4,
     "failed": 0,
@@ -12,64 +12,53 @@
       "name": "Public /api/auth/login compatibility route",
       "method": "POST",
       "url": "https://thenewfuse.com/api/auth/login",
-      "expectedStatus": [
-        400,
-        401
-      ],
+      "expectedStatus": [400, 401],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 1804,
+      "elapsedMs": 1187,
       "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Public /api/v1/auth/login compatibility route",
       "method": "POST",
       "url": "https://thenewfuse.com/api/v1/auth/login",
-      "expectedStatus": [
-        400,
-        401
-      ],
+      "expectedStatus": [400, 401],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 473,
+      "elapsedMs": 848,
       "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Gateway /v1/auth/login canonical route",
       "method": "POST",
       "url": "https://api.thenewfuse.com/v1/auth/login",
-      "expectedStatus": [
-        400,
-        401
-      ],
+      "expectedStatus": [400, 401],
       "body": {
         "email": "invalid@example.com",
         "password": "bad-password"
       },
       "status": 401,
       "ok": true,
-      "elapsedMs": 362,
+      "elapsedMs": 396,
       "responseSnippet": "{\"message\":\"Invalid credentials\",\"error\":\"Unauthorized\",\"statusCode\":401}"
     },
     {
       "name": "Public /health route",
       "method": "GET",
       "url": "https://thenewfuse.com/health",
-      "expectedStatus": [
-        200
-      ],
+      "expectedStatus": [200],
       "status": 200,
       "ok": true,
-      "elapsedMs": 54,
-      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-08-10T19:01:50.493Z\"}"
+      "elapsedMs": 75,
+      "responseSnippet": "{\"status\":\"ok\",\"service\":\"tnf-landing\",\"timestamp\":\"2026-08-31T21:09:59.166Z\"}"
     }
   ]
 }

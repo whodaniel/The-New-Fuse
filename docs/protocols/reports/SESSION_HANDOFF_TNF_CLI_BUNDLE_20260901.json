@@ -1,0 +1,71 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "c6f0b5a2-7d3e-4c18-9f2e-8a4b1c2de3f5",
+  "created_at": "2026-09-01T10:15:00Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
+  "head_sha": "cf07878c4c8d2b012b3ae315c286b8d9443a2177",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node", "pnpm", "terminal"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-DOCTOR-PERF"],
+  "work_summary": [
+    "Bundled packages/tnf-cli into a single-file dist/cli.js (esbuild, minified, ~6.1MB, format esm, target node22) appended after tsc --build, replacing the per-file dist entry while keeping the tsc tree intact for anything importing dist subpaths.",
+    "createRequire banner shim fixes CJS deps (commander etc.) whose builtin requires fall into esbuild's dynamic-require guard; externals: bufferutil, utf-8-validate, fsevents, readline/promises.",
+    "Bundler resolves esbuild from the workspace root via createRequire so pnpm's isolated node_modules needs no new dependency; on any bundling failure it warns and keeps the tsc output, so build can never regress.",
+    "Also this session: root-caused flaky launchd services to a full disk (ENOSPC, 2Gi free); freed ~4.4GB via approved cleanup (pnpm prune/cache, old recovery capsules, recovery-tests), restarted failed services; all 20 services healthy."
+  ],
+  "changed_paths": [
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_BUNDLE_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_BUNDLE_20260901.md",
+    "packages/tnf-cli/package.json",
+    "packages/tnf-cli/scripts/bundle-cli.cjs"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "tnf --version warm 4.1s -> 2.9-3.6s (CPU 1.3s -> 0.7s); tnf doctor ~11.9s PASS with 20/20 services; tnf models openrouter --json returns 420 live models; command-surface test PASS (512 paths); full tnf-cli test suite passes (517 checks)."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Watch ~/.tnf growth (6.3GB at cleanup time) — disk pressure is the flake source.",
+      "Optionally pursue lazy command registration to cut the remaining ~0.7s CPU / ~2.5s eval floor."
+    ]
+  },
+  "next_actions": [
+    "Commit the bundling change through the normal TNF gates.",
+    "Monitor first cold-boot run for esbuild bundle regressions in uncommon command paths.",
+    "Do not push without a separate explicit publication instruction."
+  ]
+}

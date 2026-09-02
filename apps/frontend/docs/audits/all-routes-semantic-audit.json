@@ -1,28 +1,28 @@
 {
   "summary": {
-    "startedAt": "2026-08-10T18:54:26.406Z",
-    "generatedAt": "2026-08-10T19:01:42.030Z",
+    "startedAt": "2026-08-31T20:59:23.506Z",
+    "generatedAt": "2026-08-31T21:09:55.611Z",
     "baseUrl": "https://app.thenewfuse.com",
     "totalRoutes": 224,
     "hardBroken": 0,
     "networkBroken": 0,
     "sameAsRoot": 0,
-    "duplicateFingerprintGroups": 13,
+    "duplicateFingerprintGroups": 14,
     "rootHasAppRoot": true
   },
   "rows": [
     {
       "route": "/",
       "url": "https://app.thenewfuse.com/",
-      "finalUrl": "https://app.thenewfuse.com/auth/login",
-      "finalPath": "/auth/login",
+      "finalUrl": "https://app.thenewfuse.com/dashboard",
+      "finalPath": "/dashboard",
       "status": 200,
       "error": null,
       "title": "The New Fuse - AI Agent Orchestration Platform",
-      "h1": "Sign in",
+      "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
-      "textPreview": "{\"@context\":\"https://schema.org\",\"@type\":[\"softwareapplication\",\"webapplication\"],\"name\":\"the new fuse\",\"alternatename\":\"tnf\",\"applicationcategory\":\"developerapplication\",\"operatingsystem\":[\"web\",\"cli\",\"browser extension"
+      "fingerprint": "ef346ff9fa61efbb6b57df347d6ca1d9019d89af",
+      "textPreview": ""
     },
     {
       "route": "/3d-library",
@@ -34,8 +34,8 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "",
       "hasAppRoot": true,
-      "fingerprint": "061b47ec89e8010b0f639d511779de4f2c3e280b",
-      "textPreview": "something went wrongcannot read properties of undefined (reading 'x')try again (3 attempts left)reload page <div style=\"padding: 20px; text-align: center; color: #333\"> <h1>javascript required</h1> <p> this application r"
+      "fingerprint": "44358a706abe7f7e00e3f7124fd107f3c23e0381",
+      "textPreview": "loading 3d library..."
     },
     {
       "route": "/404",
@@ -905,7 +905,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
+      "fingerprint": "445ddcf9cd5c0f8e798f4fe9e63269f8a0be7edb",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -944,8 +944,8 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "5c9212d65ca2b0c25b4cad8718abe14952a3700c",
-      "textPreview": "tnf ecosystem maprootthe new fuse ecosystemmove up architecturethe new fuse ecosystempkg113 units@the-new-fusepkga2a-corepkg9 unitsa2a-protocolpkg1 unitsa2a-reactpkgag-ui-corepkg5 unitsagentpkg42 unitsagent-coordinationp"
+      "fingerprint": "68d51638784e56ff825f9cf38bc797be43f9ef2c",
+      "textPreview": "loading codebase map"
     },
     {
       "route": "/command-center",
@@ -1802,7 +1802,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "445ddcf9cd5c0f8e798f4fe9e63269f8a0be7edb",
+      "fingerprint": "d4aca6712c4957516d721322efdce673ba3f148e",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -2036,7 +2036,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
+      "fingerprint": "d4aca6712c4957516d721322efdce673ba3f148e",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -2101,7 +2101,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
+      "fingerprint": "445ddcf9cd5c0f8e798f4fe9e63269f8a0be7edb",
       "textPreview": "the new fuse • ai assets marketplacethe ai agent resourcemarketplace for tnf.find free and paid assets across the full ai agent stack: complete agents, prompts, skills, mcp servers, workflows, templates, models, courses,"
     },
     {
@@ -2335,8 +2335,8 @@
       "title": "",
       "h1": "",
       "hasAppRoot": false,
-      "fingerprint": "a47c6b86ebf9040f49df36f2d94a227e3a2db180",
-      "textPreview": "{\"status\":\"ok\",\"service\":\"tnf-app\",\"timestamp\":\"2026-08-10t18:59:52.056z\"}"
+      "fingerprint": "973a75d6718b394745e18a42300665963be79d35",
+      "textPreview": "{\"status\":\"ok\",\"service\":\"tnf-app\",\"timestamp\":\"2026-08-31t21:07:47.694z\"}"
     },
     {
       "route": "/suggestions",
@@ -2387,8 +2387,8 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "ea0f1f80ec072ae4d3f519079d456d914096ccdb",
-      "textPreview": "system statusthe new fuse statuslive service checks refresh every 15 seconds.multiple services unavailablerefresh nowlast checked: 02:59:59 pmpublic path: /statusapi gatewaycore api health endpoint response.healthygatewa"
+      "fingerprint": "156e3a3a4479b5ba60e7138b9b3cebaddb660492",
+      "textPreview": "system statusthe new fuse statuslive service checks refresh every 15 seconds.multiple services unavailablerefresh nowlast checked: 05:07:57 pmpublic path: /statusapi gatewaycore api health endpoint response.healthygatewa"
     },
     {
       "route": "/tasks",
@@ -2582,7 +2582,7 @@
       "title": "The New Fuse - AI Agent Orchestration Platform",
       "h1": "The New Fuse",
       "hasAppRoot": true,
-      "fingerprint": "73dce034689238bbed156a291945d162dc4936ca",
+      "fingerprint": "99ae368dfc46fe815cc2b6b4c4c6e66777062b41",
       "textPreview": "back to tnf homemaster clock visualizationturn tnf chron jobs into a living watch movement.drag gears into open mesh sockets, keep them coupled to the heartbeat, and inspect exact producer intervals with last-run and nex"
     },
     {
@@ -2931,7 +2931,6 @@
     {
       "fingerprint": "e8549d331ee41904a04fc19c5bc938227f32c365",
       "routes": [
-        "/",
         "/a2a-control",
         "/admin/marketplace",
         "/agency/dashboard",
@@ -3115,83 +3114,51 @@
     },
     {
       "fingerprint": "af90db84746289e131a6ca218ed692841d1f971e",
-      "routes": [
-        "/auth",
-        "/login"
-      ]
+      "routes": ["/auth", "/login"]
     },
     {
       "fingerprint": "0fdb296356f6da7940ac08348b6a34dd8ec6ef1a",
-      "routes": [
-        "/auth/forgot-password",
-        "/forgot-password"
-      ]
+      "routes": ["/auth/forgot-password", "/forgot-password"]
     },
     {
       "fingerprint": "ff2bd7eb8d69ce5f67abcdc9e2f379568f01f39a",
-      "routes": [
-        "/brand",
-        "/design-system"
-      ]
+      "routes": ["/brand", "/design-system"]
     },
     {
-      "fingerprint": "7f95713d0adfa7db46b9ade85969ad1d893fcd55",
-      "routes": [
-        "/capabilities",
-        "/platform",
-        "/product-map"
-      ]
+      "fingerprint": "445ddcf9cd5c0f8e798f4fe9e63269f8a0be7edb",
+      "routes": ["/capabilities", "/product-map"]
     },
     {
       "fingerprint": "9039f0758ce82e0328a01a74575b348b1528097c",
-      "routes": [
-        "/community",
-        "/help/community"
-      ]
+      "routes": ["/community", "/help/community"]
     },
     {
       "fingerprint": "261b16762e5c4fa16a6d757ebfb8e3741ea8f5d8",
-      "routes": [
-        "/connect",
-        "/integrations"
-      ]
+      "routes": ["/connect", "/integrations"]
     },
     {
       "fingerprint": "7010ea1eda456f60ca76fa9cd61df236deab8ff2",
-      "routes": [
-        "/docs",
-        "/help/documentation",
-        "/help/faq",
-        "/help/tutorials"
-      ]
+      "routes": ["/docs", "/help/documentation", "/help/faq", "/help/tutorials"]
     },
     {
       "fingerprint": "59214064dd6c6e73bda58e2d641c0d3bbca1dc1e",
-      "routes": [
-        "/help/support",
-        "/support"
-      ]
+      "routes": ["/help/support", "/support"]
     },
     {
       "fingerprint": "71e5bff5fc86dd4e76d04c524966ac39c3a9a464",
-      "routes": [
-        "/legal/privacy",
-        "/privacy"
-      ]
+      "routes": ["/legal/privacy", "/privacy"]
     },
     {
       "fingerprint": "b3f6f24c7ba7f1d7fc02b41668a2788f1beae6a1",
-      "routes": [
-        "/legal/terms",
-        "/terms"
-      ]
+      "routes": ["/legal/terms", "/terms"]
+    },
+    {
+      "fingerprint": "d4aca6712c4957516d721322efdce673ba3f148e",
+      "routes": ["/marketplace", "/platform"]
     },
     {
       "fingerprint": "992997b562b1f5024e5d7b029a61037ce97ed14c",
-      "routes": [
-        "/terminals",
-        "/visualizations/terminals"
-      ]
+      "routes": ["/terminals", "/visualizations/terminals"]
     }
   ]
 }

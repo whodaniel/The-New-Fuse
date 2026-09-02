@@ -73,6 +73,20 @@ if [[ -z "$NODE_BIN" ]]; then
   exit 127
 fi
 
+TNF_TMUX_HELPER="$ROOT/scripts/runtime/tnf-tmux.cjs"
+
+already_in_tnf_tmux() {
+  local sock="${TNF_TMUX_SOCKET:-$HOME/.tnf/tmux/tnf.sock}"
+  [[ -n "${TMUX:-}" && "${TMUX%%,*}" == "$sock" ]]
+}
+
+should_tmux_wrap() {
+  [[ "${TNF_TMUX_WRAP:-1}" == "1" ]] || return 1
+  [[ -f "$TNF_TMUX_HELPER" ]] || return 1
+  already_in_tnf_tmux && return 1
+  "$NODE_BIN" -e "process.exit(require(process.argv[1]).tmuxAvailable() ? 0 : 1)" "$TNF_TMUX_HELPER"
+}
+
 AGENT_USER=${TNF_AGENT_USER:-tnf-agent}
 should_run_as_agent() {
   [[ "${TNF_RUN_AS_OPERATOR:-0}" == "1" ]] && return 1
@@ -80,6 +94,24 @@ should_run_as_agent() {
   [[ "$(id -un)" == "$AGENT_USER" ]] && return 1
   return 0
 }
+
+if should_tmux_wrap; then
+  agent_id="${AGENT_ID:-$(basename "$WRAPPER" .cjs)}"
+  export TNF_TMUX_WRAP=0
+  wrap_extra=()
+  if [[ ! -t 1 ]]; then
+    wrap_extra+=(--detach)
+  fi
+  if should_run_as_agent; then
+    echo "[tnf-launcher] wrapping ${agent_id} in TNF tmux, then dropping to ${AGENT_USER}" >&2
+    export HOME=/var/tnf-agent-home
+    exec "$NODE_BIN" "$TNF_TMUX_HELPER" wrap --class agent --agent-id "$agent_id" --cwd "$ROOT" "${wrap_extra[@]}" -- \
+      sudo -n -u "$AGENT_USER" "$NODE_BIN" "$WRAPPER"
+  fi
+  echo "[tnf-launcher] wrapping ${agent_id} in TNF tmux" >&2
+  exec "$NODE_BIN" "$TNF_TMUX_HELPER" wrap --class agent --agent-id "$agent_id" --cwd "$ROOT" "${wrap_extra[@]}" -- \
+    "$NODE_BIN" "$WRAPPER"
+fi
 
 if should_run_as_agent; then
   echo "[tnf-launcher] dropping to ${AGENT_USER} for $(basename "$WRAPPER")" >&2

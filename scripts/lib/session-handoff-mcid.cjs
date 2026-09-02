@@ -69,6 +69,16 @@ function buildHandoffCumulativeId(options = {}) {
       session_key: sessionKey,
       workflow_id: null,
       channel_id: options.channelId || null,
+      // Delegation dimension. The MCID already tracked lineage TEMPORALLY
+      // (session N caused session N+1 via causation_id); these add the
+      // HIERARCHICAL axis, so a handoff also records who delegated this work
+      // and how deep it sits. Both come straight off a verified grant:
+      // `returnTo` is the parent and `depth` is the ancestry length.
+      //
+      // Without this pair, N delegates under one root are indistinguishable
+      // from N unrelated sessions and every return collides on one mailbox.
+      parent_agent: options.parentAgent || null,
+      depth: Number.isInteger(options.depth) ? options.depth : 0,
     },
     lineage: {
       trace_id: null,
@@ -76,7 +86,9 @@ function buildHandoffCumulativeId(options = {}) {
       causation_id: causationId,
       handoff_packet_id: handoffId,
       twid: null,
-      task_id: null,
+      // The grant's rootTaskId, constant for every descendant of one
+      // delegation, which is what lets the ledger reconstruct a single tree.
+      task_id: options.rootTaskId || null,
     },
     federation: {
       domain: tenantId,

@@ -23,6 +23,7 @@ pnpm run skills:bank:status
 pnpm run skills:bank:ingest
 pnpm run skills:bank:retry-pending
 pnpm run skills:codex:guard
+pnpm run skills:progressive:guard
 ```
 
 Equivalent TNF CLI commands:
@@ -51,6 +52,7 @@ Apply reversible containment for known overflow candidates:
 
 ```bash
 pnpm run skills:codex:guard:apply
+pnpm run skills:progressive:guard:apply
 ```
 
 The apply path moves active imported skill packs into `~/.codex/skills_inactive`
@@ -58,6 +60,13 @@ instead of deleting them. For task-specific traversal, load
 `.agent/SKILL_MANIFEST.md`, query candidates with
 `node scripts/skills/skill-bank-query.cjs <term>`, then read one `SKILL.md` body
 only when invoking that skill.
+
+The universal guard applies the same reversible containment to Codex, Claude,
+and the shared Agent Framework root. Agent-bank reconciliation publishes
+imported specialist packs to each runtime's inactive vault; republishing them
+under active roots defeats progressive disclosure and must fail harness
+injection verification. Core routers and task-specific explicitly linked skills
+remain active.
 
 Department membership is additive and names-only. Existing `category` values
 stay authoritative for skill-chain / domain maps. Operator departments and the

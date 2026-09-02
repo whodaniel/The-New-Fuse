@@ -97,10 +97,12 @@ export async function promptChoiceWithWriteIn<T = string>(
     });
 
     rl.question(
-      chalk.cyan(`\nSelect [1-${allOptions.length}] (default: ${(prompt.defaultIndex ?? 0) + 1}): `),
+      chalk.cyan(
+        `\nSelect [1-${allOptions.length}] (default: ${(prompt.defaultIndex ?? 0) + 1}): `
+      ),
       (answer) => {
         const trimmed = answer.trim();
-        let selectedIdx = (prompt.defaultIndex ?? 0);
+        let selectedIdx = prompt.defaultIndex ?? 0;
         if (trimmed.length > 0) {
           const parsed = parseInt(trimmed, 10);
           if (!isNaN(parsed) && parsed >= 1 && parsed <= allOptions.length) {
@@ -110,14 +112,17 @@ export async function promptChoiceWithWriteIn<T = string>(
 
         const selected = allOptions[selectedIdx];
         if (selected.key === 'custom') {
-          rl.question(chalk.yellow(`\n✏️  ${prompt.writeInPrompt || 'Enter custom value'}: `), (customInput) => {
-            rl.close();
-            resolve({
-              value: customInput.trim(),
-              isCustom: true,
-              rawChoice: 'custom',
-            });
-          });
+          rl.question(
+            chalk.yellow(`\n✏️  ${prompt.writeInPrompt || 'Enter custom value'}: `),
+            (customInput) => {
+              rl.close();
+              resolve({
+                value: customInput.trim(),
+                isCustom: true,
+                rawChoice: 'custom',
+              });
+            }
+          );
         } else {
           rl.close();
           resolve({
@@ -134,17 +139,134 @@ export async function promptChoiceWithWriteIn<T = string>(
 /**
  * Runs the VIP interactive onboarding wizard for first-time or explicit onboarding.
  */
+/**
+ * First-run authority setup for the local subdirector.
+ *
+ * TNF ships with `tnf-cli-agent` autonomous — that is the operator's intended
+ * posture, and it is also load-bearing: without it every tool call in
+ * `tnf agents run` is refused, which is precisely the state this machine sat in
+ * (no config file, so the disabled fallback applied, so the agent was denied on
+ * every call and looped without output).
+ *
+ * The operator is asked once, at first run, and the answer is written to
+ * `~/.tnf/local-subdirector.json`. If the config already exists this is a
+ * no-op — it never silently re-widens authority someone has narrowed.
+ *
+ * Non-interactive callers (cron, daemons, CI, piped shells) must never block on
+ * a prompt, so they take the shipped default and print exactly what was applied
+ * rather than deciding silently.
+ */
+export async function ensureLocalSubdirectorAuthority(repoRoot: string): Promise<void> {
+  const { LocalSubdirectorAuthorityService, DEFAULT_LOCAL_SUBDIRECTOR_CONFIG } =
+    await import('../services/LocalSubdirectorAuthorityService.js');
+  const auth = new LocalSubdirectorAuthorityService(repoRoot);
+  if (!auth.isFirstRun()) return;
+
+  const shipped = DEFAULT_LOCAL_SUBDIRECTOR_CONFIG;
+
+  if (!process.stdin.isTTY) {
+    auth.updateConfig(shipped);
+    console.log(
+      chalk.dim(
+        `[tnf] Local Subdirector authority initialised non-interactively: ` +
+          `agent=${shipped.agentId}, autonomy=enabled, capabilities=all. ` +
+          `Change with: tnf subdirector autonomy --pause | --revoke <cap>`
+      )
+    );
+    return;
+  }
+
+  const choice = await promptChoiceWithWriteIn<'defaults' | 'restricted' | 'disabled'>({
+    title: 'Local Subdirector Authority',
+    subtitle:
+      `Which capabilities may '${shipped.agentId}' exercise on your behalf without asking? ` +
+      `Stored in ~/.tnf/local-subdirector.json; changeable any time via ` +
+      `'tnf subdirector autonomy'.`,
+    allowWriteIn: false,
+    defaultIndex: 0,
+    options: [
+      {
+        key: 'defaults',
+        label: 'Keep defaults — full autonomy (recommended)',
+        description:
+          'Autonomy enabled, all capabilities granted. Required for unattended full-auto ' +
+          'cycles and scout missions to run at all.',
+        value: 'defaults',
+      },
+      {
+        key: 'restricted',
+        label: 'Enabled, read-only capabilities',
+        description:
+          'Autonomy enabled but limited to read_file, search_files, web_search and web_fetch. ' +
+          'The agent can investigate but not modify or execute.',
+        value: 'restricted',
+      },
+      {
+        key: 'disabled',
+        label: 'Disabled — approve every action',
+        description:
+          'No autonomous tool use. Unattended loops will not be able to act; agent runs will ' +
+          'stop with an authority error instead of hanging.',
+        value: 'disabled',
+      },
+    ],
+  });
+
+  if (choice.value === 'defaults') {
+    auth.updateConfig(shipped);
+  } else if (choice.value === 'restricted') {
+    auth.updateConfig({
+      agentId: shipped.agentId,
+      autonomyEnabled: true,
+      capabilities: ['read_file', 'search_files', 'web_search', 'web_fetch'],
+    });
+  } else {
+    auth.updateConfig({ agentId: shipped.agentId, autonomyEnabled: false, capabilities: [] });
+  }
+
+  const saved = auth.getConfig();
+  console.log(
+    chalk.green(
+      `  ✅ Authority saved to ${auth.configLocation()} — ` +
+        `autonomy ${saved.autonomyEnabled ? 'enabled' : 'disabled'}, ` +
+        `capabilities: ${saved.capabilities.join(', ') || 'none'}`
+    )
+  );
+}
+
 export async function runInteractiveOnboardingWizard(
   repoRoot: string,
   suggestedHandle?: string
 ): Promise<UserProfileConfig> {
   const osUser = suggestedHandle || process.env.USER || os.userInfo().username || 'operator';
 
-  console.log(chalk.bold.magenta('\n╔═══════════════════════════════════════════════════════════════════════════╗'));
-  console.log(chalk.bold.magenta('║                     THE NEW FUSE (TNF) HARNESS ONBOARDING                 ║'));
-  console.log(chalk.bold.magenta('║             Self-Synthesizing Kernel & Multi-Agent Swarm Platform         ║'));
-  console.log(chalk.bold.magenta('╚═══════════════════════════════════════════════════════════════════════════╝\n'));
-  console.log(chalk.cyan('Welcome! Let\'s tailor your local environment, agent swarm, and memory harness.\n'));
+  console.log(
+    chalk.bold.magenta(
+      '\n╔═══════════════════════════════════════════════════════════════════════════╗'
+    )
+  );
+  console.log(
+    chalk.bold.magenta(
+      '║                     THE NEW FUSE (TNF) HARNESS ONBOARDING                 ║'
+    )
+  );
+  console.log(
+    chalk.bold.magenta(
+      '║             Self-Synthesizing Kernel & Multi-Agent Swarm Platform         ║'
+    )
+  );
+  console.log(
+    chalk.bold.magenta(
+      '╚═══════════════════════════════════════════════════════════════════════════╝\n'
+    )
+  );
+  console.log(
+    chalk.cyan("Welcome! Let's tailor your local environment, agent swarm, and memory harness.\n")
+  );
+
+  // Authority before anything else: every later step assumes the local agent
+  // can actually act, and if it cannot, the whole harness degrades silently.
+  await ensureLocalSubdirectorAuthority(repoRoot);
 
   // Step 1: Identity & Authentication Mode
   const identity = await promptChoiceWithWriteIn<'cloud' | 'local' | 'sandbox'>({
@@ -193,7 +315,8 @@ export async function runInteractiveOnboardingWizard(
       {
         key: 'full-swarm',
         label: 'Full Autonomous Swarm (Gemini + Claude + Codex + Hermes + OpenCode)',
-        description: 'High-reasoning architecture, parallel code generation, and native bus routing.',
+        description:
+          'High-reasoning architecture, parallel code generation, and native bus routing.',
         value: 'full-swarm',
       },
       {
@@ -210,7 +333,8 @@ export async function runInteractiveOnboardingWizard(
       },
     ],
     defaultIndex: 0,
-    writeInPrompt: 'Enter custom LLM tag or model endpoint (e.g. ollama/llama3.3:70b, openrouter/...)',
+    writeInPrompt:
+      'Enter custom LLM tag or model endpoint (e.g. ollama/llama3.3:70b, openrouter/...)',
   });
 
   // Step 3: Workspace & Personal Data Ingestion
@@ -219,7 +343,8 @@ export async function runInteractiveOnboardingWizard(
 
   const ingestion = await promptChoiceWithWriteIn<'current-repo' | 'clean-slate' | 'vault'>({
     title: 'Step 3: Workspace Scaffolding & Personal Data Ingestion',
-    subtitle: 'Choose what data sources and file context should be indexed into the knowledge base.',
+    subtitle:
+      'Choose what data sources and file context should be indexed into the knowledge base.',
     options: [
       {
         key: 'current-repo',
@@ -236,7 +361,8 @@ export async function runInteractiveOnboardingWizard(
       {
         key: 'vault',
         label: 'Personal Knowledge Vault / Notes Folder',
-        description: 'Indexes markdown notes, research documents, and design specs with secret redaction.',
+        description:
+          'Indexes markdown notes, research documents, and design specs with secret redaction.',
         value: 'vault',
       },
     ],
@@ -257,24 +383,28 @@ export async function runInteractiveOnboardingWizard(
   // Step 4: User Context Storage
   const storage = await promptChoiceWithWriteIn<ContextStorageStrategy>({
     title: 'Step 4: Choose Where TNF Stores Your Personal Context',
-    subtitle: 'All agents inherit one TNF profile mapping. Google Drive binding can be authorized after onboarding.',
+    subtitle:
+      'All agents inherit one TNF profile mapping. Google Drive binding can be authorized after onboarding.',
     options: [
       {
         key: 'local-primary',
         label: 'Local Primary + Optional Google Drive Mirror (Recommended)',
-        description: 'Keeps the authoritative copy local and allows an authorized Drive mirror for cross-agent/cross-device access.',
+        description:
+          'Keeps the authoritative copy local and allows an authorized Drive mirror for cross-agent/cross-device access.',
         value: 'local-primary',
       },
       {
         key: 'google-drive-primary',
         label: 'Google Drive Primary + Local Cache',
-        description: 'Uses a user-authorized Drive folder as durable authority once the Drive binding is verified.',
+        description:
+          'Uses a user-authorized Drive folder as durable authority once the Drive binding is verified.',
         value: 'google-drive-primary',
       },
       {
         key: 'mirrored',
         label: 'Mirrored Local + Google Drive',
-        description: 'Treats both as durable replicas and requires explicit conflict receipts when they diverge.',
+        description:
+          'Treats both as durable replicas and requires explicit conflict receipts when they diverge.',
         value: 'mirrored',
       },
       {
@@ -405,18 +535,36 @@ export async function runInteractiveOnboardingWizard(
     // Non-fatal if running outside git root
   }
 
-  console.log(chalk.bold.green('\n🎉 Onboarding Complete! Your Personalized TNF Environment Is Configured.'));
-  console.log(chalk.bold.cyan('─────────────────────────────────────────────────────────────────────────'));
+  console.log(
+    chalk.bold.green('\n🎉 Onboarding Complete! Your Personalized TNF Environment Is Configured.')
+  );
+  console.log(
+    chalk.bold.cyan('─────────────────────────────────────────────────────────────────────────')
+  );
   console.log(`  👤  ${chalk.bold('Profile:')}               ${chalk.yellow(profileName)}`);
-  console.log(`  🚀  ${chalk.bold('Personalized Command:')}   ${chalk.green(`tnf boot ${profileName}`)}`);
+  console.log(
+    `  🚀  ${chalk.bold('Personalized Command:')}   ${chalk.green(`tnf boot ${profileName}`)}`
+  );
   console.log(`  📂  ${chalk.bold('Active Workspace:')}       ${chalk.dim(selectedWorkspace)}`);
-  console.log(`  🤖  ${chalk.bold('Swarm Layout:')}           ${chalk.dim(profileConfig.agentTopology)}`);
-  console.log(`  💾  ${chalk.bold('Context Storage:')}         ${chalk.dim(profileConfig.contextStorage.strategy)}`);
+  console.log(
+    `  🤖  ${chalk.bold('Swarm Layout:')}           ${chalk.dim(profileConfig.agentTopology)}`
+  );
+  console.log(
+    `  💾  ${chalk.bold('Context Storage:')}         ${chalk.dim(profileConfig.contextStorage.strategy)}`
+  );
   if (profileConfig.contextStorage.googleDrive.enabled) {
-    console.log(chalk.yellow('      Google Drive is selected but not yet bound; configure/verify the authorized folder before use.'));
+    console.log(
+      chalk.yellow(
+        '      Google Drive is selected but not yet bound; configure/verify the authorized folder before use.'
+      )
+    );
   }
-  console.log(`  🎯  ${chalk.bold('Starting Objective:')}      ${chalk.italic(profileConfig.initialGoal)}`);
-  console.log(chalk.bold.cyan('─────────────────────────────────────────────────────────────────────────\n'));
+  console.log(
+    `  🎯  ${chalk.bold('Starting Objective:')}      ${chalk.italic(profileConfig.initialGoal)}`
+  );
+  console.log(
+    chalk.bold.cyan('─────────────────────────────────────────────────────────────────────────\n')
+  );
 
   return profileConfig;
 }

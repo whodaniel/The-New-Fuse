@@ -29,8 +29,10 @@ tnf_single_instance_guard() {
 
   # Write our PID
   echo "$$" > "${lock_file}"
-  # Set up exit trap to clean up
-  trap 'rm -f "${lock_file}"' EXIT
+  # Set up exit trap to clean up — bake the path in now, because ${lock_file}
+  # is a function-local variable and is out of scope when the EXIT trap fires
+  # (with `set -u` that surfaces as "lock_file: unbound variable").
+  trap "rm -f '${lock_file}'" EXIT
 
   return 0
 }

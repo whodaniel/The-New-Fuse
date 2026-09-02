@@ -1,10 +1,11 @@
 name: TNF Repo Separation Sync
 
-# Manual only. Auto-running this on every monorepo main push force-pushed an
-# orphan commit onto public The-New-Fuse main (2026-08-13) and closed every
-# open PR. Publication now goes through a sync/open-runtime PR, not a
-# force-push to main. Do not add `on.push` back until that path is proven.
+# Auto-running on monorepo main push was disabled after an orphan commit was force-pushed.
+# The sync path now correctly uses PRs instead of force-pushing main.
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       force:

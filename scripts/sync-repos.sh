@@ -203,6 +203,7 @@ ALWAYS_EXCLUDE=(
   # are separate satellites, hosted experiments, private SaaS surfaces, or
   # personal workstreams unless explicitly promoted through that manifest.
   "apps/ai-arcade"
+  "apps/casin8-games"
   "apps/cloud-sandbox"
   "apps/gemini-bridge-extension"
   "apps/myphoneremote-api"

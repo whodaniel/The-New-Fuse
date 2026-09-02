@@ -1,17 +1,18 @@
 {
-  "mode": "stopped",
-  "updatedAt": "2026-08-13T04:21:50.474Z",
-  "intervalMinutes": 30,
+  "mode": "running",
+  "updatedAt": "2026-08-31T21:10:29.603Z",
+  "intervalMinutes": 60,
   "maxCycles": 0,
-  "completedCycles": 82,
-  "failedCycles": 226,
+  "completedCycles": 57,
+  "failedCycles": 225,
   "lastRun": {
-    "cycle": 36,
-    "startedAt": "2026-08-12T02:10:49.986Z",
-    "finishedAt": "2026-08-12T02:21:03.426Z",
-    "durationMs": 613440,
+    "cycle": 8,
+    "startedAt": "2026-08-31T20:40:30.680Z",
+    "finishedAt": "2026-08-31T21:10:29.603Z",
+    "durationMs": 1798923,
     "ok": true,
-    "error": "post-steps soft-failed: broadcast: <USER_HOME>/.hermes/node/bin/node timed out after 600s and was killed"
-  },
-  "stoppedReason": "Reconciled 2026-08-13: state claimed running, but the daemon (pid 8865) was dead and both pidfiles were stale. Last cycle finished 2026-08-12T02:21Z."
+    "warnings": [
+      "status: pnpm exited with code 1\n--- child stderr ---\nError: A system error occurred: uv_os_get_passwd returned ENOENT (no such file or directory)"
+    ]
+  }
 }

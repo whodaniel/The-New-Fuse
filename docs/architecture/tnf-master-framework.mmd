@@ -27,6 +27,7 @@ flowchart LR
     app_api[api]
     app_api_gateway[api-gateway]
     app_backend[backend]
+    app_browser_control_surfaces[browser-control-surfaces]
     app_chrome_extension[chrome-extension]
     app_extensions[extensions]
     app_frontend[frontend]
@@ -42,6 +43,7 @@ flowchart LR
     pkg_a2a_react[a2a-react]
     pkg_ag_ui_core[ag-ui-core]
     pkg_agent[agent]
+    pkg_agent_adapters[agent-adapters]
     pkg_agent_coordination[agent-coordination]
     pkg_agent_evaluation_framework[agent-evaluation-framework]
     pkg_agentic_rag_search[agentic-rag-search]
@@ -56,10 +58,9 @@ flowchart LR
     pkg_backend[backend]
     pkg_build_optimization[build-optimization]
     pkg_cache[cache]
-    pkg_claude_skills[claude-skills]
-    pkg_claw_skills[claw-skills]
     pkg_cli[cli]
     pkg_client[client]
+    pkg_coding_agent_delegation[coding-agent-delegation]
     pkg_common[common]
     pkg_compounding_memory[compounding-memory]
     pkg_contracts[contracts]
@@ -83,10 +84,6 @@ flowchart LR
     pkg_fairtable_components[fairtable-components]
     pkg_fairtable_core[fairtable-core]
     pkg_fairtable_utils[fairtable-utils]
-    pkg_feature_suggestions[feature-suggestions]
-    pkg_feature_tracker[feature-tracker]
-    pkg_features[features]
-    pkg_gemini_browser_skill[gemini-browser-skill]
     pkg_google_sheets_mcp_server[google-sheets-mcp-server]
     pkg_governance_gate[governance-gate]
     pkg_hardware_bridge[hardware-bridge]
@@ -94,8 +91,7 @@ flowchart LR
     pkg_infrastructure[infrastructure]
     pkg_integration_tests[integration-tests]
     pkg_job_queue[job-queue]
-    pkg_jules_integration[jules-integration]
-    pkg_jules_skill[jules-skill]
+    pkg_llm_catalog[llm-catalog]
     pkg_logger[logger]
     pkg_lpm_native[lpm-native]
     pkg_mcp_cloud_redis_bridge[mcp-cloud-redis-bridge]
@@ -111,6 +107,7 @@ flowchart LR
     pkg_protocol_contracts[protocol-contracts]
     pkg_relay_core[relay-core]
     pkg_resource_registry[resource-registry]
+    pkg_rust_relay[rust-relay]
     pkg_security[security]
     pkg_shared[shared]
     pkg_shared_utils[shared-utils]
@@ -138,6 +135,7 @@ flowchart LR
     wf_ci_build_yml[ci-build.yml]
     wf_claude_code_review_yml[claude-code-review.yml]
     wf_claude_yml[claude.yml]
+    wf_close_jules_persona_prs_yml[close-jules-persona-prs.yml]
     wf_deploy_yml[deploy.yml]
     wf_framework_consciousness_nightly_yml[framework-consciousness-nightly.yml]
     wf_framework_master_graph_monitor_yml[framework-master-graph-monitor.yml]
@@ -170,6 +168,7 @@ flowchart LR
   Web -.maps.-> app_api
   Web -.maps.-> app_api_gateway
   Web -.maps.-> app_backend
+  Web -.maps.-> app_browser_control_surfaces
   Web -.maps.-> app_chrome_extension
   Web -.maps.-> app_extensions
   Web -.maps.-> app_frontend
@@ -183,6 +182,7 @@ flowchart LR
   Gateway -.depends on.-> pkg_a2a_react
   Gateway -.depends on.-> pkg_ag_ui_core
   Gateway -.depends on.-> pkg_agent
+  Gateway -.depends on.-> pkg_agent_adapters
   Gateway -.depends on.-> pkg_agent_coordination
   Gateway -.depends on.-> pkg_agent_evaluation_framework
   Gateway -.depends on.-> pkg_agentic_rag_search
@@ -197,10 +197,9 @@ flowchart LR
   Gateway -.depends on.-> pkg_backend
   Gateway -.depends on.-> pkg_build_optimization
   Gateway -.depends on.-> pkg_cache
-  Gateway -.depends on.-> pkg_claude_skills
-  Gateway -.depends on.-> pkg_claw_skills
   Gateway -.depends on.-> pkg_cli
   Gateway -.depends on.-> pkg_client
+  Gateway -.depends on.-> pkg_coding_agent_delegation
   Gateway -.depends on.-> pkg_common
   Gateway -.depends on.-> pkg_compounding_memory
   Gateway -.depends on.-> pkg_contracts
@@ -224,10 +223,6 @@ flowchart LR
   Gateway -.depends on.-> pkg_fairtable_components
   Gateway -.depends on.-> pkg_fairtable_core
   Gateway -.depends on.-> pkg_fairtable_utils
-  Gateway -.depends on.-> pkg_feature_suggestions
-  Gateway -.depends on.-> pkg_feature_tracker
-  Gateway -.depends on.-> pkg_features
-  Gateway -.depends on.-> pkg_gemini_browser_skill
   Gateway -.depends on.-> pkg_google_sheets_mcp_server
   Gateway -.depends on.-> pkg_governance_gate
   Gateway -.depends on.-> pkg_hardware_bridge
@@ -235,8 +230,7 @@ flowchart LR
   Gateway -.depends on.-> pkg_infrastructure
   Gateway -.depends on.-> pkg_integration_tests
   Gateway -.depends on.-> pkg_job_queue
-  Gateway -.depends on.-> pkg_jules_integration
-  Gateway -.depends on.-> pkg_jules_skill
+  Gateway -.depends on.-> pkg_llm_catalog
   Gateway -.depends on.-> pkg_logger
   Gateway -.depends on.-> pkg_lpm_native
   Gateway -.depends on.-> pkg_mcp_cloud_redis_bridge
@@ -252,6 +246,7 @@ flowchart LR
   Gateway -.depends on.-> pkg_protocol_contracts
   Gateway -.depends on.-> pkg_relay_core
   Gateway -.depends on.-> pkg_resource_registry
+  Gateway -.depends on.-> pkg_rust_relay
   Gateway -.depends on.-> pkg_security
   Gateway -.depends on.-> pkg_shared
   Gateway -.depends on.-> pkg_shared_utils
@@ -277,6 +272,7 @@ flowchart LR
   wf_ci_build_yml --> Audits
   wf_claude_code_review_yml --> Audits
   wf_claude_yml --> Audits
+  wf_close_jules_persona_prs_yml --> Audits
   wf_deploy_yml --> Audits
   wf_framework_consciousness_nightly_yml --> Audits
   wf_framework_master_graph_monitor_yml --> Audits

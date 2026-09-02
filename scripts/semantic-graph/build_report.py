@@ -8,10 +8,16 @@ TSV = os.path.join(OUT_DIR, "wordcount_full.tsv.gz")
 STATS = os.path.join(OUT_DIR, "wordcount_stats.json")
 HTML_OUT = os.path.join(OUT_DIR, "wordcount_report.html")
 
+# Dataset is too large for Cloudflare Pages' 25 MiB per-file limit, so the
+# report fetches it at runtime from Supabase Storage instead of embedding it.
+# Upload wordcount_full.tsv.gz to this URL when the corpus is recounted:
+#   <SUPABASE_SERVICE_ROLE_KEY required> PUT/POST to
+#   /storage/v1/object/concordance/wordcount/wordcount.tsv.gz
+DATA_URL = ("https://wslydgtgindrywldatbv.supabase.co/storage/v1/object/"
+            "public/concordance/wordcount/wordcount.tsv.gz")
+
 with open(STATS) as f:
     stats = json.load(f)
-
-b64 = b64_of_file(TSV)
 
 page = f"""<!DOCTYPE html>
 <html lang="en">
@@ -103,8 +109,7 @@ __NAV__
   <button id="last2">Last &raquo;</button>
 </div>
 </div>
-<div class="foot">All {stats['unique_terms']:,} terms are embedded (gzip) in this file and decompressed in your browser. Source data: wordcount_full.tsv.gz.</div>
-<script id="gzdata" type="application/octet-stream">{b64}</script>
+<div class="foot">All {stats['unique_terms']:,} terms are streamed (gzip) from Supabase Storage and decompressed in your browser. Source data: wordcount_full.tsv.gz.</div>
 <script>
 let TERMS = [], COUNTS = null, MAXC = 1;
 let filtered = null; // Uint32Array of indices into TERMS
@@ -113,15 +118,14 @@ let page = 0, pageSize = 250;
 const $ = id => document.getElementById(id);
 function esc(s) {{ const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
 
+const DATA_URL = '{DATA_URL}';
 async function init() {{
-  const b64 = $('gzdata').textContent.trim();
-  const bin = atob(b64);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   let text;
   if (typeof DecompressionStream !== 'undefined') {{
+    const resp = await fetch(DATA_URL);
+    if (!resp.ok) throw new Error('Failed to load dataset: HTTP ' + resp.status + ' from ' + DATA_URL);
     const ds = new DecompressionStream('gzip');
-    const stream = new Blob([bytes]).stream().pipeThrough(ds);
+    const stream = resp.body.pipeThrough(ds);
     text = await new Response(stream).text();
   }} else {{
     $('loading').textContent = 'This browser lacks DecompressionStream. Please open in Chrome, Edge, or Safari 16.4+.';
@@ -205,7 +209,7 @@ for (const [id, fn] of [
 $('go').addEventListener('click', () => {{ const p = +$('goto').value; if (p >= 1) {{ page = p - 1; render(); }} }});
 $('goto').addEventListener('keydown', e => {{ if (e.key === 'Enter') $('go').click(); }});
 
-init();
+init().catch(err => {{ const l = document.getElementById('loading'); if (l) l.textContent = 'Error loading dataset: ' + err.message; console.error(err); }});
 </script>
 </main>
 </div>

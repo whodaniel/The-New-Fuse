@@ -330,12 +330,20 @@
               "description": "Max candidates to show"
             },
             {
+              "flags": "--no-telemetry",
+              "description": "Skip routing-telemetry weight adjustment (base score only)"
+            },
+            {
               "flags": "--platform <platform>",
               "description": "Restrict to candidates whose live row matches this platform"
             },
             {
               "flags": "--require-capacity",
               "description": "Only candidates that are live and not busy (declared capacity respected)"
+            },
+            {
+              "flags": "--require-verification",
+              "description": "Only candidates whose spec declares verification/QA capability"
             },
             {
               "flags": "-c, --capabilities <list>",

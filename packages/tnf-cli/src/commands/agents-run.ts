@@ -654,6 +654,10 @@ async function recallMemory(query: string, limit: number): Promise<Record<string
 export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
   const t0 = Date.now();
   const cwd = opts.cwd ?? process.cwd();
+  // Who is running. `tnf subdirector` already treats TNF_AGENT_ID as the
+  // identity and defaults it to `tnf-cli-agent`; match that so authority binds
+  // to the same name from either entry point.
+  const resolvedAgentId = process.env.TNF_AGENT_ID || process.env.AGENT_NAME || 'tnf-cli-agent';
   const enabledToolsRaw = opts.enableTools?.trim();
   const enabledTools =
     enabledToolsRaw === undefined || enabledToolsRaw === ''
@@ -681,6 +685,21 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
   const toolCalls: JsonResult['toolCalls'] = [];
   let iterCount = 0;
 
+  // An unauthorized agent used to hang forever instead of failing.
+  //
+  // Every tool call returns "Authority Denied" to the model, the model tries
+  // another tool, and `maxIterations` defaults to unlimited — so the loop spun
+  // against a paid provider producing no output until an outer timeout killed
+  // it. That is how `tnf agents run` presented as "slow" for weeks while
+  // actually being denied on the very first call, and it is why
+  // staff-scout-missions could never complete a mission.
+  //
+  // Denials are a configuration state, not a transient error: if the first
+  // three are refused, the fourth will be too. Stop and say which knob is off.
+  const MAX_CONSECUTIVE_DENIALS = 3;
+  let consecutiveDenials = 0;
+  let fatalAuthorityError: string | null = null;
+
   const result = await client.chatCompleteWithTools(
     messages,
     async (name: string, args: Record<string, unknown>) => {
@@ -690,15 +709,38 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
       let denyReason = '';
       let authoritySource = '';
       try {
-        const {
-          LocalSubdirectorAuthorityService,
-        } = require('../services/LocalSubdirectorAuthorityService.js');
+        // `await import`, not `require`. This package is ESM
+        // (`"type": "module"`), so `require` is not defined at runtime and this
+        // line threw a ReferenceError on EVERY tool call. The surrounding catch
+        // turned that into an ordinary tool failure — `{ok:false,
+        // error:"require is not defined"}` — which the model dutifully retried
+        // against an unlimited iteration budget.
+        //
+        // That is the real reason `tnf agents run` produced no output and had
+        // to be killed: not slowness, and not the authority denial it looked
+        // like from outside. The authority block below never executed at all.
+        const { LocalSubdirectorAuthorityService } =
+          await import('../services/LocalSubdirectorAuthorityService.js');
         const auth = new LocalSubdirectorAuthorityService(cwd);
         const authConfig = auth.getConfig();
 
-        const isSubdirector = auth.verifyLocalSubdirectorIdentity(
-          process.env.TNF_SUBDIRECTOR_IDENTITY_TOKEN || ''
-        );
+        // Self-mint the identity rather than demanding it from the environment.
+        //
+        // Requiring TNF_SUBDIRECTOR_IDENTITY_TOKEN bought nothing: this process
+        // already holds the runtime key that signs it, so anything able to
+        // present a valid token could equally mint one. All the env round-trip
+        // ever did was create the failure mode where the variable is unset —
+        // which is exactly the state this machine was in, silently, so every
+        // run fell through to the subordinate branch and was denied.
+        //
+        // An explicitly supplied token still wins, so genuine cross-process
+        // delegation (a parent granting a narrower scope to a child) is
+        // unaffected.
+        const suppliedIdentity = process.env.TNF_SUBDIRECTOR_IDENTITY_TOKEN || '';
+        const identityToken =
+          suppliedIdentity ||
+          (authConfig.agentId === resolvedAgentId ? auth.signLocalSubdirectorIdentity() : '');
+        const isSubdirector = auth.verifyLocalSubdirectorIdentity(identityToken);
 
         if (isSubdirector) {
           authoritySource = 'LocalSubdirector (Verified Identity)';
@@ -723,13 +765,30 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
         if (Array.isArray(enabledTools) && enabledTools.length === 0) {
           response = { ok: false, error: `tool '${name}' disabled (tools=none)` };
         } else if (!authorized) {
+          consecutiveDenials += 1;
+          if (consecutiveDenials >= MAX_CONSECUTIVE_DENIALS) {
+            // Recorded, not thrown here: the surrounding catch turns every
+            // throw into an ordinary tool response, which would put us right
+            // back in the loop this exists to break. Rethrown below it.
+            fatalAuthorityError =
+              `Authority Denied ${consecutiveDenials}x in a row — stopping instead of looping.\n` +
+              `  Last denial: ${denyReason}\n` +
+              `  Authority source: ${authoritySource || 'none'}\n` +
+              `  Agent: ${resolvedAgentId}\n` +
+              `  Config: ${auth.configLocation()} ` +
+              `(agentId=${authConfig.agentId}, autonomyEnabled=${authConfig.autonomyEnabled}, ` +
+              `capabilities=${authConfig.capabilities.join(',') || 'none'})\n` +
+              `  Fix: tnf subdirector autonomy --enable --grant all`;
+          }
           response = { ok: false, error: `Authority Denied: ${denyReason}` };
         } else {
+          consecutiveDenials = 0;
           response = await executeBuiltinTool(name, args, { cwd, quiet: !!opts.quiet });
         }
       } catch (err: any) {
         response = { ok: false, error: err?.message ?? String(err), tool: name };
       }
+      if (fatalAuthorityError) throw new Error(fatalAuthorityError);
       const durationMs = Date.now() - tTool;
       const ok = !(response && typeof response === 'object' && (response as any).ok === false);
       toolCalls.push({

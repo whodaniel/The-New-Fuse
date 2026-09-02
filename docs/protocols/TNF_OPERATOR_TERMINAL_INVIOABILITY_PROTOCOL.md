@@ -50,14 +50,17 @@ This protocol closes the gap that produced the 2026-07-28 incident:
    `scripts/runtime/`, every relay/monitor in `scripts/relay/`, and every
    agent-side helper in `packages/*`.
 2. **No auto-submit of operator-visible prompts.** Even if the prompt is written
-   into a tab, the agent MUST NOT press `Enter` (or its composer equivalent)
-   unless the operator explicitly opted in via
+   into a tab or pane, the agent MUST NOT press `Enter` (or its composer
+   equivalent, including `tmux send-keys … Enter`) unless the operator
+   explicitly opted in via
    `TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="true"` AND a logged
    `challenge_rationale` exists referencing this protocol.
 3. **Frontmost check before any keystroke path.** If a target Terminal window is
    currently the operator's frontmost window, the cron MUST skip the UI path
    entirely for that target and rely on the structured bus (`tnf:bus:heartbeat`
-   or `agent:activity`) to carry the heartbeat.
+   or `agent:activity`) to carry the heartbeat. For tmux panes the equivalent
+   is: skip if an attached client has that pane active, or the pane tty is
+   recently active, or the session name is `tnf-o-*`.
 4. **Default-safe env.** The crontab for any heartbeat/wake-up script MUST set
    `TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="false"` (or omit it). Any
    operator who wants to flip it to `"true"` for a specific run must edit the
@@ -76,6 +79,12 @@ This protocol closes the gap that produced the 2026-07-28 incident:
    (never ordinal array indices), submit prompts using physical hardware
    `key code 36` (Return/Enter), and execute a post-submission verification
    sweep to confirm text ingestion and state transition.
+8. **Multiplexer writes are keystroke paths.** `tmux send-keys` has no
+   Accessibility checkpoint. It MAY be used only from
+   `scripts/lib/tnf-tmux-inject.cjs` after `shouldInjectTmuxPane` returns ok.
+   Operator-class sessions (`tnf-o-*`) are never injectable. Capture
+   (`capture-pane`) is read-only and is not a D24 violation. The CI guard fails
+   any other `send-keys` in `scripts/`, `packages/`, or `apps/`.
 
 ### 3.1 Opt-in escape hatch
 
@@ -103,6 +112,9 @@ crontab (e.g. `scripts/runtime/terminal-heartbeat-cron.sh`) MUST default to
 ```bash
 # 1) Any agent-initiated AppleScript that activates a Terminal window?
 rg -n 'tell application "Terminal" to activate|set frontmost of window' scripts/ packages/ apps/ || echo OK_NO_ACTIVATES
+
+# 1b) Any unallowlisted tmux keystroke transport?
+rg -n 'send-keys' scripts/ packages/ apps/ --glob '!scripts/lib/tnf-tmux-inject.cjs' --glob '!scripts/lib/tnf-tmux-inject.test.cjs' --glob '!scripts/archive/**' --glob '!scripts/protocols/check-operator-terminal-inviolability.cjs' || echo OK_NO_UNALLOWLISTED_SEND_KEYS
 
 # 2) Any crontab line that flips the prompt-injection flag without a rationale?
 crontab -l | grep -B2 TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION=\"true\" || echo OK_NO_OPT_IN_LINES
