@@ -39,8 +39,8 @@ packages/*
 !packages/fairtable-utils/**
 !packages/infrastructure/
 !packages/infrastructure/**
-!packages/jules-skill/
-!packages/jules-skill/**
+!packages/coding-agent-delegation/
+!packages/coding-agent-delegation/**
 # Depended on as workspace:* by api-gateway/frontend/extensions. Without this
 # re-include the tarball ships a packages/ tree missing it, and the workspace
 # link resolves to nothing inside the image.
