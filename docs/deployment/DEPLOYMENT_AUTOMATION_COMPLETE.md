@@ -1,5 +1,15 @@
 # Deployment Automation Suite - Complete
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 ## Overview
 
 The New Fuse now has a **complete, production-ready automated deployment
@@ -460,22 +470,20 @@ agnostic** - Works with CloudRuntime and others
 
 ### Core Documentation
 
-- **[Automated Deployment Guide](./AUTOMATED_DEPLOYMENT_GUIDE.md)** -
-  Complete deployment system guide
-- **[Quick Reference](./QUICK_REFERENCE.md)** - Fast command
-  reference
-- **[Emergency Procedures](./EMERGENCY_PROCEDURES.md)** -
-  Emergency response guide
-- **[Rollback Procedures](./ROLLBACK_PROCEDURES.md)** - Rollback
+- **[Automated Deployment Guide](./AUTOMATED_DEPLOYMENT_GUIDE.md)** - Complete
+  deployment system guide
+- **[Quick Reference](./QUICK_REFERENCE.md)** - Fast command reference
+- **[Emergency Procedures](./EMERGENCY_PROCEDURES.md)** - Emergency response
   guide
+- **[Rollback Procedures](./ROLLBACK_PROCEDURES.md)** - Rollback guide
 - **[Troubleshooting](./TROUBLESHOOTING.md)** - Problem resolution
 
 ### Configuration
 
 - **[Environment Example](.env.deployment.example)** - Complete configuration
   template
-- **[Deployment Checklist](./DEPLOYMENT_CHECKLIST.md)** -
-  Pre-deployment checklist
+- **[Deployment Checklist](./DEPLOYMENT_CHECKLIST.md)** - Pre-deployment
+  checklist
 
 ## 🎓 Usage Examples
 

@@ -71,9 +71,9 @@ of these directly via the CLI.
 
 ### Infrastructure & Deployment
 
-- `scripts/cloud_runtime/cloud_runtime-deploy-saas.sh`: ⚠️ **DEPRECATED** Production SaaS
-  deployment. CloudRuntime is no longer used; deploy via GCP Cloud Run + Cloudflare.
-  See `CLOUD_MIGRATION_BLUEPRINT.md`.
+- `scripts/cloud-run/cloud_runtime-deploy-saas.sh`: ⚠️ **DEPRECATED** Production
+  SaaS deployment. CloudRuntime is no longer used; deploy via GCP Cloud Run +
+  Cloudflare. See `CLOUD_MIGRATION_BLUEPRINT.md`.
 - `scripts/deployment/blue-green-deploy.sh`: Zero-downtime rollouts.
 - `scripts/cleanup/deep-cleanup.sh`: Exhaustive workspace pruning.
 

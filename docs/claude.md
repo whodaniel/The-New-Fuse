@@ -134,10 +134,18 @@
 
 ## Agent Commands
 
-# sync Claude agents: pnpm run claude:agents:sync
+# sync agent banks to runtime homes: pnpm run agents:bank:reconcile
 
-# register agents in DB: pnpm run claude:agents:register
+# build the agent registry: pnpm run agents:registry:build
 
-# search agent ecosystem: pnpm run claude:agents:search
+# verify the agent registry: pnpm run agents:registry:check
 
-# check agent status: pnpm run claude:agents:status
+# check live agent work: pnpm run tnf:live:agents
+
+# NOTE: the previously documented claude:agents:sync / :register / :search /
+
+# :status commands never existed in package.json. They are replaced above with
+
+# the scripts that do exist. There is currently no agent-ecosystem _search_
+
+# command; discovery goes through the registry built by agents:registry:build.

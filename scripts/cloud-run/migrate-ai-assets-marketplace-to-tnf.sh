@@ -28,7 +28,7 @@ if [[ -z "$SRC_URL" || -z "$DST_URL" ]]; then
 Usage:
   SRC_URL='<source database url>' \
   DST_URL='<target database url>' \
-  scripts/cloud_runtime/migrate-ai-assets-marketplace-to-tnf.sh
+  scripts/cloud-run/migrate-ai-assets-marketplace-to-tnf.sh
 
 Optional:
   PG_BIN_DIR=/usr/local/opt/postgresql@17/bin

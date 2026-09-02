@@ -67,7 +67,7 @@ Run these from the monorepo root (`<repo-root>`):
 | `pnpm build:frontend`         | Build Frontend                     | Specific app build       |
 | `pnpm build:backend`          | Build Backend                      | Specific app build       |
 | `pnpm build:production`       | Clean + optimized production build | Deployment preparation   |
-| `pnpm build:cloud_runtime`          | CloudRuntime-specific build             | CloudRuntime deployment       |
+| `pnpm build:cloud-run`        | CloudRuntime-specific build        | CloudRuntime deployment  |
 | `pnpm build:clean`            | Clean + fresh build                | After dependency changes |
 | `pnpm build:memory-optimized` | Build with memory limits           | Constrained environments |
 
@@ -673,7 +673,7 @@ jobs:
 ```bash
 # CloudRuntime uses these scripts automatically
 pnpm install
-pnpm build:cloud_runtime  # Or pnpm build:production
+pnpm build:cloud-run  # Or pnpm build:production
 pnpm start
 ```
 

@@ -3,8 +3,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-SYNC_ONE_SCRIPT="$ROOT_DIR/scripts/cloud_runtime/sync-openclaw-codex-account.sh"
-CONFIG_FILE="${OPENCLAW_CODEX_TENANTS_CONFIG:-$ROOT_DIR/scripts/cloud_runtime/openclaw-codex-tenants.json}"
+SYNC_ONE_SCRIPT="$ROOT_DIR/scripts/cloud-run/sync-openclaw-codex-account.sh"
+CONFIG_FILE="${OPENCLAW_CODEX_TENANTS_CONFIG:-$ROOT_DIR/scripts/cloud-run/openclaw-codex-tenants.json}"
 WAIT_FLAG=""
 CLOUD_RUNTIME_VAR_LIST_MAX_RETRIES="${CLOUD_RUNTIME_VAR_LIST_MAX_RETRIES:-8}"
 CLOUD_RUNTIME_VAR_LIST_SLEEP_SECONDS="${CLOUD_RUNTIME_VAR_LIST_SLEEP_SECONDS:-3}"
@@ -12,7 +12,7 @@ CLOUD_RUNTIME_VAR_LIST_SLEEP_SECONDS="${CLOUD_RUNTIME_VAR_LIST_SLEEP_SECONDS:-3}
 usage() {
   cat <<'EOF'
 Usage:
-  bash scripts/cloud_runtime/sync-openclaw-codex-tenants.sh [--config FILE] [--no-wait]
+  bash scripts/cloud-run/sync-openclaw-codex-tenants.sh [--config FILE] [--no-wait]
 
 Config format:
 {

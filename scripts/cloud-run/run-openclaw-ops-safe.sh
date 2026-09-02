@@ -3,9 +3,9 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-SYNC_SCRIPT="$ROOT_DIR/scripts/cloud_runtime/sync-openclaw-codex-tenants.sh"
-VERIFY_SCRIPT="$ROOT_DIR/scripts/cloud_runtime/verify-adaptive-routing.sh"
-CONFIG_FILE="${OPENCLAW_CODEX_TENANTS_CONFIG:-$ROOT_DIR/scripts/cloud_runtime/openclaw-codex-tenants.json}"
+SYNC_SCRIPT="$ROOT_DIR/scripts/cloud-run/sync-openclaw-codex-tenants.sh"
+VERIFY_SCRIPT="$ROOT_DIR/scripts/cloud-run/verify-adaptive-routing.sh"
+CONFIG_FILE="${OPENCLAW_CODEX_TENANTS_CONFIG:-$ROOT_DIR/scripts/cloud-run/openclaw-codex-tenants.json}"
 MAX_ATTEMPTS="${OPENCLAW_OPS_MAX_ATTEMPTS:-6}"
 SLEEP_SECONDS="${OPENCLAW_OPS_SLEEP_SECONDS:-8}"
 LOG_DIR="${OPENCLAW_OPS_LOG_DIR:-$ROOT_DIR/.agent/logs/openclaw-ops}"

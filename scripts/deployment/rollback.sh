@@ -308,8 +308,8 @@ rebuild_services() {
   # Build services
   log INFO "Building services..."
 
-  if [[ -f "$PROJECT_ROOT/scripts/build-cloud_runtime.cjs" ]]; then
-    node "$PROJECT_ROOT/scripts/build-cloud_runtime.cjs" || {
+  if [[ -f "$PROJECT_ROOT/scripts/build-cloud-run.cjs" ]]; then
+    node "$PROJECT_ROOT/scripts/build-cloud-run.cjs" || {
       log ERROR "Build failed"
       return 1
     }

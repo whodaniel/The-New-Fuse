@@ -57,6 +57,6 @@ unlocks.
    - `VITE_CHAIN_NETWORK`, `VITE_CHAIN_ID`, `VITE_CHAIN_RPC_URL`
    - `VITE_CONTRACT_TOKEN`, `VITE_CONTRACT_MERKABA`, `VITE_CONTRACT_GENESIS`
 3. Sync vars:
-   - `pnpm cloud_runtime:arcade:chain:sync`
+   - `pnpm cloud-run:arcade:chain:sync`
 4. Optional immediate redeploy:
-   - `TRIGGER_DEPLOY=true pnpm cloud_runtime:arcade:chain:sync`
+   - `TRIGGER_DEPLOY=true pnpm cloud-run:arcade:chain:sync`

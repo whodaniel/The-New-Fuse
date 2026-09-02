@@ -6,8 +6,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
 
 # Usage:
-#   scripts/cloud_runtime/check-zeroclaw-instances.sh
-#   scripts/cloud_runtime/check-zeroclaw-instances.sh zeroclaw-sandbox picoclaw-tester-v2
+#   scripts/cloud-run/check-zeroclaw-instances.sh
+#   scripts/cloud-run/check-zeroclaw-instances.sh zeroclaw-sandbox picoclaw-tester-v2
 
 tnf_require_gcloud
 if ! command -v curl >/dev/null 2>&1; then

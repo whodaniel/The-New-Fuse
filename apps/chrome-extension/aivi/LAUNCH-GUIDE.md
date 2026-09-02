@@ -1,5 +1,15 @@
 # AI Video Intelligence Suite - Complete Launch Guide
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 ## 🎯 Launch Readiness Status
 
 **Overall Progress: 85% Complete**
@@ -172,8 +182,8 @@ Billing: Recurring - Yearly
 
 #### C. Copy Price IDs
 
-From Stripe Dashboard → Products, copy each `price_xxx` ID and add to CloudRuntime
-environment variables.
+From Stripe Dashboard → Products, copy each `price_xxx` ID and add to
+CloudRuntime environment variables.
 
 #### D. Set Up Webhook
 

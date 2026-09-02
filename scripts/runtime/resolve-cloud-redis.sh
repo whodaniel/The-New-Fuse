@@ -2,25 +2,26 @@
 set -euo pipefail
 
 # Resolve a Redis URL with production-first precedence:
-# 1) Explicit env vars (REDIS_URL, CloudRuntime-provided aliases)
-# 2) CloudRuntime service vars for Redis (if cloud_runtime CLI is linked/authenticated)
-# 3) Optional local fallback (only when explicitly allowed)
+# 1) Explicit env vars (REDIS_URL and the aliases relay-core also honours)
+# 2) Optional local fallback (only when explicitly allowed)
+#
+# History: this script used to probe Railway service vars and the `cloud_runtime`
+# CLI. Railway is retired and `cloud_runtime` is not a real binary (it is the
+# artifact of a blind railway -> cloud_runtime string-replace in 62b2a3e2f), so
+# every CLOUD_RUNTIME_* branch here was permanently unreachable and has been
+# removed. TNF now runs local Redis + a WebSocket bus per node, with Upstash
+# Cloud Redis for hosted (paid-tier) deployments on GCP Cloud Run.
+#
+# Note: Upstash's REST interface (UPSTASH_REDIS_REST_URL / _REST_TOKEN, used by
+# packages/infrastructure/src/redis/RedisConfig.ts and cloudflare-sharedstate)
+# is an https:// endpoint, not a redis:// URL, so it is deliberately NOT part of
+# the resolution list below. Set REDIS_URL (rediss://) for TCP clients.
 
 ALLOW_LOCAL_REDIS="${ALLOW_LOCAL_REDIS:-false}"
-CLOUD_RUNTIME_ENVIRONMENT_NAME="${CLOUD_RUNTIME_ENVIRONMENT_NAME:-production}"
 
 is_local_url() {
   local url="${1:-}"
   [[ "${url}" == *"localhost"* ]] || [[ "${url}" == *"127.0.0.1"* ]]
-}
-
-is_internal_cloud_runtime_url() {
-  local url="${1:-}"
-  [[ "${url}" == *"cloud_runtime.internal"* ]]
-}
-
-running_inside_cloud_runtime() {
-  [[ -n "${CLOUD_RUNTIME_SERVICE_ID:-}" ]] || [[ -n "${CLOUD_RUNTIME_PRIVATE_DOMAIN:-}" ]] || [[ -n "${CLOUD_RUNTIME_ENVIRONMENT_ID:-}" ]]
 }
 
 emit_if_valid() {
@@ -32,35 +33,20 @@ emit_if_valid() {
   if is_local_url "${url}" && [[ "${ALLOW_LOCAL_REDIS}" != "true" ]]; then
     return 1
   fi
-  if is_internal_cloud_runtime_url "${url}" && ! running_inside_cloud_runtime; then
-    return 1
-  fi
   printf "%s\n" "${url}"
   echo "[resolve-cloud-redis] source=${source}" >&2
   return 0
 }
 
 try_env_sources() {
-  local keys=()
-  if running_inside_cloud_runtime; then
-    keys=(
-      REDIS_URL
-      CLOUD_RUNTIME_REDIS_URL
-      LIVE_REDIS_URL
-      REDIS_PRIVATE_URL
-      REDIS_TLS_URL
-      REDIS_PUBLIC_URL
-    )
-  else
-    keys=(
-      REDIS_PUBLIC_URL
-      REDIS_URL
-      CLOUD_RUNTIME_REDIS_URL
-      LIVE_REDIS_URL
-      REDIS_PRIVATE_URL
-      REDIS_TLS_URL
-    )
-  fi
+  # Same precedence in cloud and locally: the old split existed only to prefer
+  # Railway's REDIS_PUBLIC_URL outside the platform, and nothing sets that now.
+  local keys=(
+    REDIS_URL
+    LIVE_REDIS_URL
+    REDIS_PRIVATE_URL
+    REDIS_TLS_URL
+  )
   local key
   for key in "${keys[@]}"; do
     local value="${!key:-}"
@@ -71,18 +57,8 @@ try_env_sources() {
   return 1
 }
 
-try_cloud_runtime_sources() {
-  # Legacy Railway/cloud_runtime Redis discovery retired.
-  # Prefer REDIS_URL / Upstash env vars (see try_env_sources).
-  return 1
-}
-
 main() {
   if try_env_sources; then
-    exit 0
-  fi
-
-  if try_cloud_runtime_sources; then
     exit 0
   fi
 

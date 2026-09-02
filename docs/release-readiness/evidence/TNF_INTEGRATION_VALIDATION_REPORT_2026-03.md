@@ -1,5 +1,12 @@
 # TNF Integration Validation Test Results
 
+> ⚠️ **HISTORICAL EVIDENCE — do not read as current state.** This is a
+> point-in-time test record from 2026-03-06 and is preserved unedited. The Redis
+> bridge it records (`tramway.proxy.rlwy.net`) was Railway-hosted; **Railway is
+> retired.** TNF now runs local Redis + WebSocket bus per node, with Upstash
+> Cloud Redis for hosted (paid-tier) deployments. For current architecture see
+> `docs/architecture/TNF_AUTHORITATIVE_CHAIN_OF_COMMAND.md`.
+
 **Test Date:** 2026-03-06T17:01:16Z  
 **Test Environment:** Daniel's MacBook Pro  
 **TNF Version:** v6 (latest)  

@@ -16,7 +16,8 @@ The New Fuse (TNF) implements a federated control plane where authority is deriv
 - **Control Mechanism**: Exclusive control of the Authoritative command chain via a Live LLM API.
 - **Primary Tooling**:
     - **Master Clock**: Pulses global signals and heartbeats.
-    - **Cloud Redis**: Backbone for global broadcast (`tramway.proxy.rlwy.net`).
+    - **Cloud Redis**: Backbone for global broadcast — Upstash (hosted/paid tier),
+      bridged to each node's local Redis + WebSocket bus.
     - **Master Cloud Orchestrator/Broker**: Validates and routes directives.
 
 ### 2.2 The Sub-Director (Local)

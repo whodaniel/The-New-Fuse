@@ -34,7 +34,7 @@ Comprehensive production build orchestrator with:
 node scripts/build-production.cjs [--clean] [--packages-only] [--apps-only] [--verbose] [--skip-validation]
 ```
 
-#### `/scripts/build-cloud_runtime.cjs`
+#### `/scripts/build-cloud-run.cjs`
 
 CloudRuntime-optimized build script:
 
@@ -57,9 +57,9 @@ CloudRuntime-optimized build script:
 **Usage:**
 
 ```bash
-node scripts/build-cloud_runtime.cjs
-BUILD_VERBOSE=true node scripts/build-cloud_runtime.cjs
-BUILD_FRONTEND=false node scripts/build-cloud_runtime.cjs
+node scripts/build-cloud-run.cjs
+BUILD_VERBOSE=true node scripts/build-cloud-run.cjs
+BUILD_FRONTEND=false node scripts/build-cloud-run.cjs
 ```
 
 #### `/scripts/verify-build.cjs`
@@ -92,8 +92,8 @@ Added to `/package.json`:
     "build:backend": "turbo run build --filter=@the-new-fuse/backend-app",
     "build:production": "node scripts/build-production.cjs --clean",
     "build:production:verbose": "node scripts/build-production.cjs --clean --verbose",
-    "build:cloud_runtime": "node scripts/build-cloud_runtime.cjs",
-    "build:cloud_runtime:verbose": "BUILD_VERBOSE=true node scripts/build-cloud_runtime.cjs",
+    "build:cloud-run": "node scripts/build-cloud-run.cjs",
+    "build:cloud-run:verbose": "BUILD_VERBOSE=true node scripts/build-cloud-run.cjs",
     "build:validate": "node scripts/build-production.cjs --skip-validation=false",
     "build:verify": "node scripts/verify-build.cjs"
   }
@@ -117,7 +117,7 @@ RUN pnpm --filter @the-new-fuse/api-gateway build || echo "API Gateway build fai
 ```dockerfile
 ENV NODE_ENV=production
 ENV BUILD_VERBOSE=true
-RUN pnpm run build:cloud_runtime || (echo "Build failed" && exit 1)
+RUN pnpm run build:cloud-run || (echo "Build failed" && exit 1)
 ```
 
 **Benefits:**
@@ -226,19 +226,19 @@ pnpm run build:frontend  # Only Frontend
 
 ```bash
 # Dockerfile.cloud_runtime automatically uses:
-pnpm run build:cloud_runtime
+pnpm run build:cloud-run
 ```
 
 #### Test CloudRuntime build locally:
 
 ```bash
-pnpm run build:cloud_runtime
+pnpm run build:cloud-run
 ```
 
 #### Debug CloudRuntime build:
 
 ```bash
-pnpm run build:cloud_runtime:verbose
+pnpm run build:cloud-run:verbose
 ```
 
 ### CI/CD Pipeline
@@ -301,7 +301,7 @@ pnpm run build:verify || exit 1
 <repo-root>/
 ├── scripts/
 │   ├── build-production.cjs      # Comprehensive build orchestrator
-│   ├── build-cloud_runtime.cjs          # CloudRuntime-optimized build
+│   ├── build-cloud-run.cjs          # CloudRuntime-optimized build
 │   └── verify-build.cjs           # Build verification utility
 ├── Dockerfile.cloud_runtime             # Updated to use build scripts
 ├── package.json                   # Updated with new build scripts

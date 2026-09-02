@@ -10,7 +10,7 @@
 Run from repo root:
 
 ```
-pnpm agents:registry:cloud_runtime
+pnpm agents:registry:cloud-run
 ```
 
 ## Requirements
@@ -39,7 +39,8 @@ AGENT_REGISTRY_IMPORT_TOKEN=your-token
 POST /api/agent-registry/import/snapshot?token=${AGENT_REGISTRY_IMPORT_TOKEN}
 ```
 
-Set `AGENT_REGISTRY_IMPORT_TOKEN` in CloudRuntime so the cron call is authorized.
+Set `AGENT_REGISTRY_IMPORT_TOKEN` in CloudRuntime so the cron call is
+authorized.
 
 ## Notes
 

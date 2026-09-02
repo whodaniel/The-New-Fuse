@@ -27,8 +27,8 @@ validation, and health checks.
   - `GET /api/admin/openclaw/oauth/bindings`
   - `POST /api/admin/openclaw/oauth/execute/:tenantId/:service/:provider`
 - CLI scripts:
-  - `scripts/cloud_runtime/sync-openclaw-oauth-instance.sh`
-  - `scripts/cloud_runtime/sync-openclaw-oauth-instances.sh`
+  - `scripts/cloud-run/sync-openclaw-oauth-instance.sh`
+  - `scripts/cloud-run/sync-openclaw-oauth-instances.sh`
   - Shared helper: `scripts/lib/tnf-cloud-run.sh` (gcloud Cloud Run env ops)
 - Super Admin UI:
   - `apps/frontend/src/pages/Admin/components/OAuthInstanceRotationControl.tsx`
@@ -65,17 +65,17 @@ Collect Tokens -> Encrypt + Store Binding -> Execute Rotation -> Wait Deploy
 
 When Railway was retired, `railway` was string-replaced with `cloud_runtime`
 repo-wide. `cloud_runtime` is **not a real binary**. The OAuth sync scripts
-under `scripts/cloud_runtime/` now call `gcloud` via
-`scripts/lib/tnf-cloud-run.sh` (env update / verify / wait-ready). Prefer
-`--no-wait` only when you intentionally skip the Cloud Run ready poll.
+under `scripts/cloud-run/` now call `gcloud` via `scripts/lib/tnf-cloud-run.sh`
+(env update / verify / wait-ready). Prefer `--no-wait` only when you
+intentionally skip the Cloud Run ready poll.
 
 ## Testing
 
 Run:
 
 ```bash
-bash scripts/cloud_runtime/sync-openclaw-oauth-instances.sh \
-  --config scripts/cloud_runtime/openclaw-oauth-instances.json --no-wait
+bash scripts/cloud-run/sync-openclaw-oauth-instances.sh \
+  --config scripts/cloud-run/openclaw-oauth-instances.json --no-wait
 ```
 
 Then verify (Cloud Run):

@@ -59,7 +59,7 @@ git checkout <commit-hash>
 
 # Rebuild
 pnpm install
-pnpm run build:cloud_runtime
+pnpm run build:cloud-run
 ```
 
 ### 3. Service Rollback

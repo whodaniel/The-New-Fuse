@@ -26,7 +26,7 @@ REQUIRE_TWIP_CONTEXT_FOR_TERMINAL_BOUND="${BROKER_REQUIRE_TWIP_CONTEXT_FOR_TERMI
 usage() {
   cat <<'USAGE'
 Usage:
-  bash scripts/cloud_runtime/set-federation-gate-mode.sh [off|warn|enforce]
+  bash scripts/cloud-run/set-federation-gate-mode.sh [off|warn|enforce]
 
 Environment overrides:
   CLOUD_RUNTIME_API_SERVICE / CLOUD_RUNTIME_RELAY_SERVICE  Cloud Run service names

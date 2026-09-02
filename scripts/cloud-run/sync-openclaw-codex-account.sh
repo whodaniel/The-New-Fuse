@@ -16,7 +16,7 @@ EXTRA=()
 usage() {
   cat <<'EOF'
 Usage:
-  bash scripts/cloud_runtime/sync-openclaw-codex-account.sh [options]
+  bash scripts/cloud-run/sync-openclaw-codex-account.sh [options]
 
 Delegates to sync-openclaw-oauth-instance.sh --provider openai-codex (gcloud/Cloud Run).
 EOF
@@ -37,7 +37,7 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-exec bash scripts/cloud_runtime/sync-openclaw-oauth-instance.sh \
+exec bash scripts/cloud-run/sync-openclaw-oauth-instance.sh \
   --service "$SERVICE" \
   --provider openai-codex \
   --auth-file "$AUTH_FILE" \

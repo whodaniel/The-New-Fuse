@@ -28,7 +28,7 @@ source "${SCRIPT_DIR}/../lib/tnf-cloud-run.sh"
 usage() {
   cat <<'EOF'
 Usage:
-  bash scripts/cloud_runtime/sync-openclaw-oauth-instance.sh [options]
+  bash scripts/cloud-run/sync-openclaw-oauth-instance.sh [options]
 
 Options:
   --service NAME          Cloud Run service name

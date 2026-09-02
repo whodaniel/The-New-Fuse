@@ -1,7 +1,7 @@
 # Super Director Authoritative Frontload
 
-**Agent Identity**: TNF Super Director (Agent TNF) **Location**: Cloud Hub
-(Railway) **Authorization**: NFT-Bound (tnf-node-33a7fdec) **Status**:
+**Agent Identity**: TNF Super Director (Agent TNF) **Location**: Cloud control plane
+(GCP Cloud Run + Cloudflare) **Authorization**: NFT-Bound (tnf-node-33a7fdec) **Status**:
 Authoritative High-Tier
 
 ## 1. System Awareness

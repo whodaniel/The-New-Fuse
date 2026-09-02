@@ -8,28 +8,28 @@ discovery, mirroring the functionality of an IDE Command Palette (Cmd+Shift+P).
 
 These are the primary entry points for the TNF Self-Synthesizing Kernel.
 
-| Command       | Description                                                            |
-| :------------ | :--------------------------------------------------------------------- |
-| `boot`        | Master entry point to boot the entire TNF stack.                       |
-| `forge`       | **LLVM-powered JIT compilation** and native machine code optimization. |
-| `mirror`      | iPhone/iPad mirroring and AI vision bridge operations.                 |
-| `super-cycle` | Provider-routed orchestration and long-running agent loops.            |
-| `self-improvement` | Deterministic reliability loop with artifact verification.        |
-| `relay`       | Real-time multi-agent communication and synaptic bus operations.       |
-| `jules`       | Autonomous automation engine for batch processing and PR management.   |
-| `hooks`       | HookChain operations (`logs`, `test`, `replay`, `explain`).            |
-| `skills`      | Skill bank operations (sync, ingest, audit).                           |
-| `metaskills`  | Meta-skills audit and cognitive layer diagnostics.                     |
-| `mcp`         | Model Context Protocol utilities and server management.                |
-| `ai`          | AI launcher and prompt engineering utilities.                          |
-| `chat`        | Interactive chat session with the TNF Orchestrator (Gemini OAuth).     |
-| `acp`         | Agent Control Protocol server operations.                              |
-| `auth`        | Credential management and secure token rotation.                       |
-| `compat`      | Compatibility and migration tools (TNF <-> OpenClaw).                  |
-| `voice`       | Voice Bridge commands (TTS/STT, anchor target).                        |
-| `doctor`      | System-wide health checks and quick fixes.                             |
-| `onboard`     | Frontload onboarding for new environment setup.                        |
-| `menu`        | Visual command menu (Run `tnf menu --full` for the complete list).     |
+| Command            | Description                                                            |
+| :----------------- | :--------------------------------------------------------------------- |
+| `boot`             | Master entry point to boot the entire TNF stack.                       |
+| `forge`            | **LLVM-powered JIT compilation** and native machine code optimization. |
+| `mirror`           | iPhone/iPad mirroring and AI vision bridge operations.                 |
+| `super-cycle`      | Provider-routed orchestration and long-running agent loops.            |
+| `self-improvement` | Deterministic reliability loop with artifact verification.             |
+| `relay`            | Real-time multi-agent communication and synaptic bus operations.       |
+| `jules`            | Autonomous automation engine for batch processing and PR management.   |
+| `hooks`            | HookChain operations (`logs`, `test`, `replay`, `explain`).            |
+| `skills`           | Skill bank operations (sync, ingest, audit).                           |
+| `metaskills`       | Meta-skills audit and cognitive layer diagnostics.                     |
+| `mcp`              | Model Context Protocol utilities and server management.                |
+| `ai`               | AI launcher and prompt engineering utilities.                          |
+| `chat`             | Interactive chat session with the TNF Orchestrator (Gemini OAuth).     |
+| `acp`              | Agent Control Protocol server operations.                              |
+| `auth`             | Credential management and secure token rotation.                       |
+| `compat`           | Compatibility and migration tools (TNF <-> OpenClaw).                  |
+| `voice`            | Voice Bridge commands (TTS/STT, anchor target).                        |
+| `doctor`           | System-wide health checks and quick fixes.                             |
+| `onboard`          | Frontload onboarding for new environment setup.                        |
+| `menu`             | Visual command menu (Run `tnf menu --full` for the complete list).     |
 
 ---
 
@@ -66,9 +66,9 @@ of these directly via the CLI.
 
 ### Infrastructure & Deployment
 
-- `scripts/cloud_runtime/cloud_runtime-deploy-saas.sh`: ⚠️ **DEPRECATED** Production SaaS
-  deployment. CloudRuntime is no longer used; deploy via GCP Cloud Run + Cloudflare.
-  See `CLOUD_MIGRATION_BLUEPRINT.md`.
+- `scripts/cloud-run/cloud_runtime-deploy-saas.sh`: ⚠️ **DEPRECATED** Production
+  SaaS deployment. CloudRuntime is no longer used; deploy via GCP Cloud Run +
+  Cloudflare. See `CLOUD_MIGRATION_BLUEPRINT.md`.
 - `scripts/deployment/blue-green-deploy.sh`: Zero-downtime rollouts.
 - `scripts/cleanup/deep-cleanup.sh`: Exhaustive workspace pruning.
 

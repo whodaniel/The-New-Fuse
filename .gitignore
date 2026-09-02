@@ -191,7 +191,7 @@ data/original_master_data.csv
 worktrees/
 cloudflare-sharedstate/accelerator/target/
 apps/external/cursor-watch-learn/output/
-scripts/cloud_runtime/openclaw-codex-tenants.json
+scripts/cloud-run/openclaw-codex-tenants.json
 archive/junk/
 
 # Semantic pipeline: personal-data overlay + local build cache (system

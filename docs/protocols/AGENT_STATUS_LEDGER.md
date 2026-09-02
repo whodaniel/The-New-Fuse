@@ -159,9 +159,15 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-02T07:27:18.150Z** — handoff
-`e12e3d89-52db-414f-bf9d-1d7a3069a2a3` (`2c03af17566f`).
-`bade7eee-c7dc-4d52-8127-eed0a91f1d2b` (`0dd74d78a11e`).
+Updated: **2026-09-02T20:52:38.585Z** — handoff
+`0fad78b4-bf59-45de-bc04-ec299e9ba22d` (`7efa941e6706`).
+`a25d5924-4019-4d1f-88ab-75a450ad0e83` (`a004554d2c98`).
+`526779c6-43fb-4b27-af8a-6dae26978899` (`fc58e7742f9c`).
+`505f76d4-0fbe-4af4-8030-de9c97c6ee30` (`c0a5de17cf53`).
+`8a6bbacb-3dc3-4b95-91ce-e890bfbc1395` (`809aeade3d63`).
+`b250a837-90df-4b59-a1b1-3ccf6437dfc2` (`f1d516be3e0a`).
+`d7063906-686c-4fb1-84e0-30b346ef188b` (`3757759a5e3b`).
+`cef062b2-0ec0-4570-9c1f-55fe7e19c4e7` (`f39270fa3f60`).
 `6bc10366-c1ed-4d30-8109-f3c617a39310` (`feb6a50e0abb`).
 `09e2dc69-909b-49ef-b284-8dc1fb692e8e` (`2a9963dcf08f`).
 `3cd19e37-bec3-4154-a954-894caf1c3aa9` (`5c1baed3b7fe`).
@@ -1680,6 +1686,28 @@ clean | ✅ COMPLETE |
 (bade7eee-c7dc-4d52-8127-eed0a91f1d2b) | ✅ HANDOFF_READY |
 
 | 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(e12e3d89-52db-414f-bf9d-1d7a3069a2a3) | ✅ HANDOFF_READY | | 2026-09-02 |
-Orchestrator | Published SESSION_HANDOFF_LATEST
-(6f8085d5-8db9-4b66-921d-3a78dc7b93c9) | ✅ HANDOFF_READY |
+(d7063906-686c-4fb1-84e0-30b346ef188b) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(b250a837-90df-4b59-a1b1-3ccf6437dfc2) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(8a6bbacb-3dc3-4b95-91ce-e890bfbc1395) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0e3f7d08-d21c-4302-b745-427d61484fcf) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(505f76d4-0fbe-4af4-8030-de9c97c6ee30) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4abed0f7-05e8-41f8-b227-1ddcbcbe5185) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(526779c6-43fb-4b27-af8a-6dae26978899) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a25d5924-4019-4d1f-88ab-75a450ad0e83) | ✅ HANDOFF_READY |
+
+| 2026-09-02 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0fad78b4-bf59-45de-bc04-ec299e9ba22d) | ✅ HANDOFF_READY |

@@ -3,8 +3,9 @@
 ## Overview
 
 The New Fuse monorepo now has a comprehensive, production-ready build system
-that works both locally and on CloudRuntime. The build system intelligently handles
-dependency ordering, validates outputs, and provides detailed build reports.
+that works both locally and on CloudRuntime. The build system intelligently
+handles dependency ordering, validates outputs, and provides detailed build
+reports.
 
 ## Build Scripts
 
@@ -50,12 +51,12 @@ pnpm run build:production:verbose
 
 ### CloudRuntime-Specific Build
 
-#### `pnpm run build:cloud_runtime`
+#### `pnpm run build:cloud-run`
 
 Optimized build for CloudRuntime deployment - only builds what's needed.
 
 ```bash
-pnpm run build:cloud_runtime
+pnpm run build:cloud-run
 ```
 
 **What it builds:**
@@ -163,7 +164,7 @@ Options:
   --skip-validation Skip build output validation
 ```
 
-#### `/scripts/build-cloud_runtime.cjs`
+#### `/scripts/build-cloud-run.cjs`
 
 CloudRuntime-optimized build script:
 
@@ -189,7 +190,7 @@ The CloudRuntime Dockerfile (`/Dockerfile.cloud_runtime`) uses the build system:
 # Build packages and API Gateway using CloudRuntime-optimized build
 ENV NODE_ENV=production
 ENV BUILD_VERBOSE=true
-RUN pnpm run build:cloud_runtime || (echo "Build failed" && exit 1)
+RUN pnpm run build:cloud-run || (echo "Build failed" && exit 1)
 ```
 
 ## Dependency Order
@@ -248,7 +249,7 @@ pnpm run build:production:verbose
 #### CloudRuntime deployment
 
 ```bash
-pnpm run build:cloud_runtime
+pnpm run build:cloud-run
 ```
 
 #### Build verification in CI
@@ -344,7 +345,7 @@ pnpm run build:low-memory
 Or use CloudRuntime build:
 
 ```bash
-pnpm run build:cloud_runtime
+pnpm run build:cloud-run
 ```
 
 ### Build succeeds but verification fails
@@ -397,7 +398,7 @@ pnpm run build:all:clean
 
 ### For CI/CD
 
-1. Always use `build:cloud_runtime` for CloudRuntime deployments
+1. Always use `build:cloud-run` for CloudRuntime deployments
 2. Set `BUILD_VERBOSE=true` for debugging
 3. Use `build:verify` to validate build outputs
 4. Set appropriate memory limits for your environment

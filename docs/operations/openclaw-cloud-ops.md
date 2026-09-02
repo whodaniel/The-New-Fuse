@@ -1,12 +1,22 @@
 # OpenClaw Cloud Operations Guide
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 ## Overview
 
 Reference guide for managing OpenClaw cloud instances on CloudRuntime.
 
 ## Instance Information
 
-| Service                  | CloudRuntime URL                                                | Purpose                    |
+| Service                  | CloudRuntime URL                                           | Purpose                    |
 | ------------------------ | ---------------------------------------------------------- | -------------------------- |
 | `openclaw-cloud`         | `https://openclaw-cloud-production-934c.thenewfuse.com`    | Main production instance   |
 | `openclaw-sandbox-cloud` | `https://openclaw-sandbox-cloud-production.thenewfuse.com` | Sandbox/Testing instance   |
@@ -87,8 +97,8 @@ cloud_runtime up --service openclaw-primary --detach
 ### Failed Deployments
 
 - If `cloud_runtime up` fails, check if you are in the correct directory.
-- For Sandbox, ensure `cloud_runtime-openclaw-sandbox/Dockerfile` matches the Gateway
-  version.
+- For Sandbox, ensure `cloud_runtime-openclaw-sandbox/Dockerfile` matches the
+  Gateway version.
 - Make sure `entrypoint.sh` is present and executable (`chmod +x`).
 
 ### Authentication Failures

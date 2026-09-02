@@ -978,9 +978,7 @@
       "source": "@the-new-fuse/a2a-core",
       "target": "@the-new-fuse/ap2-protocol",
       "importCount": 4,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/a2a-core/src/a2a.module.js",
@@ -988,33 +986,25 @@
         "packages/a2a-core/src/a2a.service.js",
         "packages/a2a-core/src/a2a.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/ap2-protocol"
-      ]
+      "specifiers": ["@the-new-fuse/ap2-protocol"]
     },
     {
       "source": "@the-new-fuse/a2a-core",
       "target": "@the-new-fuse/core-vector-db",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/a2a-core/src/a2a.module.ts",
         "packages/a2a-core/src/pointer-resolver.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/core-vector-db"
-      ]
+      "specifiers": ["@the-new-fuse/core-vector-db"]
     },
     {
       "source": "@the-new-fuse/a2a-core",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 7,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/a2a-core/src/a2a.module.js",
@@ -1025,32 +1015,22 @@
         "packages/a2a-core/src/redis-adapter.js",
         "packages/a2a-core/src/redis-adapter.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/a2a-core",
       "target": "@the-new-fuse/security",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/a2a-core/src/signature-wrapper.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/security"
-      ]
+      "files": ["packages/a2a-core/src/signature-wrapper.ts"],
+      "specifiers": ["@the-new-fuse/security"]
     },
     {
       "source": "@the-new-fuse/a2a-react",
       "target": "@the-new-fuse/a2a-core",
       "importCount": 6,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/a2a-react/src/A2AProvider.tsx",
@@ -1060,32 +1040,22 @@
         "packages/a2a-react/src/index.ts",
         "packages/a2a-react/src/useA2A.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/a2a-core"
-      ]
+      "specifiers": ["@the-new-fuse/a2a-core"]
     },
     {
       "source": "@the-new-fuse/agent",
       "target": "@the-new-fuse/api-types",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/agent/src/core/AgentProcessor.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/api-types"
-      ]
+      "files": ["packages/agent/src/core/AgentProcessor.ts"],
+      "specifiers": ["@the-new-fuse/api-types"]
     },
     {
       "source": "@the-new-fuse/agent",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 6,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/agent/src/bridges/adapters/RedisTransportAdapter.ts",
@@ -1095,17 +1065,13 @@
         "packages/agent/src/registry/redis-agent-registry.ts",
         "packages/agent/src/services/RedisService.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/agent",
       "target": "@the-new-fuse/types",
       "importCount": 11,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/agent/src/bridges/cline_bridge.tsx",
@@ -1120,17 +1086,13 @@
         "packages/agent/src/services/InterAgentChatService.tsx",
         "packages/agent/src/services/MessageValidator.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/agent-coordination",
       "target": "@the-new-fuse/a2a-core",
       "importCount": 5,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/agent-coordination/examples/basic-usage.ts",
@@ -1139,17 +1101,13 @@
         "packages/agent-coordination/src/redis-coordinator.ts",
         "packages/agent-coordination/src/types/coordination.types.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/a2a-core"
-      ]
+      "specifiers": ["@the-new-fuse/a2a-core"]
     },
     {
       "source": "@the-new-fuse/agent-coordination",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 11,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/agent-coordination/examples/basic-usage.ts",
@@ -1164,17 +1122,13 @@
         "packages/agent-coordination/src/state/SharedCache.ts",
         "packages/agent-coordination/tests/redis-client.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/agent-evaluation-framework",
       "target": "@the-new-fuse/logger",
       "importCount": 4,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/agent-evaluation-framework/src/business-rules-evaluator.ts",
@@ -1182,63 +1136,43 @@
         "packages/agent-evaluation-framework/src/lm-judge.ts",
         "packages/agent-evaluation-framework/src/multi-step-toolcall-evaluator.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/logger"
-      ]
+      "specifiers": ["@the-new-fuse/logger"]
     },
     {
       "source": "@the-new-fuse/agentic-rag-search",
       "target": "@the-new-fuse/logger",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/agentic-rag-search/src/agent-rag-decider.ts",
         "packages/agentic-rag-search/src/search-tool.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/logger"
-      ]
+      "specifiers": ["@the-new-fuse/logger"]
     },
     {
       "source": "@the-new-fuse/ai-security-bridge",
       "target": "@the-new-fuse/logger",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/ai-security-bridge/src/versa-labs-adapter.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/logger"
-      ]
+      "files": ["packages/ai-security-bridge/src/versa-labs-adapter.ts"],
+      "specifiers": ["@the-new-fuse/logger"]
     },
     {
       "source": "@the-new-fuse/api",
       "target": "@the-new-fuse/core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/api/src/app.module.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/core"
-      ]
+      "files": ["packages/api/src/app.module.ts"],
+      "specifiers": ["@the-new-fuse/core"]
     },
     {
       "source": "@the-new-fuse/api",
       "target": "@the-new-fuse/database",
       "importCount": 10,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/api/src/app.module.ts",
@@ -1252,33 +1186,25 @@
         "packages/api/src/services/system-metrics.service.ts",
         "packages/api/src/types/shims.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/api",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/api/src/services/agent-discovery-registry.service.ts",
         "packages/api/src/services/redis.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/api",
       "target": "@the-new-fuse/types",
       "importCount": 14,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/api/src/dto/agent.dto.ts",
@@ -1296,110 +1222,74 @@
         "packages/api/src/types/index.ts",
         "packages/api/src/types/shims.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/api-client",
       "target": "@the-new-fuse/types",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/api-client/src/agents.client.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "files": ["packages/api-client/src/agents.client.ts"],
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/api-gateway",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/api-gateway/src/gateway/jules-webhook.module.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "files": ["apps/api-gateway/src/gateway/jules-webhook.module.ts"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/api-gateway",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/api-gateway/src/gateway/jules-webhook.module.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "files": ["apps/api-gateway/src/gateway/jules-webhook.module.ts"],
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/api-optimization",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 3,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/api-optimization/src/caching/response-cache.service.ts",
         "packages/api-optimization/src/quota/quota-management.service.ts",
         "packages/api-optimization/src/rate-limiting/redis-rate-limiter.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/a2a-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/api/src/app.module.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/a2a-core"
-      ]
+      "files": ["apps/api/src/app.module.ts"],
+      "specifiers": ["@the-new-fuse/a2a-core"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/core",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/api/src/modules/director/director.module.ts",
         "apps/api/src/modules/director/director.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/core"
-      ]
+      "specifiers": ["@the-new-fuse/core"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/database",
       "importCount": 101,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/api/src/agents/agents.module.ts",
@@ -1506,86 +1396,60 @@
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/api/src/app.module.ts",
         "apps/api/src/services/agent-pfp-overrides.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/jules-skill",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/api/src/mcp/TheNewFuseMCPServer.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/jules-skill"
-      ]
+      "files": ["apps/api/src/mcp/TheNewFuseMCPServer.ts"],
+      "specifiers": ["@the-new-fuse/jules-skill"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/n8n-workflows",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/api/src/controllers/n8n-workflows.controller.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/n8n-workflows"
-      ]
+      "files": ["apps/api/src/controllers/n8n-workflows.controller.ts"],
+      "specifiers": ["@the-new-fuse/n8n-workflows"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/protocol-contracts",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/api/src/modules/resources/resource-search-protocol.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/protocol-contracts"
-      ]
+      "specifiers": ["@the-new-fuse/protocol-contracts"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/relay-core",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/api/src/modules/agentic/goose/goose.service.ts",
         "apps/api/src/services/agent-handoff.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/types",
       "importCount": 17,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/api/src/agents/dto/agent.dto.ts",
@@ -1606,77 +1470,51 @@
         "apps/api/src/services/role.service.ts",
         "apps/api/src/services/workflow.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/web-scraping",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/api/src/mcp/TheNewFuseMCPServer.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/web-scraping"
-      ]
+      "files": ["apps/api/src/mcp/TheNewFuseMCPServer.ts"],
+      "specifiers": ["@the-new-fuse/web-scraping"]
     },
     {
       "source": "@the-new-fuse/api-server",
       "target": "@the-new-fuse/workflow-engine",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/api/src/modules/workflow-deployment/cloudflare-deployment.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/workflow-engine"
-      ]
+      "specifiers": ["@the-new-fuse/workflow-engine"]
     },
     {
       "source": "@the-new-fuse/backend-app",
       "target": "@the-new-fuse/ag-ui-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/backend/src/app.module.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/ag-ui-core"
-      ]
+      "files": ["apps/backend/src/app.module.ts"],
+      "specifiers": ["@the-new-fuse/ag-ui-core"]
     },
     {
       "source": "@the-new-fuse/backend-app",
       "target": "@the-new-fuse/core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/backend/src/tasks/task.service.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/core"
-      ]
+      "files": ["apps/backend/src/tasks/task.service.ts"],
+      "specifiers": ["@the-new-fuse/core"]
     },
     {
       "source": "@the-new-fuse/backend-app",
       "target": "@the-new-fuse/database",
       "importCount": 61,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/backend/src/api/agent.controller.ts",
@@ -1747,39 +1585,25 @@
       "source": "@the-new-fuse/backend-app",
       "target": "@the-new-fuse/feature-tracker",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/backend/src/services/agent/agent-coordinator.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/feature-tracker"
-      ]
+      "files": ["apps/backend/src/services/agent/agent-coordinator.ts"],
+      "specifiers": ["@the-new-fuse/feature-tracker"]
     },
     {
       "source": "@the-new-fuse/backend-app",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/backend/src/services/redis.service.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "files": ["apps/backend/src/services/redis.service.ts"],
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/backend-app",
       "target": "@the-new-fuse/mcp-core",
       "importCount": 9,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/backend/src/modules/mcp/examples/api-integration-agent.ts",
@@ -1800,24 +1624,16 @@
       "source": "@the-new-fuse/backend-app",
       "target": "@the-new-fuse/relay-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/backend/src/modules/relay/relay.service.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "files": ["apps/backend/src/modules/relay/relay.service.ts"],
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@the-new-fuse/backend-app",
       "target": "@the-new-fuse/types",
       "importCount": 13,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/backend/src/middleware/auth.ts",
@@ -1834,47 +1650,31 @@
         "apps/backend/src/services/agent.service.ts",
         "apps/backend/src/services/agent/agent-coordinator.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/claude-skills",
       "target": "@the-new-fuse/core-vector-db",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/claude-skills/src/registry/SkillRegistry.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/core-vector-db"
-      ]
+      "files": ["packages/claude-skills/src/registry/SkillRegistry.ts"],
+      "specifiers": ["@the-new-fuse/core-vector-db"]
     },
     {
       "source": "@the-new-fuse/core",
       "target": "@the-new-fuse/core-vector-db",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/core/src/memory/VectorMemorySystem.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/core-vector-db"
-      ]
+      "files": ["packages/core/src/memory/VectorMemorySystem.ts"],
+      "specifiers": ["@the-new-fuse/core-vector-db"]
     },
     {
       "source": "@the-new-fuse/core",
       "target": "@the-new-fuse/database",
       "importCount": 4,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/core/src/modules/llm/llm.module.js",
@@ -1882,17 +1682,13 @@
         "packages/core/src/services/agency.service.ts",
         "packages/core/src/services/enhanced-agency.service.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/core",
       "target": "@the-new-fuse/features",
       "importCount": 2,
-      "kind": [
-        "relative-boundary-crossing"
-      ],
+      "kind": ["relative-boundary-crossing"],
       "declaredInPackageJson": false,
       "files": [
         "packages/core/analytics/AnalyticsManager.ts",
@@ -1907,9 +1703,7 @@
       "source": "@the-new-fuse/core",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 11,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/core/src/security/metricsCollector.ts",
@@ -1924,17 +1718,13 @@
         "packages/core/src/task/TaskQueue.ts",
         "packages/core/src/utils/database.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/core",
       "target": "@the-new-fuse/types",
       "importCount": 5,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/core/src/llm/providers/AnthropicProvider.ts",
@@ -1943,92 +1733,58 @@
         "packages/core/src/llm/providers/OpenCodeApiProvider.ts",
         "packages/core/src/llm/providers/OpenCodeCliProvider.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/core",
       "target": "@the-new-fuse/ui-consolidated",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/core/components/agents/AgentCard.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/ui-consolidated"
-      ]
+      "files": ["packages/core/components/agents/AgentCard.tsx"],
+      "specifiers": ["@the-new-fuse/ui-consolidated"]
     },
     {
       "source": "@the-new-fuse/data",
       "target": "@the-new-fuse/core-vector-db",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/data/src/index.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/core-vector-db"
-      ]
+      "files": ["packages/data/src/index.ts"],
+      "specifiers": ["@the-new-fuse/core-vector-db"]
     },
     {
       "source": "@the-new-fuse/data",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/data/src/index.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "files": ["packages/data/src/index.ts"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/data",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/data/src/index.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "files": ["packages/data/src/index.ts"],
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/extension-system",
       "target": "@the-new-fuse/protocol-contracts",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/extension-system/src/satellite/SatelliteManifest.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/protocol-contracts/extension-manifest.js"
-      ]
+      "files": ["packages/extension-system/src/satellite/SatelliteManifest.ts"],
+      "specifiers": ["@the-new-fuse/protocol-contracts/extension-manifest.js"]
     },
     {
       "source": "@the-new-fuse/extension-system",
       "target": "@the-new-fuse/relay-core",
       "importCount": 9,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/extension-system/src/ExtensionLoader.ts",
@@ -2041,65 +1797,47 @@
         "packages/extension-system/src/types/ExtensionTypes.ts",
         "packages/extension-system/src/validator/ExtensionValidator.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@the-new-fuse/extension-system",
       "target": "@the-new-fuse/workflow-engine",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
       "files": [
         "packages/extension-system/src/manager/ExtensionManager.ts",
         "packages/extension-system/src/types/ExtensionTypes.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/workflow-engine"
-      ]
+      "specifiers": ["@the-new-fuse/workflow-engine"]
     },
     {
       "source": "@the-new-fuse/fairtable-adapters",
       "target": "@the-new-fuse/fairtable-components",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/fairtable-adapters/src/KanbanBoardAdapter.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/fairtable-components"
-      ]
+      "files": ["packages/fairtable-adapters/src/KanbanBoardAdapter.tsx"],
+      "specifiers": ["@the-new-fuse/fairtable-components"]
     },
     {
       "source": "@the-new-fuse/fairtable-adapters",
       "target": "@the-new-fuse/fairtable-core",
       "importCount": 3,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/fairtable-adapters/src/KanbanBoardAdapter.tsx",
         "packages/fairtable-adapters/src/index.ts",
         "packages/fairtable-adapters/src/migration-utils.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/fairtable-core"
-      ]
+      "specifiers": ["@the-new-fuse/fairtable-core"]
     },
     {
       "source": "@the-new-fuse/fairtable-components",
       "target": "@the-new-fuse/fairtable-core",
       "importCount": 9,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/fairtable-components/src/ActiveTableView.tsx",
@@ -2112,217 +1850,145 @@
         "packages/fairtable-components/src/TimelineView.tsx",
         "packages/fairtable-components/src/Toolbar.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/fairtable-core"
-      ]
+      "specifiers": ["@the-new-fuse/fairtable-core"]
     },
     {
       "source": "@the-new-fuse/fairtable-components",
       "target": "@the-new-fuse/fairtable-utils",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/fairtable-components/src/ColumnHeader.tsx",
         "packages/fairtable-components/src/TableCell.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/fairtable-utils"
-      ]
+      "specifiers": ["@the-new-fuse/fairtable-utils"]
     },
     {
       "source": "@the-new-fuse/feature-suggestions",
       "target": "@the-new-fuse/feature-tracker",
       "importCount": 3,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/feature-suggestions/src/components/EnhancedTimelineView.tsx",
         "packages/feature-suggestions/src/types/index.tsx",
         "packages/feature-suggestions/src/types/timeline.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/feature-tracker"
-      ]
+      "specifiers": ["@the-new-fuse/feature-tracker"]
     },
     {
       "source": "@the-new-fuse/feature-suggestions",
       "target": "@the-new-fuse/types",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/feature-suggestions/src/types.ts",
         "packages/feature-suggestions/src/types/index.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/features",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/features/dashboard/templates/TemplateManager.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "files": ["packages/features/dashboard/templates/TemplateManager.tsx"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/features",
       "target": "@the-new-fuse/ui-consolidated",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/features/agents/components/AgentCard.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/ui-consolidated"
-      ]
+      "files": ["packages/features/agents/components/AgentCard.tsx"],
+      "specifiers": ["@the-new-fuse/ui-consolidated"]
     },
     {
       "source": "@the-new-fuse/features",
       "target": "@the-new-fuse/utils",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/features/dashboard/templates/TemplateManager.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/utils"
-      ]
+      "files": ["packages/features/dashboard/templates/TemplateManager.tsx"],
+      "specifiers": ["@the-new-fuse/utils"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/a2a-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/frontend/src/components/A2AMultiAgentChat.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/a2a-core"
-      ]
+      "files": ["apps/frontend/src/components/A2AMultiAgentChat.tsx"],
+      "specifiers": ["@the-new-fuse/a2a-core"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/a2a-react",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/frontend/src/components/A2AMultiAgentChat.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/a2a-react"
-      ]
+      "files": ["apps/frontend/src/components/A2AMultiAgentChat.tsx"],
+      "specifiers": ["@the-new-fuse/a2a-react"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/api-client",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
       "files": [
         "apps/frontend/src/hooks/useApi.ts",
         "apps/frontend/src/hooks/useBackup.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/api-client"
-      ]
+      "specifiers": ["@the-new-fuse/api-client"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/fairtable-components",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/frontend/src/pages/fairtable/FairtableDashboard.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/fairtable-components"
-      ]
+      "files": ["apps/frontend/src/pages/fairtable/FairtableDashboard.tsx"],
+      "specifiers": ["@the-new-fuse/fairtable-components"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/fairtable-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/frontend/src/pages/fairtable/FairtableDashboard.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/fairtable-core"
-      ]
+      "files": ["apps/frontend/src/pages/fairtable/FairtableDashboard.tsx"],
+      "specifiers": ["@the-new-fuse/fairtable-core"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/llm-catalog",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/frontend/src/shared/features/settings/LLMConfigManager.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/llm-catalog"
-      ]
+      "specifiers": ["@the-new-fuse/llm-catalog"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/prompt-templating",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "apps/frontend/src/components/WorkflowBuilder/nodes.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/prompt-templating"
-      ]
+      "files": ["apps/frontend/src/components/WorkflowBuilder/nodes.tsx"],
+      "specifiers": ["@the-new-fuse/prompt-templating"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/types",
       "importCount": 21,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/frontend/src/components/AdminPanel/FeatureFlagConditions.tsx",
@@ -2357,9 +2023,7 @@
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/ui-consolidated",
       "importCount": 6,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/frontend/src/components/webhooks/BusinessMetricsDisplay.tsx",
@@ -2369,22 +2033,15 @@
         "apps/frontend/src/components/webhooks/WebhookDashboard.tsx",
         "apps/frontend/src/components/webhooks/WebhookDeliveryLogs.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/ui-consolidated"
-      ]
+      "specifiers": ["@the-new-fuse/ui-consolidated"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/web-scraping",
       "importCount": 2,
-      "kind": [
-        "relative-boundary-crossing"
-      ],
+      "kind": ["relative-boundary-crossing"],
       "declaredInPackageJson": false,
-      "files": [
-        "apps/frontend/api/proxy.ts",
-        "apps/frontend/api/scrape.ts"
-      ],
+      "files": ["apps/frontend/api/proxy.ts", "apps/frontend/api/scrape.ts"],
       "specifiers": [
         "../../../packages/web-scraping/src/core/WebScrapingService.js",
         "../../../packages/web-scraping/src/proxy/ProxyService.js"
@@ -2394,39 +2051,25 @@
       "source": "@the-new-fuse/gemini-browser-skill",
       "target": "@the-new-fuse/a2a-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/gemini-browser-skill/src/TranscriptProcessorV2.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/a2a-core"
-      ]
+      "files": ["packages/gemini-browser-skill/src/TranscriptProcessorV2.ts"],
+      "specifiers": ["@the-new-fuse/a2a-core"]
     },
     {
       "source": "@the-new-fuse/google-sheets-mcp-server",
       "target": "@the-new-fuse/mcp-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/google-sheets-mcp-server/src/index.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/mcp-core"
-      ]
+      "files": ["packages/google-sheets-mcp-server/src/index.ts"],
+      "specifiers": ["@the-new-fuse/mcp-core"]
     },
     {
       "source": "@the-new-fuse/governance-gate",
       "target": "@the-new-fuse/logger",
       "importCount": 4,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/governance-gate/src/audit-trail-gate.ts",
@@ -2434,48 +2077,34 @@
         "packages/governance-gate/src/pii-detection-gate.ts",
         "packages/governance-gate/src/security-review-gate.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/logger"
-      ]
+      "specifiers": ["@the-new-fuse/logger"]
     },
     {
       "source": "@the-new-fuse/hooks",
       "target": "@the-new-fuse/fairtable-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/hooks/src/hooks/useKanbanBoard.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/fairtable-core"
-      ]
+      "files": ["packages/hooks/src/hooks/useKanbanBoard.tsx"],
+      "specifiers": ["@the-new-fuse/fairtable-core"]
     },
     {
       "source": "@the-new-fuse/integration-tests",
       "target": "@the-new-fuse/extension-system",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/integration-tests/src/examples/collaboration-app.ts",
         "packages/integration-tests/src/examples/data-pipeline-app.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/extension-system"
-      ]
+      "specifiers": ["@the-new-fuse/extension-system"]
     },
     {
       "source": "@the-new-fuse/integration-tests",
       "target": "@the-new-fuse/relay-core",
       "importCount": 5,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/integration-tests/src/examples/collaboration-app.ts",
@@ -2484,17 +2113,13 @@
         "packages/integration-tests/src/setup/heartbeat-adapter.ts",
         "packages/integration-tests/src/setup/test-setup.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@the-new-fuse/integration-tests",
       "target": "@the-new-fuse/workflow-engine",
       "importCount": 4,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
       "files": [
         "packages/integration-tests/src/examples/collaboration-app.ts",
@@ -2509,268 +2134,172 @@
       "source": "@the-new-fuse/jules-integration",
       "target": "@the-new-fuse/agent",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/jules-integration/src/JulesAgentAdapter.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/agent"
-      ]
+      "files": ["packages/jules-integration/src/JulesAgentAdapter.ts"],
+      "specifiers": ["@the-new-fuse/agent"]
     },
     {
       "source": "@the-new-fuse/jules-integration",
       "target": "@the-new-fuse/database",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/jules-integration/src/JulesAgentAdapter.ts",
         "packages/jules-integration/src/JulesWebhookHandler.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/jules-integration",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/jules-integration/src/JulesAgentAdapter.ts",
         "packages/jules-integration/src/JulesWebhookHandler.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/jules-integration",
       "target": "@the-new-fuse/relay-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/jules-integration/src/JulesWebhookHandler.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "files": ["packages/jules-integration/src/JulesWebhookHandler.ts"],
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@the-new-fuse/jules-integration",
       "target": "@the-new-fuse/types",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/jules-integration/src/JulesAgentAdapter.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "files": ["packages/jules-integration/src/JulesAgentAdapter.ts"],
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/logger",
       "target": "@the-new-fuse/utils",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/logger/src/index.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/utils"
-      ]
+      "files": ["packages/logger/src/index.ts"],
+      "specifiers": ["@the-new-fuse/utils"]
     },
     {
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/core-error-handling",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/mcp-core/src/error/MCPUnifiedErrorHandler.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/core-error-handling"
-      ]
+      "files": ["packages/mcp-core/src/error/MCPUnifiedErrorHandler.ts"],
+      "specifiers": ["@the-new-fuse/core-error-handling"]
     },
     {
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/core-monitoring",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/mcp-core/src/monitoring/MCPMetricsCollector.ts",
         "packages/mcp-core/src/monitoring/MCPMonitoringSystem.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/core-monitoring"
-      ]
+      "specifiers": ["@the-new-fuse/core-monitoring"]
     },
     {
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/mcp-core/src/integrations/database.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "files": ["packages/mcp-core/src/integrations/database.ts"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/relay-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/mcp-core/src/integrations/relay-core.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "files": ["packages/mcp-core/src/integrations/relay-core.ts"],
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/types",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/mcp-core/src/integrations/platform-types.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "files": ["packages/mcp-core/src/integrations/platform-types.ts"],
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/web-scraping",
       "importCount": 1,
-      "kind": [
-        "relative-boundary-crossing"
-      ],
+      "kind": ["relative-boundary-crossing"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/mcp-core/examples/web-scraping-server.ts"
-      ],
-      "specifiers": [
-        "../../web-scraping/src/mcp/WebScrapingMCPTools.js"
-      ]
+      "files": ["packages/mcp-core/examples/web-scraping-server.ts"],
+      "specifiers": ["../../web-scraping/src/mcp/WebScrapingMCPTools.js"]
     },
     {
       "source": "@the-new-fuse/mcp-tar-bridge",
       "target": "@the-new-fuse/logger",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/mcp-tar-bridge/src/index.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/logger"
-      ]
+      "files": ["packages/mcp-tar-bridge/src/index.ts"],
+      "specifiers": ["@the-new-fuse/logger"]
     },
     {
       "source": "@the-new-fuse/messaging-bridge",
       "target": "@the-new-fuse/logger",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/messaging-bridge/src/hermes-adapter.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/logger"
-      ]
+      "files": ["packages/messaging-bridge/src/hermes-adapter.ts"],
+      "specifiers": ["@the-new-fuse/logger"]
     },
     {
       "source": "@the-new-fuse/prompt-templating",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/prompt-templating/src/PromptTemplateService.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "files": ["packages/prompt-templating/src/PromptTemplateService.ts"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/relay-core",
       "target": "@the-new-fuse/database",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/relay-core/src/services/MasterAgentRegistry.ts",
         "packages/relay-core/src/services/VCIssuanceService.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/relay-core",
       "target": "@the-new-fuse/fairtable-adapters",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/relay-core/src/services/MasterAgentRegistry.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/fairtable-adapters"
-      ]
+      "files": ["packages/relay-core/src/services/MasterAgentRegistry.ts"],
+      "specifiers": ["@the-new-fuse/fairtable-adapters"]
     },
     {
       "source": "@the-new-fuse/relay-core",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 14,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/relay-core/src/agent-registry-bridge.ts",
@@ -2788,17 +2317,13 @@
         "packages/relay-core/src/super-cycle-client.ts",
         "packages/relay-core/src/transports/RedisTransport.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/relay-core",
       "target": "@the-new-fuse/protocol-contracts",
       "importCount": 4,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/relay-core/src/contracts/identity.ts",
@@ -2806,53 +2331,37 @@
         "packages/relay-core/src/protocol/resource-protocol.ts",
         "packages/relay-core/src/protocol/tnf-envelope.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/protocol-contracts"
-      ]
+      "specifiers": ["@the-new-fuse/protocol-contracts"]
     },
     {
       "source": "@the-new-fuse/relay-core",
       "target": "@the-new-fuse/tnf-cli",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/relay-core/src/adapters/TerminalFederationBridge.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/tnf-cli"
-      ]
+      "files": ["packages/relay-core/src/adapters/TerminalFederationBridge.ts"],
+      "specifiers": ["@the-new-fuse/tnf-cli"]
     },
     {
       "source": "@the-new-fuse/security",
       "target": "@the-new-fuse/utils",
       "importCount": 3,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
       "files": [
         "packages/security/src/audit/storage.ts",
         "packages/security/src/middleware/SecurityMiddleware.ts",
         "packages/security/src/rate-limiting/index.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/utils"
-      ]
+      "specifiers": ["@the-new-fuse/utils"]
     },
     {
       "source": "@the-new-fuse/shared",
       "target": "@the-new-fuse/core",
       "importCount": 3,
-      "kind": [
-        "relative-boundary-crossing"
-      ],
+      "kind": ["relative-boundary-crossing"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/shared/providers/index.tsx"
-      ],
+      "files": ["packages/shared/providers/index.tsx"],
       "specifiers": [
         "../../core/components/auth/Login",
         "../../core/components/auth/Register",
@@ -2863,40 +2372,28 @@
       "source": "@the-new-fuse/shared",
       "target": "@the-new-fuse/types",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/shared/src/types/index.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "files": ["packages/shared/src/types/index.ts"],
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/sync-core",
       "target": "@the-new-fuse/core-error-handling",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/sync-core/src/error/SyncErrorHandler.ts",
         "packages/sync-core/src/services/ConflictManager.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/core-error-handling"
-      ]
+      "specifiers": ["@the-new-fuse/core-error-handling"]
     },
     {
       "source": "@the-new-fuse/sync-core",
       "target": "@the-new-fuse/core-monitoring",
       "importCount": 10,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/sync-core/src/deployment/SyncHealthService.ts",
@@ -2910,17 +2407,13 @@
         "packages/sync-core/src/performance/SyncLRUCache.ts",
         "packages/sync-core/src/performance/SyncPerformanceTelemetry.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/core-monitoring"
-      ]
+      "specifiers": ["@the-new-fuse/core-monitoring"]
     },
     {
       "source": "@the-new-fuse/sync-core",
       "target": "@the-new-fuse/database",
       "importCount": 14,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/sync-core/src/cms/CMSIntegration.example.ts",
@@ -2947,9 +2440,7 @@
       "source": "@the-new-fuse/sync-core",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 13,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/sync-core/src/dashboard/SyncDashboard.example.ts",
@@ -2966,52 +2457,36 @@
         "packages/sync-core/src/tasks/TaskNotificationService.ts",
         "packages/sync-core/src/tasks/TaskSynchronizationService.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/sync-core",
       "target": "@the-new-fuse/prompt-templating",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/sync-core/src/services/SyncOrchestrator.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/prompt-templating"
-      ]
+      "files": ["packages/sync-core/src/services/SyncOrchestrator.ts"],
+      "specifiers": ["@the-new-fuse/prompt-templating"]
     },
     {
       "source": "@the-new-fuse/sync-core",
       "target": "@the-new-fuse/relay-core",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/sync-core/src/monitoring/SyncAwareHeartbeatMonitoringService.ts",
         "packages/sync-core/src/monitoring/SyncAwareMonitoring.example.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@the-new-fuse/tauri-desktop",
       "target": "@the-new-fuse/shared",
       "importCount": 2,
-      "kind": [
-        "relative-boundary-crossing"
-      ],
+      "kind": ["relative-boundary-crossing"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/tauri-desktop/src/lib/sharedFederation.ts"
-      ],
+      "files": ["apps/tauri-desktop/src/lib/sharedFederation.ts"],
       "specifiers": [
         "../../../../packages/shared/src/federation/FederationNodeClient",
         "../../../../packages/shared/src/federation/protocol"
@@ -3021,177 +2496,115 @@
       "source": "@the-new-fuse/tauri-desktop",
       "target": "@the-new-fuse/ui-consolidated",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/tauri-desktop/src/pages/MultiAgentChat.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/ui-consolidated/scrollViewportToEnd"
-      ]
+      "files": ["apps/tauri-desktop/src/pages/MultiAgentChat.tsx"],
+      "specifiers": ["@the-new-fuse/ui-consolidated/scrollViewportToEnd"]
     },
     {
       "source": "@the-new-fuse/telegram-bot-service",
       "target": "@the-new-fuse/utils",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/telegram-bot-service/src/bot.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/utils"
-      ]
+      "files": ["packages/telegram-bot-service/src/bot.ts"],
+      "specifiers": ["@the-new-fuse/utils"]
     },
     {
       "source": "@the-new-fuse/testing",
       "target": "@the-new-fuse/types",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/testing/src/contract/contractEnforcer.tsx",
         "packages/testing/src/contract/testUtils.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/tnf-cli",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/tnf-cli/src/RedisAgentClient.ts",
         "packages/tnf-cli/src/refresh-context-runtime/runner.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/tnf-cli",
       "target": "@the-new-fuse/protocol-contracts",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/tnf-cli/src/services/PluginsService.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/protocol-contracts/extension-manifest.js"
-      ]
+      "files": ["packages/tnf-cli/src/services/PluginsService.ts"],
+      "specifiers": ["@the-new-fuse/protocol-contracts/extension-manifest.js"]
     },
     {
       "source": "@the-new-fuse/tnf-cli",
       "target": "@the-new-fuse/shared",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/tnf-cli/src/commands/federation-tap.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/shared/federation"
-      ]
+      "files": ["packages/tnf-cli/src/commands/federation-tap.ts"],
+      "specifiers": ["@the-new-fuse/shared/federation"]
     },
     {
       "source": "@the-new-fuse/tnf-cli",
       "target": "@the-new-fuse/tnf-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/tnf-cli/src/cli.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/tnf-core"
-      ]
+      "files": ["packages/tnf-cli/src/cli.ts"],
+      "specifiers": ["@the-new-fuse/tnf-core"]
     },
     {
       "source": "@the-new-fuse/tnf-cli",
       "target": "@the-new-fuse/tnf-note-taking",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/tnf-cli/src/cli.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/tnf-note-taking"
-      ]
+      "files": ["packages/tnf-cli/src/cli.ts"],
+      "specifiers": ["@the-new-fuse/tnf-note-taking"]
     },
     {
       "source": "@the-new-fuse/tnf-network-mcp",
       "target": "@the-new-fuse/tnf-cli",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/mcp-servers/tnf-network-mcp/src/index.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/tnf-cli"
-      ]
+      "files": ["apps/mcp-servers/tnf-network-mcp/src/index.ts"],
+      "specifiers": ["@the-new-fuse/tnf-cli"]
     },
     {
       "source": "@the-new-fuse/ui-consolidated",
       "target": "@the-new-fuse/a2a-core",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/ui-consolidated/src/hooks/useA2A.ts",
         "packages/ui-consolidated/src/providers/A2AProvider/A2AProvider.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/a2a-core"
-      ]
+      "specifiers": ["@the-new-fuse/a2a-core"]
     },
     {
       "source": "@the-new-fuse/ui-consolidated",
       "target": "@the-new-fuse/api-client",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/ui-consolidated/src/providers/ApiProvider.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/api-client"
-      ]
+      "files": ["packages/ui-consolidated/src/providers/ApiProvider.tsx"],
+      "specifiers": ["@the-new-fuse/api-client"]
     },
     {
       "source": "@the-new-fuse/ui-consolidated",
       "target": "@the-new-fuse/api-types",
       "importCount": 6,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/ui-consolidated/src/components/features/memory-inspector/MemoryInspector.tsx",
@@ -3211,178 +2624,118 @@
       "source": "@the-new-fuse/ui-consolidated",
       "target": "@the-new-fuse/hooks",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/ui-consolidated/src/providers/AuthProvider.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/hooks"
-      ]
+      "files": ["packages/ui-consolidated/src/providers/AuthProvider.tsx"],
+      "specifiers": ["@the-new-fuse/hooks"]
     },
     {
       "source": "@the-new-fuse/ui-consolidated",
       "target": "@the-new-fuse/utils",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/ui-consolidated/src/components/Dropdown/Dropdown.tsx",
         "packages/ui-consolidated/src/components/Icon/Icon.tsx"
       ],
-      "specifiers": [
-        "@the-new-fuse/utils"
-      ]
+      "specifiers": ["@the-new-fuse/utils"]
     },
     {
       "source": "@the-new-fuse/utils",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/utils/disabled_modules/logging/ephemeral.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "files": ["packages/utils/disabled_modules/logging/ephemeral.tsx"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/utils",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/utils/src/redis.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "files": ["packages/utils/src/redis.ts"],
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/web-scraping",
       "target": "@the-new-fuse/mcp-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/web-scraping/src/mcp/WebScrapingMCPTools.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/mcp-core"
-      ]
+      "files": ["packages/web-scraping/src/mcp/WebScrapingMCPTools.ts"],
+      "specifiers": ["@the-new-fuse/mcp-core"]
     },
     {
       "source": "@the-new-fuse/web-scraping",
       "target": "@the-new-fuse/utils",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/web-scraping/src/core/WebScrapingService.ts",
         "packages/web-scraping/src/proxy/ProxyService.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/utils"
-      ]
+      "specifiers": ["@the-new-fuse/utils"]
     },
     {
       "source": "@the-new-fuse/websocket-infrastructure",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/websocket-infrastructure/src/adapters/redis-adapter.ts",
         "packages/websocket-infrastructure/src/websocket.module.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/workflow-engine",
       "target": "@the-new-fuse/agent",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/workflow-engine/src/orchestrator/tnf-router.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/agent"
-      ]
+      "files": ["packages/workflow-engine/src/orchestrator/tnf-router.ts"],
+      "specifiers": ["@the-new-fuse/agent"]
     },
     {
       "source": "@the-new-fuse/workflow-engine",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "packages/workflow-engine/src/WorkflowTypes.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "files": ["packages/workflow-engine/src/WorkflowTypes.ts"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/workflow-engine",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/workflow-engine/src/orchestrator/start.ts",
         "packages/workflow-engine/src/orchestrator/tnf-router.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "@the-new-fuse/workflow-engine",
       "target": "@the-new-fuse/mcp-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "packages/workflow-engine/src/WorkflowTypes.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/mcp-core"
-      ]
+      "files": ["packages/workflow-engine/src/WorkflowTypes.ts"],
+      "specifiers": ["@the-new-fuse/mcp-core"]
     },
     {
       "source": "@the-new-fuse/workflow-engine",
       "target": "@the-new-fuse/relay-core",
       "importCount": 9,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/workflow-engine/src/builder/WorkflowBuilder.ts",
@@ -3395,146 +2748,102 @@
         "packages/workflow-engine/src/repository/WorkflowRepository.ts",
         "packages/workflow-engine/src/validator/WorkflowValidator.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@tnf/build-optimization",
       "target": "@the-new-fuse/core-error-handling",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/build-optimization/src/monitoring/BuildUnifiedErrorHandler.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/core-error-handling"
-      ]
+      "specifiers": ["@the-new-fuse/core-error-handling"]
     },
     {
       "source": "@tnf/build-optimization",
       "target": "@the-new-fuse/core-monitoring",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "packages/build-optimization/src/monitoring/BuildMetricsCollector.ts",
         "packages/build-optimization/src/monitoring/BuildMonitoringSystem.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/core-monitoring"
-      ]
+      "specifiers": ["@the-new-fuse/core-monitoring"]
     },
     {
       "source": "the-new-fuse",
       "target": "@the-new-fuse/infrastructure",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/vscode-extension/src/services/tnf-framework/RelayServerService.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/infrastructure"
-      ]
+      "specifiers": ["@the-new-fuse/infrastructure"]
     },
     {
       "source": "the-new-fuse",
       "target": "@the-new-fuse/sync-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/vscode-extension/src/services/WorkspaceSyncService.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/sync-core"
-      ]
+      "files": ["apps/vscode-extension/src/services/WorkspaceSyncService.ts"],
+      "specifiers": ["@the-new-fuse/sync-core"]
     },
     {
       "source": "the-new-fuse",
       "target": "@the-new-fuse/tnf-cli",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
       "files": [
         "apps/vscode-extension/src/services/tnf-framework/RelayServerService.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/tnf-cli"
-      ]
+      "specifiers": ["@the-new-fuse/tnf-cli"]
     },
     {
       "source": "the-new-fuse-chrome-extension",
       "target": "@the-new-fuse/core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
-      "files": [
-        "apps/chrome-extension/src/_legacy/agents/BaseAgent.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/core"
-      ]
+      "files": ["apps/chrome-extension/src/_legacy/agents/BaseAgent.ts"],
+      "specifiers": ["@the-new-fuse/core"]
     },
     {
       "source": "the-new-fuse-chrome-extension",
       "target": "@the-new-fuse/llm-catalog",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
-      "files": [
-        "apps/chrome-extension/src/v6/shared/catalog.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/llm-catalog"
-      ]
+      "files": ["apps/chrome-extension/src/v6/shared/catalog.ts"],
+      "specifiers": ["@the-new-fuse/llm-catalog"]
     },
     {
       "source": "the-new-fuse-chrome-extension",
       "target": "@the-new-fuse/types",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": false,
       "files": [
         "apps/chrome-extension/src/_legacy/agents/BaseAgent.ts",
         "apps/chrome-extension/src/_legacy/agents/interfaces/IAgent.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "the-new-fuse-chrome-extension",
       "target": "@the-new-fuse/workflow-engine",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "declaredInPackageJson": true,
       "files": [
         "apps/chrome-extension/src/shared/progressive-self-prompter.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/workflow-engine/sequencer"
-      ]
+      "specifiers": ["@the-new-fuse/workflow-engine/sequencer"]
     }
   ],
   "declaredWorkspaceDependencyEdges": [
@@ -4916,123 +4225,77 @@
       "source": "@the-new-fuse/core",
       "target": "@the-new-fuse/ui-consolidated",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/core/components/agents/AgentCard.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/ui-consolidated"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/core/components/agents/AgentCard.tsx"],
+      "specifiers": ["@the-new-fuse/ui-consolidated"]
     },
     {
       "source": "@the-new-fuse/extension-system",
       "target": "@the-new-fuse/workflow-engine",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "files": [
         "packages/extension-system/src/manager/ExtensionManager.ts",
         "packages/extension-system/src/types/ExtensionTypes.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/workflow-engine"
-      ]
+      "specifiers": ["@the-new-fuse/workflow-engine"]
     },
     {
       "source": "@the-new-fuse/features",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/features/dashboard/templates/TemplateManager.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/features/dashboard/templates/TemplateManager.tsx"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/features",
       "target": "@the-new-fuse/ui-consolidated",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/features/agents/components/AgentCard.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/ui-consolidated"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/features/agents/components/AgentCard.tsx"],
+      "specifiers": ["@the-new-fuse/ui-consolidated"]
     },
     {
       "source": "@the-new-fuse/features",
       "target": "@the-new-fuse/utils",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/features/dashboard/templates/TemplateManager.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/utils"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/features/dashboard/templates/TemplateManager.tsx"],
+      "specifiers": ["@the-new-fuse/utils"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/api-client",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "files": [
         "apps/frontend/src/hooks/useApi.ts",
         "apps/frontend/src/hooks/useBackup.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/api-client"
-      ]
+      "specifiers": ["@the-new-fuse/api-client"]
     },
     {
       "source": "@the-new-fuse/frontend-app",
       "target": "@the-new-fuse/prompt-templating",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "apps/frontend/src/components/WorkflowBuilder/nodes.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/prompt-templating"
-      ]
+      "kind": ["bare-import"],
+      "files": ["apps/frontend/src/components/WorkflowBuilder/nodes.tsx"],
+      "specifiers": ["@the-new-fuse/prompt-templating"]
     },
     {
       "source": "@the-new-fuse/gemini-browser-skill",
       "target": "@the-new-fuse/a2a-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/gemini-browser-skill/src/TranscriptProcessorV2.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/a2a-core"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/gemini-browser-skill/src/TranscriptProcessorV2.ts"],
+      "specifiers": ["@the-new-fuse/a2a-core"]
     },
     {
       "source": "@the-new-fuse/integration-tests",
       "target": "@the-new-fuse/workflow-engine",
       "importCount": 4,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "files": [
         "packages/integration-tests/src/examples/collaboration-app.ts",
         "packages/integration-tests/src/examples/data-pipeline-app.ts"
@@ -5046,130 +4309,82 @@
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/mcp-core/src/integrations/database.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/mcp-core/src/integrations/database.ts"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/relay-core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/mcp-core/src/integrations/relay-core.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/relay-core"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/mcp-core/src/integrations/relay-core.ts"],
+      "specifiers": ["@the-new-fuse/relay-core"]
     },
     {
       "source": "@the-new-fuse/mcp-core",
       "target": "@the-new-fuse/types",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/mcp-core/src/integrations/platform-types.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/mcp-core/src/integrations/platform-types.ts"],
+      "specifiers": ["@the-new-fuse/types"]
     },
     {
       "source": "@the-new-fuse/security",
       "target": "@the-new-fuse/utils",
       "importCount": 3,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "files": [
         "packages/security/src/audit/storage.ts",
         "packages/security/src/middleware/SecurityMiddleware.ts",
         "packages/security/src/rate-limiting/index.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/utils"
-      ]
+      "specifiers": ["@the-new-fuse/utils"]
     },
     {
       "source": "@the-new-fuse/utils",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/utils/disabled_modules/logging/ephemeral.tsx"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/utils/disabled_modules/logging/ephemeral.tsx"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "@the-new-fuse/workflow-engine",
       "target": "@the-new-fuse/database",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "packages/workflow-engine/src/WorkflowTypes.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/database"
-      ]
+      "kind": ["bare-import"],
+      "files": ["packages/workflow-engine/src/WorkflowTypes.ts"],
+      "specifiers": ["@the-new-fuse/database"]
     },
     {
       "source": "the-new-fuse",
       "target": "@the-new-fuse/tnf-cli",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "files": [
         "apps/vscode-extension/src/services/tnf-framework/RelayServerService.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/tnf-cli"
-      ]
+      "specifiers": ["@the-new-fuse/tnf-cli"]
     },
     {
       "source": "the-new-fuse-chrome-extension",
       "target": "@the-new-fuse/core",
       "importCount": 1,
-      "kind": [
-        "bare-import"
-      ],
-      "files": [
-        "apps/chrome-extension/src/_legacy/agents/BaseAgent.ts"
-      ],
-      "specifiers": [
-        "@the-new-fuse/core"
-      ]
+      "kind": ["bare-import"],
+      "files": ["apps/chrome-extension/src/_legacy/agents/BaseAgent.ts"],
+      "specifiers": ["@the-new-fuse/core"]
     },
     {
       "source": "the-new-fuse-chrome-extension",
       "target": "@the-new-fuse/types",
       "importCount": 2,
-      "kind": [
-        "bare-import"
-      ],
+      "kind": ["bare-import"],
       "files": [
         "apps/chrome-extension/src/_legacy/agents/BaseAgent.ts",
         "apps/chrome-extension/src/_legacy/agents/interfaces/IAgent.ts"
       ],
-      "specifiers": [
-        "@the-new-fuse/types"
-      ]
+      "specifiers": ["@the-new-fuse/types"]
     }
   ],
   "relativePackageBoundaryCrossings": [
@@ -5439,7 +4654,7 @@
     "@the-new-fuse/ai-security-bridge": [],
     "@the-new-fuse/api": [
       "scripts/execute-refactor-consensus.ts",
-      "scripts/build-cloud_runtime.cjs",
+      "scripts/build-cloud-run.cjs",
       "scripts/cli.tsx",
       "scripts/release-gate.cjs",
       "scripts/register-jules-agent.ts",
@@ -5456,12 +4671,8 @@
     "@the-new-fuse/claude-skills": [],
     "@the-new-fuse/claw-skills": [],
     "@the-new-fuse/client": [],
-    "@the-new-fuse/common": [
-      "scripts/build-cloud_runtime.cjs"
-    ],
-    "@the-new-fuse/contracts": [
-      "scripts/reconnect-all-packages.cjs"
-    ],
+    "@the-new-fuse/common": ["scripts/build-cloud-run.cjs"],
+    "@the-new-fuse/contracts": ["scripts/reconnect-all-packages.cjs"],
     "@the-new-fuse/control-plane-contracts": [
       "scripts/lib/tnf-elevation-broker.cjs",
       "scripts/lib/tnf-capability-grant.cjs",
@@ -5471,7 +4682,7 @@
     "@the-new-fuse/data": [
       "scripts/launch-new-fuse.tsx",
       "scripts/send-status.js",
-      "scripts/build-cloud_runtime.cjs",
+      "scripts/build-cloud-run.cjs",
       "scripts/populate-feature-tracker.js",
       "scripts/populate-feature-tracker.ts",
       "scripts/test-optimize.ts",

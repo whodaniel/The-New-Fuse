@@ -2,8 +2,9 @@
 
 ## ✅ Live Production Validation (2026-03-18)
 
-This section reflects the current live state for `thenewfuse.com` and CloudRuntime
-production services after the master-clock coherence and visualization updates.
+This section reflects the current live state for `thenewfuse.com` and
+CloudRuntime production services after the master-clock coherence and
+visualization updates.
 
 ### Production Services (CloudRuntime)
 
@@ -255,7 +256,8 @@ CloudRuntime should auto-deploy when you push to main. Monitor in the dashboard:
 
 ### Issue: CloudRuntime Doesn't Auto-Deploy
 
-**Solution:** CloudRuntime may not detect `cloud_runtime.toml` if it's not on main branch.
+**Solution:** CloudRuntime may not detect `cloud_runtime.toml` if it's not on
+main branch.
 
 ```bash
 # Make sure changes are on main
@@ -391,7 +393,7 @@ cloud_runtime domain
 **Method 3: Use Helper Script**
 
 ```bash
-./scripts/cloud_runtime/get-cloud_runtime-urls.sh
+./scripts/cloud-run/get-cloud_runtime-urls.sh
 ```
 
 ---
@@ -400,9 +402,9 @@ cloud_runtime domain
 
 Your deployment is successful when:
 
-✅ All 4 services show "Active" in CloudRuntime ✅ Health checks pass for backend
-services ✅ Frontend loads at www.thenewfuse.com ✅ You can sign up and log in
-✅ No errors in browser console ✅ API calls work from frontend
+✅ All 4 services show "Active" in CloudRuntime ✅ Health checks pass for
+backend services ✅ Frontend loads at www.thenewfuse.com ✅ You can sign up and
+log in ✅ No errors in browser console ✅ API calls work from frontend
 
 ---
 
@@ -412,6 +414,6 @@ services ✅ Frontend loads at www.thenewfuse.com ✅ You can sign up and log in
   https://cloud_runtime.app/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 - **Deployment Guide**: `docs/deployment/CLOUD_RUNTIME_DEPLOYMENT_GUIDE.md`
 - **CloudRuntime Docs**: https://docs.thenewfuse.com
-- **Get Service URLs**: `scripts/cloud_runtime/get-cloud_runtime-urls.sh`
+- **Get Service URLs**: `scripts/cloud-run/get-cloud_runtime-urls.sh`
 
 **Your deployment is 95% ready - just needs to be pushed to main!** 🚀

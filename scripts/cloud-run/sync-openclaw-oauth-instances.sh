@@ -3,14 +3,14 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-SYNC_ONE_SCRIPT="$ROOT_DIR/scripts/cloud_runtime/sync-openclaw-oauth-instance.sh"
-CONFIG_FILE="${OPENCLAW_OAUTH_INSTANCES_CONFIG:-$ROOT_DIR/scripts/cloud_runtime/openclaw-oauth-instances.json}"
+SYNC_ONE_SCRIPT="$ROOT_DIR/scripts/cloud-run/sync-openclaw-oauth-instance.sh"
+CONFIG_FILE="${OPENCLAW_OAUTH_INSTANCES_CONFIG:-$ROOT_DIR/scripts/cloud-run/openclaw-oauth-instances.json}"
 WAIT_FLAG=""
 
 usage() {
   cat <<'EOF'
 Usage:
-  bash scripts/cloud_runtime/sync-openclaw-oauth-instances.sh [--config FILE] [--no-wait]
+  bash scripts/cloud-run/sync-openclaw-oauth-instances.sh [--config FILE] [--no-wait]
 
 Config format:
 {

@@ -1,5 +1,15 @@
 # Deployment Guide: Hybrid Vercel + CloudRuntime Setup
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 This guide covers deploying The New Fuse using a **hybrid approach**:
 
 - **Frontend** → Vercel (optimized for React/static sites)
@@ -36,12 +46,12 @@ This guide covers deploying The New Fuse using a **hybrid approach**:
 
 ## ✅ Current Status
 
-| Service         | Platform | Status        | URL                                                                   |
-| --------------- | -------- | ------------- | --------------------------------------------------------------------- |
-| **Frontend**    | Vercel   | ✅ Deployed   | https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/ |
-| **API Gateway** | CloudRuntime  | 🔧 Setting up | https://api-gateway-production-XXXX.thenewfuse.com                    |
-| **Backend**     | CloudRuntime  | 🔧 Setting up | https://backend-production-XXXX.thenewfuse.com                        |
-| **API**         | CloudRuntime  | 🔧 Setting up | https://api-production-XXXX.thenewfuse.com                            |
+| Service         | Platform     | Status        | URL                                                                   |
+| --------------- | ------------ | ------------- | --------------------------------------------------------------------- |
+| **Frontend**    | Vercel       | ✅ Deployed   | https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/ |
+| **API Gateway** | CloudRuntime | 🔧 Setting up | https://api-gateway-production-XXXX.thenewfuse.com                    |
+| **Backend**     | CloudRuntime | 🔧 Setting up | https://backend-production-XXXX.thenewfuse.com                        |
+| **API**         | CloudRuntime | 🔧 Setting up | https://api-production-XXXX.thenewfuse.com                            |
 
 ---
 
@@ -302,8 +312,8 @@ https://fuse-frontend-j9kcxkge5-daniels-projects-13d7ea71.vercel.app/
 
 ## 🧰 Alternative Deployment Modes
 
-In addition to the hybrid Vercel + CloudRuntime path, these operational modes remain
-available when needed for specific environments.
+In addition to the hybrid Vercel + CloudRuntime path, these operational modes
+remain available when needed for specific environments.
 
 ### Docker-Based Deployment
 
@@ -481,16 +491,20 @@ Use this checklist-oriented flow for routine and emergency releases.
 
 #### Pre-Deployment Checks
 
-- [ ] `pnpm run lint && pnpm run type-check && pnpm run test && pnpm run build` all pass
+- [ ] `pnpm run lint && pnpm run type-check && pnpm run test && pnpm run build`
+      all pass
 - [ ] PR approvals and CI checks are complete
 - [ ] CloudRuntime environment variables and migration plan are confirmed
 - [ ] Team/stakeholders are notified for the deployment window
 
 #### Release Paths
 
-- **Production (default)**: merge to `main`, then monitor GitHub Actions (`gh run watch`)
-- **Tagged release**: `git tag -a vX.Y.Z -m "Release vX.Y.Z"` and `git push origin vX.Y.Z`
-- **Staging**: manual workflow dispatch (`gh workflow run deploy.yml -f environment=staging`)
+- **Production (default)**: merge to `main`, then monitor GitHub Actions
+  (`gh run watch`)
+- **Tagged release**: `git tag -a vX.Y.Z -m "Release vX.Y.Z"` and
+  `git push origin vX.Y.Z`
+- **Staging**: manual workflow dispatch
+  (`gh workflow run deploy.yml -f environment=staging`)
 
 #### Hotfix and Rollback
 

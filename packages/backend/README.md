@@ -1,16 +1,31 @@
 # @the-new-fuse/backend
 
-Basic HTTP server for The New Fuse backend infrastructure. Provides a simple health check endpoint for deployment platforms like CloudRuntime.
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
+Basic HTTP server for The New Fuse backend infrastructure. Provides a simple
+health check endpoint for deployment platforms like CloudRuntime.
 
 ## Overview
 
-The backend package is a lightweight HTTP server that serves as the foundation for The New Fuse backend infrastructure. It provides basic health monitoring and serves as a deployment target for cloud platforms.
+The backend package is a lightweight HTTP server that serves as the foundation
+for The New Fuse backend infrastructure. It provides basic health monitoring and
+serves as a deployment target for cloud platforms.
 
 ## Features
 
-- **Simple HTTP Server**: Minimal Node.js HTTP server without external framework dependencies
+- **Simple HTTP Server**: Minimal Node.js HTTP server without external framework
+  dependencies
 - **Health Check Endpoint**: Returns operational status and timestamp
-- **CloudRuntime Compatible**: Designed for deployment on CloudRuntime and similar platforms
+- **CloudRuntime Compatible**: Designed for deployment on CloudRuntime and
+  similar platforms
 - **Docker Support**: Includes Dockerfile for containerized deployments
 - **Port Configuration**: Configurable via environment variables
 - **Error Handling**: Basic error handling and logging
@@ -54,6 +69,7 @@ PORT=3001  # Server port (default: 3001)
 **GET /** - Returns server status
 
 **Response:**
+
 ```json
 {
   "status": "running",
@@ -123,7 +139,7 @@ services:
   backend:
     build: ./packages/backend
     ports:
-      - "3001:3001"
+      - '3001:3001'
     environment:
       - PORT=3001
     restart: unless-stopped
@@ -131,7 +147,8 @@ services:
 
 ## CloudRuntime Deployment
 
-The package includes `cloud_runtime.toml` configuration for seamless CloudRuntime deployment.
+The package includes `cloud_runtime.toml` configuration for seamless
+CloudRuntime deployment.
 
 ### CloudRuntime Configuration
 
@@ -186,11 +203,13 @@ import { createServer } from 'http';
 
 const server = createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({
-    status: 'running',
-    message: 'The New Fuse backend is operational',
-    time: new Date().toISOString()
-  }));
+  res.end(
+    JSON.stringify({
+      status: 'running',
+      message: 'The New Fuse backend is operational',
+      time: new Date().toISOString(),
+    })
+  );
 });
 
 const PORT = process.env.PORT || 3001;
@@ -281,7 +300,7 @@ server.on('request', async (req, res) => {
 const config = {
   port: process.env.PORT || 3001,
   host: process.env.HOST || '0.0.0.0',
-  env: process.env.NODE_ENV || 'development'
+  env: process.env.NODE_ENV || 'development',
 };
 ```
 
@@ -330,6 +349,7 @@ done
 ### Uptime Monitoring
 
 Integrate with monitoring services:
+
 - UptimeRobot
 - Pingdom
 - DataDog
@@ -357,6 +377,7 @@ Integrate with monitoring services:
 ### Common Issues
 
 **Port Already in Use**
+
 ```bash
 # Find process using port
 lsof -i :3001
@@ -365,6 +386,7 @@ kill -9 <PID>
 ```
 
 **Server Not Starting**
+
 ```bash
 # Check environment variables
 echo $PORT
@@ -375,6 +397,7 @@ pnpm dev
 ```
 
 **Health Check Failing**
+
 ```bash
 # Test locally
 curl http://localhost:3001/
@@ -386,6 +409,7 @@ docker logs <container-id>
 ## Roadmap
 
 Future enhancements planned:
+
 - Additional health check endpoints (database, redis, etc.)
 - Metrics collection integration
 - OpenTelemetry tracing
@@ -428,6 +452,7 @@ MIT
 ## Support
 
 For issues and questions:
+
 - Open an issue on GitHub
 - Check existing documentation
 - Contact the maintainers

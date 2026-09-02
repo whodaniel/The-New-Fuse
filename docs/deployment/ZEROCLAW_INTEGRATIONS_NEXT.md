@@ -8,7 +8,7 @@ Run a relay process that accepts automation webhooks and forwards to ZeroClaw.
 ZEROCLAW_PRIMARY_URL="https://zeroclaw-sandbox-production.thenewfuse.com" \
 ZEROCLAW_SECONDARY_URL="https://picoclaw-tester-v2-production.thenewfuse.com" \
 TNF_WEBHOOK_SECRET="set-a-shared-secret" \
-pnpm cloud_runtime:zeroclaw:webhook-relay
+pnpm cloud-run:zeroclaw:webhook-relay
 ```
 
 Test it:
@@ -49,7 +49,7 @@ After vars are set, redeploy target service and validate `/api/status`.
 ### Fast setup command
 
 ```bash
-pnpm cloud_runtime:zeroclaw:discord:setup <service> <discord_bot_token> [allow_from_csv] [enabled=true]
+pnpm cloud-run:zeroclaw:discord:setup <service> <discord_bot_token> [allow_from_csv] [enabled=true]
 ```
 
 ### Discord Portal steps

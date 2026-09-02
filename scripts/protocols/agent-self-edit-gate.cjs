@@ -16,6 +16,50 @@ const defaultSchemaPath = path.join(
 );
 const defaultRegistryPath = path.join(repoRoot, 'data', 'protocols', 'agent-owned-docs.registry.json');
 
+// Machine-local self-edit policy.
+//
+// Deliberately OUTSIDE the repo. If this lived in-tree, enabling it on one
+// machine would enable it for everyone who clones — the opposite of a local
+// opt-in — and the file itself would become an authority surface that this very
+// gate guards, which is circular. Keeping it under $HOME means the decision is
+// per-operator, per-machine, and never travels with a commit.
+//
+// FAIL CLOSED. Absent, unreadable, malformed, or anything other than the
+// literal boolean true all mean "disabled". A policy loader that guesses on
+// ambiguity is a policy loader that can be tricked into guessing "allow".
+const DEFAULT_POLICY_PATH = path.join(os.homedir(), '.tnf', 'config', 'self-edit-policy.json');
+
+function readLocalPolicy() {
+  const policyPath = process.env.TNF_SELF_EDIT_POLICY || DEFAULT_POLICY_PATH;
+  let raw;
+  try {
+    raw = fs.readFileSync(policyPath, 'utf8');
+  } catch (error) {
+    return {
+      enabled: false,
+      path: policyPath,
+      reason: error.code === 'ENOENT' ? 'no local policy file' : `policy unreadable: ${error.message}`,
+    };
+  }
+
+  let cfg;
+  try {
+    cfg = JSON.parse(raw);
+  } catch (error) {
+    return { enabled: false, path: policyPath, reason: `policy is not valid JSON: ${error.message}` };
+  }
+
+  if (cfg.allow_agent_authority_edits !== true) {
+    return { enabled: false, path: policyPath, reason: 'allow_agent_authority_edits is not literally true' };
+  }
+
+  // An empty or non-array allowed_paths means "no path restriction", not
+  // "restrict to nothing" — but an array that IS present and non-empty is a
+  // real restriction and is enforced strictly below.
+  const scoped = Array.isArray(cfg.allowed_paths) && cfg.allowed_paths.length ? cfg.allowed_paths : null;
+  return { enabled: true, path: policyPath, allowedPaths: scoped, note: cfg.note || '' };
+}
+
 const REQUIRED_GATES = [
   'TENANT_SCOPE_GATE',
   'TRACE_CONTINUITY_GATE',
@@ -230,17 +274,46 @@ function checkStagedAuthoritySurfaces(registryPath, asJson) {
 
   const hits = staged.filter((p) => rules.some((r) => matchRule(p, r)));
 
-  if (asJson) {
-    console.log(JSON.stringify({ ok: hits.length === 0 || Boolean(process.env.TNF_AUTHORITY_EDIT_CONFIRM), staged: staged.length, authoritySurfaces: hits }, null, 2));
-  }
-
   if (!hits.length) {
-    if (!asJson) console.log(`[self-edit-gate] OK: no authority surfaces staged (${staged.length} path(s))`);
+    if (asJson) console.log(JSON.stringify({ ok: true, staged: staged.length, authoritySurfaces: [] }, null, 2));
+    else console.log(`[self-edit-gate] OK: no authority surfaces staged (${staged.length} path(s))`);
     return;
   }
 
   const audit = path.join(os.homedir(), '.tnf', 'audit', 'commit-attempts.jsonl');
-  const confirmed = Boolean(process.env.TNF_AUTHORITY_EDIT_CONFIRM);
+
+  // Two independent ways an authority edit may proceed:
+  //   operator-env   — a human sets TNF_AUTHORITY_EDIT_CONFIRM for this commit.
+  //   local-policy   — this machine's operator has standing-authorized agent
+  //                    self-edits in ~/.tnf/config/self-edit-policy.json.
+  // Both are recorded distinctly in the audit log, because "a human typed it
+  // once" and "this box always allows it" are different claims about consent
+  // and the log should not blur them.
+  const envConfirmed = Boolean(process.env.TNF_AUTHORITY_EDIT_CONFIRM);
+  const policy = readLocalPolicy();
+
+  let policyAllows = false;
+  let policyDetail = policy.reason || '';
+  if (!envConfirmed && policy.enabled) {
+    if (!policy.allowedPaths) {
+      policyAllows = true;
+      policyDetail = 'unscoped local policy';
+    } else {
+      const uncovered = hits.filter((p) => !policy.allowedPaths.some((r) => matchRule(p, r)));
+      if (uncovered.length === 0) {
+        policyAllows = true;
+        policyDetail = `scoped local policy (${policy.allowedPaths.length} rule(s))`;
+      } else {
+        // Partial coverage blocks the whole commit. Allowing the covered paths
+        // and blocking the rest would let a commit half-land, leaving the
+        // authority set in a state neither the operator nor the policy chose.
+        policyDetail = `scoped local policy does not cover: ${uncovered.join(', ')}`;
+      }
+    }
+  }
+
+  const confirmed = envConfirmed || policyAllows;
+  const via = envConfirmed ? 'operator-env' : policyAllows ? 'local-policy' : 'none';
   try {
     fs.mkdirSync(path.dirname(audit), { recursive: true });
     for (const p of hits) {
@@ -250,6 +323,9 @@ function checkStagedAuthoritySurfaces(registryPath, asJson) {
           ts: new Date().toISOString(),
           action: 'authority-surface-edit',
           decision: confirmed ? 'allowed' : 'blocked',
+          via,
+          policy: policy.enabled ? policy.path : null,
+          detail: policyDetail || undefined,
           path: p,
           branch: (() => {
             try {
@@ -267,10 +343,38 @@ function checkStagedAuthoritySurfaces(registryPath, asJson) {
     /* auditing must never be the reason a commit fails */
   }
 
+  // JSON mode reports the same decision the human mode enforces, and exits with
+  // the same code. The `--json` path once printed a denial and exited 0; that
+  // defect is called out below in main() and must not be reintroduced here.
+  if (asJson) {
+    console.log(
+      JSON.stringify(
+        {
+          ok: confirmed,
+          via,
+          policyPath: policy.path,
+          policyEnabled: policy.enabled,
+          detail: policyDetail || undefined,
+          staged: staged.length,
+          authoritySurfaces: hits,
+        },
+        null,
+        2
+      )
+    );
+    if (!confirmed) process.exit(1);
+    return;
+  }
+
   if (confirmed) {
     if (!asJson) {
-      console.log(`[self-edit-gate] AUTHORITY EDIT acknowledged (${hits.length}):`);
+      const how =
+        via === 'operator-env'
+          ? 'operator env (TNF_AUTHORITY_EDIT_CONFIRM)'
+          : `local policy ${policy.path}${policyDetail ? ` — ${policyDetail}` : ''}`;
+      console.log(`[self-edit-gate] AUTHORITY EDIT allowed via ${how} (${hits.length}):`);
       for (const p of hits) console.log(`    ${p}`);
+      console.log(`[self-edit-gate] logged to ${audit}`);
     }
     return;
   }
@@ -286,9 +390,18 @@ function checkStagedAuthoritySurfaces(registryPath, asJson) {
   console.error('  TNF_OPERATOR_CONFIRM authorizes committing this session.');
   console.error('  It does not authorize changing the rules.');
   console.error('');
-  console.error('  Operator:  TNF_AUTHORITY_EDIT_CONFIRM=1 TNF_OPERATOR_CONFIRM=1 git commit ...');
+  console.error('  Per-commit:  TNF_AUTHORITY_EDIT_CONFIRM=1 TNF_OPERATOR_CONFIRM=1 git commit ...');
   console.error('');
-  console.error('  If you are an automated agent: neither variable is yours to set.');
+  console.error('  Standing (per machine, opt-in, OFF by default):');
+  console.error(`    ${policy.path}`);
+  console.error('    {"allow_agent_authority_edits": true}');
+  console.error('    Add "allowed_paths": ["docs/protocols/schemas/**"] to scope it.');
+  console.error(
+    `    Current status: ${policy.enabled ? 'enabled but did not permit this commit' : 'disabled'} — ${policyDetail}`
+  );
+  console.error('');
+  console.error('  If you are an automated agent: the env vars are not yours to set,');
+  console.error('  and you must not enable the standing policy on the operator\'s behalf.');
   console.error('  Surface the blocked authority edit to the operator instead.');
   console.error('');
   process.exit(1);

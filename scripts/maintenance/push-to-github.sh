@@ -1,7 +1,16 @@
 #!/bin/bash
-# Push Dockerfile and cloud_runtime.toml changes to GitHub using API
+# RETIRED — this pushed Dockerfile + railway.toml (renamed cloud_runtime.toml)
+# to GitHub via the contents API. Railway is retired and that config file has
+# been removed, so the `cat cloud_runtime.toml` below could never succeed.
+# Refuse honestly rather than fail halfway through a series of API writes.
+#
+# Use `git push` for normal pushes; scripts/deployment/gcp-deploy.sh to deploy.
 
 set -e
+
+echo "push-to-github.sh is retired (Railway-era: pushed Dockerfile + cloud_runtime.toml)." >&2
+echo "Use 'git push', or scripts/deployment/gcp-deploy.sh to deploy." >&2
+exit 1
 
 echo "📤 Pushing changes to GitHub via API..."
 
