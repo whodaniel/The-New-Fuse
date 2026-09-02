@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-02T21:20:13.541Z` Handoff ID: `71f01ff2-1e17-4ae2-bbe2-547a941e000e`
+`2026-09-02T23:48:37.042Z` Handoff ID: `13ce21c2-bcfa-4116-a512-3045ee012e5a`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `docs/worktree-reclamation-ledger`
-- Head SHA: `2c7d2d4eb7e0da15297ba6227918028176c060f9`
+- Head SHA: `89edd4c539ed5ee63d0d7713b7c15f6da8181092`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -26,17 +26,17 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Changed Paths
 
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/TNF_WORKTREE_RECLAMATION_LEDGER.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- .agent/skills/notation-reconciliation-auditor/SKILL.md
+- config/litellm/config.yaml
+- docs/deployment/LITELLM_GATEWAY.md
+- package.json
+- scripts/llm/generate-litellm-config.cjs
 - apps/api-gateway/src/main.ts
 - apps/api/src/dto/register.dto.ts
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
 - apps/frontend/src/App.simplified.tsx
 - apps/frontend/src/App.tsx
+- apps/frontend/src/data/codebase_map.json
 - apps/frontend/src/designSystem.ts
 - apps/frontend/src/pages/GeneralSettingsPage.tsx
 - apps/frontend/src/stubs/class-validator.ts
@@ -54,7 +54,10 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - data/marketplace/catalog-items.json
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/cli.ts
@@ -63,13 +66,9 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - scripts/agent-registry/build-agent-registry.mjs
 - scripts/agent-registry/check-agent-registry.mjs
 - scripts/agents/tnf-task-pusher.py
-- scripts/harness/resolve-workspace-tier.cjs
-- scripts/protocols/emit-session-handoff.cjs
 - apps/frontend/src/MinimalApp.tsx
 - apps/frontend/src/pages/Admin/Agents/skills.ts.bak
 - apps/frontend/src/pages/ConnectExtension.tsx.bak
-- .agent/skills/tnf-platform-migration-residue-audit/
-- .agent/skills/tnf-worktree-reclamation/
 - data/agent-registry/agent-cards.json
 - docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.report.md
 - docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.yml

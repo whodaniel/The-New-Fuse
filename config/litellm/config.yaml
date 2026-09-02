@@ -1,0 +1,196 @@
+# GENERATED FILE — DO NOT EDIT BY HAND.
+#
+# Source of truth: data/providers/catalog.json (+ nvidia-models.json)
+# Regenerate:     node scripts/llm/generate-litellm-config.cjs
+# Rationale:      docs/UNIFIED_LLM_CATALOG.md
+#
+# Editing this file directly recreates the per-surface drift the unified
+# catalog was built to eliminate. Change the JSON and regenerate.
+#
+# providers: 17   entries: 17
+# generated: 2026-09-02T23:41:44.353Z
+
+model_list:
+  - model_name: "google/gemini-3.7-flash"
+    litellm_params:
+      model: "gemini/gemini-3.7-flash"
+      api_key: "os.environ/GOOGLE_API_KEY"
+    model_info:
+      tnf_provider: "google"
+      tnf_tier: 10
+      tnf_type: "cloud"
+  - model_name: "groq/openai/gpt-oss-120b"
+    litellm_params:
+      model: "openai/openai/gpt-oss-120b"
+      api_base: "https://api.groq.com/openai/v1"
+      api_key: "os.environ/GROQ_API_KEY"
+    model_info:
+      tnf_provider: "groq"
+      tnf_tier: 20
+      tnf_type: "cloud"
+  - model_name: "nvidia/nvidia/nemotron-3-ultra-550b-a55b"
+    litellm_params:
+      model: "openai/nvidia/nemotron-3-ultra-550b-a55b"
+      api_base: "https://integrate.api.nvidia.com/v1"
+      api_key: "os.environ/NVIDIA_API_KEY"
+    model_info:
+      tnf_provider: "nvidia"
+      tnf_tier: 30
+      tnf_type: "cloud"
+  - model_name: "deepseek/deepseek-chat"
+    litellm_params:
+      model: "openai/deepseek-chat"
+      api_base: "https://api.deepseek.com/v1"
+      api_key: "os.environ/DEEPSEEK_API_KEY"
+    model_info:
+      tnf_provider: "deepseek"
+      tnf_tier: 40
+      tnf_type: "cloud"
+  - model_name: "openrouter/openrouter/auto"
+    litellm_params:
+      model: "openai/openrouter/auto"
+      api_base: "https://openrouter.ai/api/v1"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+    model_info:
+      tnf_provider: "openrouter"
+      tnf_tier: 50
+      tnf_type: "cloud"
+  - model_name: "togetherai/openai/gpt-oss-120b"
+    litellm_params:
+      model: "openai/openai/gpt-oss-120b"
+      api_base: "https://api.together.xyz/v1"
+      api_key: "os.environ/TOGETHER_API_KEY"
+    model_info:
+      tnf_provider: "togetherai"
+      tnf_tier: 51
+      tnf_type: "cloud"
+  - model_name: "fireworksai/accounts/fireworks/models/llama-v3p1-70b-instruct"
+    litellm_params:
+      model: "openai/accounts/fireworks/models/llama-v3p1-70b-instruct"
+      api_base: "https://api.fireworks.ai/inference/v1"
+      api_key: "os.environ/FIREWORKS_API_KEY"
+    model_info:
+      tnf_provider: "fireworksai"
+      tnf_tier: 52
+      tnf_type: "cloud"
+  - model_name: "perplexity/sonar"
+    litellm_params:
+      model: "openai/sonar"
+      api_base: "https://api.perplexity.ai"
+      api_key: "os.environ/PERPLEXITY_API_KEY"
+    model_info:
+      tnf_provider: "perplexity"
+      tnf_tier: 53
+      tnf_type: "cloud"
+  - model_name: "cohere/command-a-03-2025"
+    litellm_params:
+      model: "cohere/command-a-03-2025"
+      api_key: "os.environ/COHERE_API_KEY"
+    model_info:
+      tnf_provider: "cohere"
+      tnf_tier: 54
+      tnf_type: "cloud"
+  - model_name: "mistral/mistral-large-latest"
+    litellm_params:
+      model: "openai/mistral-large-latest"
+      api_base: "https://api.mistral.ai/v1"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      tnf_provider: "mistral"
+      tnf_tier: 54
+      tnf_type: "cloud"
+  - model_name: "xai/grok-4.6"
+    litellm_params:
+      model: "openai/grok-4.6"
+      api_base: "https://api.x.ai/v1"
+      api_key: "os.environ/XAI_API_KEY"
+    model_info:
+      tnf_provider: "xai"
+      tnf_tier: 55
+      tnf_type: "cloud"
+  - model_name: "sambanova/Meta-Llama-3.1-8B-Instruct"
+    litellm_params:
+      model: "openai/Meta-Llama-3.1-8B-Instruct"
+      api_base: "https://api.sambanova.ai/v1"
+      api_key: "os.environ/SAMBANOVA_API_KEY"
+    model_info:
+      tnf_provider: "sambanova"
+      tnf_tier: 55
+      tnf_type: "cloud"
+  - model_name: "qwen/qwen-max"
+    litellm_params:
+      model: "openai/qwen-max"
+      api_base: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+      api_key: "os.environ/DASHSCOPE_API_KEY"
+    model_info:
+      tnf_provider: "qwen"
+      tnf_tier: 56
+      tnf_type: "cloud"
+  - model_name: "novita/deepseek/deepseek-v3-0324"
+    litellm_params:
+      model: "openai/deepseek/deepseek-v3-0324"
+      api_base: "https://api.novita.ai/v3/openai"
+      api_key: "os.environ/NOVITA_API_KEY"
+    model_info:
+      tnf_provider: "novita"
+      tnf_tier: 57
+      tnf_type: "cloud"
+  - model_name: "moonshot/moonshot-v1-8k"
+    litellm_params:
+      model: "openai/moonshot-v1-8k"
+      api_base: "https://api.moonshot.cn/v1"
+      api_key: "os.environ/MOONSHOT_API_KEY"
+    model_info:
+      tnf_provider: "moonshot"
+      tnf_tier: 58
+      tnf_type: "cloud"
+  - model_name: "anthropic/claude-sonnet-5"
+    litellm_params:
+      model: "anthropic/claude-sonnet-5"
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+    model_info:
+      tnf_provider: "anthropic"
+      tnf_tier: 60
+      tnf_type: "cloud"
+  - model_name: "openai/gpt-5.6-sol"
+    litellm_params:
+      model: "openai/gpt-5.6-sol"
+      api_key: "os.environ/OPENAI_API_KEY"
+    model_info:
+      tnf_provider: "openai"
+      tnf_tier: 70
+      tnf_type: "cloud"
+
+router_settings:
+  routing_strategy: simple-shuffle
+  fallbacks:
+    - "google/gemini-3.7-flash":
+        [
+          "groq/openai/gpt-oss-120b",
+          "nvidia/nvidia/nemotron-3-ultra-550b-a55b",
+          "deepseek/deepseek-chat",
+          "openrouter/openrouter/auto",
+          "togetherai/openai/gpt-oss-120b",
+          "fireworksai/accounts/fireworks/models/llama-v3p1-70b-instruct",
+          "perplexity/sonar",
+          "cohere/command-a-03-2025",
+          "mistral/mistral-large-latest",
+          "xai/grok-4.6",
+          "sambanova/Meta-Llama-3.1-8B-Instruct",
+          "qwen/qwen-max",
+          "novita/deepseek/deepseek-v3-0324",
+          "moonshot/moonshot-v1-8k",
+          "anthropic/claude-sonnet-5",
+          "openai/gpt-5.6-sol",
+        ]
+
+general_settings:
+  # Virtual keys, per-key budgets and spend tracking all require this.
+  # Without DATABASE_URL the proxy still routes but records nothing, which
+  # is useless for BYOK quotas or any metered tier.
+  database_url: "os.environ/DATABASE_URL"
+  master_key: "os.environ/LITELLM_MASTER_KEY"
+
+litellm_settings:
+  drop_params: true
+  set_verbose: false

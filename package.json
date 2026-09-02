@@ -438,7 +438,9 @@
     "searxng:down": "docker compose -f docker-compose.searxng.yml down",
     "authority:surface:staged": "node scripts/protocols/agent-self-edit-gate.cjs --staged",
     "handoff:gate:staged": "node scripts/protocols/enforce-session-handoff.cjs --mode=staged",
-    "guard:mutation": "node scripts/security/workspace-mutation-guard.cjs --check"
+    "guard:mutation": "node scripts/security/workspace-mutation-guard.cjs --check",
+    "llm:config": "node scripts/llm/generate-litellm-config.cjs",
+    "llm:config:configured": "node scripts/llm/generate-litellm-config.cjs --only-configured"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
