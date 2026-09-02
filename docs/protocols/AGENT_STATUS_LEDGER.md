@@ -6,6 +6,12 @@
 
 # Agent Status Ledger
 
+- **Updated: 2026-09-02T17:48:44.254ZZ** — TNF web-dev audit remediation pass: 9
+  fixes applied (task-pusher gateDecisions
+
+- **Updated: 2026-09-02T16:47:02.946ZZ** — Implemented reversible multi-slash
+  TNF CLI skill chains with validated upstream handoffs
+
 - **Updated: 2026-09-01T23:44:04.266ZZ** — Added 1 new script file(s)
 
 - **Updated: 2026-09-01T20:36:27.801ZZ** — Restored documented publication

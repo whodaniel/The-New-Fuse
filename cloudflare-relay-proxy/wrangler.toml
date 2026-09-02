@@ -1,0 +1,25 @@
+name = "tnf-relay-proxy"
+main = "src/index.ts"
+compatibility_date = "2026-04-04"
+
+account_id = "db1d3832768b2bbad4c5c5d9dbc63f8b"
+workers_dev = true
+
+[[routes]]
+pattern = "relay.thenewfuse.com/*"
+zone_name = "thenewfuse.com"
+
+[vars]
+GCP_TARGET_URL = "https://relay-server-241337102384.us-central1.run.app"
+# relay.thenewfuse.com's DNS previously CNAME'd straight to Google's
+# ghs.googlehosted.com (a Cloud Run domain mapping) with proxy off,
+# bypassing Cloudflare entirely and serving a broken/self-signed cert to
+# visitors (same failure mode api.thenewfuse.com had — see cloudflare-api-proxy).
+# The DNS record now points at Cloudflare (thenewfuse-main.pages.dev,
+# Proxied) purely so this Worker Route can intercept it; the CNAME target
+# itself is never actually reached.
+#
+# relay-server (apps/relay-server) runs a `ws` WebSocket server alongside
+# its HTTP server, so this Worker forwards Upgrade: websocket requests via
+# Cloudflare's WebSocket fetch() passthrough rather than treating everything
+# as plain HTTP.

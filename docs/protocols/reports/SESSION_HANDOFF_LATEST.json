@@ -1,24 +1,35 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "d7063906-686c-4fb1-84e0-30b346ef188b",
-  "created_at": "2026-09-02T13:17:34.514Z",
+  "handoff_id": "5f620186-540d-4027-9305-ef447c53d47e",
+  "created_at": "2026-09-02T17:48:41.949Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "feat/api-google-oauth",
-  "head_sha": "3757759a5e3bd0350b6617d1aee237f6426734d7",
+  "head_sha": "05e1189830fb49f09db327a59e7374386e8a8564",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [],
   "work_summary": [
-    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
-    "CI/hook gates now block critical changes without fresh handoff artifacts."
+    "TNF web-dev audit remediation pass: 9 fixes applied (task-pusher gateDecisions",
+    "/v1 mount cleanup",
+    "App.tsx DEV gating",
+    "deleted MinimalApp.tsx + .bak files",
+    "designSystem.ts doc header",
+    "App.simplified.tsx docstring",
+    "WS rate-limit on relay",
+    "@ApiProperty on RegisterDto",
+    "eslint-disable in class-validator stub). 10 items deferred with rationale in /tmp/tnf-audit-fix-report-2026-09-02.json. Nothing committed — operator gate per docs/core/AGENTS.md."
   ],
   "changed_paths": [
-    "apps/api/.env.example",
-    "apps/api/src/controllers/auth.controller.ts",
-    "apps/api/src/services/auth.service.ts",
-    "apps/api/src/utils/validate-env.ts",
+    "apps/api-gateway/src/main.ts",
+    "apps/api/src/dto/register.dto.ts",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "apps/frontend/src/App.simplified.tsx",
+    "apps/frontend/src/App.tsx",
+    "apps/frontend/src/designSystem.ts",
+    "apps/frontend/src/pages/GeneralSettingsPage.tsx",
+    "apps/frontend/src/stubs/class-validator.ts",
+    "apps/relay-server/src/comprehensive-tnf-relay.js",
     "data/agent-registry/agent_capabilities.json",
     "data/agent-registry/agent_relationships.json",
     "data/agent-registry/agent_tags.json",
@@ -26,23 +37,24 @@
     "data/agent-registry/registry_summary.json",
     "data/harness/ANOMALY_PAYLOAD.md",
     "data/harness/active-sieve-manifest.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "pnpm-lock.yaml",
-    ".agent/SKILL_MANIFEST.md",
-    ".agent/skills/tnf-enforcement-change-safety/SKILL.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/PROTOCOL_ENFORCEMENT_INERTNESS_LESSONS_20260901.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "packages/web-scraping/src/core/WebScrapingService.ts",
-    "packages/web-scraping/src/proxy/ProxyService.ts",
-    "scripts/lib/enforcement-mode.cjs",
-    "scripts/lib/enforcement-mode.test.cjs",
-    "scripts/protocols/enforce-session-handoff.cjs",
-    "scripts/tests/session-handoff-gate.test.sh",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "packages/tnf-cli/package.json",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/slashCommands.ts",
+    "pnpm-lock.yaml",
+    "scripts/agents/tnf-task-pusher.py",
+    "docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.report.md",
+    "docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.yml",
     "docs/protocols/reports/session_handoff_gate-repair-pi-20260902.json",
-    "docs/protocols/reports/session_handoff_gate-repair-pi-20260902.md"
+    "docs/protocols/reports/session_handoff_gate-repair-pi-20260902.md",
+    "packages/tnf-cli/src/slashCommands.test.ts",
+    "apps/frontend/src/MinimalApp.tsx",
+    "apps/frontend/src/pages/Admin/Agents/skills.ts.bak",
+    "apps/frontend/src/pages/ConnectExtension.tsx.bak"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -52,21 +64,25 @@
     "notes": ""
   },
   "continuation": {
-    "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
-    "priority": "high",
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
-      "Execute listed next actions in order and preserve privacy/security gates"
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
     ]
   },
   "next_actions": [
+    "Review updated LIVING_STATE.md for new active steps",
     "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit.",
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 32 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["3757759a5e3bd0350b6617d1aee237f6426734d7"]
+    "commits": ["05e1189830fb49f09db327a59e7374386e8a8564"],
+    "deployment_urls": [],
+    "database_migrations": []
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
