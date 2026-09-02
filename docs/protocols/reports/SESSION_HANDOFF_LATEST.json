@@ -1,27 +1,66 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "ff087ae5-e8c0-4bc2-bf79-7b58237672dd",
-  "created_at": "2026-09-02T05:41:03.357Z",
+  "handoff_id": "bade7eee-c7dc-4d52-8127-eed0a91f1d2b",
+  "created_at": "2026-09-02T06:48:07.096Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "1c2926bdcf44c74305e4dc8f7a78b2b4028b90b4",
+  "head_sha": "0dd74d78a11e0aec3e56081f227c716e9e180f8c",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [],
-  "work_summary": ["Modified 12 file(s)"],
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts."
+  ],
   "changed_paths": [
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    ".agent/SKILL_MANIFEST.md",
+    ".github/workflows/deploy-frontend-pages.yml",
     "apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json",
     "apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json",
     "apps/chrome-extension/src/v6/content/adapters/SimpleChatBridge.ts",
     "apps/chrome-extension/src/v6/content/adapters/__tests__/SimpleChatBridge.test.ts",
     "apps/chrome-extension/src/v6/content/index.ts",
+    "apps/chrome-extension/src/v6/content/injectable/FloatingPanel.ts",
+    "apps/chrome-extension/src/v6/shared/__tests__/extension-context.test.ts",
+    "apps/chrome-extension/src/v6/shared/__tests__/utils.test.ts",
+    "apps/chrome-extension/src/v6/shared/extension-context.ts",
+    "apps/chrome-extension/src/v6/shared/utils.ts",
+    "apps/frontend/.wrangler/tmp/pages-XOF4nE/functions-filepath-routing-config-0.3241775630825481.json",
+    "apps/frontend/.wrangler/tmp/pages-XOF4nE/functionsRoutes-0.8421570143385246.mjs",
+    "apps/frontend/.wrangler/tmp/pages-XOF4nE/functionsWorker-0.06752331002577305.js",
     "data/agent-registry/onboarding-agent.json",
     "data/llm-provider-status.json",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/operations/tnf-substrate-seal.json",
     "packages/tnf-cli/src/cli.ts",
-    "validation-results/pre-change-report.json"
+    "packages/tnf-cli/src/slashCommands.ts",
+    "packages/web-scraping/src/core/WebScrapingService.ts",
+    "packages/web-scraping/src/proxy/ProxyService.ts",
+    "parse_test.ts",
+    "pnpm-lock.yaml",
+    "rewrite_interactive.py",
+    "rewrite_oneshot.py",
+    "rewrite_slash.py",
+    "scripts/protocols/enforce-session-handoff.cjs",
+    "scripts/tests/session-handoff-gate.test.sh",
+    "validation-results/pre-change-report.json",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "apps/tauri-desktop/src/components/ForefrontOperatorPanel.tsx",
+    "apps/tauri-desktop/src/components/layout/SynergyStatusBar.tsx",
+    "apps/tauri-desktop/src/pages/AgentHub.tsx",
+    "apps/tauri-desktop/src/pages/MissionControl.tsx",
+    "apps/tauri-desktop/src/pages/MultiAgentChat.tsx",
+    "apps/tauri-desktop/src/pages/Settings.tsx",
+    "apps/tauri-desktop/src/pages/SwarmTerminal.tsx",
+    "apps/tauri-desktop/src/services/OperatorSynergyService.ts",
+    "apps/tauri-desktop/src/services/operatorSynergy/types.ts",
+    "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "apps/tauri-desktop/src/lib/relayAuthHint.ts"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -31,24 +70,21 @@
     "notes": ""
   },
   "continuation": {
-    "owner": "operator",
-    "targets": ["orchestrator"],
-    "priority": "medium",
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against schema",
-      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
   "next_actions": [
-    "Review updated LIVING_STATE.md for new active steps",
-    "Merge to main",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 12 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["1c2926bdcf44c74305e4dc8f7a78b2b4028b90b4"],
-    "deployment_urls": [],
-    "database_migrations": []
+    "commits": ["0dd74d78a11e0aec3e56081f227c716e9e180f8c"]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
