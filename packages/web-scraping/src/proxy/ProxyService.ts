@@ -93,7 +93,7 @@ export class ProxyService {
       const response = await axios(axiosConfig);
 
       // Validate response content type
-      const contentType = response.headers['content-type'] || '';
+      const contentType = String(response.headers['content-type'] ?? '');
       if (!this.isAllowedContentType(contentType)) {
         throw new Error(`Response content type not allowed: ${contentType}`);
       }

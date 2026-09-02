@@ -344,17 +344,30 @@ function main() {
       // ignore parse errors; leave ledgerSatisfied=false to keep gate strict
     }
   }
-  // Find all scoped receipts in the change set
+  // Find all handoff receipts in the change set. changedSet is lower-cased,
+  // so the global SESSION_HANDOFF_LATEST.json ALSO matches the session_handoff_
+  // filter below. A per-agent receipt plus a co-staged LATEST (the normal
+  // turn-end shape) must NOT be treated as ambiguity — prefer the per-agent
+  // receipt and ignore the co-staged LATEST. Only two or more per-agent
+  // receipts is genuine ambiguity.
+  const globalLatestLower = HANDOFF_JSON.toLowerCase();
   const scopedJsonCandidates = Array.from(changedSet).filter(f => f.startsWith('docs/protocols/reports/session_handoff_') && f.endsWith('.json'));
-  
-  if (scopedJsonCandidates.length === 0) {
-    fail('Critical-path changes require a valid scoped handoff receipt. No docs/protocols/reports/SESSION_HANDOFF_*.json found in this change set.');
-  }
-  if (scopedJsonCandidates.length > 1) {
-    fail('Multiple handoff JSON receipts found in this change set. Only one receipt per commit is permitted to prevent ambiguity.');
+  const perAgentReceipts = scopedJsonCandidates.filter(f => f !== globalLatestLower);
+
+  if (perAgentReceipts.length > 1) {
+    fail('Multiple per-agent handoff JSON receipts found in this change set. Only one receipt per agent per commit is permitted to prevent ambiguity.');
   }
 
-  const receiptJsonPath = scopedJsonCandidates[0];
+  let receiptJsonPath;
+  if (perAgentReceipts.length === 1) {
+    // Per-agent receipt wins; a co-staged global LATEST is ignored.
+    receiptJsonPath = perAgentReceipts[0];
+  } else if (scopedJsonCandidates.length === 1) {
+    // Only the global LATEST is present — global semantics apply.
+    receiptJsonPath = scopedJsonCandidates[0];
+  } else {
+    fail('Critical-path changes require a valid scoped handoff receipt. No docs/protocols/reports/SESSION_HANDOFF_*.json found in this change set.');
+  }
   const receiptBase = receiptJsonPath.slice(0, -5);
   const receiptMdPath = receiptBase + '.md';
 

@@ -395,6 +395,56 @@ else
 fi
 cd "$TEMP_DIR"
 
+echo "Test 15 - per-agent receipt preferred over co-staged LATEST"
+git checkout main >/dev/null 2>&1
+git commit --allow-empty -m "Second commit" >/dev/null 2>&1
+echo "// test" > scripts/dummy-critical.js
+make_valid_json docs/protocols/reports/SESSION_HANDOFF_AGENT1.json "['scripts/dummy-critical.js', 'docs/protocols/reports/SESSION_HANDOFF_AGENT1.json', 'docs/protocols/reports/SESSION_HANDOFF_AGENT1.md']"
+cat << 'MD' > docs/protocols/reports/SESSION_HANDOFF_AGENT1.md
+TNF_PROTOCOL_ACK
+Next Actions
+MD
+# Co-stage a global LATEST WITHOUT the status ledger. Under the old semantics
+# this shape jammed every turn-end commit with "Multiple handoff JSON receipts
+# found" (changedSet is lower-cased, so LATEST also matches the filter). The
+# per-agent receipt must win and the co-staged LATEST must be ignored.
+make_valid_json docs/protocols/reports/SESSION_HANDOFF_LATEST.json "['docs/protocols/reports/SESSION_HANDOFF_LATEST.json', 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md']"
+cat << 'MD' > docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+TNF_PROTOCOL_ACK
+Next Actions
+MD
+git add scripts/dummy-critical.js docs/protocols/reports/SESSION_HANDOFF_AGENT1.* docs/protocols/reports/SESSION_HANDOFF_LATEST.*
+if run_gate; then
+  echo "✅ Passed: per-agent receipt preferred, co-staged LATEST ignored"
+else
+  echo "❌ Failed: should have allowed (per-agent receipt + co-staged LATEST)!"
+  "$NODE_BIN" "$GATE" --mode=staged
+  exit 1
+fi
+git reset HEAD --hard >/dev/null 2>&1
+
+echo "Test 16 - two per-agent receipts remain ambiguous"
+git commit --allow-empty -m "Second commit" >/dev/null 2>&1
+echo "// test" > scripts/dummy-critical.js
+make_valid_json docs/protocols/reports/SESSION_HANDOFF_AGENT1.json "['scripts/dummy-critical.js', 'docs/protocols/reports/SESSION_HANDOFF_AGENT1.json', 'docs/protocols/reports/SESSION_HANDOFF_AGENT1.md']"
+cat << 'MD' > docs/protocols/reports/SESSION_HANDOFF_AGENT1.md
+TNF_PROTOCOL_ACK
+Next Actions
+MD
+make_valid_json docs/protocols/reports/SESSION_HANDOFF_AGENT2.json "['scripts/dummy-critical.js', 'docs/protocols/reports/SESSION_HANDOFF_AGENT2.json', 'docs/protocols/reports/SESSION_HANDOFF_AGENT2.md']"
+cat << 'MD' > docs/protocols/reports/SESSION_HANDOFF_AGENT2.md
+TNF_PROTOCOL_ACK
+Next Actions
+MD
+git add scripts/dummy-critical.js docs/protocols/reports/SESSION_HANDOFF_AGENT1.* docs/protocols/reports/SESSION_HANDOFF_AGENT2.*
+if run_gate; then
+  echo "❌ Failed: Should have blocked two per-agent receipts (genuine ambiguity)!"
+  exit 1
+else
+  echo "✅ Passed: Blocked correctly (two per-agent receipts)"
+fi
+git reset HEAD --hard >/dev/null 2>&1
+
 # Cleanup
 cd "$REPO_ROOT"
 rm -rf "$TEMP_DIR"
