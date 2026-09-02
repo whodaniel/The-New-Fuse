@@ -546,10 +546,11 @@ const UserProfilePage: React.FC = () => {
                 ) : (
                   <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
                     <div>
-                      <label className="block text-xs font-medium text-gray-400 mb-1">
+                      <label htmlFor="newPassword" className="block text-xs font-medium text-gray-400 mb-1">
                         New Password
                       </label>
                       <input
+                        id="newPassword"
                         type="password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
@@ -558,10 +559,11 @@ const UserProfilePage: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-400 mb-1">
+                      <label htmlFor="confirmPassword" className="block text-xs font-medium text-gray-400 mb-1">
                         Confirm Password
                       </label>
                       <input
+                        id="confirmPassword"
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
@@ -585,9 +587,16 @@ const UserProfilePage: React.FC = () => {
                         type="button"
                         onClick={handlePasswordChange}
                         disabled={isChangingPassword || !newPassword || !confirmPassword}
-                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                       >
-                        {isChangingPassword ? 'Updating...' : 'Update Password'}
+                        {isChangingPassword ? (
+                          <>
+                            <div className="animate-spin rounded-full h-3 w-3 border-t-2 border-b-2 border-white"></div>
+                            Updating...
+                          </>
+                        ) : (
+                          'Update Password'
+                        )}
                       </button>
                     </div>
                   </div>
