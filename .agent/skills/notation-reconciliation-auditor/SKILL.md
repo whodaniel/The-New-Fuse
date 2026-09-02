@@ -103,6 +103,28 @@ node scripts/protocols/notation-reconciliation-audit.cjs --strict
   health) — that's `state-freshness-gate.cjs`'s job.
 - Replace reading the code. This narrows where to look; it doesn't replace
   looking.
+- **Look where most drift actually lives.** `DEFAULT_SCAN_GLOBS` is exactly
+  `.agent/skills/**/*.md`, `docs/protocols/*.md`, `AGENTS.md`, `CLAUDE.md`
+  (minus vendor packs). It does **not** scan `docs/deployment/`,
+  `docs/development/`, `scripts/`, `apps/`, `packages/` or `.github/`.
+
+  On 2026-09-02 ~50 files of Railway/`cloud_runtime` drift were remediated
+  almost entirely outside that corpus and the totals barely moved — dangling
+  paths 601 → 601, commands 14 → 17, staleness 249 → 258, the rises coming from
+  newly added "retired/deprecated" banner wording, not new defects. **A flat
+  total after real remediation is not evidence the work failed; it usually means
+  the tool did not look there.** Point it at what you changed:
+
+  ```bash
+  node scripts/protocols/notation-reconciliation-audit.cjs 'docs/deployment/*.md'
+  ```
+
+- **Catch renamed platforms, not just missing ones.** This scan cannot see a
+  dead dependency that was string-replaced into a plausible new name — the
+  `railway` → `cloud_runtime` rename hid ~447 files behind a token that reads
+  like real infrastructure. Pair it with
+  `.agent/skills/tnf-platform-migration-residue-audit/SKILL.md` whenever a
+  platform is believed retired.
 
 ## After a run
 

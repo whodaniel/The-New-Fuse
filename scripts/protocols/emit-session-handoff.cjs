@@ -302,9 +302,29 @@ function syncLivingState(handoffPayload) {
   const headShort = String(handoffPayload.head_sha || '').slice(0, 12);
   const aligned = tipAligned(handoffPayload);
   const statusMarker = aligned ? '[STATUS:SYNCHRONIZED]' : '[STATUS:DRIFT]';
+  // The emitting agent's first next-action silently became the fleet's Current
+  // Directive. On 2026-09-02 that replaced a standing operator directive
+  // ("Deploy frontend to Cloudflare Pages") with a routine per-session action,
+  // and only a memory note caught it. A handoff records what one session did;
+  // it is not authority to retarget the fleet.
+  //
+  // Default is now preserve. Set TNF_HANDOFF_SET_DIRECTIVE=1 to retarget.
+  const existingDirective = (() => {
+    const m = fs
+      .readFileSync(livingStatePath, 'utf8')
+      .match(/<!--\s*CURRENT_DIRECTIVE:START\s*-->\s*\n+\*\*Current Directive:\*\*\s*([^\n]*)/);
+    return m ? m[1].trim() : '';
+  })();
+  const overrideDirective = Boolean(process.env.TNF_HANDOFF_SET_DIRECTIVE);
+  const directiveText = !overrideDirective && existingDirective ? existingDirective : leadAction;
+  if (existingDirective && directiveText !== leadAction) {
+    console.log(
+      `[emit-session-handoff] preserved Current Directive: "${existingDirective}" (set TNF_HANDOFF_SET_DIRECTIVE=1 to replace)`
+    );
+  }
   const fence = [
     '<!-- CURRENT_DIRECTIVE:START -->',
-    `**Current Directive:** ${leadAction}`,
+    `**Current Directive:** ${directiveText}`,
     '<!-- CURRENT_DIRECTIVE:END -->',
   ].join('\n');
   const historyLine = `- ${new Date().toISOString()} handoff \`${handoffId}\` head \`${headShort}\` project \`${projectId}\` — ${leadAction}`;

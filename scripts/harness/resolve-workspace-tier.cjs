@@ -158,10 +158,34 @@ function main(argv) {
       : 'OK to proceed in the current workspace for this task class.',
   };
 
+  // Disk preflight. R1 *mandates* a separate worktree/clone for these task
+  // classes but nothing checked there was room for one. On 2026-09-02 a
+  // worktree add on a near-full volume failed mid-checkout, left a partial
+  // tree, and drove the machine to 35 MB free -- at which point the shell
+  // began failing commands with no output. Refusing to advise a checkout we
+  // cannot fit is cheaper than recovering from a half-written one.
+  if (violation) {
+    try {
+      const df = require('node:child_process')
+        .execSync('df -k / | tail -1', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+        .trim()
+        .split(/\s+/);
+      const availMb = Math.floor(Number(df[3]) / 1024);
+      // Comparable existing TNF worktrees measured 462-596 MB; require ~2x.
+      if (Number.isFinite(availMb) && availMb < 1200) {
+        result.diskWarning = `only ${availMb} MB free on / — a TNF worktree checkout needs ~500-600 MB and has failed mid-checkout below this. Free space before creating one.`;
+      }
+      result.availMb = availMb;
+    } catch {
+      /* preflight is advisory; never let it be why this tool fails */
+    }
+  }
+
   if (opts.json) {
     console.log(JSON.stringify(result, null, 2));
   } else {
     console.log(`[resolve-workspace-tier] task-class=${result.taskClass} -> tier=${result.tier} (${result.workspace})`);
+    if (result.diskWarning) console.log(`  ⛔ DISK: ${result.diskWarning}`);
     if (violation) {
       console.log(`  ⚠ ${result.guidance}`);
     } else {
