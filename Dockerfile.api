@@ -40,7 +40,7 @@ COPY packages/fairtable-components/package.json packages/fairtable-components/
 COPY packages/fairtable-core/package.json packages/fairtable-core/
 COPY packages/fairtable-utils/package.json packages/fairtable-utils/
 COPY packages/infrastructure/package.json packages/infrastructure/
-COPY packages/jules-skill/package.json packages/jules-skill/
+COPY packages/coding-agent-delegation/package.json packages/coding-agent-delegation/
 COPY packages/mcp-core/package.json packages/mcp-core/
 COPY packages/n8n-workflows/package.json packages/n8n-workflows/
 COPY packages/port-management/package.json packages/port-management/
@@ -87,7 +87,7 @@ COPY packages/fairtable-components/ packages/fairtable-components/
 COPY packages/fairtable-core/ packages/fairtable-core/
 COPY packages/fairtable-utils/ packages/fairtable-utils/
 COPY packages/infrastructure/ packages/infrastructure/
-COPY packages/jules-skill/ packages/jules-skill/
+COPY packages/coding-agent-delegation/ packages/coding-agent-delegation/
 COPY packages/mcp-core/ packages/mcp-core/
 COPY packages/n8n-workflows/ packages/n8n-workflows/
 COPY packages/port-management/ packages/port-management/
@@ -161,7 +161,7 @@ COPY packages/fairtable-components/package.json packages/fairtable-components/
 COPY packages/fairtable-core/package.json packages/fairtable-core/
 COPY packages/fairtable-utils/package.json packages/fairtable-utils/
 COPY packages/infrastructure/package.json packages/infrastructure/
-COPY packages/jules-skill/package.json packages/jules-skill/
+COPY packages/coding-agent-delegation/package.json packages/coding-agent-delegation/
 COPY packages/mcp-core/package.json packages/mcp-core/
 COPY packages/n8n-workflows/package.json packages/n8n-workflows/
 COPY packages/port-management/package.json packages/port-management/
