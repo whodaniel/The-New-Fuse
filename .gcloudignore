@@ -101,13 +101,18 @@ packages/*
 !data/
 !data/agent-bank/
 !data/agent-bank/**
-# Runtime bank sources scanned by AgentBankService / Dockerfile.api
+# Runtime bank sources scanned by AgentBankService / Dockerfile.api.
+# Only .agent/agents/** is actually needed at runtime; a bare `!.agent/`
+# re-include (as this used to be) drags in the entire directory — 294MB of
+# docs, skill-bank snapshots, and volatile scratch dirs like test-reports/
+# that other agent processes write to concurrently in this shared checkout,
+# which both bloats every upload and can crash mid-tar when a file it's
+# reading gets deleted out from under it. Exclude every direct child of
+# .agent/ by default, then re-include only the one subtree that's used.
 !.agent/
+.agent/*
 !.agent/agents/
 !.agent/agents/**
-# skill-bank snapshots balloon the upload (~50MB+) and are not needed to run api-server
-.agent/skill-bank/
-.agent/skill-bank/**
 !.claude/
 !.claude/agents/
 !.claude/agents/**
