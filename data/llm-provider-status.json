@@ -1,5 +1,5 @@
 {
-  "lastChecked": "2026-09-01T16:07:50.607Z",
+  "lastChecked": "2026-09-02T03:13:13.381Z",
   "bestAvailable": {
     "id": "openrouter",
     "name": "OpenRouter",
@@ -90,7 +90,7 @@
       "type": "cloud",
       "envKey": "GOOGLE_API_KEY",
       "testUrl": "https://generativelanguage.googleapis.com/v1beta/chat/completions",
-      "defaultModel": "gemini-pro",
+      "defaultModel": "gemini-3.7-flash",
       "active": false
     },
     {
@@ -100,7 +100,7 @@
       "type": "cloud",
       "envKey": "GROQ_API_KEY",
       "testUrl": "https://api.groq.com/openai/v1/chat/completions",
-      "defaultModel": "llama3-8b-8192",
+      "defaultModel": "openai/gpt-oss-120b",
       "active": false
     },
     {
@@ -134,6 +134,56 @@
       "active": true
     },
     {
+      "id": "togetherai",
+      "name": "Together AI",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "TOGETHER_API_KEY",
+      "testUrl": "https://api.together.xyz/v1/chat/completions",
+      "defaultModel": "openai/gpt-oss-120b",
+      "active": false
+    },
+    {
+      "id": "fireworksai",
+      "name": "Fireworks AI",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "FIREWORKS_API_KEY",
+      "testUrl": "https://api.fireworks.ai/inference/v1/chat/completions",
+      "defaultModel": "accounts/fireworks/models/llama-v3p1-70b-instruct",
+      "active": false
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "PERPLEXITY_API_KEY",
+      "testUrl": "https://api.perplexity.ai/chat/completions",
+      "defaultModel": "sonar",
+      "active": false
+    },
+    {
+      "id": "cohere",
+      "name": "Cohere",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "COHERE_API_KEY",
+      "testUrl": "https://api.cohere.ai/v1/chat/completions",
+      "defaultModel": "command-a-03-2025",
+      "active": false
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral AI",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "MISTRAL_API_KEY",
+      "testUrl": "https://api.mistral.ai/v1/chat/completions",
+      "defaultModel": "mistral-large-latest",
+      "active": false
+    },
+    {
       "id": "xai",
       "name": "SpaceXAI (xAI)",
       "tier": "cheap",
@@ -154,6 +204,26 @@
       "active": false
     },
     {
+      "id": "qwen",
+      "name": "Qwen (DashScope)",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "DASHSCOPE_API_KEY",
+      "testUrl": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "defaultModel": "qwen-max",
+      "active": false
+    },
+    {
+      "id": "novita",
+      "name": "Novita AI",
+      "tier": "cheap",
+      "type": "cloud",
+      "envKey": "NOVITA_API_KEY",
+      "testUrl": "https://api.novita.ai/v3/openai/chat/completions",
+      "defaultModel": "deepseek/deepseek-v3-0324",
+      "active": false
+    },
+    {
       "id": "moonshot",
       "name": "Moonshot",
       "tier": "cheap",
@@ -170,7 +240,7 @@
       "type": "cloud",
       "envKey": "ANTHROPIC_API_KEY",
       "testUrl": "https://api.anthropic.com/v1/chat/completions",
-      "defaultModel": "claude-3-haiku-20240307",
+      "defaultModel": "claude-sonnet-5",
       "active": false
     },
     {
@@ -180,7 +250,31 @@
       "type": "cloud",
       "envKey": "OPENAI_API_KEY",
       "testUrl": "https://api.openai.com/v1/chat/completions",
-      "defaultModel": "gpt-4o-mini",
+      "defaultModel": "gpt-5.6-sol",
+      "active": false
+    },
+    {
+      "id": "lmstudio",
+      "name": "LM Studio",
+      "tier": "premium",
+      "type": "local",
+      "testUrl": "http://localhost:1234/v1/models",
+      "active": false
+    },
+    {
+      "id": "localai",
+      "name": "LocalAI",
+      "tier": "premium",
+      "type": "local",
+      "testUrl": "http://localhost:8080/readyz",
+      "active": false
+    },
+    {
+      "id": "textgenwebui",
+      "name": "Text Generation WebUI",
+      "tier": "premium",
+      "type": "local",
+      "testUrl": "http://localhost:5000/v1/models",
       "active": false
     }
   ]
