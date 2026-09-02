@@ -8,9 +8,7 @@
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": [
-    "Modified 12 file(s)"
-  ],
+  "work_summary": ["Modified 12 file(s)"],
   "changed_paths": [
     "apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json",
     "apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json",
@@ -34,9 +32,7 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": [
-      "orchestrator"
-    ],
+    "targets": ["orchestrator"],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -50,9 +46,7 @@
     "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 12 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": [
-      "1c2926bdcf44c74305e4dc8f7a78b2b4028b90b4"
-    ],
+    "commits": ["1c2926bdcf44c74305e4dc8f7a78b2b4028b90b4"],
     "deployment_urls": [],
     "database_migrations": []
   },
