@@ -13,7 +13,13 @@
 
 import { EXTENSION_VERSION as FUSE_VERSION } from '../shared/constants';
 import { buildPageAgentIdentity } from '../shared/federation-identity';
-import { isControlPlaneRelayMessage } from '../shared/utils';
+import {
+  isExtensionContextInvalidated,
+  isExtensionRuntimeAlive,
+  isTransientRuntimeDisconnect,
+  runtimeErrorMessage,
+} from '../shared/extension-context';
+import { isControlPlaneRelayMessage, isTnfSaaSChatHost } from '../shared/utils';
 import { simpleChatBridge } from './adapters/SimpleChatBridge';
 import './guard'; // MUST BE FIRST - Patches customElements.define
 import { createEnhancedFloatingPanel, EnhancedFloatingPanel } from './injectable/FloatingPanel';

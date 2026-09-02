@@ -42,7 +42,7 @@ export interface ChatSendOptions {
 }
 
 import { DEFAULT_NODES } from '../../shared/constants';
-import { isControlPlaneRelayMessage } from '../../shared/utils';
+import { isControlPlaneRelayMessage, isTnfSaaSChatHost } from '../../shared/utils';
 import { TnfTranscriptClient } from '../utils/TnfTranscriptClient';
 
 class SimpleChatBridge {
