@@ -1,6 +1,7 @@
 import React from 'react';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { openExternal } from '../lib/openExternal';
+import { relayAuthHint } from '../lib/relayAuthHint';
 import FederationNodeService from '../services/FederationNodeService';
 import { useRoute } from './route-context';
 
@@ -28,7 +29,11 @@ export const ForefrontOperatorPanel: React.FC = () => {
 
       <div className="forefront-status">
         <StatusChip label="Relay" ok={state.relayConnected} />
-        <StatusChip label="Federation" ok={state.relayRegistered} />
+        <StatusChip
+          label="Federation"
+          ok={state.relayRegistered}
+          title={relayAuthHint(state) || undefined}
+        />
         <StatusChip label="Extension" ok={state.extensionConnected} />
         <StatusChip label="API" ok={state.apiOnline} />
         <StatusChip
@@ -130,12 +135,13 @@ export const ForefrontOperatorPanel: React.FC = () => {
   );
 };
 
-const StatusChip: React.FC<{ label: string; ok: boolean; warn?: boolean }> = ({
+const StatusChip: React.FC<{ label: string; ok: boolean; warn?: boolean; title?: string }> = ({
   label,
   ok,
   warn,
+  title,
 }) => (
-  <span className={`chip ${ok ? 'ok' : warn ? 'warn' : 'off'}`}>
+  <span className={`chip ${ok ? 'ok' : warn ? 'warn' : 'off'}`} title={title}>
     {label}: {ok ? 'ON' : warn ? '…' : 'OFF'}
     <style>{`
       .chip {

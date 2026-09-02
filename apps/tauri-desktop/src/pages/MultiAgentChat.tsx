@@ -8,6 +8,7 @@ import ChatSessionSidebar from '../components/chat/ChatSessionSidebar';
 import PageShell from '../components/layout/PageShell';
 import { useRoute } from '../components/route-context';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
+import { relayAuthHint } from '../lib/relayAuthHint';
 import FederationNodeService, {
   type FederationChannelMessage,
 } from '../services/FederationNodeService';
@@ -25,6 +26,7 @@ import type { Agent, ChatMessage } from '../types';
 const MultiAgentChat: React.FC = () => {
   const { navigate } = useRoute();
   const { unifiedAgents, state: synergy, sendFederationMessage } = useOperatorSynergy();
+  const authHint = relayAuthHint(synergy);
   const { agents: apiAgents, fetchAgents, updateAgent, apiOffline } = useAgentStore();
 
   const {
@@ -468,7 +470,8 @@ const MultiAgentChat: React.FC = () => {
                   <p className="text-xs text-slate-400 max-w-sm mt-1">
                     {mappedAgents.length > 0
                       ? 'Select agents, choose an execution mode, and type a prompt to start collaborating.'
-                      : 'No reachable agents were found. Configure the API or relay connection, then return here to start a conversation.'}
+                      : authHint ||
+                        'No reachable agents were found. Configure the API or relay connection, then return here to start a conversation.'}
                   </p>
                   {mappedAgents.length === 0 && (
                     <button

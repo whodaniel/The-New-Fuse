@@ -30,12 +30,24 @@ export interface TopologyLink {
   active: boolean;
 }
 
+/**
+ * The relay's REGISTRATION_ERROR payload (see packages/relay-core's
+ * standalone-relay.ts), kept verbatim so every surface that shows a
+ * "why is federation stuck" message points at the same real fix instead of
+ * each inventing its own vague "still connecting…" copy.
+ */
+export interface RelayAuthError {
+  message: string;
+  code?: string;
+}
+
 export interface OperatorSynergySnapshot {
   environment: Environment;
   relayUrl: string;
   apiUrl: string;
   relayConnected: boolean;
   relayRegistered: boolean;
+  relayAuthError: RelayAuthError | null;
   relayHealth: RelayHealthSnapshot | null;
   apiOnline: boolean;
   extensionConnected: boolean;

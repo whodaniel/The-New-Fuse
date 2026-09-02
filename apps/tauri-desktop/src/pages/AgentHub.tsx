@@ -10,6 +10,7 @@ import {
 import { useModalA11y } from '../hooks/useModalA11y';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { isTauriRuntime } from '../lib/isTauri';
+import { relayAuthHint } from '../lib/relayAuthHint';
 import { apiService } from '../services/api';
 import { useAgentStore } from '../stores/agentStore';
 import type { Agent } from '../types';
@@ -32,6 +33,7 @@ const AgentHub: React.FC = () => {
   } = useAgentStore();
   const { unifiedAgents, state: synergy, rediscover, refresh } = useOperatorSynergy();
   const { navigate } = useRoute();
+  const authHint = relayAuthHint(synergy);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
@@ -217,6 +219,13 @@ const AgentHub: React.FC = () => {
               </div>
             ))}
           </div>
+        ) : authHint ? (
+          <p className="offline-notice offline-notice-warn">
+            {authHint}{' '}
+            <button type="button" className="link-button" onClick={() => navigate('/settings')}>
+              Fix in Settings
+            </button>
+          </p>
         ) : (
           <p className="offline-notice">
             {synergy.relayConnected
@@ -370,6 +379,22 @@ const AgentHub: React.FC = () => {
           background: rgba(239, 68, 68, 0.12);
           border: 1px solid rgba(239, 68, 68, 0.25);
           color: #fecaca;
+        }
+
+        .offline-notice-warn {
+          background: rgba(245, 158, 11, 0.12);
+          border-color: rgba(245, 158, 11, 0.3);
+          color: #fde68a;
+        }
+
+        .link-button {
+          background: none;
+          border: none;
+          padding: 0;
+          color: inherit;
+          text-decoration: underline;
+          cursor: pointer;
+          font: inherit;
         }
 
         .offline-banner-actions {

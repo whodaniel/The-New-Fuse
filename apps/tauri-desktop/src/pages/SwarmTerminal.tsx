@@ -85,7 +85,13 @@ const SwarmTerminal: React.FC = () => {
   return (
     <PageShell
       title="Swarm Terminal"
-      subtitle={`Federated control · ${terminals.length} terminal(s) · ${synergy.relayRegistered ? 'relay registered' : 'relay offline'}`}
+      subtitle={`Federated control · ${terminals.length} terminal(s) · ${
+        synergy.relayRegistered
+          ? 'federation registered'
+          : synergy.relayConnected
+            ? 'federation connecting'
+            : 'relay offline'
+      }`}
       actions={
         <>
           <button type="button" className="secondary-button" onClick={refreshTerminals}>

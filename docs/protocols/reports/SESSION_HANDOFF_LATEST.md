@@ -1,15 +1,15 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-02T02:47:22.515Z` Handoff ID: `cef062b2-0ec0-4570-9c1f-55fe7e19c4e7`
+`2026-09-02T07:27:18.150Z` Handoff ID: `e12e3d89-52db-414f-bf9d-1d7a3069a2a3`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `HEAD`
-- Head SHA: `f39270fa3f603a13d1cd6b70a113439fcbde285d`
-- Sensitive Scope: `fix-build-breakage-from-merges`
+- Branch: `fix/tnf-desktop-relay-auth-visibility`
+- Head SHA: `2c03af17566f949b5db2303307b27888c58fec7a`
+- Sensitive Scope: `internal`
 
 ## Classification
 
@@ -27,11 +27,21 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Changed Paths
 
-- packages/tnf-cli/src/cli.ts
-- packages/web-scraping/src/core/WebScrapingService.ts
-- packages/web-scraping/src/proxy/ProxyService.ts
-- .jules/sentinel.md
-- packages/client/src/websocket-client.html
+- apps/tauri-desktop/src/components/ForefrontOperatorPanel.tsx
+- apps/tauri-desktop/src/components/layout/SynergyStatusBar.tsx
+- apps/tauri-desktop/src/lib/relayAuthHint.ts
+- apps/tauri-desktop/src/pages/AgentHub.tsx
+- apps/tauri-desktop/src/pages/MissionControl.tsx
+- apps/tauri-desktop/src/pages/MultiAgentChat.tsx
+- apps/tauri-desktop/src/pages/Settings.tsx
+- apps/tauri-desktop/src/pages/SwarmTerminal.tsx
+- apps/tauri-desktop/src/services/OperatorSynergyService.ts
+- apps/tauri-desktop/src/services/operatorSynergy/types.ts
+- data/marketplace/catalog-items.json
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 
 ## Verification
 
