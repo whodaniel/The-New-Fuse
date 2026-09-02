@@ -1,65 +1,49 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-02T07:27:18.150Z` Handoff ID: `e12e3d89-52db-414f-bf9d-1d7a3069a2a3`
+`2026-09-02T17:48:41.949Z` Handoff ID: `5f620186-540d-4027-9305-ef447c53d47e`
 
-## Scope
+## Repository
 
-- Repository: `whodaniel/tnf-monorepo`
-- Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `fix/tnf-desktop-relay-auth-visibility`
-- Head SHA: `2c03af17566f949b5db2303307b27888c58fec7a`
-- Sensitive Scope: `internal`
+- Actual: `whodaniel/tnf-monorepo`
+- Canonical TNF source: `whodaniel/tnf-monorepo`
+- Origin: `https://github.com/whodaniel/tnf-monorepo.git`
+- Branch: `feat/api-google-oauth`
+- Head SHA: `05e1189830fb49f09db327a59e7374386e8a8564`
 
 ## Classification
 
-- Work Domain: `unknown`
-- Artifact Destination: `unknown`
-- Data Residency: `unknown`
+- Work domain: `unknown`
+- Artifact destination: `unknown`
+- Data residency: `unknown`
 - Sensitivity: `unknown`
+
+## Capabilities
+
+- Required: (not recorded)
+- Staffed by: (not recorded)
 
 ## Work Summary
 
-- tnf-cli: remove dangling video-ingest registration (module never existed;
-  lane5 import broke build:packages)
-- web-scraping: coerce axios content-type header to string (AxiosHeaders union
-  type)
-
-## Changed Paths
-
-- apps/tauri-desktop/src/components/ForefrontOperatorPanel.tsx
-- apps/tauri-desktop/src/components/layout/SynergyStatusBar.tsx
-- apps/tauri-desktop/src/lib/relayAuthHint.ts
-- apps/tauri-desktop/src/pages/AgentHub.tsx
-- apps/tauri-desktop/src/pages/MissionControl.tsx
-- apps/tauri-desktop/src/pages/MultiAgentChat.tsx
-- apps/tauri-desktop/src/pages/Settings.tsx
-- apps/tauri-desktop/src/pages/SwarmTerminal.tsx
-- apps/tauri-desktop/src/services/OperatorSynergyService.ts
-- apps/tauri-desktop/src/services/operatorSynergy/types.ts
-- data/marketplace/catalog-items.json
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-
-## Verification
-
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
-- supabase_rls_audit: `na`
-
-## Continuation
-
-- Owner: `pi-coding-agent`
-- Targets: `story-architect`, `librarian`
-- Priority: `P1`
-
-### Resume Checklist
-
-- pnpm run build:packages green (73/73)
+- TNF web-dev audit remediation pass: 9 fixes applied (task-pusher gateDecisions
+- /v1 mount cleanup
+- App.tsx DEV gating
+- deleted MinimalApp.tsx + .bak files
+- designSystem.ts doc header
+- App.simplified.tsx docstring
+- WS rate-limit on relay
+- @ApiProperty on RegisterDto
+- eslint-disable in class-validator stub). 10 items deferred with rationale in
+  /tmp/tnf-audit-fix-report-2026-09-02.json. Nothing committed — operator gate
+  per docs/core/AGENTS.md.
 
 ## Next Actions
 
-- Deploy frontend to Cloudflare Pages
+- Review updated LIVING_STATE.md for new active steps
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 32 file(s)
+  uncommitted — see
+  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
