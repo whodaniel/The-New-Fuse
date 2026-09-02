@@ -126,6 +126,24 @@ const ENV_VARS: EnvVarConfig[] = [
     description: 'Frontend application URL',
   },
 
+  // Google OAuth
+  {
+    name: 'GOOGLE_CLIENT_ID',
+    required: false,
+    description: 'Google OAuth 2.0 client ID (enables GET /api/auth/google)',
+  },
+  {
+    name: 'GOOGLE_CLIENT_SECRET',
+    required: false,
+    description: 'Google OAuth 2.0 client secret',
+  },
+  {
+    name: 'GOOGLE_CALLBACK_URL',
+    required: false,
+    description:
+      'Google OAuth redirect URI, e.g. https://api.thenewfuse.com/api/auth/google/callback. Defaults to `${API_URL}/auth/google/callback`.',
+  },
+
   // External Services
   {
     name: 'OPENAI_API_KEY',

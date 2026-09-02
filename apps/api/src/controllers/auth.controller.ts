@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import * as crypto from 'node:crypto';
 import { hasAuthorizationLevel } from '../auth/auth-policy';
 import { GenerateInviteCodeDto, LoginDto, RegisterDto, SupabaseAuthDto } from '../dtos/auth.dto';
 import { AuthGuard } from '../guards/auth.guard';
@@ -21,6 +22,7 @@ import { AuthService } from '../services/auth.service';
 
 const ACCESS_COOKIE = 'tnf_access_token';
 const REFRESH_COOKIE = 'tnf_refresh_token';
+const GOOGLE_STATE_COOKIE = 'tnf_google_oauth_state';
 
 function setAuthCookies(res: Response, tokens: { accessToken?: string; refreshToken?: string }) {
   const secure = process.env.NODE_ENV === 'production';
@@ -99,6 +101,55 @@ export class AuthController {
       refreshToken: (result as any).refreshToken || (result as any).refresh_token,
     });
     return result;
+  }
+
+  @Get('google')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @ApiOperation({ summary: 'Start Google OAuth sign-in' })
+  async googleAuth(@Res({ passthrough: false }) res: Response) {
+    const state = crypto.randomBytes(16).toString('hex');
+    const secure = process.env.NODE_ENV === 'production';
+    res.cookie(GOOGLE_STATE_COOKIE, state, {
+      httpOnly: true,
+      secure,
+      sameSite: (secure ? 'none' : 'lax') as 'none' | 'lax',
+      path: '/',
+      maxAge: 5 * 60 * 1000,
+    });
+    res.redirect(this.authService.getGoogleAuthorizationUrl(state));
+  }
+
+  @Get('google/callback')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @ApiOperation({ summary: 'Google OAuth callback' })
+  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    const frontendUrl = process.env.FRONTEND_URL || 'https://thenewfuse.com';
+    const code = req.query.code as string | undefined;
+    const state = req.query.state as string | undefined;
+    const expectedState = req.cookies?.[GOOGLE_STATE_COOKIE] as string | undefined;
+    res.clearCookie(GOOGLE_STATE_COOKIE, { path: '/' });
+
+    if (!code || !state || !expectedState || state !== expectedState) {
+      return res.redirect(`${frontendUrl}/auth/google/callback?error=invalid_state`);
+    }
+
+    try {
+      const result = await this.authService.googleCallback(code);
+      setAuthCookies(res, {
+        accessToken:
+          (result as any).accessToken || (result as any).access_token || (result as any).token,
+        refreshToken: (result as any).refreshToken || (result as any).refresh_token,
+      });
+      const token =
+        (result as any).accessToken || (result as any).access_token || (result as any).token;
+      return res.redirect(`${frontendUrl}/auth/google/callback?token=${token}`);
+    } catch (error) {
+      return res.redirect(
+        `${frontendUrl}/auth/google/callback?error=${encodeURIComponent(
+          (error as Error)?.message || 'google_auth_failed'
+        )}`
+      );
+    }
   }
 
   @Get('invite-policy')

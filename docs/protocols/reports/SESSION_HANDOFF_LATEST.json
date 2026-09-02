@@ -1,60 +1,33 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "cef062b2-0ec0-4570-9c1f-55fe7e19c4e7",
-  "created_at": "2026-09-02T10:00:35.207Z",
+  "handoff_id": "d7063906-686c-4fb1-84e0-30b346ef188b",
+  "created_at": "2026-09-02T13:17:34.514Z",
   "repository": "whodaniel/tnf-monorepo",
-  "repository_context": {
-    "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": false,
-    "operation_in_progress": "merge",
-    "publication_targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ]
-  },
-  "branch": "main",
-  "head_sha": "2c03af1",
+  "branch": "feat/api-google-oauth",
+  "head_sha": "3757759a5e3bd0350b6617d1aee237f6426734d7",
   "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "public",
-  "classification": {
-    "work_domain": "core",
-    "artifact_destination": "oss_runtime",
-    "data_residency": "product_state",
-    "sensitivity": "public"
-  },
-  "capabilities": {
-    "required": ["git", "node", "pnpm", "husky"],
-    "staffed_by": ["orchestrator", "tnf-cli-agent"]
-  },
-  "publication": {
-    "public_runtime_affected": true,
-    "control_plane_affected": false,
-    "satellites": []
-  },
-  "freshness_receipts": [
-    {
-      "id": "LIVING_STATE",
-      "state": "SYNCHRONIZED",
-      "observed_at": "2026-09-02T10:00:35.209Z",
-      "value": "current"
-    },
-    {
-      "id": "AGENT_STATUS_LEDGER",
-      "state": "CURRENT",
-      "observed_at": "2026-09-02T10:00:35.209Z",
-      "value": "current"
-    }
-  ],
-  "project_ids": [],
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Merge origin/main (XSS fix #281, a11y fix #282)",
-    "Add enforcement mode scripts and tests",
-    "Repair handoff gate validation",
-    "Update web-scraping package"
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts."
   ],
   "changed_paths": [
+    "apps/api/.env.example",
+    "apps/api/src/controllers/auth.controller.ts",
+    "apps/api/src/services/auth.service.ts",
+    "apps/api/src/utils/validate-env.ts",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "data/agent-registry/agent_capabilities.json",
+    "data/agent-registry/agent_relationships.json",
+    "data/agent-registry/agent_tags.json",
+    "data/agent-registry/agents.json",
+    "data/agent-registry/registry_summary.json",
+    "data/harness/ANOMALY_PAYLOAD.md",
+    "data/harness/active-sieve-manifest.json",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "pnpm-lock.yaml",
     ".agent/SKILL_MANIFEST.md",
     ".agent/skills/tnf-enforcement-change-safety/SKILL.md",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
@@ -67,29 +40,120 @@
     "scripts/lib/enforcement-mode.cjs",
     "scripts/lib/enforcement-mode.test.cjs",
     "scripts/protocols/enforce-session-handoff.cjs",
-    "scripts/tests/session-handoff-gate.test.sh"
+    "scripts/tests/session-handoff-gate.test.sh",
+    "docs/protocols/reports/session_handoff_gate-repair-pi-20260902.json",
+    "docs/protocols/reports/session_handoff_gate-repair-pi-20260902.md"
   ],
   "verification": {
-    "privacy_guard": "pass",
-    "secret_sweep": "pass",
-    "docs_pii_guard": "pass",
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "All security gates passed in pre-commit"
+    "notes": ""
   },
   "continuation": {
-    "owner": "orchestrator",
-    "targets": ["tnf-cli-agent"],
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
-      "Deploy frontend to Cloudflare Pages",
-      "Verify merged changes in CI",
-      "Run full test suite"
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
-  "next_actions": ["Deploy frontend to Cloudflare Pages"],
+  "next_actions": [
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+  ],
   "artifacts": {
-    "commits": [],
-    "deployment_urls": [],
-    "database_migrations": []
-  }
+    "commits": ["3757759a5e3bd0350b6617d1aee237f6426734d7"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:19.963Z",
+      "value": "2181b2b2c6b192517196322b602217689d104ed4"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:21.926Z",
+      "value": "1e680a2108b66d921a8d827daf3fad36cfc78c86"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:24.475Z",
+      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:26.532Z",
+      "value": "[]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:28.087Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:31.152Z",
+      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:31.456Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:32.068Z",
+      "value": "1894ae33efb03a0ce244577a65836a66a7a6d059\n2026-09-01"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:01:32.260Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=5c1baed3b7fee5acab81d27aab21941e6db3fba1\nbranch=feat/tier2-roadmap-telemetry-verification-lexical\ndirty=0"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-09-02T01:49:29.535Z",
+      "value": "PONG\nRELAY_OK"
+    }
+  ]
 }
