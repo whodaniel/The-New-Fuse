@@ -1,8 +1,8 @@
 {
   "schema": "tnf/substrate-seal/0.1",
-  "writtenAt": "2026-08-31T13:47:02.798Z",
+  "writtenAt": "2026-09-02T05:51:15.158Z",
   "lockfile": "pnpm-lock.yaml",
-  "lockfileSha256": "6e33c03b0bad547ab1b212992b56c83ca8284e792198206d2c2d8bacd5577d2b",
+  "lockfileSha256": "f9dbad62db52678b12e9cf7219c30c36bbe52685f8487714c4f54c3814c7715d",
   "cliCriticalArtifacts": {
     "@the-new-fuse/infrastructure": {
       "rel": "packages/infrastructure/dist/index.js",
