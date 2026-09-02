@@ -1,13 +1,69 @@
 {
-  "lastChecked": "2026-09-02T03:43:55.070Z",
-  "bestAvailable": null,
-  "allocations": {
-    "orchestrator": null,
-    "worker": null,
-    "reviewer": null,
-    "subagent": null
+  "lastChecked": "2026-09-02T05:43:55.310Z",
+  "bestAvailable": {
+    "id": "openrouter",
+    "name": "OpenRouter",
+    "tier": "free",
+    "type": "cloud",
+    "envKey": "OPENROUTER_API_KEY",
+    "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+    "defaultModel": "openrouter/auto",
+    "active": true
   },
-  "fallbackChain": [],
+  "allocations": {
+    "orchestrator": {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
+      "active": true
+    },
+    "worker": {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
+      "active": true
+    },
+    "reviewer": {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
+      "active": true
+    },
+    "subagent": {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
+      "active": true
+    }
+  },
+  "fallbackChain": [
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "OPENROUTER_API_KEY",
+      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
+      "defaultModel": "openrouter/auto",
+      "active": true
+    }
+  ],
   "all": [
     {
       "id": "ollama",
@@ -75,7 +131,7 @@
       "envKey": "OPENROUTER_API_KEY",
       "testUrl": "https://openrouter.ai/api/v1/chat/completions",
       "defaultModel": "openrouter/auto",
-      "active": false
+      "active": true
     },
     {
       "id": "togetherai",

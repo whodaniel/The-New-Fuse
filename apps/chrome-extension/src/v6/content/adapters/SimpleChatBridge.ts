@@ -42,7 +42,7 @@ export interface ChatSendOptions {
 }
 
 import { DEFAULT_NODES } from '../../shared/constants';
-import { isControlPlaneRelayMessage, isTnfSaaSChatHost } from '../../shared/utils';
+import { isControlPlaneRelayMessage } from '../../shared/utils';
 import { TnfTranscriptClient } from '../utils/TnfTranscriptClient';
 
 class SimpleChatBridge {
@@ -429,8 +429,9 @@ class SimpleChatBridge {
         : []),
 
       // The New Fuse (Custom App) - High Priority
-      'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
-      'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
+      'button[data-testid="chat-send"]',
+      'button[data-testid*="chat-send" i]',
+      'button[data-testid="send-button"]',
 
       // OpenClaw Chat UI
       '.chat-compose button.primary',
@@ -546,22 +547,25 @@ class SimpleChatBridge {
       }
     }
 
-    // Try each button selector with same fallback logic
-    let sendButton: HTMLElement | null = null;
+    // Prefer a send control next to the composer. Page-wide SVG/icon matches
+    // (lucide stroke="currentColor") otherwise grab Chat hub mode tabs first.
+    let sendButton: HTMLElement | null = input ? this.findSendButtonNear(input) : null;
 
-    for (const selector of sendButtonSelectors) {
-      try {
-        const candidates = this.queryAllIncludingShadow(selector);
-        for (const el of candidates) {
-          if (this.isExtensionUiElement(el)) continue;
-          if (this.isVisible(el)) {
-            sendButton = el;
-            break;
+    if (!sendButton) {
+      for (const selector of sendButtonSelectors) {
+        try {
+          const candidates = this.queryAllIncludingShadow(selector);
+          for (const el of candidates) {
+            if (this.isExtensionUiElement(el)) continue;
+            if (this.isVisible(el)) {
+              sendButton = el;
+              break;
+            }
           }
+          if (sendButton) break;
+        } catch (e) {
+          // Invalid selector, skip
         }
-        if (sendButton) break;
-      } catch (e) {
-        // Invalid selector, skip
       }
     }
 
@@ -620,6 +624,10 @@ class SimpleChatBridge {
       }
     }
 
+    if (input && !sendButton) {
+      sendButton = this.findSendButtonNear(input);
+    }
+
     // ULTRA FALLBACK: If we still don't have elements, try to find the FIRST visible contenteditable
     // and the FIRST visible button (in desperation mode)
     if (!input && DEBUG) {
@@ -674,7 +682,7 @@ class SimpleChatBridge {
       }
     }
 
-    const isReady = !!(input && sendButton);
+    const isReady = Boolean(input && (sendButton || isSupportedSite));
     const result = { input, sendButton, isReady };
 
     // Enhanced logging with selector diagnostics
@@ -793,10 +801,14 @@ class SimpleChatBridge {
    */
   /**
    * Matches buttons by accessible name (aria-label, then title, then text content)
-   * against common send/submit vocabulary.
+   * against common send/submit vocabulary. Disabled send buttons still count —
+   * host UIs often keep Send disabled until React state catches the injected text.
    */
   private looksLikeSendButton(el: HTMLElement): boolean {
-    if (el instanceof HTMLButtonElement && el.disabled) return false;
+    const testId = (el.getAttribute('data-testid') || '').toLowerCase();
+    if (testId === 'chat-send' || testId.includes('send-button') || testId.includes('chat-send')) {
+      return true;
+    }
     const name = (el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent || '')
       .replace(/\s+/g, ' ')
       .trim()
@@ -805,6 +817,51 @@ class SimpleChatBridge {
     return /^(send|submit|send message|send chat|send reply|submit prompt|send prompt)\b/.test(
       name
     );
+  }
+
+  /**
+   * Find a send control in the same composer row as `input`.
+   * Avoids matching unrelated lucide icon buttons elsewhere on the page.
+   */
+  private findSendButtonNear(input: HTMLElement): HTMLElement | null {
+    const scopes: ParentNode[] = [];
+    const row = input.closest(
+      'form, [data-testid*="composer" i], [class*="composer" i], [class*="chat-input" i], [class*="input-row" i], .flex'
+    );
+    if (row) scopes.push(row);
+    if (input.parentElement) scopes.push(input.parentElement);
+    if (input.parentElement?.parentElement) scopes.push(input.parentElement.parentElement);
+
+    const localSelectors = [
+      'button[data-testid="chat-send"]',
+      'button[data-testid*="send" i]',
+      'button[aria-label="Send" i]',
+      'button[aria-label*="Send" i]',
+      'button[title*="Send" i]',
+      'button[type="submit"]',
+    ];
+
+    for (const scope of scopes) {
+      for (const selector of localSelectors) {
+        try {
+          const matches = scope.querySelectorAll(selector);
+          for (const node of matches) {
+            if (!(node instanceof HTMLElement)) continue;
+            if (this.isExtensionUiElement(node)) continue;
+            return node;
+          }
+        } catch {
+          // Invalid selector in this document
+        }
+      }
+      const buttons = scope.querySelectorAll('button, [role="button"]');
+      for (const node of buttons) {
+        if (!(node instanceof HTMLElement)) continue;
+        if (this.isExtensionUiElement(node)) continue;
+        if (this.looksLikeSendButton(node)) return node;
+      }
+    }
+    return null;
   }
 
   private isVisible(el: HTMLElement): boolean {
@@ -1257,6 +1314,10 @@ class SimpleChatBridge {
       // Wait for UI to react to the text input
       await this.delay(300);
 
+      // Composer DOM may have changed after injection; drop stale cache.
+      this.cachedElements = null;
+      this.cacheValidUntil = 0;
+
       // RE-FIND the send button AFTER text input - it may have become enabled
       // Gemini and other chat UIs often disable the send button until there's text
       const updatedElements = this.findElements();
@@ -1403,7 +1464,6 @@ class SimpleChatBridge {
       }
 
       console.warn('[SimpleChatBridge] Submission not confirmed after Enter/button fallbacks');
-      this.startWatchingForResponse(responsesBefore);
       return this.setLastSendResult({
         success: false,
         injected: true,

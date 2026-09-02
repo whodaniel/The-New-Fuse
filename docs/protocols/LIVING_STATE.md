@@ -310,6 +310,12 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-31T22:52:45.474Z Fix MEMORY.md drift: canonicalize § delimiter
 - [✅] 2026-09-01T23:44:01.072Z New script(s) created: sync-dist.cjs
 - [✅] 2026-09-01T23:44:01.072Z Fix MEMORY.md drift: canonicalize § delimiter
+- [✅] 2026-09-02T04:19:01.808Z Fix MEMORY.md drift: canonicalize § delimiter format, split oversized entry
+- [✅] 2026-09-02T05:13:51.053Z Fix MEMORY.md drift: canonicalize § delimiter format, split oversized entry
+- [✅] 2026-09-02T05:41:03.348Z Fix MEMORY.md drift: canonicalize § delimiter format, split oversized entry
+
+
+
   format, split oversized entry
 
   format, split oversized entry

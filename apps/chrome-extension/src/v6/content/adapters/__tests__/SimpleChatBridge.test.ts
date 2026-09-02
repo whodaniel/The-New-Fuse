@@ -212,4 +212,46 @@ describe('SimpleChatBridge injection', () => {
     expect(panel.value).toBe('hello I am typing a full sentence');
     expect(panel.selectionStart).toBe(panel.value.length);
   });
+
+  it('finds the TNF SaaS send button even when it is disabled and lucide tabs exist', () => {
+    document.body.innerHTML = `
+      <div class="flex flex-wrap gap-2">
+        <button type="button">
+          <svg stroke="currentColor"></svg>
+          <span>Agents</span>
+        </button>
+      </div>
+      <div class="flex space-x-2 items-center">
+        <input type="text" placeholder="Type a message..." />
+        <button type="button" aria-label="Send" data-testid="chat-send" disabled>
+          <svg stroke="currentColor"><path d="m22 2-7 20-4-9-9-4Z"></path></svg>
+          <span class="sr-only">Send</span>
+        </button>
+      </div>
+    `;
+
+    const input = document.querySelector('input') as HTMLInputElement;
+    const send = document.querySelector('[data-testid="chat-send"]') as HTMLButtonElement;
+    const elements = simpleChatBridge.findElements();
+
+    expect(elements.input).toBe(input);
+    expect(elements.sendButton).toBe(send);
+  });
+
+  it('does not start a long response watch when submit is not confirmed', async () => {
+    document.body.innerHTML = `
+      <main>
+        <textarea placeholder="Message"></textarea>
+      </main>
+    `;
+
+    const success = await simpleChatBridge.sendMessage('orphan payload');
+
+    expect(success).toBe(false);
+    expect(simpleChatBridge.getLastSendResult()).toMatchObject({
+      injected: true,
+      submitted: false,
+      method: 'unconfirmed-submit',
+    });
+  });
 });

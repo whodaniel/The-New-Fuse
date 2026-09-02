@@ -270,12 +270,29 @@ class FuseConnectContentScript {
   private startChatDetection(): void {
     const checkElements = () => {
       const elements = simpleChatBridge.findElements();
+      if (!elements.isReady) return;
 
-      if (elements.isReady && !this.chatReady) {
+      if (this.panel) {
+        this.panel.updateChatElements({
+          input: elements.input,
+          sendButton: elements.sendButton,
+          messageContainer: null,
+          lastMessage: null,
+          isStreaming: false,
+          confidence: 1,
+          detectedAt: Date.now(),
+        });
+      }
+
+      const firstReady = !this.chatReady;
+      if (firstReady) {
         this.chatReady = true;
         console.log('[FuseConnect v7] Chat is ready!');
+      }
 
-        // Notify background
+      // Keep asking until the background assigns a page agent. MV3 worker
+      // sleep / reload used to leave pageAgentId null after the first miss.
+      if (!this.pageAgentId) {
         this.safeSendMessage(
           {
             type: 'CHAT_DETECTED',
@@ -296,24 +313,8 @@ class FuseConnectContentScript {
             }
           }
         );
-
-        // Update panel if exists
-        if (this.panel) {
-          this.panel.updateChatElements({
-            input: elements.input,
-            sendButton: elements.sendButton,
-            messageContainer: null,
-            lastMessage: null,
-            isStreaming: false,
-            confidence: 1,
-            detectedAt: Date.now(),
-          });
-        }
-
-        // Pass agent ID to panel if available
-        if (this.panel && this.pageAgentId) {
-          this.panel.setAgentId(this.pageAgentId);
-        }
+      } else if (this.panel) {
+        this.panel.setAgentId(this.pageAgentId);
       }
     };
 
@@ -1110,27 +1111,40 @@ class FuseConnectContentScript {
    * Safely send message to background
    */
   private safeSendMessage(message: any, callback?: (response: any) => void): void {
-    if (!chrome.runtime?.id) return;
-    try {
-      chrome.runtime.sendMessage(message, (response) => {
-        // Access lastError to suppress "Unchecked runtime.lastError" warnings
-        const error = chrome.runtime.lastError;
-        if (error) {
-          const errorMessage = error.message || '';
-          callback?.({
-            success: false,
-            transient: errorMessage.includes('Receiving end does not exist'),
-            error: errorMessage,
-          });
+    if (!isExtensionRuntimeAlive()) return;
+    const send = (attempt: number): void => {
+      try {
+        chrome.runtime.sendMessage(message, (response) => {
+          const error = chrome.runtime.lastError;
+          if (error) {
+            const errorMessage = error.message || '';
+            if (isExtensionContextInvalidated(errorMessage) || !isExtensionRuntimeAlive()) {
+              callback?.({ success: false, contextInvalidated: true, error: errorMessage });
+              return;
+            }
+            if (isTransientRuntimeDisconnect(errorMessage) && attempt < 1) {
+              window.setTimeout(() => send(attempt + 1), 400);
+              return;
+            }
+            callback?.({
+              success: false,
+              transient: isTransientRuntimeDisconnect(errorMessage),
+              error: errorMessage,
+            });
+            return;
+          }
+          callback?.(response);
+        });
+      } catch (e) {
+        const errorMessage = runtimeErrorMessage(e);
+        if (isExtensionContextInvalidated(errorMessage) || !isExtensionRuntimeAlive()) {
+          callback?.({ success: false, contextInvalidated: true, error: errorMessage });
           return;
         }
-        if (callback && !error) {
-          callback(response);
-        }
-      });
-    } catch (e) {
-      // Ignore context invalidated errors
-    }
+        callback?.({ success: false, error: errorMessage });
+      }
+    };
+    send(0);
   }
 
   private setupKeyboardShortcuts(): void {
@@ -1372,6 +1386,8 @@ class FuseConnectContentScript {
    */
   private canAutoInjectRelayMessage(msg: any): boolean {
     if (msg?.metadata?.forceInject === true) return true;
+    // TNF SaaS chat is an agent picker, not a host-model composer.
+    if (isTnfSaaSChatHost()) return false;
     const channelId = msg?.channel || msg?.metadata?.channel || this.currentChannel;
     if (channelId && this.isChannelPaused(String(channelId))) return false;
     return true;
