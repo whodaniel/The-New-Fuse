@@ -21,6 +21,38 @@ retains authority without empirical re-verification. All knowledge must be
 continuously validated for freshness against live runtime evidence and canonical
 ground truth.
 
+## Where TNF Actually Runs (probe before asserting)
+
+TNF is **already deployed**. Never propose a hosting platform for an existing
+service, and never infer deployment state from which config files sit in the
+repo — that is the reasoning the freshness axiom above forbids.
+
+| Layer             | Runs on                                  | Deploy path                                                                   |
+| ----------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
+| API / backend     | **GCP Cloud Run** (`us-central1`)        | `scripts/deployment/gcp-deploy.sh` → `scripts/deployment/cloudbuild.yaml`     |
+| Frontend          | **Cloudflare Pages** (`thenewfuse-main`) | `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main` |
+| Subdomain routing | **Cloudflare Workers**                   | `cloudflare-*-proxy/`, each with its own `wrangler.toml`                      |
+| Auth / DB         | **Supabase**                             | `npx supabase ...`                                                            |
+| Cloud Redis       | **Upstash** (hosted/paid tier)           | local Redis + WebSocket bus per node otherwise                                |
+
+Live Cloud Run services include `api-server`, `api-gateway`, `backend` and
+`marketplace-api`. **Verify, don't recall:** `gcloud run services list`.
+
+`--branch=main` on the Pages deploy is not optional. Omitting it produces a
+branch-preview URL (e.g. `19ac4874.thenewfuse-main.pages.dev`) that never
+reaches the custom domains. Never record such a URL as a production endpoint.
+
+**Retired — do not propose, and do not read as current:** Railway, and its
+string-replaced alias `cloud_runtime`, which is not a real CLI (commit
+`62b2a3e2f`). Docs and configs bearing either name are residue; see
+`.agent/skills/tnf-platform-migration-residue-audit/SKILL.md`. Render.com and
+Fly.io have never been TNF infrastructure.
+
+Local network note: a FortiGuard appliance intercepts TLS for the
+`thenewfuse.com` zone, so `curl`/WebFetch can return a self-signed cert or a 403
+block page for hosts that are healthy. Neither is evidence of an outage — verify
+through a real browser.
+
 ## DOM Over Screenshots
 
 When programmatic access to structured data is available, use it. Screenshots
