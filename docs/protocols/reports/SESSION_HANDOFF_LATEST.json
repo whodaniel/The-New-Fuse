@@ -1,70 +1,51 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "6bc10366-c1ed-4d30-8109-f3c617a39310",
-  "created_at": "2026-09-02T01:18:07.125Z",
+  "handoff_id": "cef062b2-0ec0-4570-9c1f-55fe7e19c4e7",
+  "created_at": "2026-09-02T02:47:22.515Z",
   "repository": "whodaniel/tnf-monorepo",
-  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
-  "head_sha": "feb6a50e0abb0e4b8c0a62729825e680983a60f3",
+  "branch": "HEAD",
+  "head_sha": "f39270fa3f603a13d1cd6b70a113439fcbde285d",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [
     "TNF-SESSION"
   ],
   "work_summary": [
-    "lint-staged auto-fix: unused type parameter T renamed _T in IApiClient"
+    "tnf-cli: remove dangling video-ingest registration (module never existed; lane5 import broke build:packages)",
+    "web-scraping: coerce axios content-type header to string (AxiosHeaders union type)"
   ],
   "changed_paths": [
-    "packages/api-client/src/services/IApiClient.ts",
-    "apps/frontend/docs/audits/navigation-route-audit.json",
-    "apps/frontend/docs/audits/navigation-route-audit.md",
-    "apps/frontend/package.json",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "apps/frontend/scripts/audit-navigation-routes.mjs",
-    "apps/frontend/src/components/Sidebar/PremiumSidebar.tsx",
-    "apps/frontend/src/config/routeCatalog.ts",
-    "apps/frontend/src/config/sidebarNavigation.ts",
-    "apps/frontend/src/hooks/useApi.ts",
-    "apps/frontend/src/layouts/FullscreenBrandLayout.tsx",
-    "apps/frontend/src/pages/Agents/AgentIdentity.tsx",
-    "apps/frontend/src/pages/OnboardingFlow/index.tsx",
-    "apps/frontend/src/pages/chat/ChatPage.tsx",
-    "apps/frontend/src/pages/mcp/MCPHub.tsx",
-    "apps/frontend/src/routes/membership.route-protection.test.ts",
-    "apps/frontend/vite.config.ts",
-    "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json",
-    "data/llm-intel/arena-intel-latest.json",
-    "data/llm-intel/arena-intel.json",
-    "data/llm-intel/history/intel_2026-09-02.json",
-    "data/llm-intel/ranking-recommendations.json",
-    "data/llm-intel/ranking-report-latest.md",
-    "data/marketplace/catalog-items.json",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/AGENT_WHO_IS_WHO.md",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "pnpm-lock.yaml"
+    ".jules/sentinel.md",
+    "packages/client/src/websocket-client.html",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/web-scraping/src/core/WebScrapingService.ts",
+    "packages/web-scraping/src/proxy/ProxyService.ts"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": "Auto-verify 2026-09-02T01:18:14.206Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+    "notes": "Auto-verify 2026-09-02T02:47:25.546Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
     "owner": "pi-coding-agent",
-    "targets": ["story-architect", "librarian"],
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
     "priority": "high",
-    "resume_checklist": ["None"]
+    "resume_checklist": [
+      "pnpm run build:packages green (73/73)"
+    ]
   },
-  "next_actions": ["Merge to main"],
+  "next_actions": [
+    "Deploy frontend to Cloudflare Pages"
+  ],
   "artifacts": {
-    "commits": ["feb6a50e0abb0e4b8c0a62729825e680983a60f3"]
+    "commits": [
+      "f39270fa3f603a13d1cd6b70a113439fcbde285d"
+    ]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -92,66 +73,5 @@
     "control_plane_affected": false,
     "satellites": []
   },
-  "freshness_receipts": [
-    {
-      "id": "github.dev.main",
-      "state": "STALE",
-      "observed_at": "2026-09-02T01:01:19.963Z",
-      "value": "2181b2b2c6b192517196322b602217689d104ed4"
-    },
-    {
-      "id": "github.public.main",
-      "state": "STALE",
-      "observed_at": "2026-09-02T01:01:21.926Z",
-      "value": "1e680a2108b66d921a8d827daf3fad36cfc78c86"
-    },
-    {
-      "id": "github.control-plane.main",
-      "state": "STALE",
-      "observed_at": "2026-09-02T01:01:24.475Z",
-      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
-    },
-    {
-      "id": "github.public.pr-queue",
-      "state": "STALE",
-      "observed_at": "2026-09-02T01:01:26.532Z",
-      "value": "[]"
-    },
-    {
-      "id": "github.public.ruleset",
-      "state": "FRESH",
-      "observed_at": "2026-09-02T01:01:28.087Z",
-      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
-    },
-    {
-      "id": "github.public.proprietary-leak",
-      "state": "FRESH",
-      "observed_at": "2026-09-02T01:01:31.152Z",
-      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
-    },
-    {
-      "id": "tnf.product-repo-map",
-      "state": "FRESH",
-      "observed_at": "2026-09-02T01:01:31.456Z",
-      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
-    },
-    {
-      "id": "tnf.oss-app-boundary",
-      "state": "FRESH",
-      "observed_at": "2026-09-02T01:01:32.068Z",
-      "value": "1894ae33efb03a0ce244577a65836a66a7a6d059\n2026-09-01"
-    },
-    {
-      "id": "git.repository.identity",
-      "state": "STALE",
-      "observed_at": "2026-09-02T01:01:32.260Z",
-      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=5c1baed3b7fee5acab81d27aab21941e6db3fba1\nbranch=feat/tier2-roadmap-telemetry-verification-lexical\ndirty=0"
-    },
-    {
-      "id": "runtime.services",
-      "state": "STALE",
-      "observed_at": "2026-09-02T01:01:32.312Z",
-      "value": "REDIS_UNREACHABLE\nRELAY_OK"
-    }
-  ]
+  "freshness_receipts": []
 }
