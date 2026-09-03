@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-03T04:12:33.143Z` Handoff ID: `48a40162-b9bc-4ee7-b02d-31e681255cb1`
+`2026-09-03T04:48:57.455Z` Handoff ID: `fc679232-a77f-4a45-872a-cf4028238ea5`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `fix/entitlement-comment-accuracy`
-- Head SHA: `8b4683128415da6d94613366c1ff33a40099e7db`
+- Branch: `feat/notation-coherence-protocol`
+- Head SHA: `137d5bc169ceb95493c7a78aa2ff6f09291a15f9`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -26,9 +26,18 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Changed Paths
 
-- apps/api/src/controllers/available-models.controller.ts
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/TNF_NOTATION_COHERENCE_PROTOCOL.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- package.json
+- scripts/protocols/notation-coherence-gate.cjs
 - apps/api-gateway/src/main.ts
 - apps/api/src/dto/register.dto.ts
+- apps/chrome-extension/dist-v7/content/index.js
+- apps/chrome-extension/dist-v7/manifest.json
+- apps/chrome-extension/dist-v7/service-worker.js
+- apps/chrome-extension/src/v6/background/index.ts
 - apps/chrome-extension/src/v6/content/index.ts
 - apps/chrome-extension/src/v6/manifest.json
 - apps/chrome-extension/src/v6/shared/**tests**/federation-addressing.test.ts
@@ -67,19 +76,12 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - scripts/agent-registry/build-agent-registry.mjs
 - scripts/agent-registry/check-agent-registry.mjs
 - scripts/agents/tnf-task-pusher.py
-- .jules/palette.md
-- .jules/sentinel.md
-- apps/api/src/middleware/security-validation.middleware.ts
-- docs/deployment/LITELLM_GATEWAY.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- scripts/lib/tnf-operator-profile.cjs
-- scripts/postinstall.cjs
-- scripts/setup/apply-operator-profile.cjs
+- apps/api/src/controllers/available-models.controller.ts
 - apps/frontend/src/MinimalApp.tsx
 - apps/frontend/src/pages/Admin/Agents/skills.ts.bak
 - apps/frontend/src/pages/ConnectExtension.tsx.bak
+- apps/chrome-extension/src/v6/shared/**tests**/kws-gate.test.ts
+- apps/chrome-extension/src/v6/shared/kws-gate.ts
 - data/agent-registry/agent-cards.json
 - docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.report.md
 - docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.yml

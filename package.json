@@ -440,7 +440,9 @@
     "handoff:gate:staged": "node scripts/protocols/enforce-session-handoff.cjs --mode=staged",
     "guard:mutation": "node scripts/security/workspace-mutation-guard.cjs --check",
     "llm:config": "node scripts/llm/generate-litellm-config.cjs",
-    "llm:config:configured": "node scripts/llm/generate-litellm-config.cjs --only-configured"
+    "llm:config:configured": "node scripts/llm/generate-litellm-config.cjs --only-configured",
+    "notation:coherence": "node scripts/protocols/notation-coherence-gate.cjs",
+    "notation:coherence:strict": "node scripts/protocols/notation-coherence-gate.cjs --strict"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
