@@ -114,6 +114,60 @@ command -v timeout gtimeout   # both absent on this host
 
 Use `redis-cli -t <s>`, `curl -m <s>`, and other native timeouts instead.
 
+## A crashed gate is not an open gate
+
+A gate has three outcomes, and two of them look alike from the shell:
+
+| Outcome     | Meaning                | Correct response              |
+| ----------- | ---------------------- | ----------------------------- |
+| passes      | checked, allowed       | proceed                       |
+| **denies**  | checked, refused       | address the finding           |
+| **crashes** | never checked anything | restore the gate, then re-run |
+
+Deny and crash are not the same, but both stop the commit, so the reflex is the
+same reflex: reach for `--no-verify`. That converts "the control could not run"
+into "the control does not apply", silently, at exactly the moment the control
+was least able to object.
+
+Observed 2026-09-03: a disk-pressure reclaimer in the running fleet deleted the
+repo root `node_modules` mid-session to free ~3.5 GB. Every pre-commit gate here
+is a Node script with dependencies, so `agent-self-edit-gate.cjs` died on
+`require('ajv/dist/2020')` with `MODULE_NOT_FOUND`. The commit under way touched
+`scripts/sync-repos.sh` — a registry authority surface, the exact file class
+that gate exists to guard. `--no-verify` would have bypassed the authority gate,
+the handoff gate and the build gate together, on a change to the distribution
+boundary.
+
+**The rule: when a gate cannot run, restore it and re-run. Never bypass a gate
+whose verdict you have not seen.** The correct move there was `pnpm install` (5
+minutes) and commit normally, not a flag.
+
+Distinguish the two before deciding anything:
+
+```bash
+npm run --silent authority:surface:staged; echo "exit=$?"
+# BLOCKED / OK with a verdict  -> the gate ran; act on what it said
+# MODULE_NOT_FOUND, ENOENT, a
+# stack trace, "node_modules missing" -> it did not run; restore it
+```
+
+Cheap liveness check before trusting any clean commit:
+
+```bash
+[ -d node_modules/ajv ] || echo "authority gate cannot run — commits are unchecked"
+```
+
+Two corollaries:
+
+- **A clean pre-commit run proves nothing if the gates were not loadable.** A
+  commit that sails through because every hook crashed looks identical to one
+  that passed. If tooling was broken at any point in a session, re-verify the
+  commits made during that window.
+- **Anything that reclaims disk must not touch `node_modules` in a repo whose
+  enforcement lives there.** A reclaimer that disables the control plane to free
+  space has made a trade nobody authorised. Delete a _worktree's_ `node_modules`
+  if you must — never the checkout that runs the hooks.
+
 ## Multi-writer state
 
 Append-only JSONL is the only shape that survives concurrent agents.

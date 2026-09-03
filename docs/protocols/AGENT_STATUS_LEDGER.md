@@ -159,7 +159,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-03T05:58:24.496Z** — handoff
+Updated: **2026-09-03T06:30:32.721Z** — handoff
+`47b770cb-017e-45ce-84de-0d4c581586ac` (`30a56dfe5b22`).
+`88a99725-f27e-4300-b5ac-08245300429f` (`1f126bd8efef`).
 `14a6878c-71a1-4ecb-b39a-3acc555e5348` (`cdb2aa48117c`).
 `9abbad99-16b0-4d63-a971-af273e61d64f` (`4dc1664a628f`).
 `fc679232-a77f-4a45-872a-cf4028238ea5` (`137d5bc169ce`).
@@ -1756,5 +1758,12 @@ clean | ✅ COMPLETE |
 (9abbad99-16b0-4d63-a971-af273e61d64f) | ✅ HANDOFF_READY |
 
 | 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
-(14a6878c-71a1-4ecb-b39a-3acc555e5348) | ✅ HANDOFF_READY |
-| 2026-09-03 | Antigravity | Implemented multiple slash command parsing and skill chaining in tnf-cli (cli.ts, slashCommands.ts) | ✅ COMPLETE |
+(14a6878c-71a1-4ecb-b39a-3acc555e5348) | ✅ HANDOFF_READY | | 2026-09-03 |
+Antigravity | Implemented multiple slash command parsing and skill chaining in
+tnf-cli (cli.ts, slashCommands.ts) | ✅ COMPLETE |
+
+| 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(88a99725-f27e-4300-b5ac-08245300429f) | ✅ HANDOFF_READY |
+
+| 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(47b770cb-017e-45ce-84de-0d4c581586ac) | ✅ HANDOFF_READY |
