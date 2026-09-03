@@ -415,7 +415,7 @@ start_antigravity() {
     fi
 
     # Linux / headless fallback (wrappers stay up without a TTY).
-    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-1}" \
+    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-0}" \
       nohup "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" \
       >"$PROJECT_ROOT/.agent/runtime-logs/antigravity.log" 2>&1 &
     AG_PID=$!
@@ -466,7 +466,7 @@ start_agent_wrapper() {
         echo -e "  ${YELLOW}!${NC} Terminal tab launch did not stick — falling back to headless"
     fi
 
-    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-1}" \
+    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-0}" \
       nohup "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id" \
       >"$log_file" 2>&1 &
     echo $! >> "$PID_FILE"

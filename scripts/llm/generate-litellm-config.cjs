@@ -15,6 +15,7 @@
  *   node scripts/llm/generate-litellm-config.cjs --include-local  # + localhost
  *   node scripts/llm/generate-litellm-config.cjs --only-configured
  *   node scripts/llm/generate-litellm-config.cjs --nvidia-limit 40
+ *   node scripts/llm/generate-litellm-config.cjs --include-operator-only  # dev only
  *   node scripts/llm/generate-litellm-config.cjs --out config/litellm/config.yaml
  */
 
@@ -64,11 +65,13 @@ function parseArgs(argv) {
     includeLocal: false,
     onlyConfigured: false,
     nvidiaLimit: 0,
+    includeOperatorOnly: false,
     out: 'config/litellm/config.yaml',
   };
   for (let i = 0; i < argv.length; i += 1) {
     const t = argv[i];
     if (t === '--include-local') a.includeLocal = true;
+    else if (t === '--include-operator-only') a.includeOperatorOnly = true;
     else if (t === '--only-configured') a.onlyConfigured = true;
     else if (t === '--nvidia-limit') a.nvidiaLimit = Number(argv[++i] || 0);
     else if (t === '--out') a.out = argv[++i] || a.out;
@@ -123,6 +126,28 @@ function main() {
   const args = parseArgs(process.argv.slice(2));
   const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
   let providers = (catalog.providers || []).filter((p) => p.enabled !== false);
+
+  // Entitlement gate. Some providers are the operator's personal entitlement,
+  // not TNF's to serve: NVIDIA's endpoints come from the operator's NVIDIA
+  // Developer Program membership. A gateway config is exactly where such a
+  // provider would silently become available to every virtual key, so they are
+  // withheld unless explicitly asked for. Fails closed: unknown entitlement
+  // values are withheld too.
+  const entitled = [];
+  if (!args.includeOperatorOnly) {
+    const before = providers.length;
+    providers = providers.filter((p) => {
+      if (!p.entitlement) return true;
+      entitled.push(`${p.id}(${p.entitlement})`);
+      return false;
+    });
+    if (before !== providers.length) {
+      console.log(
+        `[litellm-config] withheld ${before - providers.length} operator-only provider(s): ${entitled.join(', ')}`
+      );
+      console.log('[litellm-config] pass --include-operator-only for a local/dev-only config.');
+    }
+  }
 
   if (!args.includeLocal) {
     // Cloud Run cannot reach a localhost provider. Shipping them in a

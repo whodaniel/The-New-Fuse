@@ -7,8 +7,8 @@
 # Editing this file directly recreates the per-surface drift the unified
 # catalog was built to eliminate. Change the JSON and regenerate.
 #
-# providers: 17   entries: 17
-# generated: 2026-09-02T23:41:44.353Z
+# providers: 16   entries: 16
+# generated: 2026-09-03T00:01:38.805Z
 
 model_list:
   - model_name: "google/gemini-3.7-flash"
@@ -27,15 +27,6 @@ model_list:
     model_info:
       tnf_provider: "groq"
       tnf_tier: 20
-      tnf_type: "cloud"
-  - model_name: "nvidia/nvidia/nemotron-3-ultra-550b-a55b"
-    litellm_params:
-      model: "openai/nvidia/nemotron-3-ultra-550b-a55b"
-      api_base: "https://integrate.api.nvidia.com/v1"
-      api_key: "os.environ/NVIDIA_API_KEY"
-    model_info:
-      tnf_provider: "nvidia"
-      tnf_tier: 30
       tnf_type: "cloud"
   - model_name: "deepseek/deepseek-chat"
     litellm_params:
@@ -167,7 +158,6 @@ router_settings:
     - "google/gemini-3.7-flash":
         [
           "groq/openai/gpt-oss-120b",
-          "nvidia/nvidia/nemotron-3-ultra-550b-a55b",
           "deepseek/deepseek-chat",
           "openrouter/openrouter/auto",
           "togetherai/openai/gpt-oss-120b",

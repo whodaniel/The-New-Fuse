@@ -1,10 +1,10 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "13ce21c2-bcfa-4116-a512-3045ee012e5a",
-  "created_at": "2026-09-02T23:48:37.042Z",
+  "handoff_id": "aa753990-b80f-45d5-8e98-7b5723c65476",
+  "created_at": "2026-09-03T03:06:23.899Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "docs/worktree-reclamation-ledger",
-  "head_sha": "89edd4c539ed5ee63d0d7713b7c15f6da8181092",
+  "head_sha": "2145b8cad6e988a7774c2c943df706e11751ac7c",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
@@ -14,9 +14,12 @@
   ],
   "changed_paths": [
     "config/litellm/config.yaml",
+    "data/providers/catalog.json",
     "docs/deployment/LITELLM_GATEWAY.md",
-    "package.json",
-    "scripts/llm/generate-litellm-config.cjs",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "scripts/sync-repos.sh",
     "apps/api-gateway/src/main.ts",
     "apps/api/src/dto/register.dto.ts",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
@@ -38,6 +41,8 @@
     "data/agent-registry/schema.sql",
     "data/harness/ANOMALY_PAYLOAD.md",
     "data/harness/active-sieve-manifest.json",
+    "data/llm-intel/ranking-recommendations.json",
+    "data/llm-intel/ranking-report-latest.md",
     "data/marketplace/catalog-items.json",
     "docs/operations/tnf-master-reconciliation-report-latest.json",
     "docs/operations/tnf-master-reconciliation-report-latest.md",
@@ -53,6 +58,9 @@
     "scripts/agent-registry/build-agent-registry.mjs",
     "scripts/agent-registry/check-agent-registry.mjs",
     "scripts/agents/tnf-task-pusher.py",
+    "apps/api/src/controllers/available-models.controller.ts",
+    "scripts/llm/generate-litellm-config.cjs",
+    "scripts/start-agent-network.sh",
     "apps/frontend/src/MinimalApp.tsx",
     "apps/frontend/src/pages/Admin/Agents/skills.ts.bak",
     "apps/frontend/src/pages/ConnectExtension.tsx.bak",
@@ -86,7 +94,7 @@
     "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": ["89edd4c539ed5ee63d0d7713b7c15f6da8181092"]
+    "commits": ["2145b8cad6e988a7774c2c943df706e11751ac7c"]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",

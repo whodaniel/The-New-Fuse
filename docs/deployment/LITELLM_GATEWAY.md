@@ -56,6 +56,31 @@ Local providers are **excluded by default**: Cloud Run cannot reach
 `localhost:11434`, and shipping them server-side produces menu entries that fail
 on call.
 
+### Operator-only providers are withheld by default
+
+Some providers are the **operator's personal entitlement, not TNF's to serve**.
+NVIDIA is the live case: those endpoints come from the TNF operator's NVIDIA
+Developer Program membership. Serving them to TNF's users would be running other
+people's inference on one person's personal developer credentials.
+
+`catalog.json` marks these with `"entitlement": "operator-dev-only"`. Three
+places enforce it, all failing closed:
+
+| Surface                                             | Behaviour                                                                                                                                            |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `loadCatalog()` in `available-models.controller.ts` | entitled providers filtered out of `/api/llm/models` and `/api/llm/providers`                                                                        |
+| `GET /api/llm/nvidia-catalog`                       | gated explicitly — it reads `nvidia-models.json` directly and does **not** pass through `loadCatalog()`, so without its own gate all 202 models leak |
+| `generate-litellm-config.cjs`                       | withheld unless `--include-operator-only`                                                                                                            |
+
+Server-side, they are served only when the process was started with
+`TNF_OPERATOR_CATALOG=1` — a deployment switch, not a user role. That endpoint
+is documented as public/no-JWT, so there is no session to resolve a role from;
+making the gate role-based would have implied an auth context that isn't there.
+Unknown `entitlement` values are withheld rather than assumed harmless.
+
+**Do not set `TNF_OPERATOR_CATALOG=1` on any instance serving other users.** It
+is for the operator's own dev instances, local or cloud.
+
 ### Known naming drift the generator works around
 
 One Google credential has three spellings across TNF: `catalog.json` says

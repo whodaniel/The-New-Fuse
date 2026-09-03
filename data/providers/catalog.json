@@ -1,7 +1,7 @@
 {
   "$schema": "./catalog.schema.md",
   "version": 2,
-  "generatedBy": "hand-maintained \u2014 this file is the source, not an output",
+  "generatedBy": "hand-maintained — this file is the source, not an output",
   "note": "Single source of truth for LLM providers across ALL TNF lanes. See docs/protocols/TNF_PROVIDER_RESOLUTION_COHERENCE.md. Consumers merge this over their built-in fallbacks; they must not add providers inline.",
   "providers": [
     {
@@ -180,7 +180,9 @@
       "modelCount": 202,
       "chatModelCount": 90,
       "verifiedModelCount": 26,
-      "note": "All 202 free endpoints from build.nvidia.com/models registered. 26 verified live via chat probe (2026-08-14). See nvidia-models.json for full catalog."
+      "note": "All 202 free endpoints from build.nvidia.com/models registered. 26 verified live via chat probe (2026-08-14). See nvidia-models.json for full catalog.",
+      "entitlement": "operator-dev-only",
+      "entitlementNote": "NVIDIA Developer Program credentials belong to the TNF operator personally. Dev/local use only - must never be served to other users or resold."
     },
     {
       "id": "deepseek",

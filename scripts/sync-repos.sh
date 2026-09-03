@@ -124,6 +124,8 @@ gh_authenticated() {
 # ─────────────────────────────────────────────────────────────────────
 
 PROPRIETARY_FILES=(
+  # Server-side LLM gateway deployment + commercial model (see PROPRIETARY_DIRS).
+  "docs/deployment/LITELLM_GATEWAY.md"
   # Core proprietary relay implementations
   "packages/relay-core/src/master-clock.ts"
   "packages/relay-core/src/broker-agent.ts"
@@ -138,6 +140,12 @@ PROPRIETARY_FILES=(
 )
 
 PROPRIETARY_DIRS=(
+  # Server-side LLM gateway: model aggregation, entitlement boundaries and the
+  # commercial model (BYOK vs metered tiers, resale constraints). Operator
+  # declared this proprietary 2026-09-02. Also keeps the operator-only
+  # entitlement switch (TNF_OPERATOR_CATALOG) out of a public repo.
+  "scripts/llm"
+  "config/litellm"
   # Backend orchestrator module (Director authority)
   "apps/backend/src/modules/orchestrator"
   # Nexus Orchestrator + PicoClaw live under sibling TNF-Extensions
