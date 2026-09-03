@@ -125,3 +125,31 @@ done
 Sizes are not in the loop deliberately: `du` on these trees is slow and, on
 APFS, overstates cloned blocks. Size is a tiebreak for which safe worktree to
 reclaim first, never the reason to reclaim an unsafe one.
+
+### Do not trust the Size column for anything containing node_modules
+
+Measured 2026-09-03: `du` reported **4.4 GB** for
+`lane4-video-extraction/node_modules`; deleting it freed **0.10 GB** — a ~44x
+overcount. pnpm materialises `node_modules` as APFS copy-on-write clones sharing
+blocks with `~/Library/pnpm`, and `du` counts every shared block in full. A
+hard-link check does not detect this either: the files report link count 1 and
+distinct inodes while still sharing storage.
+
+The same day, removing `lane5-repo-separation-v2` (596M) and
+`workspace-isolation-enforcement-...-v2` (78M) freed ~700 MB, matching `du`
+closely. The difference is what the tree contains:
+
+| Tree contents                      | `du` accuracy     |
+| ---------------------------------- | ----------------- |
+| Source checkout, no `node_modules` | accurate          |
+| pnpm `node_modules` on APFS        | wildly overstated |
+
+So the Size column above is honest for the pristine rows and misleading for
+lane4 and harness-hardening, whose totals are mostly dependencies. **Reclaiming
+lane4 is worth roughly 100 MB, not 5.9 GB.** Keep it because it holds
+uncommitted work that exists nowhere else — never delete it expecting space.
+
+If you need the dependency space and not the worktree, delete
+`<worktree>/node_modules` directly: it is regenerable, gitignored, and touches
+no untracked source. That was done to lane4 on 2026-09-03; its four untracked
+files were verified intact afterwards.

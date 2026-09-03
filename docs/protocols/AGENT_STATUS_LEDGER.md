@@ -159,7 +159,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-03T04:48:57.455Z** — handoff
+Updated: **2026-09-03T05:45:54.882Z** — handoff
+`9abbad99-16b0-4d63-a971-af273e61d64f` (`4dc1664a628f`).
 `fc679232-a77f-4a45-872a-cf4028238ea5` (`137d5bc169ce`).
 `0d01c84a-c890-47f1-8c09-67f004b3b32a` (`52c642f3e42a`).
 `48a40162-b9bc-4ee7-b02d-31e681255cb1` (`8b4683128415`).
@@ -469,6 +470,7 @@ Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 | codex-cli-agent    | `TNF:LOCAL:AGENT:CODEX-CLI-AGENT:001`    | **NEW** — registered at 2026-08-08T00:47:12.955Z |
 | gemini-cli-agent   | `TNF:LOCAL:AGENT:GEMINI-CLI-AGENT:001`   | **NEW** — registered at 2026-08-08T00:47:12.955Z |
 | opencode-cli-agent | `TNF:LOCAL:AGENT:OPENCODE-CLI-AGENT:001` | **NEW** — registered at 2026-08-08T00:47:12.955Z |
+| tnf-cli-agent      | `TNF:LOCAL:AGENT:TNF-CLI-AGENT:001`      | **NEW** — registered at 2026-09-03T05:30:00.000Z |
 
 ### Newly Registered (This Session)
 
@@ -1748,3 +1750,6 @@ clean | ✅ COMPLETE |
 
 | 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (fc679232-a77f-4a45-872a-cf4028238ea5) | ✅ HANDOFF_READY |
+
+| 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(9abbad99-16b0-4d63-a971-af273e61d64f) | ✅ HANDOFF_READY |
