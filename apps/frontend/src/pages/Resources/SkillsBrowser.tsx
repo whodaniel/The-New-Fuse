@@ -255,6 +255,7 @@ export default function SkillsBrowser() {
               size="icon"
               variant="glass"
               className="h-9 w-9"
+              ariaLabel="Favorite skill"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onAction(skill, 'favorite');
@@ -266,6 +267,7 @@ export default function SkillsBrowser() {
               size="icon"
               variant="glass"
               className="h-9 w-9"
+              ariaLabel="Share skill"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onAction(skill, 'share');
@@ -502,6 +504,7 @@ export default function SkillsBrowser() {
                       variant="glass"
                       size="icon"
                       className="h-7 w-7"
+                      ariaLabel="Edit skill"
                       onClick={() => handleEditPersonalSkill(skill)}
                     >
                       <Pencil className="w-3.5 h-3.5" />
@@ -511,6 +514,7 @@ export default function SkillsBrowser() {
                       variant="glass"
                       size="icon"
                       className="h-7 w-7"
+                      ariaLabel="Delete skill"
                       onClick={() => handleDeletePersonalSkill(skill.id)}
                     >
                       <Trash2 className="w-3.5 h-3.5 text-red-400" />
