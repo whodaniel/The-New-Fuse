@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { InputSanitizationService } from '../security/input-sanitization.service';
 import * as crypto from 'node:crypto';
+import { InputSanitizationService } from '../security/input-sanitization.service';
 
 export interface SecurityValidationOptions {
   sanitize?: boolean;

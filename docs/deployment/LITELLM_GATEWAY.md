@@ -72,11 +72,25 @@ places enforce it, all failing closed:
 | `GET /api/llm/nvidia-catalog`                       | gated explicitly — it reads `nvidia-models.json` directly and does **not** pass through `loadCatalog()`, so without its own gate all 202 models leak |
 | `generate-litellm-config.cjs`                       | withheld unless `--include-operator-only`                                                                                                            |
 
-Server-side, they are served only when the process was started with
-`TNF_OPERATOR_CATALOG=1` — a deployment switch, not a user role. That endpoint
-is documented as public/no-JWT, so there is no session to resolve a role from;
-making the gate role-based would have implied an auth context that isn't there.
-Unknown `entitlement` values are withheld rather than assumed harmless.
+Two things can grant them, both failing closed:
+
+1. **Operator login authority** — `~/.tnf/authority/operator-profile.json` (mode
+   0600, owned by the caller) listing `"operator-catalog"` in its
+   `entitlements`. That directory is the operator login: it already holds
+   `roles.json` and the Ed25519 keys, and `AUTHORITY_README.md` states security
+   rests on custody of it. Nothing to remember and nothing to type — a fresh
+   `pnpm install` reapplies it via `scripts/setup/apply-operator-profile.cjs`.
+   Refused in agent context (`TNF_AGENT_ID` set), so an agent cannot inherit the
+   operator's entitlements.
+2. **Explicit deployment override** — the process was started with
+   `TNF_OPERATOR_CATALOG=1` for a dev instance started deliberately.
+
+A deployed multi-user service has no operator home directory and sets no
+override, so it withholds without being configured to. The gate is custody- and
+deployment-based rather than session-role-based because that controller is
+public/no-JWT: there is no session to resolve a role from, and a role-shaped
+check would imply an auth context that isn't there. Unknown `entitlement` values
+are withheld rather than assumed harmless.
 
 **Do not set `TNF_OPERATOR_CATALOG=1` on any instance serving other users.** It
 is for the operator's own dev instances, local or cloud.

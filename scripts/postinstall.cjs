@@ -82,4 +82,29 @@ function checkAgentFrontload() {
   }
 }
 
+/**
+ * Restore the operator's own setup from their profile.
+ *
+ * Operator-only capabilities used to require remembering env vars at the moment
+ * of use (TNF_OPERATOR_CATALOG, TNF_AUTHORITY_EDIT_CONFIRM). Binding them to
+ * ~/.tnf/authority/operator-profile.json means a fresh install on the operator's
+ * machine restores their setup with nothing to type. No-ops for everyone else:
+ * no profile, or agent context, means nothing is applied.
+ */
+function applyOperatorProfile() {
+  try {
+    const script = path.join(__dirname, 'setup', 'apply-operator-profile.cjs');
+    if (!fs.existsSync(script)) return;
+    const out = execSync(`node ${JSON.stringify(script)} --quiet`, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    out.split('\n').filter(Boolean).forEach((l) => log(l.replace(/^\[operator-profile\] /, 'operator-profile: ')));
+  } catch (error) {
+    // Never fail an install over an optional operator convenience.
+    log(`operator-profile: skipped (${error.message.split('\n')[0]})`);
+  }
+}
+
 checkAgentFrontload();
+applyOperatorProfile();

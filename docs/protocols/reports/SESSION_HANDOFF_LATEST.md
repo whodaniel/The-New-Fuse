@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-03T03:06:23.899Z` Handoff ID: `aa753990-b80f-45d5-8e98-7b5723c65476`
+`2026-09-03T03:55:23.936Z` Handoff ID: `bc2a31b4-aa81-4e42-a2f5-8d3bb5b29cdf`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `docs/worktree-reclamation-ledger`
-- Head SHA: `2145b8cad6e988a7774c2c943df706e11751ac7c`
+- Head SHA: `6b5e7b9b43d875f7d6d630b9894bdeaecaf827b3`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -26,13 +26,11 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Changed Paths
 
-- config/litellm/config.yaml
-- data/providers/catalog.json
+- apps/api/src/controllers/available-models.controller.ts
 - docs/deployment/LITELLM_GATEWAY.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- scripts/sync-repos.sh
+- scripts/lib/tnf-operator-profile.cjs
+- scripts/postinstall.cjs
+- scripts/setup/apply-operator-profile.cjs
 - apps/api-gateway/src/main.ts
 - apps/api/src/dto/register.dto.ts
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
@@ -59,10 +57,7 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - data/marketplace/catalog-items.json
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/cli.ts
@@ -71,9 +66,15 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - scripts/agent-registry/build-agent-registry.mjs
 - scripts/agent-registry/check-agent-registry.mjs
 - scripts/agents/tnf-task-pusher.py
-- apps/api/src/controllers/available-models.controller.ts
-- scripts/llm/generate-litellm-config.cjs
-- scripts/start-agent-network.sh
+- .jules/palette.md
+- .jules/sentinel.md
+- apps/api/src/middleware/security-validation.middleware.ts
+- apps/frontend/src/pages/Resources/AgentTemplatesBrowser.tsx
+- apps/frontend/src/pages/Resources/SkillsBrowser.tsx
+- apps/frontend/src/pages/Resources/WorkflowBrowser.tsx
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - apps/frontend/src/MinimalApp.tsx
 - apps/frontend/src/pages/Admin/Agents/skills.ts.bak
 - apps/frontend/src/pages/ConnectExtension.tsx.bak

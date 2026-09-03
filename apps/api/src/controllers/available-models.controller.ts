@@ -94,9 +94,41 @@ let cachedCatalog: CatalogSnapshot | null = null;
 function isEntitled(p: CatalogProvider): boolean {
   if (!p.entitlement) return true;
   if (p.entitlement === 'operator-dev-only') {
-    return (process.env.TNF_OPERATOR_CATALOG || '').trim() === '1';
+    // Explicit deployment override, for a dev instance started deliberately.
+    if ((process.env.TNF_OPERATOR_CATALOG || '').trim() === '1') return true;
+    // Otherwise resolve from operator custody: ~/.tnf/authority/operator-profile.json,
+    // mode 0600, owned by the caller. That directory IS the operator login — the
+    // same custody that holds roles.json and the Ed25519 keys. A deployed
+    // multi-user service has no such directory and therefore withholds, which is
+    // the behaviour we want without configuring anything there.
+    return hasOperatorEntitlement('operator-catalog');
   }
   // Unknown entitlement values are withheld rather than assumed harmless.
+  return false;
+}
+
+/**
+ * Ask the operator profile whether this machine's operator granted a capability.
+ *
+ * Deliberately defensive: the profile lives outside the app tree, so any
+ * resolution or read failure must mean "not entitled" rather than an exception
+ * escaping into a request path. Refuses in agent context inside the library.
+ */
+function hasOperatorEntitlement(entitlement: string): boolean {
+  try {
+    const candidates = [
+      path.resolve(process.cwd(), 'scripts/lib/tnf-operator-profile.cjs'),
+      path.resolve(__dirname, '../../../../scripts/lib/tnf-operator-profile.cjs'),
+    ];
+    for (const c of candidates) {
+      if (!fs.existsSync(c)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const lib = require(c);
+      return Boolean(lib.has?.(entitlement));
+    }
+  } catch {
+    /* fail closed */
+  }
   return false;
 }
 
