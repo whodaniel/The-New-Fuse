@@ -210,7 +210,56 @@ class ComprehensiveTNFRelay {
 
     // 5. Setup WebSocket on SAME server
     this.webSocketServer = new WebSocket.Server({ server: this.httpServer });
+
+    // WS upgrade-level JWT auth (opt-in via env). Default 'open' preserves
+    // existing behavior; 'log-only' accepts but warns; 'enforce' rejects
+    // missing/invalid tokens with close code 4401.
+    this.wsAuthMode = process.env.WS_JWT_AUTH_MODE || 'open'; // 'open'|'log-only'|'enforce'
+    this.wsJwtSecret = process.env.WS_JWT_SECRET || null;
+    if (this.wsAuthMode === 'enforce' && !this.wsJwtSecret) {
+      console.warn('[relay] WS_JWT_AUTH_MODE=enforce but WS_JWT_SECRET unset — downgrading to log-only');
+      this.wsAuthMode = 'log-only';
+    }
+
+    // Per-socket WS rate limit state (deduped per clientId).
+    this.wsRateLimit = new Map(); // clientId -> { count, resetAt }
+    this.RATE_LIMIT_PER_MIN = parseInt(process.env.WS_RATE_LIMIT_PER_MIN || '240', 10);
+
     this.webSocketServer.on('connection', async (ws, req) => {
+      // ── JWT auth gate ──
+      let token = null;
+      const authHeader = req.headers['authorization'];
+      if (authHeader && /^Bearer\s+/i.test(authHeader)) {
+        token = authHeader.replace(/^Bearer\s+/i, '').trim();
+      }
+      if (!token && req.url) {
+        const m = /\?[^#]*[?&]token=([^&#]+)/.exec(req.url);
+        if (m) token = decodeURIComponent(m[1]);
+      }
+      ws.authenticated = false;
+      ws.authAttempts = 0;
+      if (this.wsAuthMode === 'enforce') {
+        if (!token) {
+          try { ws.send(JSON.stringify({ type: 'AUTH_FAILED', reason: 'missing_token' })); } catch {}
+          ws.close(4401, 'Unauthorized');
+          return;
+        }
+        try {
+          const jwt = require('jsonwebtoken');
+          jwt.verify(token, this.wsJwtSecret);
+          ws.authenticated = true;
+        } catch (e) {
+          try { ws.send(JSON.stringify({ type: 'AUTH_FAILED', reason: 'invalid_token' })); } catch {}
+          ws.close(4401, 'Unauthorized');
+          return;
+        }
+      } else if (this.wsAuthMode === 'log-only' && !token) {
+        console.warn(`[relay] WS connection without token (log-only mode)`);
+      } else if (token) {
+        // best-effort mark when not enforcing
+        ws.authenticated = true;
+      }
+
       await this.handleWebSocketConnection(ws, req);
     });
 
@@ -287,6 +336,27 @@ class ComprehensiveTNFRelay {
     await this.log(`WebSocket client connected: ${clientId}`);
 
     ws.on('message', async (data) => {
+      // Per-socket WS rate limit. Default 240 msg/min per clientId.
+      // Set WS_RATE_LIMIT_PER_MIN to override.
+      const now = Date.now();
+      let bucket = this.wsRateLimit.get(ws.clientId);
+      if (!bucket || now > bucket.resetAt) {
+        bucket = { count: 0, resetAt: now + 60_000 };
+        this.wsRateLimit.set(ws.clientId, bucket);
+      }
+      bucket.count++;
+      if (bucket.count > this.RATE_LIMIT_PER_MIN) {
+        try {
+          ws.send(JSON.stringify({
+            type: 'RATE_LIMIT',
+            retryAfterSec: Math.ceil((bucket.resetAt - now) / 1000)
+          }));
+        } catch {}
+        if (bucket.count === this.RATE_LIMIT_PER_MIN + 1) {
+          await this.log(`Rate limit exceeded for client ${ws.clientId}; messages dropped`, 'WARN');
+        }
+        return;
+      }
       try {
         const dataStr = data.toString();
 

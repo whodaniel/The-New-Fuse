@@ -3,9 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-
 **Current Directive:** Deploy frontend to Cloudflare Pages
-
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-08-30 Operator departments, remember write-path, staffing index**:
@@ -310,6 +308,10 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-08-31T22:52:45.474Z Fix MEMORY.md drift: canonicalize § delimiter
 - [✅] 2026-09-01T23:44:01.072Z New script(s) created: sync-dist.cjs
 - [✅] 2026-09-01T23:44:01.072Z Fix MEMORY.md drift: canonicalize § delimiter
+- [✅] 2026-09-03T05:54:04.228Z New script(s) created: agent-registry-prune.cjs
+- [✅] 2026-09-03T05:54:04.228Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+
   format, split oversized entry
 
   format, split oversized entry
@@ -1179,6 +1181,12 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-03T05:58:25.686Z handoff `14a6878c-71a1-4ecb-b39a-3acc555e5348` head `cdb2aa48117c` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-09-03T05:45:56.880Z handoff `9abbad99-16b0-4d63-a971-af273e61d64f` head
+  `4dc1664a628f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-09-02T07:27:19.309Z handoff `e12e3d89-52db-414f-bf9d-1d7a3069a2a3` head
   `2c03af17566f` project `TNF-SESSION` — Continue priority queue from

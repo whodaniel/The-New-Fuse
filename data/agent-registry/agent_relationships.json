@@ -1,37 +1,4 @@
-[
-  {
-    "id": "a7edcb14-b4c8-4762-8f7c-b516fb444caf",
-    "agentId": "agent-search-engine",
-    "relatedAgentId": "agent-tagger",
-    "relationshipType": "similar",
-    "strengthScore": 0.25
-  },
-  {
-    "id": "9d0ef95b-fbb9-4ca4-862b-cde17a0c7754",
-    "agentId": "digital-product-creator-agent",
-    "relatedAgentId": "digital-product-factory-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.37
-  },
-  {
-    "id": "d8f0797d-3240-4fee-bf1f-a948f2f391a2",
-    "agentId": "equipment-recommendation-agent",
-    "relatedAgentId": "podcast-equipment-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.26
-  },
-  {
-    "id": "df08a79b-683f-41e7-a6a0-45e52a704d7a",
-    "agentId": "monetization-strategy-agent",
-    "relatedAgentId": "podcast-monetization-strategy-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.34
-  },
-  {
-    "id": "ca47f916-7cad-42a8-a418-3f0e3ae27374",
-    "agentId": "orchestrator-agent-copy",
-    "relatedAgentId": "orchestrator-agent",
-    "relationshipType": "similar",
-    "strengthScore": 0.96
-  }
-]
+{
+  "relationships": [],
+  "generatedAt": "2026-09-03T05:44:03.351Z"
+}

@@ -1,5 +1,5 @@
 {
-  "agents": [
+  "agentCards": [
     {
       "id": "zeroclaw-sandbox",
       "name": "Zeroclaw Sandbox",
@@ -2326,6 +2326,5 @@
       "sourceFile": ".agent/agents/ab-testing-optimizer-agent.md"
     }
   ],
-  "generatedAt": "2026-09-03T05:44:03.351Z",
-  "count": 196
+  "generatedAt": "2026-09-03T05:44:03.351Z"
 }

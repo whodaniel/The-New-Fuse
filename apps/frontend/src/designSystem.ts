@@ -2,6 +2,13 @@
  * @file This file documents the design system for the application, providing a centralized reference for visual consistency.
  * It covers the color palette, typography, spacing, border radius, shadows, animations, and button patterns.
  * All design tokens are managed through Tailwind CSS and CSS variables to ensure a single source of truth.
+ *
+ * @remarks
+ * DOCUMENTATION ONLY — not imported anywhere (verified 2026-09-02).
+ * Kept in src/ so IDEs surface it in symbol search; safe to max-import: never.
+ * If you want the *actual* tokens, read `apps/frontend/tailwind.config.ts` and
+ * `apps/frontend/src/index.css` — the variables are defined there.
+ * If this file drifts from the real design system, edit the doc, not this file.
  */
 
 // --- COLOR PALETTE ---

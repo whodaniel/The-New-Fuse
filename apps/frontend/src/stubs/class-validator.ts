@@ -3,7 +3,13 @@
  *
  * This file stubs out class-validator which is a Node.js-only module
  * that is often imported in shared DTOs for validation decorators.
+ *
+ * Browser-side these are no-ops (the decorators do nothing in a stub);
+ * the (target, key) args must keep the call signature for the decorator
+ * pattern to work but are intentionally unused. Disable unused-vars for
+ * the whole file since this is a stub and not real code.
  */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 // Property decorators - return no-op functions
 export const IsString = () => (target: unknown, key: string | symbol) => {};

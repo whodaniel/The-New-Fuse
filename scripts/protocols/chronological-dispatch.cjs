@@ -172,6 +172,16 @@ function buildQueueItem(processId, profile) {
       reportTo: localSubdirector,
       tenantId: localTenantId,
     },
+    // Broker-compatible fields (top-level)
+    scope: {
+      tenant_id: localTenantId,
+      tenantId: localTenantId
+    },
+    trace: {
+      id: dispatchId,
+      continuity: true,
+      origin: 'chronological-dispatch'
+    }
   };
 }
 

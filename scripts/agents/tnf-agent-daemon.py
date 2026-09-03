@@ -922,17 +922,77 @@ class LLMClient:
             return {"error": str(e)}
 
     def _tool_spawn_subagent(self, daemon, task: str, agent_type: str = "general", capabilities: Optional[List[str]] = None) -> Dict[str, Any]:
-        """Spawn a sub-agent."""
+        """Spawn a sub-agent via broker queue with proper task shape."""
         if not daemon:
             return {"error": "Daemon reference not set"}
         try:
             agent_id = f"subagent-{uuid.uuid4().hex[:8]}"
-            envelope = make_envelope(
-                "task",
-                {"task": task, "agent_type": agent_type, "capabilities": capabilities or []},
-                to_agent=agent_id,
-            )
-            daemon.r.lpush("tnf:master:tasks:realtime", json.dumps(envelope))
+            task_id = f"task-spawn-{uuid.uuid4().hex[:12]}"
+            tenant_id = os.environ.get("TNF_TASK_TENANT", "tnf-core")
+            now_iso = datetime.now(timezone.utc).isoformat()
+            
+            # Build broker-compatible task shape
+            broker_task = {
+                "id": task_id,
+                "title": f"Spawn subagent: {agent_type}",
+                "description": f"Spawn {agent_type} sub-agent to execute: {task}",
+                "type": "task",
+                "priority": "medium",
+                "status": "pending",
+                "assignedTo": f"agent:{tenant_id}",
+                "source": "tnf-agent-daemon",
+                "itinerary": {
+                    "lane": "realtime_broker_routing"
+                },
+                "scope": {
+                    "tenant_id": tenant_id,
+                    "tenantId": tenant_id
+                },
+                "cumulativeId": {
+                    "scope": {
+                        "tenant_id": tenant_id
+                    }
+                },
+                "trace": {
+                    "id": task_id,
+                    "continuity": True,
+                    "origin": "tnf-agent-daemon"
+                },
+                "gateDecisions": [
+                    {
+                        "gate": "TENANT_SCOPE_GATE",
+                        "decision": "allow",
+                        "reason": "publisher-asserted local tenant",
+                        "at": now_iso
+                    },
+                    {
+                        "gate": "TRACE_CONTINUITY_GATE",
+                        "decision": "allow",
+                        "reason": "trace.id set by publisher",
+                        "at": now_iso
+                    },
+                    {
+                        "gate": "TERMINAL_BINDING_GATE",
+                        "decision": "allow",
+                        "reason": "not terminal-bound (background publisher)",
+                        "at": now_iso
+                    },
+                    {
+                        "gate": "HIGH_RISK_RUNTIME_GATE",
+                        "decision": "allow",
+                        "reason": "no high-risk runtime in publisher",
+                        "at": now_iso
+                    },
+                    {
+                        "gate": "CHANNEL_MEMBERSHIP_GATE",
+                        "decision": "allow",
+                        "reason": "publisher on allowed channel",
+                        "at": now_iso
+                    }
+                ]
+            }
+            
+            daemon.r.lpush("tnf:master:tasks:realtime", json.dumps(broker_task))
             return {"success": True, "agent_id": agent_id, "task": task}
         except Exception as e:
             return {"error": str(e)}

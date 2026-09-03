@@ -1,15 +1,25 @@
 {
-  "generatedAt": "2026-08-26T13:55:26.779Z",
-  "totals": {
-    "agents": 139,
-    "capabilities": 498,
-    "relationships": 5,
-    "tags": 4935,
-    "byType": {
-      "api": 73,
-      "external": 5,
-      "local": 57,
-      "mcp": 4
-    }
-  }
+  "totalAgents": 196,
+  "totalCapabilities": 12,
+  "totalTags": 5,
+  "totalRelationships": 0,
+  "departments": [
+    "design",
+    "finance",
+    "hr",
+    "legal",
+    "marketing",
+    "ops",
+    "product",
+    "tech"
+  ],
+  "categories": [
+    "Engineering",
+    "Governance",
+    "Journaling",
+    "Library",
+    "Scouting",
+    "Unified Orchestration"
+  ],
+  "generatedAt": "2026-09-03T05:44:03.351Z"
 }

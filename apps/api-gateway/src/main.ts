@@ -31,6 +31,33 @@ interface HttpRateLimitEntry {
 
 const httpRateLimitStore = new Map<string, HttpRateLimitEntry>();
 
+// Fail-fast env validation. The gateway is frequently mis-deployed with
+// partial config; better to boot-fail with a clear list than to silently run.
+const REQUIRED_ENV = (process.env.API_GATEWAY_STRICT_ENV === '1')
+  ? ['DATABASE_URL', 'JWT_SECRET', 'REDIS_URL']
+  : [];
+const OPTIONAL_ENV_WORTH_LOG = [
+  'CORS_ALLOWED_ORIGINS',
+  'API_GATEWAY_RATE_LIMIT_RPM',
+  'API_GATEWAY_RATE_LIMIT_LOOPBACK',
+  'SWAGGER_ENABLED',
+];
+function validateEnvAtBoot(): void {
+  const missingRequired = REQUIRED_ENV.filter((k) => !process.env[k]);
+  if (missingRequired.length > 0) {
+    console.error(
+      `[api-gateway] Missing required env: ${missingRequired.join(', ')}. ` +
+      `Set API_GATEWAY_STRICT_ENV=0 to bypass (not recommended).`
+    );
+    process.exit(1);
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    const setCount = OPTIONAL_ENV_WORTH_LOG.filter((k) => process.env[k]).length;
+    console.log(`[api-gateway] env: ${setCount}/${OPTIONAL_ENV_WORTH_LOG.length} optional vars set`);
+  }
+}
+validateEnvAtBoot();
+
 function parsePositiveInteger(
   value: string | undefined,
   fallback: number,
@@ -343,6 +370,7 @@ async function bootstrap() {
   });
 
   // Back-compat: some clients still call /v1/* without the global /api prefix.
+  // This rewrite makes /v1/X work alongside /api/v1/X. Both are canonical.
   app.use((req, _res, next) => {
     if (req.url.startsWith('/v1/') || req.url === '/v1') {
       req.url = `/api${req.url}`;
@@ -498,7 +526,10 @@ async function bootstrap() {
       uptime: process.uptime(),
       documentation: '/docs',
       health: '/health',
-      api: '/v1',
+      // Both are canonical. /v1/* is a shim rewrite that maps to /api/v1/*
+      // (see middleware above). Direct calls to either work; prefer /api/v1.
+      api: '/api/v1',
+      apiAlias: '/v1',
       environment: process.env.NODE_ENV || 'development',
     });
   };

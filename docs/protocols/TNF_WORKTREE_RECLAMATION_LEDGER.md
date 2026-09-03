@@ -139,10 +139,10 @@ The same day, removing `lane5-repo-separation-v2` (596M) and
 `workspace-isolation-enforcement-...-v2` (78M) freed ~700 MB, matching `du`
 closely. The difference is what the tree contains:
 
-| Tree contents                      | `du` accuracy     |
-| ---------------------------------- | ----------------- |
-| Source checkout, no `node_modules` | accurate          |
-| pnpm `node_modules` on APFS        | wildly overstated |
+| Tree contents | `du` accuracy |
+| --- | --- |
+| Source checkout, no `node_modules` | accurate |
+| pnpm `node_modules` on APFS | wildly overstated |
 
 So the Size column above is honest for the pristine rows and misleading for
 lane4 and harness-hardening, whose totals are mostly dependencies. **Reclaiming
@@ -150,6 +150,6 @@ lane4 is worth roughly 100 MB, not 5.9 GB.** Keep it because it holds
 uncommitted work that exists nowhere else — never delete it expecting space.
 
 If you need the dependency space and not the worktree, delete
-`<worktree>/node_modules` directly: it is regenerable, gitignored, and touches
-no untracked source. That was done to lane4 on 2026-09-03; its four untracked
-files were verified intact afterwards.
+`<worktree>/node_modules` directly: it is regenerable, gitignored, and touches no
+untracked source. That was done to lane4 on 2026-09-03; its four untracked files
+were verified intact afterwards.
