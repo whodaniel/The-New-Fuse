@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-03T03:55:23.936Z` Handoff ID: `bc2a31b4-aa81-4e42-a2f5-8d3bb5b29cdf`
+`2026-09-03T04:12:33.143Z` Handoff ID: `48a40162-b9bc-4ee7-b02d-31e681255cb1`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `docs/worktree-reclamation-ledger`
-- Head SHA: `6b5e7b9b43d875f7d6d630b9894bdeaecaf827b3`
+- Branch: `fix/entitlement-comment-accuracy`
+- Head SHA: `8b4683128415da6d94613366c1ff33a40099e7db`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -27,12 +27,13 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 ## Changed Paths
 
 - apps/api/src/controllers/available-models.controller.ts
-- docs/deployment/LITELLM_GATEWAY.md
-- scripts/lib/tnf-operator-profile.cjs
-- scripts/postinstall.cjs
-- scripts/setup/apply-operator-profile.cjs
 - apps/api-gateway/src/main.ts
 - apps/api/src/dto/register.dto.ts
+- apps/chrome-extension/src/v6/content/index.ts
+- apps/chrome-extension/src/v6/manifest.json
+- apps/chrome-extension/src/v6/shared/**tests**/federation-addressing.test.ts
+- apps/chrome-extension/src/v6/shared/constants.ts
+- apps/chrome-extension/test-harness/README.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
 - apps/frontend/src/App.simplified.tsx
@@ -69,12 +70,13 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - .jules/palette.md
 - .jules/sentinel.md
 - apps/api/src/middleware/security-validation.middleware.ts
-- apps/frontend/src/pages/Resources/AgentTemplatesBrowser.tsx
-- apps/frontend/src/pages/Resources/SkillsBrowser.tsx
-- apps/frontend/src/pages/Resources/WorkflowBrowser.tsx
+- docs/deployment/LITELLM_GATEWAY.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- scripts/lib/tnf-operator-profile.cjs
+- scripts/postinstall.cjs
+- scripts/setup/apply-operator-profile.cjs
 - apps/frontend/src/MinimalApp.tsx
 - apps/frontend/src/pages/Admin/Agents/skills.ts.bak
 - apps/frontend/src/pages/ConnectExtension.tsx.bak

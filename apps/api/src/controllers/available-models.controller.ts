@@ -82,14 +82,19 @@ let cachedCatalog: CatalogSnapshot | null = null;
  * inference.
  *
  * This endpoint is documented above as public/no-JWT, so there is no session to
- * resolve a role from. The filter is therefore deliberately NOT role-based: it
- * is a server-side deployment switch. Operator-only providers are withheld
- * unless the process it runs in was explicitly started as an operator dev
- * instance (TNF_OPERATOR_CATALOG=1).
+ * resolve a role from. The filter is therefore not session-role-based. Two
+ * things can grant an operator-only provider, both failing closed:
  *
- * Fails closed: absent or any value other than "1" means withhold. Getting this
- * backwards leaks a personal entitlement to every caller, so the default must be
- * the safe one.
+ *   1. Operator login custody — ~/.tnf/authority/operator-profile.json (mode
+ *      0600, owned by the caller) listing the capability. That directory already
+ *      holds roles.json and the Ed25519 keys; custody of it IS the operator
+ *      login. Refused in agent context so an agent cannot inherit it.
+ *   2. An explicit deployment override, TNF_OPERATOR_CATALOG=1, for a dev
+ *      instance started deliberately.
+ *
+ * A deployed multi-user service has neither, so it withholds without being
+ * configured to. Getting this backwards leaks a personal entitlement to every
+ * caller, so the default must be the safe one.
  */
 function isEntitled(p: CatalogProvider): boolean {
   if (!p.entitlement) return true;
