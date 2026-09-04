@@ -48,6 +48,11 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     path: '/google-hub',
     description: 'Google Tasks, Gemini Spark Task Ingestion, and AI Studio Prompt Laboratory',
   },
+  {
+    name: 'Dynamic UI Synthesizer',
+    path: '/dynamic-ui',
+    description: 'On-demand AG-UI generative micro-surface execution and event streaming engine',
+  },
   { name: 'AI Agent Portal Index', path: '/ai-agent-portal', description: 'Agent Portal Index' },
   { name: 'Chat', path: '/chat', description: 'Basic Chat Interface' },
   { name: 'Chat Page', path: '/chat-page', description: 'Dedicated Chat Page' },

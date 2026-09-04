@@ -90,6 +90,12 @@ export const sitemap: SiteMapNode[] = [
             requiresAuth: true,
             lifecycle: 'production',
           },
+          {
+            path: '/dynamic-ui',
+            title: 'Dynamic UI Synthesizer',
+            requiresAuth: true,
+            lifecycle: 'production',
+          },
           { path: '/dashboard/settings', title: 'Dashboard Settings', requiresAuth: true },
           { path: '/dashboard/agents', title: 'Agent Dashboard', requiresAuth: true },
           { path: '/dashboard/agents/new', title: 'Create Agent', requiresAuth: true },

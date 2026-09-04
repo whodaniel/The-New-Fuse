@@ -1,11 +1,14 @@
 export { BrowserControlSurface } from './BROWSER_CONTROL_SURFACE';
 export { ChannelManager } from './components/ChannelManager';
 export type { ChannelManagerProps } from './components/ChannelManager';
+export { DynamicUISynthesizer } from './components/DynamicUISynthesizer';
+export type { DynamicUISynthesizerProps } from './components/DynamicUISynthesizer';
 export { GoogleEcosystemControl } from './components/GoogleEcosystemControl';
 export type { GoogleEcosystemControlProps } from './components/GoogleEcosystemControl';
 export { useTnfFederation } from './hooks/useTnfFederation';
 export { FederationRelayClient } from './lib/federation-relay-client';
 export type { FederationRelayClientConfig } from './lib/federation-relay-client';
 export * from './lib/harness-protocol';
+export * from './types/dynamicUI';
 export * from './types/federation';
 export * from './types/googleEcosystem';

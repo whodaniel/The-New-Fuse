@@ -139,6 +139,7 @@ const HarnessCredentials = lazy(() => import('./pages/Admin/HarnessCredentials')
 const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
 const NexusVisualizer = lazy(() => import('./pages/SynapticNexus'));
 const GoogleEcosystemHub = lazy(() => import('./pages/GoogleEcosystemHub'));
+const DynamicUISynthesizer = lazy(() => import('./pages/DynamicUISynthesizer'));
 
 // Unified / scheduler surfaces
 const ScheduleBuilderPage = lazy(() =>
@@ -536,6 +537,15 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route path="/dashboard/google-hub" element={<Navigate to="/google-hub" replace />} />
+              <Route
+                path="/dynamic-ui"
+                element={
+                  <RequireMemberAccess>
+                    <DynamicUISynthesizer />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route path="/dashboard/dynamic-ui" element={<Navigate to="/dynamic-ui" replace />} />
               <Route
                 path="/dashboard/launchpad"
                 element={
