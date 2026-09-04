@@ -12,6 +12,7 @@ export * from './agents.js';
 export * from './ai-assets-marketplace.js';
 export * from './api-logs.js';
 export * from './audit-logs.js';
+export * from './authority-grants.js';
 export * from './billing.js';
 export * from './chat.js';
 export * from './code-execution.js';

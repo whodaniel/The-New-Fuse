@@ -1,5 +1,7 @@
 # FRONTLOAD_MANIFEST.md — TNF Progressive Context Injection
 
+`[CLASS:PRIME] [STATUS:ACTIVE] [DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE] [OWNER:TNF]`
+
 Turn Zero V2 uses **progressive disclosure**: load only the authority and
 current receipts needed to take the next safe action. File presence is not host
 injection, and frontload is not permission to mutate.
@@ -260,7 +262,7 @@ pnpm run tnf:onboard -- --legacy-full
 Before mutation, use explicit classification and write readiness, for example:
 
 ```bash
-TNF_WORK_DOMAIN=corporate \
+TNF_WORK_DOMAIN=core \
 TNF_ARTIFACT_DESTINATION=oss_runtime \
 TNF_DATA_RESIDENCY=product_state \
 TNF_DATA_SENSITIVITY=public \

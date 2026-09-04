@@ -29,6 +29,7 @@ COPY packages/a2a-core/package.json packages/a2a-core/
 COPY packages/agent/package.json packages/agent/
 COPY packages/ap2-protocol/package.json packages/ap2-protocol/
 COPY packages/api-types/package.json packages/api-types/
+COPY packages/control-plane-contracts/package.json packages/control-plane-contracts/
 COPY packages/core/package.json packages/core/
 COPY packages/core-error-handling/package.json packages/core-error-handling/
 COPY packages/core-monitoring/package.json packages/core-monitoring/
@@ -76,6 +77,7 @@ COPY packages/a2a-core/ packages/a2a-core/
 COPY packages/agent/ packages/agent/
 COPY packages/ap2-protocol/ packages/ap2-protocol/
 COPY packages/api-types/ packages/api-types/
+COPY packages/control-plane-contracts/ packages/control-plane-contracts/
 COPY packages/core/ packages/core/
 COPY packages/core-error-handling/ packages/core-error-handling/
 COPY packages/core-monitoring/ packages/core-monitoring/
@@ -115,6 +117,7 @@ RUN pnpm --filter @the-new-fuse/infrastructure run build && \
     pnpm --filter @the-new-fuse/types run build && \
     pnpm --filter @the-new-fuse/shared run build && \
     pnpm --filter @the-new-fuse/security run build && \
+    pnpm --filter @the-new-fuse/control-plane-contracts run build && \
     pnpm --filter @the-new-fuse/ap2-protocol run build && \
     pnpm --filter @the-new-fuse/a2a-core run build && \
     pnpm --filter @the-new-fuse/database run build && \
@@ -150,6 +153,7 @@ COPY packages/a2a-core/package.json packages/a2a-core/
 COPY packages/agent/package.json packages/agent/
 COPY packages/ap2-protocol/package.json packages/ap2-protocol/
 COPY packages/api-types/package.json packages/api-types/
+COPY packages/control-plane-contracts/package.json packages/control-plane-contracts/
 COPY packages/core/package.json packages/core/
 COPY packages/core-error-handling/package.json packages/core-error-handling/
 COPY packages/core-monitoring/package.json packages/core-monitoring/

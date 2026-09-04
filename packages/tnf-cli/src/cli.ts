@@ -12,7 +12,12 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage, RedisAgentClient } from './RedisAgentClient.js';
 import { buildTnfAgentOrientation } from './agent-orientation.js';
-import { printProtocolAgentRosterSafe } from './boot/agent-roster.js';
+import {
+  buildDefinitionIndex,
+  loadAgentDefinitions,
+  normalizeAgentName,
+  printProtocolAgentRosterSafe,
+} from './boot/agent-roster.js';
 import {
   createBootPipeline,
   printBootPlan,
@@ -86,9 +91,8 @@ import { WebhookService } from './services/WebhookService.js';
 import { WorktreeError, WorktreeService } from './services/WorktreeService.js';
 import {
   findSlashCommand,
-  formatPromptSlashCommand,
+  formatPromptSlashCommandChain,
   getAllSlashCommands,
-  parseSlashCommand,
   parseSlashCommands,
   renderSlashCommandDetail,
   renderSlashCommandList,
@@ -3877,7 +3881,7 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
     {
       title: 'Agent Paths',
       entries: [
-        { path: 'tnf agents list', description: 'List registered agents' },
+        { path: 'tnf agents list', description: 'List live bus agents + defined roster' },
         { path: 'tnf agents register [name] [role] [platform]', description: 'Register an agent' },
         { path: 'tnf agents send <message>', description: 'Send a one-off message' },
         {
@@ -5099,6 +5103,22 @@ async function handleOneShotSlashInput(input: string): Promise<boolean> {
   const parsedCommands = parseSlashCommands(input);
   if (parsedCommands.length === 0) return false;
 
+  // Resolve the whole chain before any step is allowed to mutate state.
+  const unresolved = parsedCommands.filter((parsed) => {
+    const cliPath = parsed.args.length > 0 ? resolveCliPath([parsed.name, ...parsed.args]) : null;
+    return !(cliPath && cliPath.argv.length > 1) && !findSlashCommand(parsed.name, invocationCwd);
+  });
+  if (unresolved.length > 0) {
+    for (const parsed of unresolved) {
+      console.error(chalk.red(`Unknown slash command: /${parsed.rawName}`));
+    }
+    console.error(chalk.dim('No chain steps were executed. Run `tnf commands <text>` to search.'));
+    process.exitCode = 1;
+    return true;
+  }
+
+  const promptSteps: Array<{ command: SlashCommandDefinition; args: string[] }> = [];
+
   for (const parsed of parsedCommands) {
     if (parsed.args.length > 0) {
       const resolved = resolveCliPath([parsed.name, ...parsed.args]);
@@ -5121,7 +5141,9 @@ async function handleOneShotSlashInput(input: string): Promise<boolean> {
         }
       }
       console.error(
-        chalk.dim('Run `tnf /help`, `tnf slash list`, or `tnf commands <text>` to search everything.')
+        chalk.dim(
+          'Run `tnf /help`, `tnf slash list`, or `tnf commands <text>` to search everything.'
+        )
       );
       process.exitCode = 1;
       continue;
@@ -5188,11 +5210,14 @@ async function handleOneShotSlashInput(input: string): Promise<boolean> {
     }
 
     if (command.mode === 'prompt') {
-      console.log(formatPromptSlashCommand(command, parsed.args));
+      promptSteps.push({ command, args: parsed.args });
       continue;
     }
 
     printSlashCommandDetail(command);
+  }
+  if (promptSteps.length > 0) {
+    console.log(formatPromptSlashCommandChain(promptSteps));
   }
   return true;
 }
@@ -5204,7 +5229,19 @@ async function handleInteractiveSlashCommand(
   const parsedCommands = parseSlashCommands(input);
   if (parsedCommands.length === 0) return { handled: false };
 
-  let combinedPrompt = '';
+  const unresolved = parsedCommands.filter((parsed) => {
+    const cliPath = parsed.args.length > 0 ? resolveCliPath([parsed.name, ...parsed.args]) : null;
+    return !(cliPath && cliPath.argv.length > 1) && !findSlashCommand(parsed.name, invocationCwd);
+  });
+  if (unresolved.length > 0) {
+    for (const parsed of unresolved) {
+      console.log(chalk.red(`  Unknown slash command: /${parsed.rawName}`));
+    }
+    console.log(chalk.dim('  No chain steps were executed. Press / and type to search.'));
+    return { handled: true };
+  }
+
+  const promptSteps: Array<{ command: SlashCommandDefinition; args: string[] }> = [];
   let handled = false;
   let exit = false;
 
@@ -5291,7 +5328,8 @@ async function handleInteractiveSlashCommand(
       if (!modelName) {
         console.log(chalk.dim(`  Provider: ${context.client?.providerName || 'unknown'}`));
         console.log(chalk.dim(`  Model: ${context.client?.model || 'unknown'}`));
-        if (context.client?.baseUrl) console.log(chalk.dim(`  Base URL: ${context.client.baseUrl}`));
+        if (context.client?.baseUrl)
+          console.log(chalk.dim(`  Base URL: ${context.client.baseUrl}`));
         handled = true;
         continue;
       }
@@ -5433,12 +5471,7 @@ async function handleInteractiveSlashCommand(
     }
 
     if (command.mode === 'prompt') {
-      const p = formatPromptSlashCommand(command, parsed.args);
-      if (combinedPrompt) {
-        combinedPrompt += '\n\n---\n\n' + p;
-      } else {
-        combinedPrompt = p;
-      }
+      promptSteps.push({ command, args: parsed.args });
       handled = true;
       continue;
     }
@@ -5447,7 +5480,8 @@ async function handleInteractiveSlashCommand(
     handled = true;
   }
 
-  return { handled, exit, prompt: combinedPrompt || undefined };
+  const chainPrompt = formatPromptSlashCommandChain(promptSteps);
+  return { handled, exit, prompt: chainPrompt || undefined };
 }
 
 program
@@ -5794,8 +5828,49 @@ program
         let autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
 
+        // D23: authority comes from verified identity, never from a wire claim.
+        // `DEFAULT_AGENT_IDENTITY.role` is a *declared* role — it comes from
+        // AGENT_ROLE in the environment or from ~/.tnf/agent.yaml (including its
+        // `dacc_role` field, which D23 states never authorizes anything). On its
+        // own it must not grant autonomy, or `AGENT_ROLE=sub-director` would be a
+        // privilege escalation.
+        //
+        // The declared identity still selects the code path; the operator-owned
+        // registry decides whether that path may run autonomously.
         if (isLocalSubdirectorIdentity(DEFAULT_AGENT_IDENTITY) && authConfig.autonomyEnabled) {
-          autonomous = true;
+          const authorityAgentId = authConfig.agentId || DEFAULT_AGENT_IDENTITY.name;
+          const residency = await resolveResidency(repoRoot, authorityAgentId);
+
+          if (residency === 'local') {
+            // Single-tenant: this is the user's own machine, and the installed
+            // harness IS a sub-director by default. There is no second party to
+            // protect them from, and the machine owner is already the authority
+            // — requiring a registry grant here would break the open-source
+            // harness on first run for no security gain.
+            autonomous = true;
+          } else {
+            // Multi-tenant: other tenants share this infrastructure, so a
+            // declared role is an escalation (D23). The operator-owned registry
+            // decides, and an unknown agent fails closed to worker.
+            const resolved = await resolveAuthorityRole(repoRoot, authorityAgentId);
+            if (
+              resolved.role === 'sub-director' ||
+              resolved.role === 'super-director' ||
+              resolved.role === 'super-admin'
+            ) {
+              autonomous = true;
+            } else {
+              console.error(
+                chalk.yellow(
+                  `⚠ Autonomy withheld: "${authorityAgentId}" resolves to ${chalk.bold(resolved.role)} ` +
+                    `(source: ${resolved.source}) in the operator-owned role registry.\n` +
+                    `  Residency is ${chalk.bold(residency)}, so a declared role is not sufficient — other tenants share this plane (D23).\n` +
+                    `  Grant it from an operator shell, then re-run:\n` +
+                    `    node -e 'require("./scripts/lib/tnf-identity.cjs").setAgentRole("${authorityAgentId}","sub-director")'`
+                )
+              );
+            }
+          }
         }
 
         const wantsOneshot = Boolean(options.print || options.oneshot);
@@ -6907,25 +6982,118 @@ function loadDefaultAgentIdentity(): {
 const DEFAULT_AGENT_IDENTITY = loadDefaultAgentIdentity();
 
 /**
- * Does this identity describe the machine's local subdirector?
+ * Does this identity *describe itself* as the machine's local subdirector?
  *
- * A literal `role === 'local-subdirector'` comparison silently never matched.
- * `establish-core-federated-fleet` writes `~/.tnf/agent.yaml` with
- * `role: director`, `dacc_role: director`, `director_tier: sub` and
- * `embodiment: sub-director` — four spellings of the same fact, none of which
- * is the string the code tested for. The autonomy elevation that depended on
- * it was therefore dead on every machine provisioned that way.
+ * `establish-core-federated-fleet` writes `~/.tnf/agent.yaml` with `role:
+ * director`, `dacc_role: director`, `director_tier: sub` and `embodiment:
+ * sub-director` — four spellings of one fact — so the tolerance in
+ * `DECLARED_ROLE_ALIASES` is required to read what provisioning actually emits.
  *
- * Accept the vocabulary the writer actually emits rather than editing the
- * operator's identity file to satisfy the reader. `role` itself is left
- * untouched because `tnf register` validates it against the role taxonomy.
+ * This answers "which code path", never "what may this agent do". The answer is
+ * a claim taken from an environment variable or a local file, and D23 is
+ * explicit that such a claim is not a credential. `resolveAuthorityRole()` is
+ * the only thing that authorizes.
  */
-function isLocalSubdirectorIdentity(identity: { role?: string; directorTier?: string }): boolean {
-  const role = (identity.role || '').toLowerCase();
-  if (role === 'local-subdirector' || role === 'sub-director' || role === 'subdirector') {
-    return true;
+/**
+ * The one sanctioned authority lookup, per D23. Resolves an agent id against the
+ * operator-owned registry at ~/.tnf/authority/roles.json via
+ * `scripts/lib/tnf-identity.cjs`.
+ *
+ * Fails closed: any error, missing module, or unknown agent yields `worker`.
+ * Never accepts a role from an environment variable, an identity file, or a bus
+ * payload — those are claims. This is the only function in the CLI permitted to
+ * answer "what may this agent do".
+ */
+/**
+ * Where this agent is running: `local` (the user's own machine, single-tenant)
+ * or `cloud` (shared TNF infrastructure, multi-tenant).
+ *
+ * Residency is an axis, not a role — the same `sub-director` is the installed
+ * harness in one place and a tenant's server-side agent in another, and only the
+ * rules differ. Encoding it in role strings is what produced `local-director`,
+ * `local-subdirector` and `subdirector`.
+ *
+ * Resolution order, strongest evidence first:
+ *   1. a `did:tnf` agent id states its own scope segment;
+ *   2. `TNF_RESIDENCY`, set explicitly by a cloud deployment;
+ *   3. `local`.
+ *
+ * The default is `local` deliberately. The overwhelmingly common case is a user
+ * who installed the open-source harness on their own machine, where defaulting
+ * to `cloud` would withhold autonomy on first run and break the free tier for no
+ * security gain. TNF's own control plane is a managed environment where setting
+ * one variable is trivial and auditable, so the burden belongs there.
+ */
+async function resolveResidency(root: string, agentId: string): Promise<string> {
+  try {
+    const identity = (await import(path.join(root, 'scripts/lib/tnf-identity.cjs'))) as {
+      residencyOf: (id: string) => string;
+    };
+    const fromDid = identity.residencyOf(agentId);
+    if (fromDid === 'local' || fromDid === 'cloud') return fromDid;
+  } catch {
+    /* fall through to the environment */
   }
-  return role === 'director' && (identity.directorTier || '').toLowerCase() === 'sub';
+  const declared = String(process.env.TNF_RESIDENCY || '').trim().toLowerCase();
+  if (declared === 'cloud' || declared === 'local') return declared;
+  return 'local';
+}
+
+async function resolveAuthorityRole(
+  root: string,
+  agentId: string
+): Promise<{ role: string; source: string }> {
+  try {
+    const identity = (await import(path.join(root, 'scripts/lib/tnf-identity.cjs'))) as {
+      resolveRole: (id: string) => { ok: boolean; role: string; source: string };
+    };
+    const resolved = identity.resolveRole(agentId);
+    return { role: resolved.role || 'worker', source: resolved.source || 'default' };
+  } catch (err: any) {
+    return { role: 'worker', source: `unavailable (${err?.message || 'load failed'})` };
+  }
+}
+
+/**
+ * Map a *declared* role spelling onto TNF's canonical authority vocabulary
+ * (`worker | sub-director | super-director`).
+ *
+ * Provisioning has emitted four spellings of the same fact, so the tolerance is
+ * real and must stay. Expressing it as a normalization — rather than as literal
+ * comparisons against invented strings like `local-subdirector` — keeps the
+ * invented vocabulary out of the code and confines it to this table.
+ *
+ * The result is still only a *claim*. It selects a code path; it authorizes
+ * nothing. `resolveAuthorityRole()` is the only thing that authorizes.
+ */
+const DECLARED_ROLE_ALIASES: Readonly<Record<string, string>> = Object.freeze({
+  'local-subdirector': 'sub-director',
+  subdirector: 'sub-director',
+  sub_director: 'sub-director',
+  'sub-director': 'sub-director',
+  'local-director': 'sub-director',
+  superdirector: 'super-director',
+  super_director: 'super-director',
+  'super-director': 'super-director',
+  worker: 'worker',
+});
+
+function normalizeDeclaredRole(identity: { role?: string; directorTier?: string }): string | null {
+  const raw = (identity.role || '').trim().toLowerCase();
+  if (!raw) return null;
+  const alias = DECLARED_ROLE_ALIASES[raw];
+  if (alias) return alias;
+  // `role: director` is ambiguous on its own; the tier disambiguates it.
+  if (raw === 'director') {
+    const tier = (identity.directorTier || '').toLowerCase();
+    if (tier === 'sub') return 'sub-director';
+    if (tier === 'super') return 'super-director';
+  }
+  return null;
+}
+
+function isLocalSubdirectorIdentity(identity: { role?: string; directorTier?: string }): boolean {
+  return normalizeDeclaredRole(identity) === 'sub-director';
 }
 
 program
@@ -7868,6 +8036,146 @@ authority
       console.log(
         chalk.gray(
           '\nKeys ready. Keep TNF_MESSAGE_AUTH_MODE=warn until every publisher signs and peers import pubs; then consider enforce.'
+        )
+      );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+/**
+ * Load the identity module, refusing when this process is an agent.
+ *
+ * `saveRoleRegistry()` already refuses to write when `TNF_AGENT_ID` is set —
+ * "Role grants are operator-owned; run this from an operator shell." These
+ * commands check the same condition up front so the refusal is a clear message
+ * rather than a throw halfway through, and so the audit record
+ * (`granted_by: 'operator'`) is only ever written when a human really did it.
+ */
+async function requireOperatorIdentity(root: string) {
+  if (process.env.TNF_AGENT_ID) {
+    throw new Error(
+      `refusing to modify authority: TNF_AGENT_ID=${process.env.TNF_AGENT_ID} is set. ` +
+        'Role grants and the bus secret are operator-owned — run this from your own shell.'
+    );
+  }
+  return (await import(path.join(root, 'scripts/lib/tnf-identity.cjs'))) as any;
+}
+
+function askOperator(question: string, fallback = ''): Promise<string> {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(String(answer || '').trim() || fallback);
+    });
+  });
+}
+
+authority
+  .command('grant')
+  .description('Grant an authority role to an agent id (operator only)')
+  .argument('<agentId>', 'did:tnf identifier, or a legacy bare agent id')
+  .argument('<role>', 'worker | sub-director | super-director | super-admin')
+  .option('--note <text>', 'Reason, recorded in the registry entry')
+  .option('--revoke', 'Remove the grant instead of setting it')
+  .action(async (agentId: string, role: string, options: { note?: string; revoke?: boolean }) => {
+    try {
+      const identity = await requireOperatorIdentity(repoRoot);
+      if (options.revoke) {
+        identity.setAgentRole(agentId, null);
+        console.log(chalk.green(`revoked  ${agentId}`));
+        return;
+      }
+      if (!identity.isValidRole(role)) {
+        throw new Error(`invalid role "${role}"; allowed: ${identity.VALID_ROLES.join(', ')}`);
+      }
+      if (!identity.parseAgentDid(agentId)) {
+        console.log(
+          chalk.yellow(
+            `▲ "${agentId}" is a legacy bare id, so residency and tenant cannot be derived from it.\n` +
+              '  See docs/protocols/TNF_AUTHORITY_IDENTIFIER_STANDARD.md for the did:tnf form.'
+          )
+        );
+      }
+      identity.setAgentRole(agentId, role, { note: options.note });
+      const resolved = identity.resolveRole(agentId);
+      console.log(chalk.green(`granted  ${agentId}  ->  ${resolved.role}  (source: ${resolved.source})`));
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('init')
+  .description('Interactive operator setup: identify yourself, provision the bus secret, seat the directors')
+  .option('--rotate-secret', 'Replace an existing bus secret (invalidates in-flight signatures)')
+  .action(async (options: { rotateSecret?: boolean }) => {
+    try {
+      const identity = await requireOperatorIdentity(repoRoot);
+      const auth = (await import(path.join(repoRoot, 'scripts/lib/tnf-message-auth.cjs'))) as any;
+      const fsMod = await import('fs');
+
+      console.log(chalk.bold('\nTNF authority setup'));
+      console.log(chalk.gray('Everything below is written to ~/.tnf/authority/ (0700), owned by you.\n'));
+
+      // 1. The operator. This is the only tier above every agent.
+      const rawName = await askOperator('Your name (for your super-admin identity): ');
+      if (!rawName) throw new Error('a name is required to mint your operator identity');
+      const operatorDid = identity.buildAgentDid({
+        scope: 'cloud',
+        category: 'user',
+        provider: 'tnf',
+        name: rawName,
+      });
+      identity.setAgentRole(operatorDid, 'super-admin', { note: 'operator, via tnf authority init' });
+      console.log(chalk.green(`  super-admin     ${operatorDid}`));
+
+      // 2. The bus secret. Until this exists every publisher falls back to the
+      //    legacy placeholder and the bus is unauthenticated.
+      const secretPath = auth.A2A_SECRET_FILE;
+      const exists = fsMod.existsSync(secretPath);
+      if (exists && !options.rotateSecret) {
+        console.log(chalk.cyan(`  bus secret      already present at ${secretPath} (--rotate-secret to replace)`));
+      } else {
+        const crypto = await import('crypto');
+        identity.ensureAuthorityLayout();
+        fsMod.writeFileSync(secretPath, `${crypto.randomBytes(32).toString('hex')}\n`, { mode: 0o600 });
+        fsMod.chmodSync(secretPath, 0o600);
+        console.log(chalk.green(`  bus secret      ${exists ? 'rotated' : 'written'} at ${secretPath}`));
+      }
+
+      // 3. The cloud orchestration agent — the singular Super Director.
+      const superDirectorDid = identity.buildAgentDid({
+        scope: 'cloud',
+        category: 'system',
+        provider: 'tnfcore',
+        name: 'super_director',
+      });
+      identity.setAgentRole(superDirectorDid, 'super-director', {
+        note: 'cloud orchestration layer, via tnf authority init',
+      });
+      console.log(chalk.green(`  super-director  ${superDirectorDid}`));
+
+      // 4. This machine's harness. Local residency means it would run
+      //    autonomously without a grant; the grant makes it traceable anyway.
+      const host = os.hostname().split('.')[0] || 'localhost';
+      const localDid = identity.buildAgentDid({
+        scope: 'local',
+        category: 'agent',
+        provider: 'tnfcli',
+        name: host,
+      });
+      identity.setAgentRole(localDid, 'sub-director', { note: 'local harness, via tnf authority init' });
+      console.log(chalk.green(`  sub-director    ${localDid}`));
+
+      console.log(chalk.gray('\nVerify:  node scripts/protocols/role-coherence-gate.cjs --strict'));
+      console.log(
+        chalk.gray(
+          'The bus stays in warn mode until publishers sign successfully. Watch\n' +
+            '~/.tnf/authority/audit.jsonl go quiet, then set TNF_MESSAGE_AUTH_MODE=enforce.\n'
         )
       );
     } catch (err: any) {
@@ -15317,17 +15625,58 @@ agentsBank
 
 program
   .command('list')
-  .description('List all registered agents')
-  .action(async () => {
+  .description('List live bus agents plus the defined agent roster')
+  .option('--all', 'Show full detail for every defined agent')
+  .option('--json', 'Emit roster as JSON')
+  .action(async (options: { all?: boolean; json?: boolean } = {}) => {
     const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       const agents = await client.listAgents();
+      const definitions = loadAgentDefinitions(process.cwd());
+      const defIndex = buildDefinitionIndex(definitions);
+      const liveKeys = new Set<string>();
+      for (const agent of agents) {
+        liveKeys.add(normalizeAgentName(agent.name));
+        liveKeys.add(normalizeAgentName(agent.id));
+      }
+      const definedOnly = definitions.filter(
+        (def) =>
+          !liveKeys.has(normalizeAgentName(def.name)) && !liveKeys.has(normalizeAgentName(def.id))
+      );
 
-      console.log(chalk.bold('\n📋 Registered Agents:\n'));
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            {
+              generatedAt: new Date().toISOString(),
+              liveCount: agents.length,
+              definitionCount: definitions.length,
+              live: agents.map((agent: any) => ({
+                ...agent,
+                definition: defIndex.get(normalizeAgentName(agent.name)) || null,
+              })),
+              definedOnly: options.all
+                ? definedOnly
+                : definedOnly.map((def) => ({
+                    id: def.id,
+                    name: def.name,
+                    department: def.department,
+                    category: def.category,
+                    capabilityCount: def.capabilities.length,
+                  })),
+            },
+            null,
+            2
+          )
+        );
+        return;
+      }
+
+      console.log(chalk.bold('\n📋 Agent Roster — live bus + defined agents:\n'));
 
       if (agents.length === 0) {
-        console.log('   No agents registered');
+        console.log('   No agents currently registered on the bus');
       } else {
         agents.forEach((agent) => {
           const statusIcon = agent.isOnline ? chalk.green('🟢') : chalk.red('🔴');
@@ -15342,9 +15691,63 @@ program
           console.log(`${statusIcon} ${icon} ${chalk.bold(agent.name)} (${agent.platform})`);
           console.log(`      Role: ${agent.role}`);
           console.log(`      ID: ${chalk.dim(agent.id)}`);
+          const def = defIndex.get(normalizeAgentName(agent.name));
+          if (def) {
+            console.log(
+              `      Definition: ${chalk.dim(
+                `${def.id} · ${def.department || '?'}/${def.category || '?'} · ${def.capabilities.length} capabilities`
+              )}`
+            );
+            if (def.description && def.description !== 'null') {
+              const trimmedDef =
+                def.description.length > 110
+                  ? `${def.description.slice(0, 107)}…`
+                  : def.description;
+              console.log(`      ${chalk.dim(trimmedDef)}`);
+            }
+          }
           console.log(`      Last seen: ${chalk.dim(agent.lastSeen)}`);
           console.log('');
         });
+      }
+
+      console.log(
+        chalk.bold(
+          `📖 Defined agents not currently live (${definedOnly.length} of ${definitions.length} definitions):\n`
+        )
+      );
+      if (definedOnly.length === 0) {
+        console.log('   Every defined agent has a live bus registration');
+      } else if (options.all) {
+        for (const def of definedOnly) {
+          console.log(`   ${chalk.bold(def.name)} ${chalk.dim(`(${def.id})`)}`);
+          console.log(
+            `      ${chalk.dim(
+              `${def.department || '?'}/${def.category || '?'} · ${def.capabilities.length} capabilities${
+                def.tags.length ? ` · tags: ${def.tags.join(', ')}` : ''
+              }`
+            )}`
+          );
+          if (def.description && def.description !== 'null') {
+            const trimmedDef =
+              def.description.length > 140 ? `${def.description.slice(0, 137)}…` : def.description;
+            console.log(`      ${chalk.dim(trimmedDef)}`);
+          }
+        }
+      } else {
+        const byDept = new Map<string, string[]>();
+        for (const def of definedOnly) {
+          const dept = def.department || 'unsorted';
+          const names = byDept.get(dept) || [];
+          names.push(`${def.name} (${def.capabilities.length}caps)`);
+          byDept.set(dept, names);
+        }
+        for (const dept of [...byDept.keys()].sort()) {
+          console.log(`   ${chalk.bold(dept)}: ${byDept.get(dept)!.join(', ')}`);
+        }
+        console.log(
+          chalk.dim('\n   Full detail: tnf list --all · machine-readable: tnf list --json')
+        );
       }
     } catch (err: any) {
       if (isRedisUnavailable(err)) {

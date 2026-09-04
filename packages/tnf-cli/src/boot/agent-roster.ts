@@ -102,10 +102,11 @@ export function formatAge(lastSeen: string | null, nowMs = Date.now()): string {
 }
 
 function readKnownCatalogCount(repoRoot: string): number | null {
+  // Canonical registry first — .tnf caches can go stale/hollow.
   const candidates = [
+    path.join(repoRoot, 'data', 'agent-registry', 'agents.json'),
     path.join(repoRoot, '.tnf', 'agent-registry-snapshot.json'),
     path.join(process.env.HOME || '', '.tnf', 'agent-registry-snapshot.json'),
-    path.join(repoRoot, 'data', 'agent-registry', 'agents.json'),
   ];
   for (const candidate of candidates) {
     if (!candidate || !fs.existsSync(candidate)) continue;
@@ -118,6 +119,80 @@ function readKnownCatalogCount(repoRoot: string): number | null {
     }
   }
   return null;
+}
+
+/** A classified agent definition from the agent-registry snapshot. */
+export type AgentDefinition = {
+  id: string;
+  name: string;
+  description: string;
+  department: string;
+  category: string;
+  capabilities: string[];
+  tags: string[];
+  sourceFile?: string;
+};
+
+/** Collapse an agent name/id to a comparable key (case/punctuation-insensitive). */
+export function normalizeAgentName(name: string): string {
+  return String(name || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+
+/**
+ * Load classified agent definitions from the registry snapshot.
+ * Resolution order: the repo's canonical data/agent-registry/agents.json
+ * (source of truth, rebuilt by scripts/agent-registry/build-agent-registry.mjs),
+ * then the .tnf cached snapshots (repo, then home) as fallbacks. Canonical-first
+ * avoids stale hollow caches shadowing rich records.
+ * Returns [] (never throws) when no snapshot is available.
+ */
+export function loadAgentDefinitions(repoRoot: string): AgentDefinition[] {
+  const candidates = [
+    path.join(repoRoot, 'data', 'agent-registry', 'agents.json'),
+    path.join(repoRoot, '.tnf', 'agent-registry-snapshot.json'),
+    path.join(process.env.HOME || '', '.tnf', 'agent-registry-snapshot.json'),
+  ];
+  for (const candidate of candidates) {
+    if (!candidate || !fs.existsSync(candidate)) continue;
+    try {
+      const parsed = JSON.parse(fs.readFileSync(candidate, 'utf8'));
+      const list = Array.isArray(parsed)
+        ? parsed
+        : Array.isArray(parsed?.agents)
+          ? parsed.agents
+          : null;
+      if (!list) continue;
+      return list
+        .filter((d: unknown) => d && typeof d === 'object')
+        .map((d: Record<string, unknown>) => ({
+          id: String(d.id || ''),
+          name: String(d.name || d.id || ''),
+          description: String(d.description || ''),
+          department: String(d.department || ''),
+          category: String(d.category || ''),
+          capabilities: Array.isArray(d.capabilities) ? d.capabilities.map(String) : [],
+          tags: Array.isArray(d.tags) ? d.tags.map(String) : [],
+          sourceFile: typeof d.sourceFile === 'string' ? d.sourceFile : undefined,
+        }));
+    } catch {
+      // try next candidate
+    }
+  }
+  return [];
+}
+
+/** Index definitions by normalized name and id for live-bus joins. */
+export function buildDefinitionIndex(definitions: AgentDefinition[]): Map<string, AgentDefinition> {
+  const index = new Map<string, AgentDefinition>();
+  for (const def of definitions) {
+    for (const key of [normalizeAgentName(def.name), normalizeAgentName(def.id)]) {
+      if (key && !index.has(key)) index.set(key, def);
+    }
+  }
+  return index;
 }
 
 export function parseRedisHgetallPairs(raw: string): RawRegistryAgent[] {

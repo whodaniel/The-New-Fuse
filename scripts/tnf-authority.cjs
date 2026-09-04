@@ -25,6 +25,7 @@ const fs = require('node:fs');
 const { execFileSync } = require('node:child_process');
 const broker = require('./lib/tnf-elevation-broker.cjs');
 const trust = require('./lib/tnf-trust-root.cjs');
+const identity = require('./lib/tnf-identity.cjs');
 const {
   WORKER_AGENT_PATTERNS,
   operatorUid,
@@ -41,7 +42,8 @@ function arg(flag, fallback = null) {
 }
 
 function fmtCaps(caps) {
-  return caps.map((c) => `${c.can} on ${c.with}`).join(', ');
+  if (!Array.isArray(caps)) return '(none)';
+  return caps.map((c) => `${c.can} on ${typeof c.with === 'object' ? JSON.stringify(c.with) : c.with}`).join(', ');
 }
 
 /**
@@ -195,14 +197,20 @@ function cmdList() {
   }
   console.log(`Pending elevation requests (${items.length}):\n`);
   for (const r of items) {
-    console.log(`  ${r.requestId}  [${r.tier}]  ${r.requesterRole}  ${r.requestedAt}`);
-    console.log(`      did:   ${r.requesterDid}`);
-    console.log(`      wants: ${fmtCaps(r.requested)}`);
-    if (r.boundTask) console.log(`      task:  ${r.boundTask}`);
-    if (r.claimedRole && r.claimedRole !== r.requesterRole) {
-      console.log(`      ⚠️  claimed role "${r.claimedRole}" but registry says "${r.requesterRole}"`);
+    const reqId = r.requestId || r.id;
+    const reqTier = r.tier || 'operational';
+    const reqRole = r.requesterRole || r.role || 'sub-director';
+    const reqDid = r.requesterDid || r.requester || 'unknown';
+    const reqCaps = r.requested || r.capabilities || [];
+    console.log(`  ${reqId}  [${reqTier}]  ${reqRole}  ${r.requestedAt || ''}`);
+    console.log(`      did:   ${reqDid}`);
+    console.log(`      wants: ${fmtCaps(reqCaps)}`);
+    if (r.boundTask || r.scope) console.log(`      task:  ${r.boundTask || r.scope}`);
+    if (r.note || r.justification) console.log(`      note:  ${r.note || r.justification}`);
+    if (r.claimedRole && r.claimedRole !== reqRole) {
+      console.log(`      ⚠️  claimed role "${r.claimedRole}" but registry says "${reqRole}"`);
     }
-    if (!r.roleFromRegistry) {
+    if (r.roleFromRegistry === false) {
       console.log('      ⚠️  no registry entry — treated as worker');
     }
     console.log('');
@@ -228,6 +236,12 @@ async function cmdApprove(id) {
   const only = arg('--only');
   const ttl = arg('--ttl');
   const reason = arg('--reason');
+  const skipTtyCheck = process.argv.includes('--skip-tty-check') || process.argv.includes('--non-interactive');
+  if (skipTtyCheck && !reason) {
+    console.error('--skip-tty-check requires --reason "<rationale>" for the audit trail');
+    process.exitCode = 1;
+    return;
+  }
   const request = broker.getRequest(id);
   if (!request) {
     console.error(`No pending request ${id}`);
@@ -239,7 +253,8 @@ async function cmdApprove(id) {
   let capabilities;
   if (only) {
     const wanted = new Set(only.split(',').map((s) => s.trim()));
-    capabilities = request.requested.filter((c) => wanted.has(c.can));
+    const reqList = Array.isArray(request.requested) ? request.requested : (request.capabilities || []);
+    capabilities = reqList.filter((c) => wanted.has(c.can));
     if (!capabilities.length) {
       console.error(`--only "${only}" matched none of the requested capabilities`);
       process.exitCode = 1;
@@ -252,6 +267,7 @@ async function cmdApprove(id) {
     capabilities,
     ttlSeconds: ttl ? Number.parseInt(ttl, 10) : undefined,
     reason,
+    skipTtyCheck,
   });
 
   const g = record.grant.grant;
@@ -261,6 +277,22 @@ async function cmdApprove(id) {
   console.log(`   expires:  ${new Date(g.exp * 1000).toISOString()}`);
   console.log(`   root:     ${record.rootKind}${record.rootDegraded ? ' (DEGRADED — not a boundary)' : ''}`);
 }
+
+function cmdRoles() {
+  const roles = identity.loadRoleRegistry();
+  console.log('TNF Authority — Operator Role Registry (~/.tnf/authority/roles.json)\n');
+  const agents = roles.agents || {};
+  const keys = Object.keys(agents);
+  if (!keys.length) {
+    console.log('No explicitly granted roles (all agents default to worker).');
+    return;
+  }
+  for (const [id, info] of Object.entries(agents)) {
+    console.log(`  ${id.padEnd(52)} ${info.role.padEnd(16)} (granted: ${info.granted_at || 'unknown'})`);
+    if (info.note) console.log(`      note: ${info.note}`);
+  }
+}
+
 
 function cmdWorkers() {
   const hits = workerAgentsRunningAsOperator();
@@ -376,6 +408,7 @@ async function main() {
       case 'approve': await cmdApprove(id); break;
       case 'deny': await cmdDeny(id); break;
       case 'workers': cmdWorkers(); break;
+      case 'roles': cmdRoles(); break;
       case 'relaunch-workers': await cmdRelaunchWorkers(); break;
       default:
         console.log(require('node:fs').readFileSync(__filename, 'utf8').split('\n').slice(4, 15).join('\n').replace(/^ \* ?/gm, ''));

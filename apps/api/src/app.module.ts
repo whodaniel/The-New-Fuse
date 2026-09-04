@@ -19,6 +19,7 @@ import llmProviderConfig from './config/llm-provider.config';
 import securityConfig from './config/security.config';
 import { AdminHarnessOAuthController } from './controllers/admin-harness-oauth.controller';
 import { AgentGrantsController } from './controllers/agent-grants.controller';
+import { AuthorityGrantsController } from './controllers/authority-grants.controller';
 import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentPfpOverridesController } from './controllers/agent-pfp-overrides.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
@@ -70,6 +71,7 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module'; // Migrated
 import { WorkflowTemplatesModule } from './modules/workflow-templates.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { AgentApiGrantsService } from './services/agent-api-grants.service';
+import { AuthorityGrantsService } from './services/authority-grants.service';
 import { AgentHandoffService } from './services/agent-handoff.service';
 import { AgentPfpOverridesService } from './services/agent-pfp-overrides.service';
 import { HarnessOAuthRotationService } from './services/harness-oauth-rotation.service';
@@ -179,6 +181,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     MCPServerController, // MCP server management (20+ endpoints)
     AgentPfpOverridesController,
     AgentGrantsController,
+    AuthorityGrantsController,
     AgentHandoffController,
     AgentProxyController,
     AiController,
@@ -215,6 +218,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     ProviderCatalogService, // Shared provider naming/catalog for the picker and the chat executor
     HarnessOAuthRotationService,
     AgentApiGrantsService,
+    AuthorityGrantsService,
     AgentHandoffService,
     WorkflowExecutionService,
     // Middleware

@@ -8,7 +8,7 @@
     "declarationMap": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": []
+    "types": ["node"]
   },
   "include": ["src/**/*"]
 }

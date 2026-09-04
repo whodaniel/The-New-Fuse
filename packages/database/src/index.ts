@@ -55,6 +55,9 @@ export {
   workflows,
   workspaceMembers,
   workspaces,
+  authorityGrants,
+  authorityRoleEnum,
+  authorityResidencyEnum,
 } from './drizzle/schema.js';
 
 // Export Drizzle inferred types
@@ -87,12 +90,26 @@ export type {
   WorkflowExecution,
   Workspace,
   WorkspaceMember,
+  AuthorityGrant,
+  NewAuthorityGrant,
 } from './drizzle/types.js';
 
 export {
   DrizzleAgentApiGrantRepository,
   DrizzleAgentManagedAccountRepository,
   DrizzleAgentRepository,
+  DrizzleAuthorityGrantRepository,
+  drizzleAuthorityGrantRepository,
+  ConfigurablePublicKeyResolver,
+  defaultPublicKeyResolver,
+  type AuthorityPublicKeyResolver,
+  type ResolveSubjectAuthorityOptions,
+  AuthorityGrantIssuerService,
+  InMemoryTrustRootProvider,
+  type IssueGrantRequest,
+  type IssueOperatorRootRequest,
+  type RenewGrantRequest,
+  type AuthorityGrantIssuerOptions,
   DrizzleAuditLogsRepository,
   DrizzleChatRepository,
   DrizzleMarketplaceCatalogRepository,

@@ -3594,8 +3594,17 @@
     {
       "name": "list",
       "aliases": [],
-      "description": "List all registered agents",
-      "options": [],
+      "description": "List live bus agents plus the defined agent roster",
+      "options": [
+        {
+          "flags": "--all",
+          "description": "Show full detail for every defined agent"
+        },
+        {
+          "flags": "--json",
+          "description": "Emit roster as JSON"
+        }
+      ],
       "commands": []
     },
     {
@@ -6707,6 +6716,94 @@
       "description": "Print TNF CLI version (Hermes parity; same as --version)",
       "options": [],
       "commands": []
+    },
+    {
+      "name": "video",
+      "aliases": [],
+      "description": "Shared video-intelligence pipeline (all agents)",
+      "options": [],
+      "commands": [
+        {
+          "name": "ingestion-completion-gate",
+          "aliases": [],
+          "description": "Enforce manifest-to-action-queue completion gate",
+          "options": [
+            {
+              "flags": "--action-queue <path>",
+              "description": "action queue JSON"
+            },
+            {
+              "flags": "--gaps-dir <dir>",
+              "description": "directory containing gaps_*.json reports"
+            },
+            {
+              "flags": "--json <path>",
+              "description": "write machine-readable verdict here"
+            },
+            {
+              "flags": "--manifest <path>",
+              "description": "pipeline manifest JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "modality-gap-pass",
+          "aliases": [],
+          "description": "Detect modality gaps in a timestamped transcript",
+          "options": [
+            {
+              "flags": "--min-confidence <n>",
+              "description": "minimum confidence threshold"
+            },
+            {
+              "flags": "--output <path>",
+              "description": "write gaps JSON here"
+            },
+            {
+              "flags": "--transcript <path>",
+              "description": "transcript file (VTT/bracketed/plain)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "visual-recovery",
+          "aliases": [],
+          "description": "Resolve visual gaps via frames + OCR/vision model",
+          "options": [
+            {
+              "flags": "--gaps <path>",
+              "description": "gaps JSON from modality-gap-pass"
+            },
+            {
+              "flags": "--max-gaps <n>",
+              "description": "limit gaps to process"
+            },
+            {
+              "flags": "--ocr",
+              "description": "try tesseract OCR before vision"
+            },
+            {
+              "flags": "--out-dir <dir>",
+              "description": "frame output directory"
+            },
+            {
+              "flags": "--video-file <path>",
+              "description": "local video file"
+            },
+            {
+              "flags": "--video-url <url>",
+              "description": "YouTube/video URL"
+            },
+            {
+              "flags": "--vision-cmd <cmd>",
+              "description": "command template with {frame}"
+            }
+          ],
+          "commands": []
+        }
+      ]
     },
     {
       "name": "voice",

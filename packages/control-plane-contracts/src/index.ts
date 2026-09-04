@@ -14,6 +14,8 @@
  * runtime; the hosted root implements the same contract. — DIRECTIVES.md D23
  */
 export * from './authority.js';
+export * from './authority-primitives.js';
+export * from './grant-issuer.js';
 
 /** Local-first / user-funded SaaS metering and route authorization contract. */
 export * from './cost-policy.js';

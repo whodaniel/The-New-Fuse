@@ -10,6 +10,22 @@ export {
   drizzleAgentManagedAccountRepository,
 } from './agent-managed-account.repository.js';
 export { DrizzleAgentRepository, drizzleAgentRepository } from './agent.repository.js';
+export {
+  DrizzleAuthorityGrantRepository,
+  drizzleAuthorityGrantRepository,
+  ConfigurablePublicKeyResolver,
+  defaultPublicKeyResolver,
+  type AuthorityPublicKeyResolver,
+  type ResolveSubjectAuthorityOptions,
+} from './authority-grant.repository.js';
+export {
+  AuthorityGrantIssuerService,
+  InMemoryTrustRootProvider,
+  type IssueGrantRequest,
+  type IssueOperatorRootRequest,
+  type RenewGrantRequest,
+  type AuthorityGrantIssuerOptions,
+} from './authority-grant-issuer.service.js';
 export { DrizzleApiLogsRepository, drizzleApiLogsRepository } from './api-logs.repository.js';
 export {
   DrizzleAuditLogsRepository,

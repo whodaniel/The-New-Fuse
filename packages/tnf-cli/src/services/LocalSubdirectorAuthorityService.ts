@@ -15,21 +15,27 @@ export interface LocalSubdirectorConfig {
   capabilities: string[];
 }
 
+/** Canonical authority spelling used in newly minted identity tokens. */
+const LOCAL_SUBDIRECTOR_TOKEN_ROLE = 'sub-director';
+
+/** Pre-rename spelling, still accepted on verify so live tokens keep working. */
+const LEGACY_TOKEN_ROLE = 'local-subdirector';
+
 /**
- * Shipped default: the local subdirector operates autonomously.
+ * Returned when no authority config has been written yet.
  *
- * This is deliberate and is the operator's stated posture — `tnf-cli-agent` is
- * meant to drive the local fleet without per-action prompting. It applies ONLY
- * when no config file exists yet (first run). A config that exists but cannot
- * be read is a different situation and fails closed below, so a corrupted or
- * truncated file can never silently widen authority.
+ * This must fail *closed*. It previously granted `autonomyEnabled: true` and
+ * `capabilities: ['all']`, so a machine with no config file — a fresh clone, a
+ * new node, a wiped `~/.tnf` — received full autonomy by default, while a
+ * machine whose config was merely corrupt correctly received none. Absence is
+ * not consent; the unreadable-file path (`DENIED_CONFIG`) had it right.
  *
- * Onboarding surfaces these values and is the place to narrow them.
+ * Grant autonomy explicitly with `tnf authority` / by writing the config.
  */
 export const DEFAULT_LOCAL_SUBDIRECTOR_CONFIG: LocalSubdirectorConfig = {
   agentId: 'tnf-cli-agent',
-  autonomyEnabled: true,
-  capabilities: ['all'],
+  autonomyEnabled: false,
+  capabilities: [],
 };
 
 /** Fail-closed shape, used when a config exists but is unreadable. */
@@ -110,7 +116,12 @@ export class LocalSubdirectorAuthorityService {
       const expectedHmac = crypto.createHmac('sha256', key).update(decoded.payload).digest('hex');
       if (expectedHmac !== decoded.hmac) return false;
       const { role } = JSON.parse(decoded.payload);
-      return role === 'local-subdirector';
+      // Mint the canonical vocabulary; keep accepting the legacy spelling so
+      // tokens issued before the rename still verify. `local-subdirector` is not
+      // an authority role (D23) and this token proves nothing on its own — the
+      // HMAC is symmetric, so any party able to verify it can also forge it.
+      // Authorization comes from resolveRole(), never from this token.
+      return role === LOCAL_SUBDIRECTOR_TOKEN_ROLE || role === LEGACY_TOKEN_ROLE;
     } catch {
       return false;
     }
@@ -118,7 +129,7 @@ export class LocalSubdirectorAuthorityService {
 
   public signLocalSubdirectorIdentity(): string {
     const key = this.getRuntimeKey();
-    const payload = JSON.stringify({ role: 'local-subdirector', iat: Date.now() });
+    const payload = JSON.stringify({ role: LOCAL_SUBDIRECTOR_TOKEN_ROLE, iat: Date.now() });
     const hmac = crypto.createHmac('sha256', key).update(payload).digest('hex');
     return Buffer.from(JSON.stringify({ payload, hmac })).toString('base64');
   }

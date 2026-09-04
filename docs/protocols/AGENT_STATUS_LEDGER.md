@@ -6,6 +6,8 @@
 
 # Agent Status Ledger
 
+- **Updated: 2026-09-03T19:06:58.248ZZ** — Committed: 9811689cf fix(gate): C3 judges intent — routing may be fuzzy, authorization may not
+
 - **Updated: 2026-09-02T17:48:44.254ZZ** — TNF web-dev audit remediation pass: 9
   fixes applied (task-pusher gateDecisions
 
@@ -159,7 +161,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-03T06:30:32.721Z** — handoff
+Updated: **2026-09-03T07:10:25.480Z** — handoff
+`fe6ae3f4-e4be-4dd6-9573-4669e644fc2a` (`de0951458dc5`).
+`f8626aee-da05-4dae-acc8-3c141e625b78` (`3e124161b1c5`).
 `47b770cb-017e-45ce-84de-0d4c581586ac` (`30a56dfe5b22`).
 `88a99725-f27e-4300-b5ac-08245300429f` (`1f126bd8efef`).
 `14a6878c-71a1-4ecb-b39a-3acc555e5348` (`cdb2aa48117c`).
@@ -395,10 +399,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
-| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
+| Priority | Action                                                                                                  |
+| -------- | ------------------------------------------------------------------------------------------------------- |
+| **P0**   | Concurrent session to resolve handoff parent-vs-module endgame and track commands/handoff.ts when ready |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1767,3 +1770,9 @@ tnf-cli (cli.ts, slashCommands.ts) | ✅ COMPLETE |
 
 | 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (47b770cb-017e-45ce-84de-0d4c581586ac) | ✅ HANDOFF_READY |
+
+| 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(f8626aee-da05-4dae-acc8-3c141e625b78) | ✅ HANDOFF_READY |
+
+| 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(fe6ae3f4-e4be-4dd6-9573-4669e644fc2a) | ✅ HANDOFF_READY |

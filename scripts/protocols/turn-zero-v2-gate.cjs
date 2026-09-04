@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
 const { hydrateStage } = require('./frontload-manifest.cjs');
+const { validateHandoff } = require('./validate-session-handoff.cjs');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const CANONICAL = 'whodaniel/tnf-monorepo';
@@ -75,19 +76,40 @@ function repoReceipt() {
 }
 
 const VALID = {
-  domain: new Set(['corporate', 'agency', 'personal', 'unknown']),
+  domain: new Set(['core', 'agency', 'personal', 'unknown']),
   destination: new Set(['oss_runtime', 'public_contract', 'private_control_plane', 'satellite', 'external', 'unknown']),
   residency: new Set(['product_state', 'bounded_working', 'external_durable', 'secret_machine_local', 'unknown']),
   sensitivity: new Set(['public', 'internal', 'private', 'restricted', 'unknown']),
 };
-function envOrUnknown(name) { return String(process.env[name] || 'unknown').trim().toLowerCase(); }
-function classificationReceipt() {
-  return {
-    workDomain: envOrUnknown('TNF_WORK_DOMAIN'),
-    artifactDestination: envOrUnknown('TNF_ARTIFACT_DESTINATION'),
-    dataResidency: envOrUnknown('TNF_DATA_RESIDENCY'),
-    sensitivity: envOrUnknown('TNF_DATA_SENSITIVITY'),
-  };
+// TURN_ZERO_MANDATE.md: "Classification is recorded in handoff state." The
+// handoff is the record; the TNF_* environment variables are explicitly
+// "environment hints" (same doc). Read the record first and let a hint override
+// it, recording which source won so the receipt stays auditable (D5, Gate 4).
+const CLASSIFICATION_AXES = [
+  ['workDomain', 'work_domain', 'TNF_WORK_DOMAIN'],
+  ['artifactDestination', 'artifact_destination', 'TNF_ARTIFACT_DESTINATION'],
+  ['dataResidency', 'data_residency', 'TNF_DATA_RESIDENCY'],
+  ['sensitivity', 'sensitivity', 'TNF_DATA_SENSITIVITY'],
+];
+function classificationReceipt(recordedClassification) {
+  const record = recordedClassification || {};
+  const value = {};
+  const source = {};
+  for (const [key, recordedKey, envName] of CLASSIFICATION_AXES) {
+    const hint = String(process.env[envName] || '').trim().toLowerCase();
+    const recorded = String(record[recordedKey] || '').trim().toLowerCase();
+    if (hint && hint !== 'unknown') {
+      value[key] = hint;
+      source[key] = recorded && recorded !== hint ? `env-override(handoff=${recorded})` : 'env';
+    } else if (recorded) {
+      value[key] = recorded;
+      source[key] = 'handoff';
+    } else {
+      value[key] = 'unknown';
+      source[key] = 'unset';
+    }
+  }
+  return { ...value, source };
 }
 function validateClassification(c) {
   const errors = [];
@@ -99,7 +121,7 @@ function validateClassification(c) {
   if (publicDest && ['private', 'restricted'].includes(c.sensitivity)) errors.push(`${c.sensitivity} content cannot target ${c.artifactDestination}`);
   if (c.dataResidency === 'secret_machine_local' && c.artifactDestination !== 'external') errors.push('secret_machine_local data must remain external to repository source');
   if (['personal', 'agency'].includes(c.workDomain) && publicDest && c.sensitivity !== 'public') errors.push('personal/agency material must be sanitized to public product-neutral form before public destination');
-  const unresolved = Object.values(c).some((value) => value === 'unknown');
+  const unresolved = CLASSIFICATION_AXES.some(([key]) => c[key] === 'unknown');
   return { ok: errors.length === 0 && !unresolved, unresolved, errors };
 }
 
@@ -172,6 +194,7 @@ function orientationSummary(repository) {
       freshAgainstCurrentHead: relation.relation === 'exact' || relation.relation === 'ancestor',
       nextActions: Array.isArray(handoff.next_actions) ? handoff.next_actions : [],
       resumeChecklist: Array.isArray(handoff.continuation?.resume_checklist) ? handoff.continuation.resume_checklist : [],
+      classification: handoff.classification && typeof handoff.classification === 'object' ? handoff.classification : null,
     } : null,
     canonicalDevelopment: productMap?.policy?.canonicalDevelopment || CANONICAL,
     onboardingContractPresent: fs.existsSync(path.join(ROOT, ONBOARDING_CONTRACT)),
@@ -214,13 +237,13 @@ function persistReceipt(payload) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const repository = repoReceipt();
-  const classification = classificationReceipt();
+  const orientation = orientationSummary(repository);
+  const classification = classificationReceipt(orientation.handoff?.classification);
   const classificationValidation = validateClassification(classification);
   const capabilities = capabilityReceipt();
   const stageA = hydrateStage({ root: ROOT, stage: 'A', consumer: args.consumer });
   const taskHydration = hydrationReceipt(args.task || process.env.TNF_TASK || '');
   const taskHydrationState = taskHydrationStatus(taskHydration);
-  const orientation = orientationSummary(repository);
   const blockers = [];
   const warnings = [];
 
@@ -234,6 +257,22 @@ function main() {
   if (orientation.handoff?.relationToCurrentHead === 'ancestor' && (orientation.handoff.commitsSince || 0) > 0) warnings.push(`SESSION_HANDOFF_LATEST is an ancestor ${orientation.handoff.commitsSince} commit(s) behind current HEAD; inspect intervening commits before relying on continuation details`);
   for (const item of taskHydrationState) {
     if (!item.present && /USER_CONTEXT_STORAGE/.test(item.path)) warnings.push(`${item.path} is not on this branch; storage work may live on an active PR and must be reconciled before implementation`);
+  }
+  // Validate-on-read: the handoff is a plain file in a shared checkout, so any
+  // agent with a file-write tool can replace it. Never classify or resume from
+  // a record that does not satisfy its own schema.
+  const handoffValidation = validateHandoff();
+  if (!handoffValidation.ok) {
+    const detail = handoffValidation.findings.slice(0, 3).map((f) => `${f.pointer || '<root>'}: ${f.message}`).join('; ');
+    warnings.push(`SESSION_HANDOFF_LATEST fails its schema (${handoffValidation.findings.length} finding(s)) — treat continuation context as unknown: ${detail}`);
+    for (const signal of handoffValidation.signals) warnings.push(`handoff fabrication signal — ${signal}`);
+    if (args.requireWriteReady) blockers.push(`SESSION_HANDOFF_LATEST is not schema-valid; recover it before mutating (node scripts/protocols/validate-session-handoff.cjs)`);
+  }
+
+  for (const [key] of CLASSIFICATION_AXES) {
+    if (String(classification.source[key]).startsWith('env-override')) {
+      warnings.push(`classification ${key} taken from environment hint, overriding the recorded handoff value (${classification.source[key]}); the handoff is the record per TURN_ZERO_MANDATE`);
+    }
   }
   if (args.requireWriteReady && !classificationValidation.ok) {
     blockers.push(...classificationValidation.errors);
@@ -275,6 +314,7 @@ function main() {
       for (const action of orientation.handoff.nextActions.slice(0, 4)) console.log(`  next: ${action}`);
     }
     console.log(`- classification: ${classification.workDomain} / ${classification.artifactDestination} / ${classification.dataResidency} / ${classification.sensitivity}`);
+    console.log(`  source: ${CLASSIFICATION_AXES.map(([key]) => `${key}=${classification.source[key]}`).join(' ')}`);
     console.log('- task-scoped hydration plan:');
     for (const item of taskHydrationState) console.log(`  ${item.present ? 'OK' : 'MISS'} ${item.path}`);
     warnings.forEach((w) => console.log(`▲ ${w}`));

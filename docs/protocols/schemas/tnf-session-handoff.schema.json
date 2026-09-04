@@ -26,39 +26,84 @@
     "next_actions"
   ],
   "properties": {
-    "spec": { "type": "string", "const": "tnf/session-handoff/0.2" },
-    "handoff_id": { "type": "string", "format": "uuid" },
-    "created_at": { "type": "string", "format": "date-time" },
-    "repository": { "type": "string", "minLength": 1 },
+    "spec": {
+      "type": "string",
+      "const": "tnf/session-handoff/0.2"
+    },
+    "handoff_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
     "repository_context": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["canonical_source", "actual", "publication_targets"],
+      "required": [
+        "canonical_source",
+        "actual",
+        "publication_targets"
+      ],
       "properties": {
         "canonical_source": {
           "type": "string",
           "const": "whodaniel/tnf-monorepo"
         },
-        "actual": { "type": "string", "minLength": 1 },
-        "origin": { "type": "string" },
-        "dirty": { "type": "boolean" },
-        "operation_in_progress": { "type": ["string", "null"] },
+        "actual": {
+          "type": "string",
+          "minLength": 1
+        },
+        "origin": {
+          "type": "string"
+        },
+        "dirty": {
+          "type": "boolean"
+        },
+        "operation_in_progress": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "publication_targets": {
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["whodaniel/The-New-Fuse", "whodaniel/fuse-control-plane"]
+            "enum": [
+              "whodaniel/The-New-Fuse",
+              "whodaniel/fuse-control-plane"
+            ]
           },
           "uniqueItems": true
         }
       }
     },
-    "branch": { "type": "string", "minLength": 1 },
-    "head_sha": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
-    "protocol_ack": { "type": "string", "const": "TNF_PROTOCOL_ACK" },
+    "branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,40}$"
+    },
+    "protocol_ack": {
+      "type": "string",
+      "const": "TNF_PROTOCOL_ACK"
+    },
     "sensitive_scope": {
       "type": "string",
-      "enum": ["public", "internal", "private", "restricted"]
+      "enum": [
+        "public",
+        "internal",
+        "private",
+        "restricted"
+      ]
     },
     "classification": {
       "type": "object",
@@ -72,7 +117,12 @@
       "properties": {
         "work_domain": {
           "type": "string",
-          "enum": ["core", "agency", "personal", "unknown"]
+          "enum": [
+            "core",
+            "agency",
+            "personal",
+            "unknown"
+          ]
         },
         "artifact_destination": {
           "type": "string",
@@ -97,23 +147,38 @@
         },
         "sensitivity": {
           "type": "string",
-          "enum": ["public", "internal", "private", "restricted", "unknown"]
+          "enum": [
+            "public",
+            "internal",
+            "private",
+            "restricted",
+            "unknown"
+          ]
         }
       }
     },
     "capabilities": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["required", "staffed_by"],
+      "required": [
+        "required",
+        "staffed_by"
+      ],
       "properties": {
         "required": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         },
         "staffed_by": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         }
       }
@@ -127,11 +192,18 @@
         "satellites"
       ],
       "properties": {
-        "public_runtime_affected": { "type": "boolean" },
-        "control_plane_affected": { "type": "boolean" },
+        "public_runtime_affected": {
+          "type": "boolean"
+        },
+        "control_plane_affected": {
+          "type": "boolean"
+        },
         "satellites": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         }
       }
@@ -141,28 +213,50 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "state"],
+        "required": [
+          "id",
+          "state"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "state": { "type": "string", "minLength": 1 },
-          "observed_at": { "type": "string" },
-          "value": { "type": "string" }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_at": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
         }
       }
     },
     "project_ids": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 },
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "uniqueItems": true
     },
     "work_summary": {
       "type": "array",
       "minItems": 1,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "changed_paths": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 },
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "uniqueItems": true
     },
     "verification": {
@@ -175,40 +269,72 @@
         "supabase_rls_audit"
       ],
       "properties": {
-        "privacy_guard": { "$ref": "#/$defs/checkState" },
-        "secret_sweep": { "$ref": "#/$defs/checkState" },
-        "docs_pii_guard": { "$ref": "#/$defs/checkState" },
-        "supabase_rls_audit": { "$ref": "#/$defs/checkState" },
-        "notes": { "type": "string" }
+        "privacy_guard": {
+          "$ref": "#/$defs/checkState"
+        },
+        "secret_sweep": {
+          "$ref": "#/$defs/checkState"
+        },
+        "docs_pii_guard": {
+          "$ref": "#/$defs/checkState"
+        },
+        "supabase_rls_audit": {
+          "$ref": "#/$defs/checkState"
+        },
+        "notes": {
+          "type": "string"
+        }
       }
     },
     "continuation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["owner", "targets", "priority", "resume_checklist"],
+      "required": [
+        "owner",
+        "targets",
+        "priority",
+        "resume_checklist"
+      ],
       "properties": {
-        "owner": { "type": "string", "minLength": 1 },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
         "targets": {
           "type": "array",
           "minItems": 1,
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         },
         "priority": {
           "type": "string",
-          "enum": ["low", "medium", "high", "critical"]
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
         },
         "resume_checklist": {
           "type": "array",
           "minItems": 1,
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
     "next_actions": {
       "type": "array",
       "minItems": 1,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "artifacts": {
       "type": "object",
@@ -216,23 +342,96 @@
       "properties": {
         "commits": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         },
         "deployment_urls": {
           "type": "array",
-          "items": { "type": "string", "format": "uri" },
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
           "uniqueItems": true
         },
         "database_migrations": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
+        }
+      }
+    },
+    "reflection": {
+      "type": "object",
+      "description": "Turn End reflection (Axiom 5 Persistence, Axiom 8 / D3 Non-Temporal Proliferation): what this session learned, and what reusable capability it actualized. Produced by scripts/protocols/turn-end-reflection.cjs. Absent means the question was never asked; explicit \"none\" means it was asked and answered.",
+      "additionalProperties": false,
+      "required": [
+        "lessons",
+        "skills"
+      ],
+      "properties": {
+        "lessons": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "considered"
+          ],
+          "properties": {
+            "considered": {
+              "type": "boolean"
+            },
+            "recorded": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rationale": {
+              "type": "string",
+              "description": "If nothing was recorded, why not."
+            }
+          }
+        },
+        "skills": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "considered"
+          ],
+          "properties": {
+            "considered": {
+              "type": "boolean"
+            },
+            "proposed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "overlap_reviewed": {
+              "type": "boolean"
+            },
+            "rationale": {
+              "type": "string"
+            }
+          }
         }
       }
     }
   },
   "$defs": {
-    "checkState": { "type": "string", "enum": ["pass", "fail", "na"] }
+    "checkState": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "na"
+      ]
+    }
   }
 }

@@ -22,6 +22,8 @@ module.exports = {
     '^@the-new-fuse/a2a-core/(.*)$': '<rootDir>/../../packages/a2a-core/src/$1',
     '^@the-new-fuse/database$': '<rootDir>/../../packages/database/src/index.ts',
     '^@the-new-fuse/database/(.*)$': '<rootDir>/../../packages/database/src/$1',
+    '^@the-new-fuse/control-plane-contracts$': '<rootDir>/../../packages/control-plane-contracts/src/index.ts',
+    '^@the-new-fuse/control-plane-contracts/(.*)$': '<rootDir>/../../packages/control-plane-contracts/src/$1',
     '^@the-new-fuse/types$': '<rootDir>/../../packages/types/src/index.ts',
     '^@the-new-fuse/types/(.*)$': '<rootDir>/../../packages/types/src/$1',
     '^node-fetch$': '<rootDir>/test/mocks/node-fetch.ts',
