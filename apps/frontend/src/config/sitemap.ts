@@ -84,6 +84,12 @@ export const sitemap: SiteMapNode[] = [
           { path: '/dashboard/architecture', title: 'Architecture', requiresAuth: true },
           { path: '/dashboard/observability', title: 'Observability', requiresAuth: true },
           { path: '/dashboard/logs', title: 'Logs', requiresAuth: true },
+          {
+            path: '/google-hub',
+            title: 'Google & Spark Hub',
+            requiresAuth: true,
+            lifecycle: 'production',
+          },
           { path: '/dashboard/settings', title: 'Dashboard Settings', requiresAuth: true },
           { path: '/dashboard/agents', title: 'Agent Dashboard', requiresAuth: true },
           { path: '/dashboard/agents/new', title: 'Create Agent', requiresAuth: true },

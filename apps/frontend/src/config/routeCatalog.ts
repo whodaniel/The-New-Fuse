@@ -43,6 +43,11 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     path: '/ai-portal/pfp-prompts',
     description: 'Prompt editing catalog connected to portrait generation',
   },
+  {
+    name: 'Google & Spark Hub',
+    path: '/google-hub',
+    description: 'Google Tasks, Gemini Spark Task Ingestion, and AI Studio Prompt Laboratory',
+  },
   { name: 'AI Agent Portal Index', path: '/ai-agent-portal', description: 'Agent Portal Index' },
   { name: 'Chat', path: '/chat', description: 'Basic Chat Interface' },
   { name: 'Chat Page', path: '/chat-page', description: 'Dedicated Chat Page' },
