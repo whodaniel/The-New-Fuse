@@ -21,3 +21,9 @@ could be exposed in logs/headers) is a security risk, as it can be predictable.
 **Prevention:** Use `crypto.randomBytes()` from the `node:crypto` library to
 generate secure identifiers where randomness is required for security tracking
 and identification.
+
+## $(date +%Y-%m-%d) - Rate Limiting via Unbounded Map
+
+**Vulnerability:** A custom rate limiter was implemented using a JavaScript `Map` to track login/registration attempts per IP address, but without a mechanism to delete expired entries, introducing an unbounded memory leak DoS risk.
+**Learning:** When using in-memory data structures (like a `Map` or `Set`) to track ephemeral client data over time, the data structure will grow indefinitely unless actively pruned.
+**Prevention:** Always implement a cleanup mechanism (such as a periodic `setInterval` that is `.unref()`ed, or an LRU cache) when storing time-bound data per unique client identifier in a long-running process.
