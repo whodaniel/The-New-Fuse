@@ -1,13 +1,13 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist',
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(import.meta.dirname, 'src/index.ts'),
       name: 'UIConsolidated',
       fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`,
     },
@@ -31,16 +31,16 @@ export default defineConfig({
         '@radix-ui/react-dialog',
         '@radix-ui/react-scroll-area',
         '@radix-ui/react-tooltip',
-        '@radix-ui/react-slot'
+        '@radix-ui/react-slot',
       ],
       output: {
         globals: {
           react: 'React',
-          'react-dom': 'ReactDOM'
-        }
-      }
+          'react-dom': 'ReactDOM',
+        },
+      },
     },
     sourcemap: true,
     emptyOutDir: true,
-  }
+  },
 });

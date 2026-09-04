@@ -6,7 +6,13 @@
 
 # Agent Status Ledger
 
-- **Updated: 2026-09-03T19:06:58.248ZZ** — Committed: 9811689cf fix(gate): C3 judges intent — routing may be fuzzy, authorization may not
+- **Updated: 2026-09-04T19:28:09.266ZZ** — Added 7 new script file(s)
+
+- **Updated: 2026-09-04T19:24:37.245ZZ** — Added 7 new script file(s)
+
+- **Updated: 2026-09-04T18:42:48.631ZZ** — Added 7 new script file(s)
+
+- **Updated: 2026-09-04T18:41:33.892ZZ** — Added 7 new script file(s)
 
 - **Updated: 2026-09-02T17:48:44.254ZZ** — TNF web-dev audit remediation pass: 9
   fixes applied (task-pusher gateDecisions
@@ -161,7 +167,15 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-03T07:10:25.480Z** — handoff
+Updated: **2026-09-04T20:30:12.900Z** — handoff
+`c063a700-0dd9-45c2-b313-f928a0c88e1e` (`0a62bca4f4f4`).
+`93ba116b-817d-41b2-b5c7-8cd4c16482e4` (`0a62bca4f4f4`).
+`363412ce-7b85-4e47-84a2-cd9bb765acad` (`f9507a3ae67a`).
+`304085e8-3b36-4267-b4fa-87105b0e8900` (`d913de4ac8df`).
+`1ea74915-826f-425d-8c88-8908984e4b7b` (`727a95254aa9`).
+`475f8ad7-5f68-4895-bb1a-6c704e82d2d7` (`7a67f67648b9`).
+`77b6032f-48fe-4a49-ad03-e465317b9b1d` (`9e6e75f1ef16`).
+`ec23c078-8f33-4f51-a9e5-aefa221d89cd` (`ddca6c62249c`).
 `fe6ae3f4-e4be-4dd6-9573-4669e644fc2a` (`de0951458dc5`).
 `f8626aee-da05-4dae-acc8-3c141e625b78` (`3e124161b1c5`).
 `47b770cb-017e-45ce-84de-0d4c581586ac` (`30a56dfe5b22`).
@@ -1776,3 +1790,63 @@ tnf-cli (cli.ts, slashCommands.ts) | ✅ COMPLETE |
 
 | 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (fe6ae3f4-e4be-4dd6-9573-4669e644fc2a) | ✅ HANDOFF_READY |
+
+| 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(b988f862-11d6-476f-83e2-eaee7e225012) | ✅ HANDOFF_READY |
+
+| 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(854c17ec-aebe-4e76-ac70-3810c0f1e7ee) | ✅ HANDOFF_READY |
+
+| 2026-09-03 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(8aa24763-cd13-4766-a50e-0f9c33d0e8ee) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(4ab6c352-bc91-4024-9f57-dc2506c039aa) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c0c4bb25-edb1-4531-80b5-a1c4ad6ada9e) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ac89db73-8dce-41cf-99f9-17bf2ec2c056) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(bad6f6ce-82d0-4332-b0fb-d3463915d0e7) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(04ad726a-03c0-43fe-8db3-196c87163860) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(269ab5ef-878c-4fb7-95dd-362cb4eb7be3) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(02b4d892-f43e-44ad-b693-848d2fb7d551) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(aa381254-a379-409b-92ac-6277a9d1f39c) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ca8741e1-25c6-41d0-adcc-701d61a6f92a) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(ec23c078-8f33-4f51-a9e5-aefa221d89cd) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(77b6032f-48fe-4a49-ad03-e465317b9b1d) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(475f8ad7-5f68-4895-bb1a-6c704e82d2d7) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(1ea74915-826f-425d-8c88-8908984e4b7b) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(304085e8-3b36-4267-b4fa-87105b0e8900) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(363412ce-7b85-4e47-84a2-cd9bb765acad) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(93ba116b-817d-41b2-b5c7-8cd4c16482e4) | ✅ HANDOFF_READY |
+
+| 2026-09-04 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(c063a700-0dd9-45c2-b313-f928a0c88e1e) | ✅ HANDOFF_READY |

@@ -1,0 +1,5 @@
+# Exclude oversized visualization artifacts from Cloudflare Pages deployment
+# Cloudflare Pages has a 25 MiB file size limit
+visualizations/semantic/wordcount_report.html
+visualizations/semantic/unified_graph_explorer.html
+visualizations/semantic/unified_graph.json.gz

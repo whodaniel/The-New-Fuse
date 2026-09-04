@@ -1,47 +1,47 @@
 # LLM Ranking Report
 
-Generated: 2026-09-02T00:01:20.711Z Intel Snapshot: intel_1788307240107
+Generated: 2026-09-04T12:30:33.562Z Intel Snapshot: intel_1788465645436
 
 ## Summary
 
 | Metric          | Value |
 | --------------- | ----- |
 | Models Scored   | 37    |
-| Live on NVIDIA  | 3     |
-| Recommendations | 133   |
+| Live on NVIDIA  | 1     |
+| Recommendations | 132   |
 | Add New         | 0     |
-| Reorder         | 5     |
-| Remove EOL      | 20    |
-| Demote Unranked | 108   |
+| Reorder         | 3     |
+| Remove EOL      | 19    |
+| Demote Unranked | 110   |
 
 ## Composite Rankings
 
 | Rank | Model                                          | Arena Score | Health  | Latency |
 | ---- | ---------------------------------------------- | ----------- | ------- | ------- |
-| 1    | `meta/llama-3.2-90b-vision-instruct`           | -           | live    | 2316ms  |
-| 2    | `openai/gpt-oss-120b`                          | -           | live    | 12486ms |
-| 3    | `openai/gpt-oss-20b`                           | -           | live    | 342ms   |
-| 4    | `meta/llama-guard-4-12b`                       | -           | timeout | -       |
-| 5    | `google/gemma-4-31b-it`                        | -           | timeout | -       |
-| 6    | `z-ai/glm-5.1`                                 | -           | eol     | -       |
-| 7    | `moonshotai/kimi-k2.6`                         | -           | error   | -       |
-| 8    | `minimaxai/minimax-m2.7`                       | -           | eol     | -       |
-| 9    | `minimaxai/minimax-m2.5`                       | -           | eol     | -       |
-| 10   | `deepseek-ai/deepseek-v4-flash`                | -           | eol     | -       |
-| 11   | `deepseek-ai/deepseek-v4-pro`                  | -           | eol     | -       |
-| 12   | `qwen/qwen3.5-397b-a17b`                       | -           | eol     | -       |
-| 13   | `qwen/qwen3.5-122b-a10b`                       | -           | eol     | -       |
-| 14   | `mistralai/mistral-large-3-675b-instruct-2512` | -           | eol     | -       |
-| 15   | `mistralai/mistral-medium-3.5-128b`            | -           | eol     | -       |
-| 16   | `mistralai/devstral-2-123b-instruct-2512`      | -           | error   | -       |
-| 17   | `mistralai/mistral-small-4-119b-2603`          | -           | eol     | -       |
-| 18   | `mistralai/magistral-small-2506`               | -           | error   | -       |
-| 19   | `mistralai/ministral-14b-instruct-2512`        | -           | eol     | -       |
-| 20   | `google/gemma-3n-e4b-it`                       | -           | eol     | -       |
-| 21   | `google/gemma-3-27b-it`                        | -           | eol     | -       |
-| 22   | `meta/llama-4-maverick-17b-128e-instruct`      | -           | eol     | -       |
-| 23   | `meta/llama-3.3-70b-instruct`                  | -           | eol     | -       |
-| 24   | `meta/llama-3.1-405b-instruct`                 | -           | error   | -       |
+| 1    | `openai/gpt-oss-20b`                           | -           | live    | 1191ms  |
+| 2    | `meta/llama-3.2-90b-vision-instruct`           | -           | timeout | -       |
+| 3    | `meta/llama-guard-4-12b`                       | -           | timeout | -       |
+| 4    | `google/gemma-4-31b-it`                        | -           | timeout | -       |
+| 5    | `z-ai/glm-5.1`                                 | -           | eol     | -       |
+| 6    | `moonshotai/kimi-k2.6`                         | -           | error   | -       |
+| 7    | `minimaxai/minimax-m2.7`                       | -           | eol     | -       |
+| 8    | `minimaxai/minimax-m2.5`                       | -           | eol     | -       |
+| 9    | `deepseek-ai/deepseek-v4-flash`                | -           | eol     | -       |
+| 10   | `deepseek-ai/deepseek-v4-pro`                  | -           | eol     | -       |
+| 11   | `qwen/qwen3.5-397b-a17b`                       | -           | eol     | -       |
+| 12   | `qwen/qwen3.5-122b-a10b`                       | -           | eol     | -       |
+| 13   | `mistralai/mistral-large-3-675b-instruct-2512` | -           | eol     | -       |
+| 14   | `mistralai/mistral-medium-3.5-128b`            | -           | eol     | -       |
+| 15   | `mistralai/devstral-2-123b-instruct-2512`      | -           | error   | -       |
+| 16   | `mistralai/mistral-small-4-119b-2603`          | -           | eol     | -       |
+| 17   | `mistralai/magistral-small-2506`               | -           | error   | -       |
+| 18   | `mistralai/ministral-14b-instruct-2512`        | -           | eol     | -       |
+| 19   | `google/gemma-3n-e4b-it`                       | -           | eol     | -       |
+| 20   | `google/gemma-3-27b-it`                        | -           | eol     | -       |
+| 21   | `meta/llama-4-maverick-17b-128e-instruct`      | -           | eol     | -       |
+| 22   | `meta/llama-3.3-70b-instruct`                  | -           | eol     | -       |
+| 23   | `meta/llama-3.1-405b-instruct`                 | -           | error   | -       |
+| 24   | `openai/gpt-oss-120b`                          | -           | eol     | -       |
 | 25   | `microsoft/phi-4-multimodal-instruct`          | -           | eol     | -       |
 | 26   | `microsoft/phi-4-mini-instruct`                | -           | eol     | -       |
 | 27   | `bytedance/seed-oss-36b-instruct`              | -           | eol     | -       |
@@ -53,8 +53,7 @@ Generated: 2026-09-02T00:01:20.711Z Intel Snapshot: intel_1788307240107
 
 | Action     | Model                                            | Current | Proposed | Reason                                                      |
 | ---------- | ------------------------------------------------ | ------- | -------- | ----------------------------------------------------------- |
-| remove-eol | `qwen/qwen3-next-80b-a3b-instruct`               | 19      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
-| remove-eol | `qwen/qwen3-coder-480b-a35b-instruct`            | 25      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
+| remove-eol | `openai/gpt-oss-120b`                            | 17      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `abacusai/dracarys-llama-3.1-70b-instruct`       | 55      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `google/gemma-3n-e4b-it`                         | 89      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `mistralai/ministral-14b-instruct-2512`          | 129     | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
@@ -73,11 +72,9 @@ Generated: 2026-09-02T00:01:20.711Z Intel Snapshot: intel_1788307240107
 | remove-eol | `z-ai/glm-5.1`                                   | 54010   | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `meta/llama-4-maverick-17b-128e-instruct`        | 54011   | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `mistralai/mistral-large-3-675b-instruct-2512`   | 63007   | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
-| reorder    | `meta/llama-3.2-90b-vision-instruct`             | 111     | 0        | Arena score change suggests priority shift of 111 positions |
-| reorder    | `openai/gpt-oss-120b`                            | 17      | 1        | Arena score change suggests priority shift of 16 positions  |
-| reorder    | `openai/gpt-oss-20b`                             | 253     | 2        | Arena score change suggests priority shift of 251 positions |
-| reorder    | `meta/llama-guard-4-12b`                         | 113     | 3        | Arena score change suggests priority shift of 110 positions |
-| reorder    | `google/gemma-4-31b-it`                          | 1       | 4        | Arena score change suggests priority shift of 3 positions   |
+| reorder    | `openai/gpt-oss-20b`                             | 253     | 0        | Arena score change suggests priority shift of 253 positions |
+| reorder    | `meta/llama-3.2-90b-vision-instruct`             | 111     | 1        | Arena score change suggests priority shift of 110 positions |
+| reorder    | `meta/llama-guard-4-12b`                         | 113     | 2        | Arena score change suggests priority shift of 111 positions |
 | demote     | `nvidia/nemotron-3-ultra-550b-a55b`              | 0       | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `z-ai/glm-5.2`                                   | 2       | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `minimaxai/minimax-m3`                           | 3       | -        | Model not found in arena rankings; consider demoting        |
@@ -93,6 +90,8 @@ Generated: 2026-09-02T00:01:20.711Z Intel Snapshot: intel_1788307240107
 | demote     | `nvidia/nemotron-3-embed-1b`                     | 15      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `nvidia/nemotron-3.5-lightning-30b-a3b`          | 16      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `nvidia/riva-translate-4b-instruct-v2`           | 17      | -        | Model not found in arena rankings; consider demoting        |
+| demote     | `qwen/qwen3-next-80b-a3b-instruct`               | 19      | -        | Model not found in arena rankings; consider demoting        |
+| demote     | `qwen/qwen3-coder-480b-a35b-instruct`            | 25      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `nvidia/llama-3.3-nemotron-super-49b-v1.5`       | 29      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `01-ai/yi-large`                                 | 53      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `adept/fuyu-8b`                                  | 57      | -        | Model not found in arena rankings; consider demoting        |

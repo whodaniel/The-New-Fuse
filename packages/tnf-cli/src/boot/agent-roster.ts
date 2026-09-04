@@ -301,7 +301,7 @@ function fetchRedisRegistryRaw(): { ok: true; raw: string } | { ok: false; error
 }
 
 /** Canonical TNF protocol network agents (wrappers / core processes). */
-export const PROTOCOL_NETWORK_AGENTS: Array<{
+export const PROTOCOL_NETWORK_AGENTS: ReadonlyArray<{
   name: string;
   role: string;
   platform: string;
@@ -309,17 +309,16 @@ export const PROTOCOL_NETWORK_AGENTS: Array<{
 }> = [
   {
     name: 'antigravity',
-    // Platform wrappers are workers by default. The baton holder is master-clock
-    // (ORCHESTRATOR-{ts}), not any particular fulfillment platform. Orchestration
-    // capabilities may still be assigned via capabilities / workerAction.
-    role: 'worker',
+    // Platform wrappers are dynamic runners. Roles are assigned dynamically via
+    // registration/capabilities rather than hardcoded to specific models or platforms.
+    role: 'dynamic',
     platform: 'antigravity',
     processPattern: 'antigravity-redis-wrapper',
   },
-  { name: 'claude', role: 'broker', platform: 'claude', processPattern: 'claude-redis-wrapper' },
-  { name: 'gemini', role: 'worker', platform: 'gemini', processPattern: 'gemini-redis-wrapper' },
-  { name: 'jules', role: 'worker', platform: 'jules', processPattern: 'jules-redis-wrapper' },
-  { name: 'pi', role: 'worker', platform: 'pi', processPattern: 'pi-redis-wrapper' },
+  { name: 'claude', role: 'dynamic', platform: 'claude', processPattern: 'claude-redis-wrapper' },
+  { name: 'gemini', role: 'dynamic', platform: 'gemini', processPattern: 'gemini-redis-wrapper' },
+  { name: 'jules', role: 'dynamic', platform: 'jules', processPattern: 'jules-redis-wrapper' },
+  { name: 'pi', role: 'dynamic', platform: 'pi', processPattern: 'pi-redis-wrapper' },
   {
     name: 'model-watchdog',
     role: 'broker',
@@ -363,10 +362,13 @@ export function discoverNetworkAgents(nowMs = Date.now()): RawRegistryAgent[] {
   const iso = new Date(nowMs).toISOString();
   return PROTOCOL_NETWORK_AGENTS.map((agent) => {
     const running = isProcessRunning(agent.processPattern);
+    const envRole =
+      process.env[`AGENT_ROLE_${agent.name.toUpperCase()}`] ||
+      (agent.name === 'antigravity' ? process.env.AGENT_ROLE : undefined);
     return {
       id: `network:${agent.platform}`,
       name: agent.name,
-      role: agent.role,
+      role: envRole || agent.role,
       platform: agent.platform,
       status: running ? 'active' : 'offline',
       lastSeen: running ? iso : null,

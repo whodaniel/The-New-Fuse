@@ -4,9 +4,9 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title FractionalizationVault
@@ -368,7 +368,7 @@ contract FractionalizationVault is ERC20, IERC721Receiver, ReentrancyGuard, Acce
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC20, AccessControl)
+        override(AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

@@ -2,314 +2,308 @@
 
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { glob } from 'glob';
 
-function slugify(input) {
-  return String(input)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .replace(/-+/g, '-');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const ROOT = path.resolve(__dirname, '../..');
+const DEFAULT_OUTPUT_DIR = path.join(ROOT, 'data/agent-registry');
+
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const result = { outputDir: DEFAULT_OUTPUT_DIR };
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--out' && i + 1 < args.length) {
+      result.outputDir = path.resolve(args[i + 1]);
+      i++;
+    }
+  }
+  return result;
 }
 
-function parseFrontMatter(raw) {
-  const text = raw.replace(/^\uFEFF/, '');
-  if (!text.startsWith('---\n')) return { frontmatter: {}, body: text };
-  const end = text.indexOf('\n---\n', 4);
-  if (end === -1) return { frontmatter: {}, body: text };
+async function findAgentFiles() {
+  const patterns = [
+    'packages/**/agents/*.md',
+    '.agent/agents/*.md',
+    'apps/**/agents/*.md',
+  ];
+  const files = [];
+  for (const pattern of patterns) {
+    const matches = await glob(pattern, { cwd: ROOT, absolute: true });
+    files.push(...matches);
+  }
+  return files;
+}
 
-  const fmText = text.slice(4, end);
-  const body = text.slice(end + 5).trim();
-  const frontmatter = {};
-  let currentKey = null;
+async function parseAgentFile(filePath) {
+  const content = await fs.readFile(filePath, 'utf-8');
+  const lines = content.split('\n');
+  
+  const agent = {
+    id: '',
+    name: '',
+    description: '',
+    department: '',
+    category: '',
+    capabilities: [],
+    tags: [],
+    relationships: [],
+    sourceFile: path.relative(ROOT, filePath),
+  };
 
-  for (const line of fmText.split(/\r?\n/)) {
-    const kv = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
-    if (kv) {
-      currentKey = kv[1];
-      const rawValue = kv[2].trim();
-      if (!rawValue) {
-        frontmatter[currentKey] = [];
-      } else if (
-        (rawValue.startsWith('"') && rawValue.endsWith('"')) ||
-        (rawValue.startsWith("'") && rawValue.endsWith("'"))
-      ) {
-        frontmatter[currentKey] = rawValue.slice(1, -1);
-      } else {
-        frontmatter[currentKey] = rawValue;
-      }
+  let inFrontmatter = false;
+  let frontmatterEnd = -1;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (i === 0 && line === '---') {
+      inFrontmatter = true;
       continue;
     }
-
-    const listItem = line.match(/^\s*-\s+(.*)$/);
-    if (listItem && currentKey) {
-      if (!Array.isArray(frontmatter[currentKey])) frontmatter[currentKey] = [];
-      frontmatter[currentKey].push(listItem[1].trim());
-    }
-  }
-
-  return { frontmatter, body };
-}
-
-function inferAgentType(id, metadata) {
-  const hint = `${id} ${JSON.stringify(metadata || {})}`.toLowerCase();
-  if (hint.includes('mcp')) return 'mcp';
-  if (hint.includes('api')) return 'api';
-  if (hint.includes('gemini') || hint.includes('openai') || hint.includes('external')) return 'external';
-  return 'local';
-}
-
-function extractCapabilities(body) {
-  const lines = body.split(/\r?\n/);
-  const capabilities = new Set();
-  const tools = new Set();
-
-  for (const line of lines) {
-    const bullet = line.match(/^\s*-\s+(.*)$/);
-    if (!bullet) continue;
-    const item = bullet[1].replace(/[`*]/g, '').trim();
-    if (!item) continue;
-    if (item.toLowerCase().includes('api') || item.toLowerCase().includes('tool')) {
-      tools.add(item);
-    } else {
-      capabilities.add(item);
-    }
-  }
-
-  return {
-    capabilities: [...capabilities].slice(0, 24),
-    inferredTools: [...tools].slice(0, 24),
-  };
-}
-
-function tokenizeTags(input) {
-  return [...new Set(
-    input
-      .toLowerCase()
-      .split(/[^a-z0-9]+/g)
-      .filter((t) => t.length >= 3 && !['agent', 'the', 'and', 'for', 'with', 'from'].includes(t))
-  )];
-}
-
-function normalizeExternalCapabilities(input) {
-  if (!Array.isArray(input)) return [];
-  return input
-    .map((cap) => {
-      if (typeof cap === 'string') return cap;
-      if (cap && typeof cap === 'object') {
-        return cap.name || cap.id || cap.capability || null;
+    if (inFrontmatter) {
+      if (line === '---') {
+        frontmatterEnd = i;
+        break;
       }
-      return null;
-    })
-    .filter(Boolean);
-}
-
-function relationshipScore(a, b) {
-  const ta = new Set(a.tags);
-  const tb = new Set(b.tags);
-  const union = new Set([...ta, ...tb]);
-  let intersect = 0;
-  for (const t of ta) if (tb.has(t)) intersect += 1;
-  if (union.size === 0) return 0;
-  return intersect / union.size;
-}
-
-async function listJsonFiles(dir) {
-  try {
-    const files = await fs.readdir(dir);
-    return files.filter((f) => f.endsWith('.json')).map((f) => path.join(dir, f));
-  } catch {
-    return [];
+      const [key, ...valueParts] = line.split(':');
+      const value = valueParts.join(':').trim();
+      const k = key.trim().toLowerCase();
+      if (k === 'id') agent.id = value.replace(/^["']|["']$/g, '');
+      else if (k === 'name') agent.name = value.replace(/^["']|["']$/g, '');
+      else if (k === 'description') agent.description = value.replace(/^["']|["']$/g, '');
+      else if (k === 'department') agent.department = value.replace(/^["']|["']$/g, '');
+      else if (k === 'category') agent.category = value.replace(/^["']|["']$/g, '');
+      else if (k === 'capabilities') {
+        try {
+          agent.capabilities = JSON.parse(value);
+        } catch {
+          agent.capabilities = value.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+        }
+      }
+      else if (k === 'tags') {
+        try {
+          agent.tags = JSON.parse(value);
+        } catch {
+          agent.tags = value.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+        }
+      }
+      else if (k === 'relationships') {
+        try {
+          agent.relationships = JSON.parse(value);
+        } catch {
+          agent.relationships = value.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+        }
+      }
+    }
   }
+
+  if (!agent.id) {
+    agent.id = path.basename(filePath, '.md').toLowerCase().replace(/[^a-z0-9]/g, '-');
+  }
+  if (!agent.name) {
+    agent.name = agent.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }
+
+  return agent;
 }
 
 async function main() {
-  const repoRoot = process.cwd();
-  const agentsDir = path.join(repoRoot, '.claude', 'agents');
-  const externalConfigDir = path.join(repoRoot, 'config', 'ai-agents');
-  const outputDir = path.join(repoRoot, 'data', 'agent-registry');
+  const { outputDir } = parseArgs();
+  
+  console.log(`[build-agent-registry] Scanning for agent files...`);
+  const agentFiles = await findAgentFiles();
+  console.log(`[build-agent-registry] Found ${agentFiles.length} agent files`);
+
+  const agents = [];
+  const capabilities = new Map();
+  const tags = new Map();
+  const relationships = [];
+
+  for (const file of agentFiles) {
+    try {
+      const agent = await parseAgentFile(file);
+      agents.push(agent);
+      
+      for (const cap of agent.capabilities) {
+        if (!capabilities.has(cap)) capabilities.set(cap, []);
+        capabilities.get(cap).push(agent.id);
+      }
+      for (const tag of agent.tags) {
+        if (!tags.has(tag)) tags.set(tag, []);
+        tags.get(tag).push(agent.id);
+      }
+      for (const rel of agent.relationships) {
+        relationships.push({ from: agent.id, to: rel, type: 'related' });
+      }
+    } catch (err) {
+      console.warn(`[build-agent-registry] Failed to parse ${file}:`, err.message);
+    }
+  }
 
   await fs.mkdir(outputDir, { recursive: true });
 
-  const agentFiles = (await fs.readdir(agentsDir))
-    .filter((f) => f.endsWith('.md'))
-    .sort();
+  const timestamp = new Date().toISOString();
 
-  const externalFiles = await listJsonFiles(externalConfigDir);
-  const agents = [];
+  // 1. agents.json
+  await fs.writeFile(
+    path.join(outputDir, 'agents.json'),
+    JSON.stringify({ agents, generatedAt: timestamp, count: agents.length }, null, 2)
+  );
 
-  for (const file of agentFiles) {
-    const relPath = path.posix.join('.claude', 'agents', file);
-    const fullPath = path.join(agentsDir, file);
-    const raw = await fs.readFile(fullPath, 'utf8');
-    const { frontmatter, body } = parseFrontMatter(raw);
-
-    const id = slugify(path.basename(file, '.md'));
-    const tools = Array.isArray(frontmatter.tools) ? frontmatter.tools : [];
-    const { capabilities, inferredTools } = extractCapabilities(body);
-    const description = frontmatter.description || '';
-    const tags = tokenizeTags(`${id} ${description} ${(tools || []).join(' ')} ${capabilities.join(' ')}`);
-
-    agents.push({
-      id,
-      name: frontmatter.name || id,
-      displayName: String(frontmatter.name || id)
-        .split('-')
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' '),
-      description,
-      agentType: inferAgentType(id, frontmatter),
-      sourceFile: relPath,
-      tools,
-      inferredTools,
-      capabilities,
-      tags,
-      systemPrompt: body,
-      status: 'active',
-      version: '1.0.0',
-    });
+  // 2. agent_capabilities.json
+  const capObj = {};
+  for (const [cap, agentIds] of capabilities) {
+    capObj[cap] = agentIds;
   }
+  await fs.writeFile(
+    path.join(outputDir, 'agent_capabilities.json'),
+    JSON.stringify({ capabilities: capObj, generatedAt: timestamp }, null, 2)
+  );
 
-  for (const fullPath of externalFiles) {
-    const relPath = path.posix.join('config', 'ai-agents', path.basename(fullPath));
-    const raw = await fs.readFile(fullPath, 'utf8');
-    const parsed = JSON.parse(raw);
-    const normalizedCapabilities = normalizeExternalCapabilities(parsed.capabilities);
-    const capabilityText = normalizedCapabilities.join(' ');
-    const toolNames = Array.isArray(parsed.tools)
-      ? parsed.tools.map((tool) => (typeof tool === 'string' ? tool : tool?.name)).filter(Boolean)
-      : [];
-    const id = slugify(parsed.name || path.basename(fullPath, '.json'));
-    const tags = tokenizeTags(`${parsed.name || ''} ${parsed.description || ''} ${capabilityText}`);
-
-    agents.push({
-      id,
-      name: parsed.name || id,
-      displayName: parsed.displayName || parsed.name || id,
-      description: parsed.description || 'External agent profile',
-      agentType: 'external',
-      sourceFile: relPath,
-      tools: toolNames,
-      inferredTools: [],
-      capabilities: normalizedCapabilities,
-      tags,
-      systemPrompt: parsed.systemPrompt || '',
-      status: 'active',
-      version: parsed.version || '1.0.0',
-    });
+  // 3. agent_tags.json
+  const tagObj = {};
+  for (const [tag, agentIds] of tags) {
+    tagObj[tag] = agentIds;
   }
+  await fs.writeFile(
+    path.join(outputDir, 'agent_tags.json'),
+    JSON.stringify({ tags: tagObj, generatedAt: timestamp }, null, 2)
+  );
 
-  const capabilities = [];
-  const tags = [];
-  const relationships = [];
+  // 4. agent_relationships.json
+  await fs.writeFile(
+    path.join(outputDir, 'agent_relationships.json'),
+    JSON.stringify({ relationships, generatedAt: timestamp }, null, 2)
+  );
 
+  // 5. registry_summary.json
+  const departments = new Set();
+  const categories = new Set();
   for (const a of agents) {
-    for (const cap of a.capabilities) {
-      capabilities.push({
-        id: crypto.randomUUID(),
-        agentId: a.id,
-        capabilityType: 'domain',
-        capabilityName: cap,
-        capabilityLevel: 'intermediate',
-      });
-    }
-    for (const t of a.tags) {
-      tags.push({
-        id: crypto.randomUUID(),
-        agentId: a.id,
-        tagCategory: 'domain',
-        tagName: t,
-        confidenceScore: 1.0,
-      });
-    }
+    if (a.department) departments.add(a.department);
+    if (a.category) categories.add(a.category);
   }
+  await fs.writeFile(
+    path.join(outputDir, 'registry_summary.json'),
+    JSON.stringify({
+      totalAgents: agents.length,
+      totalCapabilities: capabilities.size,
+      totalTags: tags.size,
+      totalRelationships: relationships.length,
+      departments: Array.from(departments).sort(),
+      categories: Array.from(categories).sort(),
+      generatedAt: timestamp,
+    }, null, 2)
+  );
 
-  for (let i = 0; i < agents.length; i += 1) {
-    for (let j = i + 1; j < agents.length; j += 1) {
-      const a = agents[i];
-      const b = agents[j];
-      const score = relationshipScore(a, b);
-      if (score < 0.25) continue;
-      relationships.push({
-        id: crypto.randomUUID(),
-        agentId: a.id,
-        relatedAgentId: b.id,
-        relationshipType: 'similar',
-        strengthScore: Number(score.toFixed(2)),
-      });
-    }
-  }
+  // 6. master_user_agents.json
+  const userAgents = agents.map(a => ({
+    id: a.id,
+    name: a.name,
+    description: a.description,
+    department: a.department,
+    category: a.category,
+    capabilities: a.capabilities,
+    tags: a.tags,
+  }));
+  await fs.writeFile(
+    path.join(outputDir, 'master_user_agents.json'),
+    JSON.stringify({ agents: userAgents, generatedAt: timestamp }, null, 2)
+  );
 
-  const schemaSql = `-- Agent Registry bootstrap schema (PostgreSQL compatible)
+  // 7. agent-cards.json
+  const agentCards = agents.map(a => ({
+    id: a.id,
+    name: a.name,
+    description: a.description,
+    department: a.department,
+    category: a.category,
+    capabilities: a.capabilities,
+    tags: a.tags,
+    relationships: a.relationships,
+    sourceFile: a.sourceFile,
+  }));
+  await fs.writeFile(
+    path.join(outputDir, 'agent-cards.json'),
+    JSON.stringify({ agentCards, generatedAt: timestamp }, null, 2)
+  );
+
+  // 8. agent-card.schema.json
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    type: 'object',
+    required: ['id', 'name'],
+    properties: {
+      id: { type: 'string' },
+      name: { type: 'string' },
+      description: { type: 'string' },
+      department: { type: 'string' },
+      category: { type: 'string' },
+      capabilities: { type: 'array', items: { type: 'string' } },
+      tags: { type: 'array', items: { type: 'string' } },
+      relationships: { type: 'array', items: { type: 'string' } },
+      sourceFile: { type: 'string' },
+    },
+    additionalProperties: false,
+  };
+  await fs.writeFile(
+    path.join(outputDir, 'agent-card.schema.json'),
+    JSON.stringify(schema, null, 2)
+  );
+
+  // 9. schema.sql
+  const sql = `-- Agent Registry Schema
+-- Generated at ${timestamp}
+
 CREATE TABLE IF NOT EXISTS agents (
   id TEXT PRIMARY KEY,
-  name TEXT NOT NULL UNIQUE,
-  display_name TEXT,
+  name TEXT NOT NULL,
   description TEXT,
-  system_prompt TEXT,
-  agent_type TEXT NOT NULL DEFAULT 'local',
+  department TEXT,
+  category TEXT,
   source_file TEXT,
-  version TEXT DEFAULT '1.0.0',
-  status TEXT DEFAULT 'active',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS capabilities (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS agent_capabilities (
-  id TEXT PRIMARY KEY,
-  agent_id TEXT NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
-  capability_type TEXT NOT NULL,
-  capability_name TEXT NOT NULL,
-  capability_level TEXT DEFAULT 'intermediate'
+  agent_id TEXT REFERENCES agents(id),
+  capability_id TEXT REFERENCES capabilities(id),
+  PRIMARY KEY (agent_id, capability_id)
 );
 
-CREATE TABLE IF NOT EXISTS agent_relationships (
+CREATE TABLE IF NOT EXISTS tags (
   id TEXT PRIMARY KEY,
-  agent_id TEXT NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
-  related_agent_id TEXT NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
-  relationship_type TEXT NOT NULL,
-  strength_score NUMERIC(3,2) DEFAULT 0.50
+  name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS agent_tags (
-  id TEXT PRIMARY KEY,
-  agent_id TEXT NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
-  tag_category TEXT NOT NULL,
-  tag_name TEXT NOT NULL,
-  confidence_score NUMERIC(3,2) DEFAULT 1.00
+  agent_id TEXT REFERENCES agents(id),
+  tag_id TEXT REFERENCES tags(id),
+  PRIMARY KEY (agent_id, tag_id)
+);
+
+CREATE TABLE IF NOT EXISTS relationships (
+  from_agent_id TEXT REFERENCES agents(id),
+  to_agent_id TEXT REFERENCES agents(id),
+  type TEXT,
+  PRIMARY KEY (from_agent_id, to_agent_id, type)
 );`;
-
-  const report = {
-    generatedAt: new Date().toISOString(),
-    totals: {
-      agents: agents.length,
-      capabilities: capabilities.length,
-      relationships: relationships.length,
-      tags: tags.length,
-      byType: agents.reduce((acc, a) => {
-        acc[a.agentType] = (acc[a.agentType] || 0) + 1;
-        return acc;
-      }, {}),
-    },
-  };
-
-  await fs.writeFile(path.join(outputDir, 'agents.json'), JSON.stringify(agents, null, 2) + '\n');
   await fs.writeFile(
-    path.join(outputDir, 'agent_capabilities.json'),
-    JSON.stringify(capabilities, null, 2) + '\n'
+    path.join(outputDir, 'schema.sql'),
+    sql
   );
-  await fs.writeFile(
-    path.join(outputDir, 'agent_relationships.json'),
-    JSON.stringify(relationships, null, 2) + '\n'
-  );
-  await fs.writeFile(path.join(outputDir, 'agent_tags.json'), JSON.stringify(tags, null, 2) + '\n');
-  await fs.writeFile(path.join(outputDir, 'schema.sql'), `${schemaSql}\n`);
-  await fs.writeFile(path.join(outputDir, 'registry_summary.json'), JSON.stringify(report, null, 2) + '\n');
 
-  console.log(JSON.stringify(report, null, 2));
+  console.log(`[build-agent-registry] Generated 9 canonical files in ${outputDir}`);
 }
 
-main().catch((error) => {
-  console.error(error);
+main().catch(err => {
+  console.error('[build-agent-registry] Fatal error:', err);
   process.exit(1);
 });

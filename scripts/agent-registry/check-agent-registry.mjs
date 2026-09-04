@@ -50,6 +50,14 @@ function normalizeJsonByFile(file, value) {
   return sortDeep(value);
 }
 
+function normalizeComparableText(file, raw) {
+  const normalized = raw.replace(/\r\n/g, '\n');
+  if (file.endsWith('.json')) return normalized;
+  // Strip build-time stamps (e.g. "-- Generated at <ISO>" in schema.sql) so a
+  // fresh temp build compares equal to a previously generated snapshot.
+  return normalized.replace(/^-- Generated at .*$/gm, '-- Generated at <timestamp>');
+}
+
 async function runBuildScript(repoRoot, outDirAbs) {
   const scriptPath = path.join(repoRoot, 'scripts/agent-registry/build-agent-registry.mjs');
   await new Promise((resolve, reject) => {
@@ -81,10 +89,16 @@ async function readComparableContent(filePath, fileName) {
   const raw = await fs.readFile(filePath, 'utf8');
   if (fileName.endsWith('.json')) {
     const parsed = JSON.parse(raw);
+    // generatedAt is a build-time stamp present on every canonical JSON
+    // artifact; strip it so a fresh temp build compares equal regardless of
+    // when the snapshot under test was generated.
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      delete parsed.generatedAt;
+    }
     const normalized = normalizeJsonByFile(fileName, parsed);
     return `${JSON.stringify(normalized, null, 2)}\n`;
   }
-  return raw.replace(/\r\n/g, '\n');
+  return normalizeComparableText(fileName, raw);
 }
 
 async function main() {

@@ -70,7 +70,7 @@ Before `git commit` on any critical-path change set, agents MUST complete the
 1. Verify (tests + domain probes)
 2. Update `LIVING_STATE.md` and `AGENT_STATUS_LEDGER.md`
 3. Emit `SESSION_HANDOFF_LATEST.{json,md}` via `pnpm run handoff:emit:verified`
-   or `node scripts/turn-end.cjs`
+   (canonical emitter; legacy alternative: `node scripts/turn-end.cjs`)
 4. Ensure `continuation.resume_checklist` names actionable next steps
 5. Commit only intentional paths (exclude daemon logs, vitest caches, unrelated
    auto-generated macro boards)

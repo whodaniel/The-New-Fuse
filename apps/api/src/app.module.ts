@@ -28,6 +28,7 @@ import { AvailableModelsController } from './controllers/available-models.contro
 import { BridgesController } from './controllers/bridges.controller';
 import { CommunityController } from './controllers/community.controller';
 import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
+import { ExtensionAuthController } from './controllers/extension-auth.controller';
 import { HealthController } from './controllers/health.controller';
 import { LLMIntelController } from './controllers/llm-intel.controller';
 import { MCPServerController } from './controllers/mcp.controller';
@@ -37,6 +38,7 @@ import { OnboardingController } from './controllers/onboarding.controller';
 import { OrchestrationController } from './controllers/orchestration.controller';
 import { ProviderKeysController } from './controllers/provider-keys.controller';
 import { PublicInfoController } from './controllers/public-info.controller';
+import { StripeWebhookController } from './controllers/stripe-webhook.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
 import { WebSocketController } from './controllers/websocket.controller';
@@ -202,6 +204,8 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     OnboardingController,
     PublicInfoController, // M02: /docs, /pricing, /features as JSON
     BridgesController, // M05: /bridges/telegram, /bridges/whatsapp health
+    ExtensionAuthController,
+    StripeWebhookController,
   ],
   providers: [
     AppService,

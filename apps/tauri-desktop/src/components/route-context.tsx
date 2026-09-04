@@ -20,6 +20,19 @@ interface RouteHistoryEntry {
   params: Record<string, string>;
 }
 
+/**
+ * True when `hash` looks like a Supabase implicit-flow OAuth redirect
+ * (`#access_token=...&refresh_token=...&...` or an `#error=...` callback),
+ * as opposed to one of this app's own `#/route` hashes. Supabase's
+ * `detectSessionInUrl` parses this asynchronously on boot; if the router
+ * rewrites the hash first, the tokens are gone before Supabase can read them
+ * and sign-in silently fails.
+ */
+function isSupabaseAuthCallbackHash(hash: string): boolean {
+  if (!hash || hash.startsWith('#/')) return false;
+  return /(^#|[?&])(access_token|refresh_token|error_description|provider_token)=/.test(hash);
+}
+
 interface RouteContextType {
   currentRoute: string;
   params: Record<string, string>;
@@ -65,6 +78,13 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!window.history?.replaceState) return;
+    // Supabase's OAuth redirect lands tokens in this same hash fragment
+    // (#access_token=...&refresh_token=...&...) when detectSessionInUrl is on.
+    // If we normalize the hash to a route here first, we wipe those tokens out
+    // from under Supabase's own (async) parser and the sign-in silently never
+    // completes. Leave the hash alone until Supabase has had a chance to
+    // consume it — it performs its own replaceState cleanup once done.
+    if (isSupabaseAuthCallbackHash(window.location.hash)) return;
     const rawHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : '';
     if (rawHash === bootRoute) return;
     // Boot can rewrite the requested path (legacy redirect) or restore a persisted

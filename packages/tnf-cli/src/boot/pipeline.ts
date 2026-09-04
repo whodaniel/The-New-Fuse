@@ -103,7 +103,7 @@ export function createBootPipeline(
   const requireCore = Boolean(options.requireCore) || strictGates;
   const autonomous = Boolean(options.autonomous);
   const withClaude = Boolean(options.withClaude);
-  const skipOnboard = options.skipOnboard !== false && !options.forceOnboard;
+  const skipOnboard = Boolean(options.skipOnboard) && !options.forceOnboard;
 
   const agentNetworkArgs = ['scripts/start-agent-network.sh', '--all'];
   if (withClaude) agentNetworkArgs.push('--claude');
@@ -169,23 +169,20 @@ export function createBootPipeline(
       id: 'turn-zero-onboard',
       label: 'Turn Zero onboarding surface',
       critical: true,
-      launches: skipOnboard
-        ? ['skipped (ProtocolInterceptor preflight already ran Turn Zero)']
-        : ['node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000'],
+      launches: skipOnboard ? ['skipped (skipOnboard requested)'] : ['pnpm run tnf:onboard'],
       notes: [
-        'Global CLI preflight already enforces Turn Zero via ProtocolInterceptor.',
-        'Pass --force-onboard to re-run scripts/tnf-onboard.cjs (fleet probe + raw-agent prompt).',
+        'Runs canonical TNF onboarding (pnpm run tnf:onboard) derived from FRONTLOAD_MANIFEST.md.',
+        'First interaction point in boot before backend services and LLM connections are established.',
       ],
       action: async () => {
         if (skipOnboard) {
           console.log(
-            chalk.dim(
-              '   Skipped redundant onboard (preflight Turn Zero already ran). Use --force-onboard to re-run.'
-            )
+            chalk.dim('   Skipped onboard (skipOnboard requested). Pass --force-onboard to re-run.')
           );
           return;
         }
-        await runCommand('node', ['scripts/tnf-onboard.cjs', '--runtime-timeout-ms', '1000']);
+        await runCommand('pnpm', ['run', 'tnf:onboard']);
+        process.env.TNF_ONBOARD_COMPLETED = '1';
       },
     },
     {
@@ -403,10 +400,15 @@ export function createBootPipeline(
       ],
       notes: [
         '`--all` starts Gemini/Jules/Pi/Watchdog; Claude is opt-in via --with-claude.',
-        'macOS Terminal tab launches are verified by process check before success is printed.',
+        'Wrappers run in background tmux sessions without popup Terminal clutter (override: TNF_TMUX_OPEN_CLIENT=1).',
       ],
       action: async () => {
-        await runCommand('bash', agentNetworkArgs);
+        await runCommand('bash', agentNetworkArgs, {
+          env: {
+            ...process.env,
+            TNF_TMUX_OPEN_CLIENT: process.env.TNF_TMUX_OPEN_CLIENT || '0',
+          },
+        });
       },
     },
     {

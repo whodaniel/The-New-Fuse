@@ -40,6 +40,7 @@ export const users = pgTable('users', {
   verificationToken: varchar('verification_token', { length: 255 }),
   verificationExpires: timestamp('verification_expires'),
   walletAddress: varchar('wallet_address', { length: 255 }).unique(),
+  hasExtensionLicense: boolean('has_extension_license').default(false).notNull(),
   // Phase 5 (audit 2026-06-14): denormalized links + per-agent qualities for
   // hot-path queries. Source of truth remains the `agents` table joined on
   // agents.userId; activeAgentIds is updated/refreshed on heartbeat and used

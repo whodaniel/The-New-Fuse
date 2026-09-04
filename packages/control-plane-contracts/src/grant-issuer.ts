@@ -18,7 +18,6 @@
 import crypto from 'node:crypto';
 import {
   attenuationHolds,
-  canonicalGrantMaterial,
   isValidRole,
   parseAgentDid,
   residencyOf,
@@ -64,7 +63,9 @@ export function issueGrant(params: IssueGrantParams): any {
   } = params;
 
   if (!parseAgentDid(subjectDid)) {
-    throw new Error(`[tnf-grant-issuer] subject must be a did:tnf, got ${JSON.stringify(subjectDid)}`);
+    throw new Error(
+      `[tnf-grant-issuer] subject must be a did:tnf, got ${JSON.stringify(subjectDid)}`
+    );
   }
   if (!isValidRole(role)) {
     throw new Error(

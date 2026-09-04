@@ -236,11 +236,44 @@ function buildContext(args) {
   const anthropic = pickModelForFamily(providers, 'anthropic');
   const nvidia = pickModelForFamily(providers, 'nvidia');
 
+  // Dynamic model resolution by capability rather than fixed platform binding.
+  // Reasoning models for planning / architectural analysis; fast models for operational execution.
+  const reasoningCandidate = providers.find((p) =>
+    /reasoning|r1|deepseek-r1|o1|o3|nemotron|thinking|thinker|claude-3-7|sonnet-3-7|grok-3/i.test(
+      `${p.id || ''} ${p.model || ''}`
+    )
+  );
+  const fastCandidate = providers.find((p) =>
+    /flash|mini|haiku|fast|lite|small|instant|8b/i.test(`${p.id || ''} ${p.model || ''}`)
+  );
+
+  const reasoningModel =
+    process.env.TNF_REASONING_MODEL ||
+    harnessProfile.reasoningModel ||
+    reasoningCandidate?.model ||
+    primary?.model ||
+    '';
+
+  const fastModel =
+    process.env.TNF_FAST_MODEL ||
+    harnessProfile.fastModel ||
+    fastCandidate?.model ||
+    primary?.model ||
+    '';
+
+  const workingModel =
+    process.env.TNF_WORKING_MODEL ||
+    harnessProfile.workingModel ||
+    (primary && primary.model) ||
+    reasoningModel ||
+    fastModel ||
+    '';
+
   const geminiModel =
     process.env.GEMINI_MODEL ||
     harnessProfile.geminiModel ||
     (google && google.model) ||
-    'gemini-2.5-flash';
+    workingModel;
   const geminiFallbacks =
     process.env.GEMINI_FALLBACK_MODELS ||
     harnessProfile.geminiFallbacks ||
@@ -249,26 +282,18 @@ function buildContext(args) {
       .map((p) => p.model)
       .slice(0, 3)
       .join(',') ||
-    `${geminiModel}`;
+    (geminiModel ? `${geminiModel}` : '');
 
   const piModel =
     process.env.PI_MODEL ||
     harnessProfile.piModel ||
     (primary && primary.model) ||
-    (nvidia && nvidia.model) ||
-    '';
+    workingModel;
   const piProvider =
     process.env.PI_PROVIDER ||
     harnessProfile.piProvider ||
     (primary ? providerFamily(primary) : '') ||
     '';
-
-  const workingModel =
-    process.env.TNF_WORKING_MODEL ||
-    harnessProfile.workingModel ||
-    (primary && primary.model) ||
-    piModel ||
-    geminiModel;
 
   const llmBaseUrl =
     process.env.TNF_LLM_BASE_URL ||
@@ -315,6 +340,8 @@ function buildContext(args) {
     RELAY_PORT: hosts.relayPort,
     TNF_PUBLIC_BASE: hosts.publicBase,
     TNF_WORKING_MODEL: workingModel,
+    TNF_REASONING_MODEL: reasoningModel,
+    TNF_FAST_MODEL: fastModel,
     TNF_LLM_BASE_URL: llmBaseUrl,
     GEMINI_CMD: geminiCmd,
     GEMINI_MODEL: geminiModel,
@@ -347,8 +374,10 @@ function buildContext(args) {
     clis,
     models: {
       workingModel,
+      reasoningModel,
+      fastModel,
       geminiModel,
-      geminiFallbacks: geminiFallbacks.split(',').filter(Boolean),
+      geminiFallbacks: geminiFallbacks ? geminiFallbacks.split(',').filter(Boolean) : [],
       piModel: piModel || null,
       piProvider: piProvider || null,
       skipGeminiWrapper,
@@ -403,11 +432,11 @@ TTL: ${ctx.ttlSeconds}s
 - Relay: \`${ctx.hosts.relayUrl}\`
 
 ## Models / providers
-- Working model: \`${ctx.models.workingModel}\`
-- Gemini: \`${ctx.models.geminiModel}\` (fallbacks: ${ctx.models.geminiFallbacks.join(', ') || 'n/a'})
-- Pi: \`${ctx.models.piModel || 'unset'}\` / provider \`${ctx.models.piProvider || 'unset'}\`
-- Watchdog chain: \`${ctx.models.watchdogChain.join(' → ')}\`
+- Working model: \`${ctx.models.workingModel || 'dynamic'}\`
+- Reasoning model: \`${ctx.models.reasoningModel || 'dynamic'}\`
+- Fast model: \`${ctx.models.fastModel || 'dynamic'}\`
 - Active catalog providers: ${ctx.models.activeProviderCount}
+- Watchdog chain: \`${ctx.models.watchdogChain.join(' → ')}\`
 
 ## CLI surfaces detected
 ${Object.entries(ctx.clis)

@@ -1,7 +1,43 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
 const DEFAULT_ENDPOINT =
   process.env.TNF_GATE_POLICY_ENDPOINT || 'https://tnf-sharedstate.bizsynth.workers.dev';
+
+function resolveDefaultToken() {
+  if (process.env.TNF_GATE_POLICY_TOKEN && process.env.TNF_GATE_POLICY_TOKEN.trim()) {
+    return process.env.TNF_GATE_POLICY_TOKEN.trim();
+  }
+
+  const candidatePaths = [
+    path.join(os.homedir(), '.tnf', 'credentials.env'),
+    path.join(os.homedir(), '.tnf.local.env'),
+  ];
+
+  for (const envPath of candidatePaths) {
+    if (!fs.existsSync(envPath)) continue;
+    try {
+      const content = fs.readFileSync(envPath, 'utf8');
+      for (const rawLine of content.split(/\r?\n/)) {
+        const line = rawLine.trim();
+        if (!line || line.startsWith('#')) continue;
+        const normalized = line.startsWith('export ') ? line.slice('export '.length).trim() : line;
+        const match = normalized.match(/^TNF_GATE_POLICY_TOKEN=(.*)$/);
+        if (match) {
+          let val = match[1].trim();
+          if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+            val = val.slice(1, -1);
+          }
+          if (val) return val;
+        }
+      }
+    } catch {}
+  }
+  return '';
+}
 
 function printUsage() {
   console.log(
@@ -26,7 +62,7 @@ function printUsage() {
 function parseArgs(argv) {
   const args = {
     endpoint: DEFAULT_ENDPOINT,
-    token: process.env.TNF_GATE_POLICY_TOKEN || '',
+    token: resolveDefaultToken(),
     tenant: 'tnf-local',
     json: false,
   };
@@ -174,15 +210,8 @@ async function main() {
   };
 
   const startedAt = new Date().toISOString();
-  let valid, invalid;
-
-  if (!args.token) {
-    valid = { status: 200, ok: true, body: { decision: 'allow', note: 'local_fallback_no_token' } };
-    invalid = { status: 422, ok: true, body: { decision: 'deny', reasons: ['CHANNEL_MEMBERSHIP_GATE_MISSING'] } };
-  } else {
-    valid = await evaluate(args.endpoint, args.token, validRequest);
-    invalid = await evaluate(args.endpoint, args.token, invalidRequest);
-  }
+  const valid = await evaluate(args.endpoint, args.token, validRequest);
+  const invalid = await evaluate(args.endpoint, args.token, invalidRequest);
 
   assertResult('valid_request', valid, true);
   assertResult('invalid_request', invalid, false);

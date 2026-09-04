@@ -250694,7 +250694,7 @@
         "label": "Core Protocols & Directives",
         "kind": "premium",
         "parentId": "TNF",
-        "childCount": 113,
+        "childCount": 116,
         "authRequired": false,
         "description": null
       },
@@ -251891,6 +251891,22 @@
       "id": "PROTO_74",
       "type": "file",
       "data": {
+        "label": "TNF_NOTATION_COHERENCE_PROTOCOL",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_NOTATION_COHERENCE_PROTOCOL.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_75",
+      "type": "file",
+      "data": {
         "label": "TNF_ONTOLOGY_MASTER_MAP",
         "kind": "file",
         "parentId": "DOMAIN_PROTOCOLS",
@@ -251904,7 +251920,7 @@
       }
     },
     {
-      "id": "PROTO_75",
+      "id": "PROTO_76",
       "type": "file",
       "data": {
         "label": "TNF_OPERATOR_TERMINAL_INVIOABILITY_PROTOCOL",
@@ -251920,7 +251936,7 @@
       }
     },
     {
-      "id": "PROTO_76",
+      "id": "PROTO_77",
       "type": "file",
       "data": {
         "label": "TNF_ORCHESTRATION_GOVERNANCE_PROTOCOL",
@@ -251936,7 +251952,7 @@
       }
     },
     {
-      "id": "PROTO_77",
+      "id": "PROTO_78",
       "type": "file",
       "data": {
         "label": "TNF_PROACTIVE_GOAL_WIZARDING_PROTOCOL",
@@ -251952,7 +251968,7 @@
       }
     },
     {
-      "id": "PROTO_78",
+      "id": "PROTO_79",
       "type": "file",
       "data": {
         "label": "TNF_PROVIDER_RESOLUTION_COHERENCE",
@@ -251968,7 +251984,7 @@
       }
     },
     {
-      "id": "PROTO_79",
+      "id": "PROTO_80",
       "type": "file",
       "data": {
         "label": "TNF_RECURSIVE_LOGICAL_FILTERING_PROTOCOL",
@@ -251984,7 +252000,7 @@
       }
     },
     {
-      "id": "PROTO_80",
+      "id": "PROTO_81",
       "type": "file",
       "data": {
         "label": "TNF_RESOURCE_GOVERNANCE_MANDATE",
@@ -252000,7 +252016,7 @@
       }
     },
     {
-      "id": "PROTO_81",
+      "id": "PROTO_82",
       "type": "file",
       "data": {
         "label": "TNF_RESOURCE_STRATEGY",
@@ -252016,7 +252032,7 @@
       }
     },
     {
-      "id": "PROTO_82",
+      "id": "PROTO_83",
       "type": "file",
       "data": {
         "label": "TNF_SELF_HEALING_PROTOCOL",
@@ -252032,7 +252048,7 @@
       }
     },
     {
-      "id": "PROTO_83",
+      "id": "PROTO_84",
       "type": "file",
       "data": {
         "label": "TNF_SELF_SUFFICIENCY",
@@ -252048,7 +252064,7 @@
       }
     },
     {
-      "id": "PROTO_84",
+      "id": "PROTO_85",
       "type": "file",
       "data": {
         "label": "TNF_SYNERGISTIC_ALIGNMENT_PROTOCOL",
@@ -252064,7 +252080,7 @@
       }
     },
     {
-      "id": "PROTO_85",
+      "id": "PROTO_86",
       "type": "file",
       "data": {
         "label": "TNF_SYSTEM_LEXICON",
@@ -252080,7 +252096,7 @@
       }
     },
     {
-      "id": "PROTO_86",
+      "id": "PROTO_87",
       "type": "file",
       "data": {
         "label": "TNF_SYSTEM_LOGICAL_COHESION_MANUAL",
@@ -252096,7 +252112,7 @@
       }
     },
     {
-      "id": "PROTO_87",
+      "id": "PROTO_88",
       "type": "file",
       "data": {
         "label": "TNF_TRANSPORT_LANE_SPEC",
@@ -252112,7 +252128,7 @@
       }
     },
     {
-      "id": "PROTO_88",
+      "id": "PROTO_89",
       "type": "file",
       "data": {
         "label": "TNF_UNBOUNDED_GROWTH_AUDIT",
@@ -252128,7 +252144,23 @@
       }
     },
     {
-      "id": "PROTO_89",
+      "id": "PROTO_90",
+      "type": "file",
+      "data": {
+        "label": "TNF_VIDEO_INTELLIGENCE_SPECIFICATION",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_VIDEO_INTELLIGENCE_SPECIFICATION.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_91",
       "type": "file",
       "data": {
         "label": "TNF_VIRTUAL_LIBRARY_CONSOLIDATION_PROTOCOL",
@@ -252144,7 +252176,23 @@
       }
     },
     {
-      "id": "PROTO_90",
+      "id": "PROTO_92",
+      "type": "file",
+      "data": {
+        "label": "TNF_WORKTREE_RECLAMATION_LEDGER",
+        "kind": "file",
+        "parentId": "DOMAIN_PROTOCOLS",
+        "childCount": 0,
+        "authRequired": false,
+        "description": "Protocol Document: TNF_WORKTREE_RECLAMATION_LEDGER.md"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "PROTO_93",
       "type": "file",
       "data": {
         "label": "TS_FIRST_CONTRACT_MIGRATION_PLAN_2026-05-17",
@@ -252160,7 +252208,7 @@
       }
     },
     {
-      "id": "PROTO_91",
+      "id": "PROTO_94",
       "type": "file",
       "data": {
         "label": "TURN_END_MANDATE",
@@ -252176,7 +252224,7 @@
       }
     },
     {
-      "id": "PROTO_92",
+      "id": "PROTO_95",
       "type": "file",
       "data": {
         "label": "TURN_ZERO_MANDATE",
@@ -252192,7 +252240,7 @@
       }
     },
     {
-      "id": "PROTO_93",
+      "id": "PROTO_96",
       "type": "file",
       "data": {
         "label": "USER_CONFIRMATION_PROTOCOL",
@@ -252208,7 +252256,7 @@
       }
     },
     {
-      "id": "PROTO_94",
+      "id": "PROTO_97",
       "type": "file",
       "data": {
         "label": "UTP_SPEC_v1.0",
@@ -252224,7 +252272,7 @@
       }
     },
     {
-      "id": "PROTO_95",
+      "id": "PROTO_98",
       "type": "file",
       "data": {
         "label": "VOICE_LIVE_CONTEXT",
@@ -252240,7 +252288,7 @@
       }
     },
     {
-      "id": "PROTO_96",
+      "id": "PROTO_99",
       "type": "file",
       "data": {
         "label": "aca-usage",
@@ -252256,7 +252304,7 @@
       }
     },
     {
-      "id": "PROTO_97",
+      "id": "PROTO_100",
       "type": "file",
       "data": {
         "label": "agent-self-edit-protocol-v0.1",
@@ -252272,7 +252320,7 @@
       }
     },
     {
-      "id": "PROTO_98",
+      "id": "PROTO_101",
       "type": "file",
       "data": {
         "label": "draft-sgp-0001",
@@ -252288,7 +252336,7 @@
       }
     },
     {
-      "id": "PROTO_99",
+      "id": "PROTO_102",
       "type": "file",
       "data": {
         "label": "draft-twip-0001",
@@ -252304,7 +252352,7 @@
       }
     },
     {
-      "id": "PROTO_100",
+      "id": "PROTO_103",
       "type": "file",
       "data": {
         "label": "instant-error-awareness-pipeline",
@@ -252320,7 +252368,7 @@
       }
     },
     {
-      "id": "PROTO_101",
+      "id": "PROTO_104",
       "type": "file",
       "data": {
         "label": "mcp-nestjs-integration",
@@ -252336,7 +252384,7 @@
       }
     },
     {
-      "id": "PROTO_102",
+      "id": "PROTO_105",
       "type": "file",
       "data": {
         "label": "resource-search-protocol-bridge",
@@ -252352,7 +252400,7 @@
       }
     },
     {
-      "id": "PROTO_103",
+      "id": "PROTO_106",
       "type": "file",
       "data": {
         "label": "resource-search-revision-implementation-plan",
@@ -252368,7 +252416,7 @@
       }
     },
     {
-      "id": "PROTO_104",
+      "id": "PROTO_107",
       "type": "file",
       "data": {
         "label": "tnf-cron-governance-protocol-v0.1",
@@ -252384,7 +252432,7 @@
       }
     },
     {
-      "id": "PROTO_105",
+      "id": "PROTO_108",
       "type": "file",
       "data": {
         "label": "tnf-log-to-dom-protocol",
@@ -252400,7 +252448,7 @@
       }
     },
     {
-      "id": "PROTO_106",
+      "id": "PROTO_109",
       "type": "file",
       "data": {
         "label": "twip-federation-state-2026-03-18",
@@ -252416,7 +252464,7 @@
       }
     },
     {
-      "id": "PROTO_107",
+      "id": "PROTO_110",
       "type": "file",
       "data": {
         "label": "twip-operator-runbook",
@@ -252432,7 +252480,7 @@
       }
     },
     {
-      "id": "PROTO_108",
+      "id": "PROTO_111",
       "type": "file",
       "data": {
         "label": "twip-orchestration-extension-v0.1",
@@ -252448,7 +252496,7 @@
       }
     },
     {
-      "id": "PROTO_109",
+      "id": "PROTO_112",
       "type": "file",
       "data": {
         "label": "twip-terminal-graph-api",
@@ -252464,7 +252512,7 @@
       }
     },
     {
-      "id": "PROTO_110",
+      "id": "PROTO_113",
       "type": "file",
       "data": {
         "label": "twip-terminal-identification-surfaces",
@@ -252480,7 +252528,7 @@
       }
     },
     {
-      "id": "PROTO_111",
+      "id": "PROTO_114",
       "type": "file",
       "data": {
         "label": "twip-terminal-macro-board",
@@ -252496,7 +252544,7 @@
       }
     },
     {
-      "id": "PROTO_112",
+      "id": "PROTO_115",
       "type": "file",
       "data": {
         "label": "twip-universalization-playbook",
@@ -347197,6 +347245,24 @@
       "id": "e-15780",
       "source": "DOMAIN_PROTOCOLS",
       "target": "PROTO_112",
+      "animated": true
+    },
+    {
+      "id": "e-15781",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_113",
+      "animated": true
+    },
+    {
+      "id": "e-15782",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_114",
+      "animated": true
+    },
+    {
+      "id": "e-15783",
+      "source": "DOMAIN_PROTOCOLS",
+      "target": "PROTO_115",
       "animated": true
     }
   ]

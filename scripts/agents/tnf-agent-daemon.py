@@ -581,6 +581,24 @@ class LLMClient:
         """Set reference to daemon for tool execution."""
         self._daemon_ref = daemon
 
+    def _prune_messages(self, max_history: int = 16):
+        """
+        Prunes self.messages to avoid unbounded context growth while
+        preserving system prompt and valid tool call / response structure.
+        """
+        if not self.messages or len(self.messages) <= max_history:
+            return
+
+        system_msgs = [m for m in self.messages if m.get("role") == "system"]
+        non_system = [m for m in self.messages if m.get("role") != "system"]
+
+        if len(non_system) > max_history:
+            trimmed = non_system[-max_history:]
+            # Ensure the first kept message isn't an orphaned tool response
+            while trimmed and trimmed[0].get("role") == "tool":
+                trimmed = trimmed[1:]
+            self.messages = (system_msgs[:1] if system_msgs else []) + trimmed
+
     def chat(self, user_message: str, system_prompt: Optional[str] = None) -> Optional[str]:
         """Simple chat without tool calling (backwards compatible)."""
         response = self.chat_with_tools(user_message, system_prompt)
@@ -610,10 +628,13 @@ class LLMClient:
             logger.warning("No LLM API key configured — skipping LLM call")
             return None
 
+        self._prune_messages()
+
         if system_prompt and not any(m["role"] == "system" for m in self.messages):
             self.messages.insert(0, {"role": "system", "content": system_prompt})
 
         self.messages.append({"role": "user", "content": user_message})
+        self._prune_messages()
 
         iteration = 0
         last_content = None
@@ -763,6 +784,48 @@ class LLMClient:
                 except Exception as retry_err:
                     logger.error("Demoted retry also failed: %s", retry_err)
                     return None
+
+            # Context length recovery: aggressively prune message history and retry once
+            if (
+                e.code == 400
+                and re.search(r"maximum context length|reduce the length of the messages|context_length_exceeded", err_body or "", re.IGNORECASE)
+            ):
+                logger.warning(
+                    "Context length exceeded ceiling — aggressively pruning message history and retrying..."
+                )
+                system_msgs = [m for m in self.messages if m.get("role") == "system"]
+                last_user = [m for m in self.messages if m.get("role") == "user"][-1:]
+                self.messages = (system_msgs[:1] if system_msgs else []) + last_user
+                pruned_payload = {k: v for k, v in payload.items()}
+                pruned_payload["messages"] = self.messages
+                try:
+                    pruned_data = json.dumps(pruned_payload).encode("utf-8")
+                    pruned_req = urllib.request.Request(
+                        url, data=pruned_data, headers=headers, method="POST"
+                    )
+                    with urllib.request.urlopen(pruned_req, timeout=180) as resp3:
+                        body3 = json.loads(resp3.read().decode("utf-8"))
+                        msg3 = body3["choices"][0]["message"]
+                        finish3 = body3["choices"][0].get("finish_reason", "stop")
+                        tool_calls3 = None
+                        if "tool_calls" in msg3:
+                            tool_calls3 = [
+                                ToolCall(
+                                    id=tc["id"],
+                                    name=tc["function"]["name"],
+                                    arguments=json.loads(tc["function"]["arguments"]),
+                                )
+                                for tc in msg3["tool_calls"]
+                            ]
+                        return ChatResponse(
+                            content=msg3.get("content"),
+                            tool_calls=tool_calls3,
+                            finish_reason=finish3,
+                        )
+                except Exception as prune_retry_err:
+                    logger.error("Retry after context pruning failed: %s", prune_retry_err)
+                    return None
+
             return None
         except Exception as e:
             logger.error(f"LLM call failed: {e}")

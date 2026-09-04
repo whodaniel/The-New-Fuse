@@ -7,6 +7,7 @@ import { defineConfig, loadEnv, Plugin } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { brotliCompressSync, gzipSync, constants as zlibConstants } from 'zlib';
+import { excludeVisualizations } from './exclude-visualizations';
 
 // Create require for ESM context
 const require = createRequire(import.meta.url);
@@ -19,14 +20,14 @@ function ethersBrowserResolve(): Plugin {
     resolveId(source, importer) {
       // Redirect ethers IPC socket provider to a local browser-safe shim.
       if (source === './provider-ipcsocket.js' && importer && importer.includes('ethers')) {
-        return path.resolve(__dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
+        return path.resolve(import.meta.dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
       }
       // Prevent axios Node adapter from pulling server-only modules into browser bundles.
       if (
         source === 'axios/lib/adapters/http.js' ||
         source.endsWith('/axios/lib/adapters/http.js')
       ) {
-        return path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts');
+        return path.resolve(import.meta.dirname, 'src/stubs/axios-http-adapter.ts');
       }
       return null;
     },
@@ -204,7 +205,7 @@ export default defineConfig(({ mode }) => {
       react(),
       tsconfigPaths({
         ignoreConfigErrors: true,
-        projects: [path.resolve(__dirname, 'tsconfig.json')],
+        projects: [path.resolve(import.meta.dirname, 'tsconfig.json')],
       }),
       // Provide Node.js polyfills for browser (required by ethers.js, @uauth, etc.)
       nodePolyfills({
@@ -241,6 +242,7 @@ export default defineConfig(({ mode }) => {
       // vite-plugin-compression (see deterministicCompression docstring).
       enableBuildCompression && deterministicCompression('gzip'),
       enableBuildCompression && deterministicCompression('brotliCompress'),
+      excludeVisualizations(),
     ].filter(Boolean),
     resolve: {
       // Force all packages to use the same React instance to prevent
@@ -258,44 +260,56 @@ export default defineConfig(({ mode }) => {
       mainFields: ['browser', 'module', 'main'],
       conditions: ['import', 'module', 'browser', 'default'],
       alias: {
-        '@': path.resolve(__dirname, 'src'),
+        '@': path.resolve(import.meta.dirname, 'src'),
         // Note: @the-new-fuse/core is NOT aliased because it contains Node.js-only code
         // @the-new-fuse/utils is aliased to a browser-safe shim
-        '@the-new-fuse/utils': path.resolve(__dirname, 'src/stubs/utils-shim.ts'),
-        '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
-        '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
-        '@the-new-fuse/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
+        '@the-new-fuse/utils': path.resolve(import.meta.dirname, 'src/stubs/utils-shim.ts'),
+        '@the-new-fuse/types': path.resolve(import.meta.dirname, '../../packages/types/src'),
+        '@the-new-fuse/shared': path.resolve(import.meta.dirname, '../../packages/shared/src'),
+        '@the-new-fuse/api-client': path.resolve(
+          import.meta.dirname,
+          '../../packages/api-client/src'
+        ),
         '@the-new-fuse/ui-consolidated': path.resolve(
-          __dirname,
+          import.meta.dirname,
           '../../packages/ui-consolidated/dist'
         ),
         '@the-new-fuse/workflow-builder': path.resolve(
-          __dirname,
+          import.meta.dirname,
           '../../packages/workflow-builder/dist'
         ),
-        '@the-new-fuse/config': path.resolve(__dirname, '../../config'),
-        '@the-new-fuse/a2a-react': path.resolve(__dirname, '../../packages/a2a-react/src'),
-        '@the-new-fuse/a2a-core': path.resolve(__dirname, '../../packages/a2a-core/src/types.ts'),
+        '@the-new-fuse/config': path.resolve(import.meta.dirname, '../../config'),
+        '@the-new-fuse/a2a-react': path.resolve(
+          import.meta.dirname,
+          '../../packages/a2a-react/src'
+        ),
+        '@the-new-fuse/a2a-core': path.resolve(
+          import.meta.dirname,
+          '../../packages/a2a-core/src/types.ts'
+        ),
         // Stub Node.js-only modules for browser compatibility
-        winston: path.resolve(__dirname, 'src/stubs/winston.ts'),
-        'winston-daily-rotate-file': path.resolve(__dirname, 'src/stubs/winston.ts'),
-        ioredis: path.resolve(__dirname, 'src/stubs/empty.ts'),
+        winston: path.resolve(import.meta.dirname, 'src/stubs/winston.ts'),
+        'winston-daily-rotate-file': path.resolve(import.meta.dirname, 'src/stubs/winston.ts'),
+        ioredis: path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
         // Additional Node.js modules that should not be in browser bundles
-        'mysql2/promise': path.resolve(__dirname, 'src/stubs/empty.ts'),
-        mysql2: path.resolve(__dirname, 'src/stubs/empty.ts'),
-        '@nestjs/common': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
-        '@nestjs/swagger': path.resolve(__dirname, 'src/stubs/nestjs-swagger.ts'),
-        'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
+        'mysql2/promise': path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
+        mysql2: path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
+        '@nestjs/common': path.resolve(import.meta.dirname, 'src/stubs/nestjs-common.ts'),
+        '@nestjs/swagger': path.resolve(import.meta.dirname, 'src/stubs/nestjs-swagger.ts'),
+        'class-validator': path.resolve(import.meta.dirname, 'src/stubs/class-validator.ts'),
         // Stub zlib to fix "Cannot read properties of undefined (reading 'Z_SYNC_FLUSH')"
-        zlib: path.resolve(__dirname, 'src/stubs/zlib.ts'),
-        'node:zlib': path.resolve(__dirname, 'src/stubs/zlib.ts'),
-        http2: path.resolve(__dirname, 'src/stubs/empty.ts'),
-        'node:http2': path.resolve(__dirname, 'src/stubs/empty.ts'),
+        zlib: path.resolve(import.meta.dirname, 'src/stubs/zlib.ts'),
+        'node:zlib': path.resolve(import.meta.dirname, 'src/stubs/zlib.ts'),
+        http2: path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
+        'node:http2': path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
         // Force browser-safe shims for Node-only transitive deps
-        'axios/lib/adapters/http.js': path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts'),
-        'xmlhttprequest-ssl': path.resolve(__dirname, 'src/stubs/xmlhttprequest-ssl.ts'),
-        'form-data': path.resolve(__dirname, 'src/stubs/form-data.ts'),
-        'lucide-react': path.resolve(__dirname, 'src/stubs/lucide-react.tsx'),
+        'axios/lib/adapters/http.js': path.resolve(
+          import.meta.dirname,
+          'src/stubs/axios-http-adapter.ts'
+        ),
+        'xmlhttprequest-ssl': path.resolve(import.meta.dirname, 'src/stubs/xmlhttprequest-ssl.ts'),
+        'form-data': path.resolve(import.meta.dirname, 'src/stubs/form-data.ts'),
+        'lucide-react': path.resolve(import.meta.dirname, 'src/stubs/lucide-react.tsx'),
       },
     },
     define: {
@@ -362,8 +376,8 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 500,
       rollupOptions: {
         input: {
-          index: path.resolve(__dirname, 'index.html'),
-          app: path.resolve(__dirname, 'app.html'),
+          index: path.resolve(import.meta.dirname, 'index.html'),
+          app: path.resolve(import.meta.dirname, 'app.html'),
         },
         // Optimize bundle size by eliminating unnecessary code
         treeshake: {

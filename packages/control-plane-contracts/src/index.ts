@@ -13,8 +13,8 @@
  * grants, and the elevation approval channel. Local providers live in the open
  * runtime; the hosted root implements the same contract. — DIRECTIVES.md D23
  */
-export * from './authority.js';
 export * from './authority-primitives.js';
+export * from './authority.js';
 export * from './grant-issuer.js';
 
 /** Local-first / user-funded SaaS metering and route authorization contract. */

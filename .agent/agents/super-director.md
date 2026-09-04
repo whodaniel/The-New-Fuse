@@ -3,7 +3,7 @@ category: Engineering
 department: tech
 domain: '[to be determined from content]'
 visibility: collective
-dacc_role: worker
+dacc_role: super-director
 worker_action: '[to be determined from capabilities]'
 fulfillment:
   vendor: '[to be determined from tools/platform]'

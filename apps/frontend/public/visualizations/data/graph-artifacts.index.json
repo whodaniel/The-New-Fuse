@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T19:28:39.566Z",
+  "generatedAt": "2026-09-03T05:45:05.564Z",
   "source": "scripts/visualizations/publish-graph-artifacts.cjs",
   "datasets": [
     {
@@ -8,7 +8,7 @@
       "sourceRoot": "tools/agent-relationship-graph",
       "publicRoot": "/visualizations/graphs/agent-relationship-graph",
       "copied": {
-        "files": 47,
+        "files": 44,
         "directories": 3
       },
       "graph": {

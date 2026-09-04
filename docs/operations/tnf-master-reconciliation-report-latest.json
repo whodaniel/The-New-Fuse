@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-01T16:02:16.628Z",
+  "timestamp": "2026-09-04T19:45:39.850Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 692,
+      "durationMs": 405,
       "data": {
-        "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
-        "commit": "12254455b",
+        "branch": "chore/worktree-consolidation-20260904",
+        "commit": "ddca6c622",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 562,
+      "durationMs": 598,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -25,7 +25,7 @@
     "selfEvolution": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 35,
+      "durationMs": 3,
       "data": {
         "status": "skipped"
       }
@@ -41,34 +41,37 @@
     "processHealth": {
       "ok": false,
       "verdict": "findings",
-      "findings": 3,
-      "durationMs": 405,
+      "findings": 6,
+      "durationMs": 494,
       "data": {
-        "findings": 3,
-        "healthy": 17,
+        "findings": 6,
+        "healthy": 14,
         "detail": [
           "error: tnf-growth-blocker-audit",
-          "stale: tnf-self-improvement-scorecard",
-          "error: tnf-swarm-role-call-and-scheduling"
+          "stale: tnf-llm-arena-intel-collector",
+          "never-ran: tnf-llm-verified-fleet-cycle",
+          "never-ran: tnf-self-improvement-scorecard",
+          "stale: tnf-agent-review-cycle",
+          "stale: tenant-knowledge-scout-sprint"
         ]
       }
     },
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 4,
+      "durationMs": 2,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 1708,
+  "totalDurationMs": 1600,
   "summary": {
     "clean": 3,
     "findings": 1,
     "unresolved": 2,
     "errored": 0,
-    "totalFindings": 5
+    "totalFindings": 6
   }
 }

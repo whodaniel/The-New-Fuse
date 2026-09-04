@@ -93,7 +93,7 @@ terminal_launch_cmd() {
     local wrapper_path="$1"
     shift
     local extras=("$@")
-    local cmd="$AGENT_WRAPPER_LAUNCHER $(printf '%q' "$wrapper_path")"
+    local cmd="cd $(printf '%q' "$PROJECT_ROOT") && $AGENT_WRAPPER_LAUNCHER $(printf '%q' "$wrapper_path")"
     local extra
     for extra in "${extras[@]}"; do
       cmd+=" $(printf '%q' "$extra")"
@@ -105,15 +105,17 @@ print_help() {
     echo "Usage: $0 [options]"
     echo ""
     echo "Options:"
-    echo "  --all        Start default agent wrappers (Gemini, Jules, Pi, Watchdog)"
-    echo "  --claude     Also start Claude wrapper when quota/auth are available"
-    echo "  --gemini     Also start Gemini wrapper"
-    echo "  --jules      Also start Jules wrapper"
-    echo "  --pi         Also start Pi wrapper"
-    echo "  --watchdog   Also start model-watchdog failover consumer"
-    echo "  --stop       Stop all running components"
-    echo "  --status     Show status of all components"
-    echo "  --help       Show this help message"
+    echo "  --all            Start default agent wrappers (Gemini, Jules, Pi, Watchdog)"
+    echo "  --claude         Also start Claude wrapper when quota/auth are available"
+    echo "  --gemini         Also start Gemini wrapper"
+    echo "  --jules          Also start Jules wrapper"
+    echo "  --pi             Also start Pi wrapper"
+    echo "  --watchdog       Also start model-watchdog failover consumer"
+    echo "  --headless       Run headlessly in tmux/background without opening GUI Terminal tabs"
+    echo "  --gui-terminals  Open macOS Terminal.app tabs to attach to tmux sessions"
+    echo "  --stop           Stop all running components"
+    echo "  --status         Show status of all components"
+    echo "  --help           Show this help message"
     echo ""
     echo "Examples:"
     echo "  $0               # Start core (Redis, Bridge, Antigravity)"
@@ -151,10 +153,10 @@ open_tmux_client() {
     local session="$1"
     local sock="${TNF_TMUX_SOCKET:-$HOME/.tnf/tmux/tnf.sock}"
     [[ "$OSTYPE" == darwin* ]] || return 0
-    [[ "${TNF_TMUX_OPEN_CLIENT:-1}" == "1" ]] || return 0
+    [[ "${TNF_TMUX_OPEN_CLIENT:-0}" == "1" ]] || return 0
     [[ -n "$session" ]] || return 0
     local cmd escaped
-    cmd="tmux -S $(printf '%q' "$sock") attach -t $(printf '%q' "$session")"
+    cmd="cd $(printf '%q' "$PROJECT_ROOT") && tmux -S $(printf '%q' "$sock") attach -t $(printf '%q' "$session")"
     escaped=$(printf '%s' "$cmd" | sed 's/\\/\\\\/g; s/"/\\"/g')
     osascript -e "tell application \"Terminal\" to do script \"$escaped\"" || true
 }
@@ -403,8 +405,8 @@ start_antigravity() {
         echo -e "  ${YELLOW}!${NC} tmux wrap did not stick — falling back"
     fi
 
-    # macOS GUI fallback: Terminal.app hosts the process only when tmux is absent.
-    if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS GUI fallback: Terminal.app hosts the process only when requested and tmux is absent.
+    if [[ "$OSTYPE" == "darwin"* && "${TNF_TMUX_OPEN_CLIENT:-0}" == "1" ]]; then
         local launch_cmd
         launch_cmd="$(terminal_launch_cmd "$SCRIPT_DIR/antigravity-redis-wrapper.cjs")"
         osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\"" || true
@@ -456,7 +458,7 @@ start_agent_wrapper() {
         echo -e "  ${YELLOW}!${NC} tmux wrap did not stick — falling back"
     fi
 
-    if [[ "$OSTYPE" == "darwin"* ]]; then
+    if [[ "$OSTYPE" == "darwin"* && "${TNF_TMUX_OPEN_CLIENT:-0}" == "1" ]]; then
         local launch_cmd
         launch_cmd="$(terminal_launch_cmd "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id")"
         osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\"" || true
@@ -615,6 +617,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         --watchdog)
             START_WATCHDOG=true
+            shift
+            ;;
+        --headless|--no-terminals)
+            export TNF_TMUX_OPEN_CLIENT=0
+            shift
+            ;;
+        --gui-terminals)
+            export TNF_TMUX_OPEN_CLIENT=1
             shift
             ;;
         --stop)

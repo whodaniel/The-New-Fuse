@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The New Fuse - Monitoring Dashboard</title>
+    <title>The New Fuse - Monitoring Dashboard (Simulated Data)</title>
     <style>
         * {
             margin: 0;
@@ -269,7 +269,7 @@
 </head>
 <body>
     <div id="header">
-        <h1>🎛️ Monitoring Dashboard</h1>
+        <h1>🎛️ Monitoring Dashboard <span style="font-size:0.55em;color:#f59e0b;font-weight:600">— Simulated Data</span></h1>
         <div class="status-indicator">
             <span>System Status:</span>
             <div class="status-dot healthy" id="systemStatus"></div>
@@ -490,6 +490,7 @@
     </div>
 
     <script>
+        <!-- honesty: metrics below are locally randomized simulations (see updateMetrics), not live telemetry -->
         // Simulate real-time data updates
         function updateMetrics() {
             // Randomize system metrics

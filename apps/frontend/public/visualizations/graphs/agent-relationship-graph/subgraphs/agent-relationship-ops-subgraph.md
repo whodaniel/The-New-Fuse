@@ -1,7 +1,6 @@
 # Ops Subgraph
 
-Generated: 2026-04-07
-Source: `agent-relationship-graph.json`
+Generated: 2026-04-07 Source: `agent-relationship-graph.json`
 
 ```mermaid
 graph TD

@@ -635,3 +635,45 @@ with no dependency on the commit landing first. Existing entries with
 - attributed_to: Daniel Goldberg (operator), 2026-08-30 chat: enable heartbeat
   injection
 - ledger_event_id: a8f2c4e1-9b3d-4a7f-8e12-0d5b6c7e8f90
+
+### [2026-09-04] Tier-2 doc reconciliation: canonical handoff emitter, D23 provenance, Engineering rename
+
+- file: docs/protocols/DIRECTIVES.md
+- file: docs/protocols/TURN_END_MANDATE.md
+- doc_hash:
+  sha256:348f614f6364d9bfe1ca80dcdd0e773703a5a0a4c1aae09aeff7963a9004fd57
+  sha256:22ed0142fe180dcb2f2783cecd6cdfaaed7e90f4d0dbe028e10bc6b9cc43f287
+- rationale: Alignment to canonical vocabulary, not policy change: (a) single
+  canonical handoff emitter ends a three-way doc fork where all three scripts
+  (turn-end.cjs, turn-end-v2.cjs, emit-session-handoff.cjs) exist, all emit
+  schema tnf/session-handoff/0.2, and none was authoritative — pnpm run
+  handoff:emit:verified is now named canonical in D14, TURN_END_MANDATE V2, and
+  SESSION_HANDOFF_ENFORCEMENT; (b) D23 local-director provenance corrected to
+  actual git source (f8e109bdf coherence-audit follow-up, not the 2026-07-23
+  session alone) with honest removal scope (active vocabularies retired; one
+  legacy tnf-local-subdirector key in ~/.tnf/authority/roles.json pending
+  normalization); (c) Forge -> Engineering and "Department chain" -> "Cluster
+  pipeline" in DIRECTIVES.md 442/580, TNF_BOOK_OF_AXIOMS:73,
+  CORE_SYSTEM_PROMPT_ARCHITECTURE:23, matching the LOCKED
+  TNF_CLUSTER_ORCHESTRATION_PROTOCOL.md which already titles the cluster
+  "Engineering & Forge (The Execution)". No behavior, schema, or authority
+  semantics change.
+- attributed_to: Daniel Goldberg (operator), 2026-09-04 chat: approved, apply
+  all four edits
+- ledger_event_id: tier2-recon-2026-09-04-emitter-d23-engineering
+
+### [2026-09-04] Shell Hygiene & IPC Deadlock Prevention (FIFO Kernel Lock)
+
+- file: docs/protocols/TNF_AGENT_SHELL_HYGIENE.md
+- doc_hash:
+  sha256:f6711c9ac44ea1b32f26bcffdbac227cdcb59f532c937eabe471fd353fbff5ba
+- rationale: Codified Rule 8 ("Named pipe (FIFO) & IPC socket deadlock
+  prevention") and inspection checklist additions in TNF_AGENT_SHELL_HYGIENE.md
+  following live incident where an agent's recursive grep over ~/.tnf/ blocked
+  indefinitely in kernel \_\_open on IPC FIFOs (~/.tnf/voice-beam/voice.fifo,
+  bridge.fifo, speak-pipe). Enforces usage of ripgrep (rg) or find type -f
+  constraints across runtime directories and provides non-destructive stack
+  sampling (sample <pid> 1) and leaf tool termination (kill -TERM) runbooks.
+- attributed_to: Daniel Goldberg (operator), 2026-09-04 chat: proceed with
+  lessons learned codification
+- ledger_event_id: c4b1e892-3a5f-4d92-bf39-fifo-deadlock-hygiene-20260904

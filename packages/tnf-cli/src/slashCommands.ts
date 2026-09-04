@@ -258,10 +258,10 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
   {
     name: 'models',
     summary: 'List available model/provider information.',
-    usage: '/models',
+    usage: '/models [query]',
     source: 'tnf',
     mode: 'cli',
-    cliCommand: ['ai', 'models'],
+    cliCommand: ['models'],
   },
   {
     name: 'config',
@@ -494,45 +494,140 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
   },
 ];
 
+export type SlashChainDirection = 'forward' | 'reverse';
+
+export interface SlashCommandChain {
+  version: 'tnf.slash-chain/v1';
+  direction: SlashChainDirection;
+  steps: ParsedSlashCommand[];
+}
+
+interface SlashToken {
+  value: string;
+  quoted: boolean;
+}
+
+function tokenizeSlashInput(input: string): SlashToken[] {
+  const tokens: SlashToken[] = [];
+  let i = 0;
+  const len = input.length;
+
+  while (i < len) {
+    while (i < len && /\s/.test(input[i])) {
+      i++;
+    }
+    if (i >= len) break;
+
+    const char = input[i];
+    if (char === '"' || char === "'") {
+      const quoteChar = char;
+      i++; // skip opening quote
+      let value = '';
+      while (i < len && input[i] !== quoteChar) {
+        if (input[i] === '\\' && i + 1 < len) {
+          i++;
+          value += input[i];
+        } else {
+          value += input[i];
+        }
+        i++;
+      }
+      if (i < len && input[i] === quoteChar) {
+        i++; // skip closing quote
+      }
+      tokens.push({ value, quoted: true });
+    } else {
+      let value = '';
+      while (i < len && !/\s/.test(input[i])) {
+        if (input[i] === '\\' && i + 1 < len) {
+          i++;
+          value += input[i];
+        } else {
+          value += input[i];
+        }
+        i++;
+      }
+      tokens.push({ value, quoted: false });
+    }
+  }
+
+  return tokens;
+}
+
 export function parseSlashCommands(input: string): ParsedSlashCommand[] {
   const trimmed = input.trim();
   if (!trimmed.startsWith('/')) return [];
-  
-  const tokens = trimmed.split(/\s+/).filter(Boolean);
+
+  const tokens = tokenizeSlashInput(trimmed);
   const commands: ParsedSlashCommand[] = [];
   let currentCmd: ParsedSlashCommand | null = null;
-  
+
   for (const token of tokens) {
-    if (token.startsWith('/') && token.indexOf('/', 1) === -1) {
-      const rawName = token.slice(1);
-      if (rawName) {
-        currentCmd = {
-          rawName,
-          name: normalizeSlashName(rawName),
-          args: [],
-        };
-        commands.push(currentCmd);
-      } else if (currentCmd) {
-        currentCmd.args.push(token);
-      }
+    if (
+      !token.quoted &&
+      token.value.startsWith('/') &&
+      token.value.length > 1 &&
+      token.value.indexOf('/', 1) === -1
+    ) {
+      const rawName = token.value.slice(1);
+      currentCmd = {
+        rawName,
+        name: normalizeSlashName(rawName),
+        args: [],
+      };
+      commands.push(currentCmd);
     } else if (currentCmd) {
-      currentCmd.args.push(token);
+      currentCmd.args.push(token.value);
     }
   }
-  
+
   return commands;
 }
 
 export function parseSlashCommand(input: string): ParsedSlashCommand | null {
-  const trimmed = input.trim();
-  if (!trimmed.startsWith('/')) return null;
-  const [rawName = '', ...args] = trimmed.slice(1).split(/\s+/).filter(Boolean);
-  if (!rawName) return null;
+  const commands = parseSlashCommands(input);
+  return commands[0] || null;
+}
+
+export function parseSlashCommandChain(
+  input: string,
+  direction: SlashChainDirection = 'forward'
+): SlashCommandChain {
+  const steps = parseSlashCommands(input);
+  if (direction === 'reverse') {
+    steps.reverse();
+  }
   return {
-    rawName,
-    name: normalizeSlashName(rawName),
-    args,
+    version: 'tnf.slash-chain/v1',
+    direction,
+    steps,
   };
+}
+
+export function reverseSlashCommandChain(chain: SlashCommandChain): SlashCommandChain {
+  const reversedDirection: SlashChainDirection =
+    chain.direction === 'forward' ? 'reverse' : 'forward';
+  return {
+    version: 'tnf.slash-chain/v1',
+    direction: reversedDirection,
+    steps: [...chain.steps].reverse(),
+  };
+}
+
+function formatSlashArg(arg: string): string {
+  if (arg === '' || /\s/.test(arg) || arg.startsWith('/') || arg.includes('"')) {
+    return JSON.stringify(arg);
+  }
+  return arg;
+}
+
+export function serializeSlashCommandChain(chain: SlashCommandChain): string {
+  return chain.steps
+    .map((step) => {
+      const formattedArgs = step.args.map(formatSlashArg).join(' ');
+      return `/${step.rawName}${formattedArgs ? ' ' + formattedArgs : ''}`;
+    })
+    .join(' ');
 }
 
 export function normalizeSlashName(name: string): string {
@@ -677,6 +772,50 @@ export function formatPromptSlashCommand(command: SlashCommandDefinition, args: 
   return suffix
     ? `${command.prompt || command.summary}\n\n${suffix}`
     : command.prompt || command.summary;
+}
+
+export function formatPromptSlashCommandChain(
+  steps: Array<{ command: SlashCommandDefinition; args: string[] }>
+): string {
+  if (steps.length === 0) return '';
+  if (steps.length === 1) {
+    return formatPromptSlashCommand(steps[0].command, steps[0].args);
+  }
+
+  const invocation = steps
+    .map((s) => {
+      const argStr = s.args.map(formatSlashArg).join(' ');
+      return `/${s.command.name}${argStr ? ' ' + argStr : ''}`;
+    })
+    .join(' ');
+
+  const lines: string[] = [
+    '# tnf.slash-chain/v1',
+    `Invocation: ${invocation}`,
+    '',
+    'Execute the following prompt skill chain in order.',
+    'Execution rules:',
+    '- Run steps sequentially in the listed order.',
+    '- Every prompt step after the first receives the prior step output as `upstream` context (e.g. step 2 receives step 1 output as `upstream`).',
+    '- Stop on the first failed validation and report the failing step.',
+    '- The final step supplies the overall chain result.',
+    '',
+  ];
+
+  steps.forEach((step, index) => {
+    const stepNum = index + 1;
+    const stepBody = formatPromptSlashCommand(step.command, step.args);
+    lines.push(`## Step ${stepNum}: /${step.command.name}`);
+    if (index > 0) {
+      lines.push(`Input: step ${index} output as \`upstream\``);
+    }
+    if (step.args.length > 0) {
+      lines.push(`Arguments: ${step.args.join(' ')}`);
+    }
+    lines.push('', stepBody, '');
+  });
+
+  return lines.join('\n').trim();
 }
 
 function projectCommandToSlashCommand(command: ProjectCommandDef): SlashCommandDefinition {

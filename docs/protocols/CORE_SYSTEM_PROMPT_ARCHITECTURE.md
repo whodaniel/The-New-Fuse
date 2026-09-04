@@ -20,7 +20,7 @@ action:
 2. **Flag Detection:** Identify the `[CLASS]` and `[STATUS]` of the target
    files.
 3. **Requirement Match:** Check the `Inbox` of the current Department (Scout,
-   Librarian, Forge, Governance).
+   Librarian, Engineering, Governance).
 4. **Action Sequence:** Execute the requested task only AFTER the above three
    items are confirmed.
 

@@ -1,0 +1,50 @@
+bridge:
+  name: tnf-cli-multi-slash-skill-chain
+  version: 1
+  status: implemented
+  source_skills:
+    - tnf-cli slash command resolver
+    - discovered TNF prompt skills
+  target_skills:
+    - tnf-skill-bridging
+    - TNF interactive agent skill-chain executor
+  objective: >
+    Convert an ordered sequence of slash commands into a validated,
+    context-passing skill chain and render that chain back into executable
+    slash syntax without changing step order or arguments.
+  handoff_contract:
+    inputs:
+      - name: slash_input
+        format: plain_text
+        example: /research topic /summarize concise /publish markdown
+    outputs:
+      - name: slash_chain
+        format: typescript_object
+        schema:
+          version: tnf.slash-chain/v1
+          direction: forward|reverse
+          steps:
+            - rawName: string
+              name: normalized_string
+              args: string_array
+      - name: step_handoff
+        format: prompt_context
+        schema:
+          upstream: validated_previous_step_output
+          arguments: current_step_arguments
+      - name: slash_input
+        format: plain_text
+        producer: serializeSlashCommandChain
+  validation:
+    success_criteria:
+      - Every command resolves before any command executes.
+      - Step order and arguments survive parse and serialization round trips.
+      - Quoted slash-prefixed arguments remain arguments.
+      - Every prompt step after the first receives the validated prior output as upstream.
+      - Reverse conversion produces an executable slash sequence in inverse order.
+    failure_handling:
+      - Abort the complete chain before execution when any command is unresolved.
+      - Stop prompt-chain execution at the first failed output validation.
+      - Report the failed command or step and do not run later steps.
+  logging:
+    report: docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.report.md

@@ -572,7 +572,12 @@
           "name": "models",
           "aliases": [],
           "description": "List available models for the current provider",
-          "options": [],
+          "options": [
+            {
+              "flags": "-s, --search <query>",
+              "description": "Filter models by name or keyword"
+            }
+          ],
           "commands": []
         },
         {
@@ -686,7 +691,9 @@
       "commands": [
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List providers",
           "options": [
             {
@@ -777,6 +784,34 @@
           "commands": []
         },
         {
+          "name": "grant",
+          "aliases": [],
+          "description": "Grant an authority role to an agent id (operator only)",
+          "options": [
+            {
+              "flags": "--note <text>",
+              "description": "Reason, recorded in the registry entry"
+            },
+            {
+              "flags": "--revoke",
+              "description": "Remove the grant instead of setting it"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "init",
+          "aliases": [],
+          "description": "Interactive operator setup: identify yourself, provision the bus secret, seat the directors",
+          "options": [
+            {
+              "flags": "--rotate-secret",
+              "description": "Replace an existing bus secret (invalidates in-flight signatures)"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "list",
           "aliases": [],
           "description": "List pending elevation requests",
@@ -854,7 +889,9 @@
     },
     {
       "name": "boot",
-      "aliases": ["boor"],
+      "aliases": [
+        "boor"
+      ],
       "description": "Master entry point to boot the entire TNF stack",
       "options": [
         {
@@ -1085,7 +1122,9 @@
         },
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List free models from the canonical catalog",
           "options": [
             {
@@ -1214,7 +1253,9 @@
     },
     {
       "name": "commands",
-      "aliases": ["palette"],
+      "aliases": [
+        "palette"
+      ],
       "description": "Search the flat command index the palette uses: every CLI path at every depth, plus Markdown commands/agents/skills from .tnf/, .claude/, .agent/, .gemini/, .cursor/, .codex/ and .pi/",
       "options": [
         {
@@ -1815,7 +1856,9 @@
     },
     {
       "name": "department",
-      "aliases": ["dept"],
+      "aliases": [
+        "dept"
+      ],
       "description": "Route TNF CLI work through operator-facing departments (HR, Marketing, Design, Legal, Tech, …)",
       "options": [],
       "commands": [
@@ -2087,7 +2130,9 @@
       "commands": [
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List all feedback",
           "options": [
             {
@@ -2729,7 +2774,9 @@
         },
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List all strategic goals",
           "options": [
             {
@@ -2855,7 +2902,9 @@
       "commands": [
         {
           "name": "generate",
-          "aliases": ["emit"],
+          "aliases": [
+            "emit"
+          ],
           "description": "Emit SESSION_HANDOFF_LATEST.json and markdown mirror",
           "options": [
             {
@@ -3025,7 +3074,9 @@
         },
         {
           "name": "fleet-status",
-          "aliases": ["status"],
+          "aliases": [
+            "status"
+          ],
           "description": "Show current fleet pause state + fleet health snapshot",
           "options": [
             {
@@ -3990,7 +4041,9 @@
         },
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List MCP servers and their status",
           "options": [
             {
@@ -4233,6 +4286,10 @@
         {
           "flags": "--verbose",
           "description": "Show detailed model information"
+        },
+        {
+          "flags": "-s, --search <query>",
+          "description": "Search or filter models by ID, name, or keyword"
         }
       ],
       "commands": []
@@ -4791,7 +4848,9 @@
       "commands": [
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List local TNF profiles",
           "options": [
             {
@@ -5722,7 +5781,9 @@
     },
     {
       "name": "services",
-      "aliases": ["svc"],
+      "aliases": [
+        "svc"
+      ],
       "description": "Health of TNF launchd services — crash loops, failures, and plists that are present but not loaded",
       "options": [
         {
@@ -5765,7 +5826,9 @@
     },
     {
       "name": "skill",
-      "aliases": ["skills"],
+      "aliases": [
+        "skills"
+      ],
       "description": "Inspect the Agent-Skills discovery surface (`tnf debug skill` is the legacy alias; Hermes-parity alias: `tnf skills`).",
       "options": [],
       "commands": [
@@ -5949,7 +6012,9 @@
       "commands": [
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List standard, TNF, and project slash commands",
           "options": [],
           "commands": []
@@ -6230,7 +6295,9 @@
         },
         {
           "name": "draft",
-          "aliases": ["resume"],
+          "aliases": [
+            "resume"
+          ],
           "description": "Start or resume an interactive story drafting session",
           "options": [
             {
@@ -6250,7 +6317,9 @@
         },
         {
           "name": "list",
-          "aliases": ["ls"],
+          "aliases": [
+            "ls"
+          ],
           "description": "List all story sessions",
           "options": [
             {
@@ -6700,7 +6769,9 @@
     },
     {
       "name": "upgrade",
-      "aliases": ["update"],
+      "aliases": [
+        "update"
+      ],
       "description": "Upgrade tnf to the latest or a specific version",
       "options": [
         {
@@ -7299,7 +7370,9 @@
     },
     {
       "name": "workspace",
-      "aliases": ["packages"],
+      "aliases": [
+        "packages"
+      ],
       "description": "Monorepo package reconnect and availability utilities (alias: `tnf packages`)",
       "options": [],
       "commands": [

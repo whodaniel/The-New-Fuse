@@ -85,7 +85,19 @@ describe('boot pipeline plan', () => {
     );
     assert.equal(
       forced.find((s) => s.id === 'turn-zero-onboard')!.launches[0],
-      'node scripts/tnf-onboard.cjs --runtime-timeout-ms 1000'
+      'pnpm run tnf:onboard'
+    );
+  });
+
+  it('default boot runs pnpm run tnf:onboard when not skipped', () => {
+    const active = toBootPlan(
+      createBootPipeline(mockDeps(), {
+        profile: 'goldberg',
+      })
+    );
+    assert.equal(
+      active.find((s) => s.id === 'turn-zero-onboard')!.launches[0],
+      'pnpm run tnf:onboard'
     );
   });
 });

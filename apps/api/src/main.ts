@@ -124,17 +124,33 @@ async function bootstrap(): Promise<void> {
       timestamp: new Date().toISOString(),
     });
   });
+  // V02: Reuse one Redis connection for health checks instead of opening/
+  // pinging/closing a brand-new TCP connection on every request — a liveness
+  // probe hitting this every few seconds was doing a full connect+disconnect
+  // cycle each time. `lazyConnect` defers the first connection attempt until
+  // the first health check actually asks for it, and a no-op 'error' listener
+  // stops ioredis's background reconnect attempts from crashing the process
+  // via an unhandled 'error' event when Redis is down.
+  const Redis = require('ioredis');
+  const redisHealthClient = new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', {
+    connectTimeout: 2000,
+    lazyConnect: true,
+    retryStrategy: (times: number) => Math.min(times * 500, 10000),
+  });
+  redisHealthClient.on('error', () => {
+    // Swallowed intentionally — connectivity is surfaced via the health
+    // response below, not process-crashing background log noise.
+  });
+
   app.getHttpAdapter().get('/api/v1/health', async (req: any, res: any) => {
     // V02: Include Redis connectivity status for monitoring dashboards
     let redisConnected = false;
     try {
-      const Redis = require('ioredis');
-      const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
-      const client = new Redis(redisUrl, { connectTimeout: 2000, lazyConnect: true });
-      await client.connect();
-      const pong = await client.ping();
+      if (redisHealthClient.status === 'wait' || redisHealthClient.status === 'end') {
+        await redisHealthClient.connect();
+      }
+      const pong = await redisHealthClient.ping();
       redisConnected = pong === 'PONG';
-      client.disconnect();
     } catch {
       // Redis unavailable — report gracefully, don't crash
       redisConnected = false;

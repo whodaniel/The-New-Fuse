@@ -60,7 +60,13 @@ export interface AgentDidParts {
 }
 
 /** Build a `did:tnf` from canonical entity parts. Throws on incomplete input. */
-export function buildAgentDid({ scope, category, provider, name, instance }: AgentDidParts = {}): string {
+export function buildAgentDid({
+  scope,
+  category,
+  provider,
+  name,
+  instance,
+}: AgentDidParts = {}): string {
   const seg = {
     scope: normalizeDidSegment(scope),
     category: normalizeDidSegment(category) || 'agent',
@@ -93,7 +99,10 @@ export interface ParsedAgentDid {
 export function parseAgentDid(did: unknown): ParsedAgentDid | null {
   const raw = String(did || '').trim();
   if (!raw.toLowerCase().startsWith(DID_TNF_PREFIX)) return null;
-  const parts = raw.slice(DID_TNF_PREFIX.length).split(':').map((p) => p.trim().toLowerCase());
+  const parts = raw
+    .slice(DID_TNF_PREFIX.length)
+    .split(':')
+    .map((p) => p.trim().toLowerCase());
   if (parts.length !== 5) return null;
   if (!parts.every((p) => DID_SEGMENT.test(p))) return null;
   const [scope, category, provider, name, instance] = parts;
@@ -169,7 +178,8 @@ export function canonicalGrantMaterial(grant: any): string {
 
 export function signGrant(grant: any, privateKeyPem: string | crypto.KeyObject): string {
   const material = Buffer.from(canonicalGrantMaterial(grant), 'utf8');
-  const key = typeof privateKeyPem === 'string' ? crypto.createPrivateKey(privateKeyPem) : privateKeyPem;
+  const key =
+    typeof privateKeyPem === 'string' ? crypto.createPrivateKey(privateKeyPem) : privateKeyPem;
   return crypto.sign(null, material, key).toString('base64');
 }
 
@@ -197,11 +207,16 @@ export function verifyGrant(
   }
   if (!grant.signature) return { verdict: 'invalid', role: 'worker', reason: 'no signature' };
   if ((grant.signatureAlgorithm || 'Ed25519') !== 'Ed25519') {
-    return { verdict: 'invalid', role: 'worker', reason: `unsupported algorithm ${grant.signatureAlgorithm}` };
+    return {
+      verdict: 'invalid',
+      role: 'worker',
+      reason: `unsupported algorithm ${grant.signatureAlgorithm}`,
+    };
   }
   let ok = false;
   try {
-    const key = typeof publicKeyPem === 'string' ? crypto.createPublicKey(publicKeyPem) : publicKeyPem;
+    const key =
+      typeof publicKeyPem === 'string' ? crypto.createPublicKey(publicKeyPem) : publicKeyPem;
     ok = crypto.verify(null, material, key, Buffer.from(grant.signature, 'base64'));
   } catch (err: any) {
     return { verdict: 'invalid', role: 'worker', reason: `signature check failed: ${err.message}` };
@@ -215,10 +230,19 @@ export function verifyGrant(
   if (new Date(grant.notBefore) > t) return { verdict: 'not-yet-valid', role: 'worker' };
   if (new Date(grant.expiresAt) <= t) return { verdict: 'expired', role: 'worker' };
   if (!isValidRole(grant.role)) {
-    return { verdict: 'invalid', role: 'worker', reason: `invalid role ${JSON.stringify(grant.role)}` };
+    return {
+      verdict: 'invalid',
+      role: 'worker',
+      reason: `invalid role ${JSON.stringify(grant.role)}`,
+    };
   }
 
-  return { verdict: 'valid', role: grant.role, subjectDid: grant.subjectDid, tenantId: grant.tenantId || null };
+  return {
+    verdict: 'valid',
+    role: grant.role,
+    subjectDid: grant.subjectDid,
+    tenantId: grant.tenantId || null,
+  };
 }
 
 export function attenuationHolds(
@@ -230,7 +254,10 @@ export function attenuationHolds(
     return { ok: false, reason: `child role ${child.role} exceeds issuer role ${parent.role}` };
   }
   if (parent.tenantId && child.tenantId !== parent.tenantId) {
-    return { ok: false, reason: `child tenant ${child.tenantId} outside issuer tenant ${parent.tenantId}` };
+    return {
+      ok: false,
+      reason: `child tenant ${child.tenantId} outside issuer tenant ${parent.tenantId}`,
+    };
   }
   if (new Date(child.expiresAt) > new Date(parent.expiresAt)) {
     return { ok: false, reason: 'child outlives its issuer grant' };
@@ -239,7 +266,9 @@ export function attenuationHolds(
   const parentResidency = parent.residency || residencyOf(parent.subjectDid || '');
   const childResidency = child.residency || residencyOf(child.subjectDid || '');
   const crossing =
-    parentResidency !== 'unknown' && childResidency !== 'unknown' && parentResidency !== childResidency;
+    parentResidency !== 'unknown' &&
+    childResidency !== 'unknown' &&
+    parentResidency !== childResidency;
   if (crossing && !parent.crossResidency) {
     return {
       ok: false,
@@ -273,16 +302,25 @@ export function verifyGrantChain(
 
   while (current) {
     if (depth++ > MAX_CHAIN_DEPTH) {
-      return { verdict: 'invalid', role: 'worker', reason: `delegation chain deeper than ${MAX_CHAIN_DEPTH}` };
+      return {
+        verdict: 'invalid',
+        role: 'worker',
+        reason: `delegation chain deeper than ${MAX_CHAIN_DEPTH}`,
+      };
     }
     if (current.id && seen.has(current.id)) {
       return { verdict: 'invalid', role: 'worker', reason: 'delegation chain contains a cycle' };
     }
     if (current.id) seen.add(current.id);
 
-    const pem = typeof resolvePublicKey === 'function' ? resolvePublicKey(current.signingKeyDid) : null;
+    const pem =
+      typeof resolvePublicKey === 'function' ? resolvePublicKey(current.signingKeyDid) : null;
     if (!pem) {
-      return { verdict: 'invalid', role: 'worker', reason: `no public key for ${current.signingKeyDid || '(unset)'}` };
+      return {
+        verdict: 'invalid',
+        role: 'worker',
+        reason: `no public key for ${current.signingKeyDid || '(unset)'}`,
+      };
     }
     const verdict = verifyGrant(current, pem, { now });
     if (verdict.verdict !== 'valid') {
@@ -303,7 +341,11 @@ export function verifyGrantChain(
 
     const parent = typeof lookupGrant === 'function' ? lookupGrant(current.parentGrantId) : null;
     if (!parent) {
-      return { verdict: 'invalid', role: 'worker', reason: `parent grant ${current.parentGrantId} not found` };
+      return {
+        verdict: 'invalid',
+        role: 'worker',
+        reason: `parent grant ${current.parentGrantId} not found`,
+      };
     }
     if (String(parent.subjectDid).toLowerCase() !== String(current.issuerDid).toLowerCase()) {
       return {
@@ -375,7 +417,7 @@ export function resolveRoleFromGrants(
     const local = opts.fallbackResolver(subjectDid);
     return {
       ...local,
-      source: local.source === 'registry' ? 'roles.json' : (local.source || 'default'),
+      source: local.source === 'registry' ? 'roles.json' : local.source || 'default',
       rejected: rejected.length ? rejected : undefined,
     };
   }

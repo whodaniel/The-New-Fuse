@@ -560,3 +560,16 @@ apps/api/logs/
 
 # Ephemeral video-frame recovery artifacts (interpret-then-delete; never commit)
 data/video-frames/
+
+# Wrangler/Pages temp directories (auto-generated, not source)
+apps/frontend/.wrangler/
+.wrangler/
+**/.wrangler/
+
+# API audit logs (runtime artifacts, not source)
+apps/api/logs/*.json
+
+# Scratch test files
+test-aihubmix.ts
+parse_test.ts
+rewrite_*.py

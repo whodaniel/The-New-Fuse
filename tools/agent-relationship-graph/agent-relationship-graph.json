@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-04-07",
-  "updated_at": "2026-07-25",
+  "updated_at": "2026-09-04T06:04:29.171Z",
   "taxonomy": {
     "note": "Cluster labels are work-domain affinity, NOT DACC baton seats. Role and platform are orthogonal axes.",
     "axes": {
@@ -39,31 +39,41 @@
       "id": "agent-registry-manager",
       "kind": "primary",
       "cluster": "orchestration",
-      "axes_note": "cluster=work domain; not baton"
+      "axes_note": "cluster=work domain; not baton",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "agent-relationship-grapher",
       "kind": "primary",
       "cluster": "orchestration",
-      "axes_note": "cluster=work domain; not baton"
+      "axes_note": "cluster=work domain; not baton",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "agent-search-engine",
       "kind": "primary",
       "cluster": "orchestration",
-      "axes_note": "cluster=work domain; not baton"
+      "axes_note": "cluster=work domain; not baton",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "agent-tagger",
       "kind": "primary",
       "cluster": "orchestration",
-      "axes_note": "cluster=work domain; not baton"
+      "axes_note": "cluster=work domain; not baton",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "content-calendar-orchestrator-agent",
       "kind": "primary",
       "cluster": "orchestration",
-      "axes_note": "persona name contains orchestrator; not master-clock baton"
+      "axes_note": "persona name contains orchestrator; not master-clock baton",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "gemini",
@@ -71,19 +81,25 @@
       "cluster": "orchestration",
       "platform": "gemini",
       "daccRole_default": "worker",
-      "axes_note": "PLATFORM node in orchestration-domain workflows — not a DACC seat"
+      "axes_note": "PLATFORM node in orchestration-domain workflows — not a DACC seat",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "inter-agentic-workflow-definer",
       "kind": "primary",
       "cluster": "orchestration",
-      "axes_note": "cluster=work domain; not baton"
+      "axes_note": "cluster=work domain; not baton",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "interoperability-protocol-agent",
       "kind": "primary",
       "cluster": "orchestration",
-      "axes_note": "cluster=work domain; not baton"
+      "axes_note": "cluster=work domain; not baton",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "orchestrator-agent",
@@ -91,13 +107,17 @@
       "cluster": "orchestration",
       "daccRole_default": "worker",
       "workerAction": "orchestrator",
-      "axes_note": "Skill/persona for coordination work — NOT master-clock ORCHESTRATOR-{ts} baton"
+      "axes_note": "Skill/persona for coordination work — NOT master-clock ORCHESTRATOR-{ts} baton",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "orchestrator-agent-copy",
       "kind": "sub",
       "cluster": "orchestration",
-      "axes_note": "Copy/variant of orchestrator-agent persona; not baton identity"
+      "axes_note": "Copy/variant of orchestrator-agent persona; not baton identity",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "master-clock-baton",
@@ -106,7 +126,9 @@
       "platform": "master-clock",
       "daccRole": "orchestrator",
       "baton_identity": "ORCHESTRATOR-{timestamp}",
-      "axes_note": "Canonical baton holder process. Added 2026-07-25 for axis clarity."
+      "axes_note": "Canonical baton holder process. Added 2026-07-25 for axis clarity.",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "antigravity-platform",
@@ -114,557 +136,779 @@
       "cluster": "fulfillment",
       "platform": "antigravity",
       "daccRole_default": "worker",
-      "axes_note": "Fulfillment platform only. Default roster role=worker with optional orchestration capabilities."
+      "axes_note": "Fulfillment platform only. Default roster role=worker with optional orchestration capabilities.",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "personal-archaeology-integrity-team-orchestrator",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "personal-archaeology-master-orchestrator",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "personal-archaeology-narrative-team-orchestrator",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "personal-archaeology-source-team-orchestrator",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "personal-historical-archaeologist",
       "kind": "sub",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "print-on-demand-manager-agent",
       "kind": "sub",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "task-agent-router",
       "kind": "primary",
-      "cluster": "orchestration"
+      "cluster": "orchestration",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "ad-network-manager-agent",
       "kind": "primary",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "analytics-and-reporting-agent",
       "kind": "primary",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "content-writer-agent",
       "kind": "primary",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "digital-product-creator-agent",
       "kind": "primary",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "digital-product-factory-agent",
       "kind": "primary",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "fan-funding-agent",
       "kind": "sub",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "live-stream-manager-agent",
       "kind": "sub",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "media-evidence-investigator",
       "kind": "primary",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "storyboard-artist-agent",
       "kind": "sub",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "technical-setup-agent",
       "kind": "sub",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "twip-orchestration-bridge",
       "kind": "sub",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "user-feedback-analysis-agent",
       "kind": "sub",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "video-editor-agent",
       "kind": "sub",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "yt-niche-strategy-agent",
       "kind": "primary",
-      "cluster": "content"
+      "cluster": "content",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "content-calendar-agent",
       "kind": "primary",
-      "cluster": "seo"
+      "cluster": "seo",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "content-refresh-agent",
       "kind": "primary",
-      "cluster": "seo"
+      "cluster": "seo",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "keyword-research-agent",
       "kind": "primary",
-      "cluster": "seo"
+      "cluster": "seo",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "link-building-agent",
       "kind": "primary",
-      "cluster": "seo"
+      "cluster": "seo",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "seo-optimizer-agent",
       "kind": "primary",
-      "cluster": "seo"
+      "cluster": "seo",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "technical-seo-auditor-agent",
       "kind": "primary",
-      "cluster": "seo"
+      "cluster": "seo",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "yt-seo-optimizer-agent",
       "kind": "primary",
-      "cluster": "seo"
+      "cluster": "seo",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "algorithm-adaptation-agent",
       "kind": "sub",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "audience-growth-agent",
       "kind": "primary",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "audience-persona-architect-agent",
       "kind": "sub",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "audience-segmentation-agent",
       "kind": "sub",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "community-engagement-agent",
       "kind": "sub",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "community-manager-agent",
       "kind": "primary",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "content-repurposing-agent",
       "kind": "primary",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "facebook-strategy-agent",
       "kind": "sub",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "instagram-strategy-agent",
       "kind": "sub",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "scout-llm-opportunities",
       "kind": "sub",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "scriptwriter-agent",
       "kind": "primary",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "social-selling-agent",
       "kind": "sub",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "tiktok-strategy-agent",
       "kind": "primary",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "traffic-generation-agent",
       "kind": "primary",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "x-strategy-agent",
       "kind": "primary",
-      "cluster": "social"
+      "cluster": "social",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "ab-testing-optimizer-agent",
       "kind": "primary",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "affiliate-link-manager-agent",
       "kind": "primary",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "audio-recording-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "code-fossil-investigator",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "cognitive-bias-optimizer-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "cro-process-agent",
       "kind": "primary",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "customer-journey-map-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "ecom-platform-manager-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "equipment-recommendation-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "ethical-bias-auditor-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "funnel-economics-analyst-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "information-retrieval-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "lead-capture-agent",
       "kind": "primary",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "lead-magnet-funnel-agent",
       "kind": "primary",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "master-of-taxonomies",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "monetization-strategy-agent",
       "kind": "primary",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "niche-analyst-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "oto-sequence-architect-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "personalized-content-recommendation-agent",
       "kind": "primary",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "sales-funnel-architect-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "value-ladder-architect-agent",
       "kind": "primary",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "visual-asset-creator-agent",
       "kind": "sub",
-      "cluster": "funnel"
+      "cluster": "funnel",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "episode-planner-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "guest-booking-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "guest-relationship-manager-agent",
       "kind": "primary",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-ad-network-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-affiliate-agent",
       "kind": "primary",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-analytics-agent",
       "kind": "primary",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-audio-editor-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-distribution-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-equipment-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-format-designer-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-hosting-setup-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-monetization-strategy-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-niche-analyst-agent",
       "kind": "primary",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-promotion-agent",
       "kind": "primary",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-seo-agent",
       "kind": "primary",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "podcast-video-editor-agent",
       "kind": "sub",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "sponsorship-outreach-agent",
       "kind": "primary",
-      "cluster": "podcast"
+      "cluster": "podcast",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "brand-identity-agent",
       "kind": "primary",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "brand-outreach-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "brand-prospecting-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "campaign-execution-agent",
       "kind": "primary",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "campaign-reporting-agent",
       "kind": "primary",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "competitive-intelligence-agent",
       "kind": "primary",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "contract-manager-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "deal-negotiator-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "email-marketing-automation-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "financial-manager-agent",
       "kind": "primary",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "influencer-media-kit-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "influencer-niche-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "personal-brand-architect-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "platform-selection-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "reputation-management-agent",
       "kind": "primary",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "talent-manager-agent",
       "kind": "sub",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "yt-content-strategy-agent",
       "kind": "primary",
-      "cluster": "brand"
+      "cluster": "brand",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "asset-sourcer-agent",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "auth-blocker-sentinel",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "digital-asset-manager-agent",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "legal-compliance-agent",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "local-ai-claude-code-cli",
       "kind": "sub",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "local-ai-gemini-cli",
       "kind": "sub",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "notes-ledger-investigator",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "productivity-and-burnout-prevention-agent",
       "kind": "sub",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "repo-lineage-investigator",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "tax-compliance-agent",
       "kind": "primary",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     },
     {
       "id": "timeline-synthesis-investigator",
       "kind": "sub",
-      "cluster": "ops"
+      "cluster": "ops",
+      "residency": "local",
+      "authorityRoleDefault": "worker"
     }
   ],
   "edges": [
@@ -3975,5 +4219,23 @@
     },
     "taxonomy_regen_at": "2026-07-25T19:27:36.317Z",
     "authority_edges_added": 3
+  },
+  "identityModel": {
+    "standard": "docs/protocols/TNF_AUTHORITY_IDENTIFIER_STANDARD.md",
+    "canonicalId": "did:tnf:<scope>:<category>:<provider>:<name>:<instance>",
+    "scopes": ["local", "cloud", "cloud_<tenantId>"],
+    "authorityRoles": [
+      "worker",
+      "sub-director",
+      "super-director",
+      "super-admin"
+    ],
+    "axes": ["role", "residency", "tenant"],
+    "notes": [
+      "residency is an axis, not a role: local=>machine owner is authority; cloud/cloud_<tenantId>=>registry decides",
+      "unverified/fail-closed default authority role is worker",
+      "daccRole is a separate DACC vocabulary and does not authorize (reintegration path in standard §reintegration)",
+      "per-agent did:tnf values are minted by the registry, not authored here"
+    ]
   }
 }

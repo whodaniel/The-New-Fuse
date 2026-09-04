@@ -3,8 +3,8 @@
 # Automates Merkle Hashing, Git Snapshots, and Deep Vaulting
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
-KB_DIR="${TNF_KB_DIR:-$HOME/my-ai-knowledge-base}"
+PROJECT_ROOT="${TNF_ROOT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
+KB_DIR="${TNF_KB_DIR:-$HOME/Desktop/A1-Inter-LLM-Com/my-ai-knowledge-base}"
 TIMESTAMP=$(date +%Y-%m-%dT%H-%M-%SZ)
 
 echo "🧠 TNF BRAIN SYNC STARTing..."
@@ -35,7 +35,7 @@ echo "📦 Committing Living State..."
 cd "$PROJECT_ROOT"
 git add "$PROJECT_ROOT/KNOWLEDGE_TREE.json"
 git add "$PROJECT_ROOT/docs/protocols/*.md"
-git add "$PROJECT_ROOT/TNF_INTELLIGENCE_DASHBOARD.html"
+git add "$PROJECT_ROOT/apps/frontend/public/visualizations/TNF_INTELLIGENCE_DASHBOARD.html"
 
 cd "$KB_DIR"
 git add "AI_Knowledge_Base.md"

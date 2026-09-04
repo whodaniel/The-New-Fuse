@@ -19,20 +19,20 @@
 
 Three assumptions, all in the Turn Zero machine gate.
 
-**1. That `corporate` is a valid work domain.** Commit `7fd41cc3c`
-(2026-08-30, "purge corporate metaphor and enforce compliance log for locked
-lexicon") deprecated the term by operator directive and rewrote 25 files.
-`TNF_SYSTEM_LEXICON.md` §2 now reads: _"The terms 'Corporate', 'Department',
-and 'Staff' are permanently deprecated."_ `TURN_ZERO_MANDATE.md:142` defines
-Axis 1 as `core` — TNF/product/framework work; the schema's `work_domain` enum
-is `core|agency|personal|unknown`; every handoff receipt emitted since
-2026-08-29 records `core`. The purge touched documents and the schema and never
-touched a single executable, so `turn-zero-v2-gate.cjs:78` still required
-`corporate`. Write-readiness and schema-validity were therefore mutually
-exclusive: a handoff that satisfied the schema could not satisfy the gate.
+**1. That `corporate` is a valid work domain.** Commit `7fd41cc3c` (2026-08-30,
+"purge corporate metaphor and enforce compliance log for locked lexicon")
+deprecated the term by operator directive and rewrote 25 files.
+`TNF_SYSTEM_LEXICON.md` §2 now reads: _"The terms 'Corporate', 'Department', and
+'Staff' are permanently deprecated."_ `TURN_ZERO_MANDATE.md:142` defines Axis 1
+as `core` — TNF/product/framework work; the schema's `work_domain` enum is
+`core|agency|personal|unknown`; every handoff receipt emitted since 2026-08-29
+records `core`. The purge touched documents and the schema and never touched a
+single executable, so `turn-zero-v2-gate.cjs:78` still required `corporate`.
+Write-readiness and schema-validity were therefore mutually exclusive: a handoff
+that satisfied the schema could not satisfy the gate.
 
-This is the failure `TNF_BOOK_OF_AXIOMS` Axiom 8 (Non-Temporal Proliferation,
-= D3) predicts: _"if an agent improves itself but fails to implement that
+This is the failure `TNF_BOOK_OF_AXIOMS` Axiom 8 (Non-Temporal Proliferation, =
+D3) predicts: _"if an agent improves itself but fails to implement that
 improvement into the shared TNF framework, the action is void."_ The purge was
 void in exactly the part that never proliferated to code.
 
@@ -54,7 +54,8 @@ holding a file-write tool is a writer, whatever the emit path says.
 ## Evidence (2026-09-03, observed in session)
 
 While this work was in progress the canonical handoff was replaced, at 12:24
-local, by an 88-line file with `handoff_id: a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d`,
+local, by an 88-line file with
+`handoff_id: a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d`,
 `created_at: 2026-09-03T16:25:00.000Z`, and `source: "repo"`. Measured against
 `tnf-session-handoff.schema.json` it was missing 14 of 18 required properties
 and carried 6 properties the schema forbids (`additionalProperties: false`). No
@@ -73,9 +74,10 @@ repository; the record was recovered with `git checkout --` from the index.
   lexicon, the mandate and the schema.
 - `classificationReceipt(recordedClassification)` reads the handoff's
   `classification` object first and lets a non-empty `TNF_*` variable override
-  it, recording provenance per axis (`handoff` / `env` / `env-override(handoff=…)`
-  / `unset`). Provenance is printed and carried in the JSON receipt. An override
-  that contradicts the record raises a warning naming both values.
+  it, recording provenance per axis (`handoff` / `env` /
+  `env-override(handoff=…)` / `unset`). Provenance is printed and carried in the
+  JSON receipt. An override that contradicts the record raises a warning naming
+  both values.
 - `orientationSummary()` exposes `handoff.classification`; `main()` computes
   orientation before classification so the record is available.
 - New `scripts/protocols/validate-session-handoff.cjs` validates the canonical
@@ -93,10 +95,10 @@ repository; the record was recovered with `git checkout --` from the index.
 
 ## Safety invariants retained
 
-- No LOCKED document body was modified. `DIRECTIVES.md`,
-  `TURN_ZERO_MANDATE.md`, `TURN_END_MANDATE.md` and `TNF_SYSTEM_LEXICON.md` are
-  untouched; the known contradictions among them are recorded for a TIER 2
-  decision, not resolved here.
+- No LOCKED document body was modified. `DIRECTIVES.md`, `TURN_ZERO_MANDATE.md`,
+  `TURN_END_MANDATE.md` and `TNF_SYSTEM_LEXICON.md` are untouched; the known
+  contradictions among them are recorded for a TIER 2 decision, not resolved
+  here.
 - The operator-facing **department** vocabulary is untouched and correct.
   `data/departments/corporate-departments.json` states departments (HR,
   Marketing, Design, Legal, Tech, Finance, Product, Ops) are _"Distinct from

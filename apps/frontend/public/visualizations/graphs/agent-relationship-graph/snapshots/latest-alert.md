@@ -1,9 +1,7 @@
 # Agent Relationship Delta Alert
 
-Generated: 2026-04-07T13:44:08.838605+00:00
-Status: **OK**
-Baseline: `snapshot-20260326T092335Z.json`
-Current: `snapshot-20260407T134408Z.json`
+Generated: 2026-04-07T13:44:08.838605+00:00 Status: **OK** Baseline:
+`snapshot-20260326T092335Z.json` Current: `snapshot-20260407T134408Z.json`
 
 ## Metrics
 

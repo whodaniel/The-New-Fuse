@@ -173,8 +173,7 @@ export default function App() {
                   borderRadius: 8,
                 }}
               >
-                cd apps/extensions/virtual-library-blueprints && npx vite --host 127.0.0.1 --port
-                5173
+                cd apps/virtual-library-blueprints && npx vite --host 127.0.0.1 --port 5173
               </code>
               <div style={{ marginTop: 12 }}>
                 <button type="button" style={btnStyle} onClick={() => void refreshDeps()}>

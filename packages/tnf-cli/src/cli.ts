@@ -140,6 +140,8 @@ import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { persistSuperAdminTokenRotation } from './utils/super-admin-env.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
+import { renderTuiMarkdown } from './utils/tui-markdown-renderer.js';
+import { expandPromptMentions } from './utils/tui-mention-expander.js';
 import { renderStatusLine, type StatusSnapshot, type StatusTheme } from './utils/tui-statusline.js';
 import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
 
@@ -356,38 +358,71 @@ async function runTnfCliEntrypoint(args: string[]): Promise<void> {
   await runCommand(process.execPath, [_filename, ...args], { cwd: repoRoot, env });
 }
 
-async function runTurnZeroOnboardSurface(options: { repair?: boolean } = {}): Promise<void> {
-  // 1000ms was too short for the Supabase pooler (5 sequential queries); 8000ms verified working.
-  const runtimeTimeoutMs = process.env.TNF_ONBOARD_RUNTIME_TIMEOUT_MS || '10000';
-  const args = ['scripts/tnf-onboard.cjs', '--runtime-timeout-ms', runtimeTimeoutMs];
-  if (options.repair) args.push('--repair');
-  await runCommand('node', args);
+let hasRanCanonicalOnboardInProcess = false;
+
+async function ensureCanonicalOnboard(
+  options: {
+    task?: string;
+    force?: boolean;
+  } = {}
+): Promise<boolean> {
+  if (
+    !options.force &&
+    (hasRanCanonicalOnboardInProcess || process.env.TNF_ONBOARD_COMPLETED === '1')
+  ) {
+    return true;
+  }
+  if (!options.force && isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD)) {
+    console.warn(
+      chalk.yellow(
+        '[TNF Harness] Skipping canonical onboarding because TNF_SKIP_TURN_ZERO_ONBOARD is set.'
+      )
+    );
+    return true;
+  }
+
+  const pnpmArgs = ['run', 'tnf:onboard'];
+  const taskArg = options.task || process.env.TNF_TASK;
+  if (taskArg) {
+    pnpmArgs.push('--', '--task', taskArg);
+  }
+
+  console.log(
+    chalk.bold.cyan(
+      '\n[TNF Harness] Canonical onboarding before LLM interaction (pnpm run tnf:onboard)\n'
+    )
+  );
+  try {
+    await runCommand('pnpm', pnpmArgs);
+    hasRanCanonicalOnboardInProcess = true;
+    process.env.TNF_ONBOARD_COMPLETED = '1';
+    return true;
+  } catch (err: any) {
+    console.warn(
+      chalk.yellow(
+        `[TNF Harness] Canonical onboarding warning (${err?.message ?? err}); proceeding to LLM session.`
+      )
+    );
+    hasRanCanonicalOnboardInProcess = true;
+    process.env.TNF_ONBOARD_COMPLETED = '1';
+    return false;
+  }
 }
 
-async function ensureTurnZeroForAgentEntrypoint(): Promise<void> {
-  if (isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD)) {
-    console.warn(
-      chalk.yellow(
-        '[TNF Harness] Skipping Turn Zero onboarding because TNF_SKIP_TURN_ZERO_ONBOARD is set.'
-      )
-    );
-    return;
+async function runTurnZeroOnboardSurface(
+  options: { repair?: boolean; task?: string } = {}
+): Promise<void> {
+  const pnpmArgs = ['run', 'tnf:onboard'];
+  if (options.task) {
+    pnpmArgs.push('--', '--task', options.task);
   }
+  await runCommand('pnpm', pnpmArgs);
+  hasRanCanonicalOnboardInProcess = true;
+  process.env.TNF_ONBOARD_COMPLETED = '1';
+}
 
-  console.log(chalk.bold.cyan('\n[TNF Harness] Turn Zero onboarding before interactive agent\n'));
-  try {
-    await runTurnZeroOnboardSurface();
-  } catch (err: any) {
-    // Onboarding is preparatory context, not a gate for the agent itself —
-    // a non-zero onboard exit (e.g. DB pooler teardown noise, observed live
-    // 2026-07-22) must not kill the interactive session. Boot triage inside
-    // onboard has already classified/reported whatever went wrong.
-    console.warn(
-      chalk.yellow(
-        `[TNF Harness] Turn Zero onboarding exited with an error (${err?.message ?? err}); continuing to the agent — see ~/.tnf/boot-triage-latest.json`
-      )
-    );
-  }
+async function ensureTurnZeroForAgentEntrypoint(task?: string): Promise<void> {
+  await ensureCanonicalOnboard({ task });
   // Fresh TNF software / onboarded operators get Voice+KWS by default.
   if (process.env.VOICE_KWS_ALWAYS_ON !== '0') {
     await ensureVoiceKwsAlwaysOn();
@@ -4857,6 +4892,99 @@ function setInteractiveModel(client: InteractiveSlashContext['client'], modelNam
   console.log(chalk.green(`  Model set for this session: ${modelName}`));
 }
 
+async function handleInteractiveModelSlash(
+  context: InteractiveSlashContext,
+  modelArg: string
+): Promise<void> {
+  const { ModelsService } = await import('./services/ModelsService.js');
+  const { interactiveSelect } = await import('./utils/interactive-select.js');
+  const modelsService = new ModelsService();
+
+  const isExplicitSelect = !modelArg || ['select', 'choose', '--select', '-s'].includes(modelArg);
+
+  if (!isExplicitSelect) {
+    const rawQuery = modelArg.replace(/^(-s\s+|--select\s+|select\s+|choose\s+)/, '').trim();
+    const allModels = await modelsService.listModels(undefined, { refresh: false });
+    const exact = allModels.find((m) => m.id.toLowerCase() === rawQuery.toLowerCase());
+    if (exact) {
+      setInteractiveModel(context.client, exact.id);
+      if (exact.provider) {
+        console.log(chalk.dim(`  Provider: ${exact.provider}`));
+      }
+      return;
+    }
+  }
+
+  const searchQuery = modelArg
+    .replace(/^(-s\s+|--select\s+|select\s+|choose\s+)/, '')
+    .trim()
+    .toLowerCase();
+
+  console.log(chalk.dim('  Loading available models...'));
+  const rawModels = await modelsService.listModels(undefined, { refresh: false });
+  let models = rawModels;
+
+  if (searchQuery) {
+    models = rawModels.filter(
+      (m) =>
+        m.id.toLowerCase().includes(searchQuery) ||
+        (m.name && m.name.toLowerCase().includes(searchQuery)) ||
+        (m.provider && m.provider.toLowerCase().includes(searchQuery))
+    );
+  }
+
+  if (models.length === 0) {
+    console.log(chalk.yellow(`  No models found matching "${searchQuery}".`));
+    console.log(chalk.dim(`  Current model: ${context.client?.model || 'unknown'}`));
+    return;
+  }
+
+  if (searchQuery && models.length === 1) {
+    setInteractiveModel(context.client, models[0].id);
+    if (models[0].provider) {
+      console.log(chalk.dim(`  Provider: ${models[0].provider}`));
+    }
+    return;
+  }
+
+  if (!process.stdin.isTTY) {
+    console.log(chalk.dim(`  Current model: ${context.client?.model || 'unknown'}`));
+    console.log(chalk.dim(`  Available models (${models.length}):`));
+    models.slice(0, 15).forEach((m) => console.log(`   - ${m.id} (${m.provider})`));
+    return;
+  }
+
+  const selected = await interactiveSelect(
+    models.map((model) => ({
+      value: model,
+      label: model.name && model.name !== model.id ? `${model.name} (${model.id})` : model.id,
+      description: [
+        model.provider ? chalk.cyan(`[${model.provider}]`) : null,
+        model.contextWindow ? `${Math.round(model.contextWindow / 1000)}k ctx` : null,
+        model.inputCost ? `$${(model.inputCost / 1000000).toFixed(2)}/1M in` : null,
+      ]
+        .filter(Boolean)
+        .join(' · '),
+    })),
+    {
+      title: `Switch active model${searchQuery ? ` (filter: "${searchQuery}")` : ''}`,
+      hint: 'Type to filter · ↑↓ to navigate · Enter to select · Esc to cancel',
+    }
+  );
+
+  if (!selected) {
+    console.log(
+      chalk.dim(`  Model selection cancelled (remains: ${context.client?.model || 'unknown'}).`)
+    );
+    return;
+  }
+
+  setInteractiveModel(context.client, selected.value.id);
+  if (selected.value.provider) {
+    console.log(chalk.dim(`  Provider: ${selected.value.provider}`));
+  }
+}
+
 function estimateTokens(text: string): number {
   return Math.max(1, Math.ceil(text.length / 4));
 }
@@ -5324,16 +5452,8 @@ async function handleInteractiveSlashCommand(
     }
 
     if (command.name === 'model') {
-      const modelName = parsed.args.join(' ').trim();
-      if (!modelName) {
-        console.log(chalk.dim(`  Provider: ${context.client?.providerName || 'unknown'}`));
-        console.log(chalk.dim(`  Model: ${context.client?.model || 'unknown'}`));
-        if (context.client?.baseUrl)
-          console.log(chalk.dim(`  Base URL: ${context.client.baseUrl}`));
-        handled = true;
-        continue;
-      }
-      setInteractiveModel(context.client, modelName);
+      const modelArg = parsed.args.join(' ').trim();
+      await handleInteractiveModelSlash(context, modelArg);
       handled = true;
       continue;
     }
@@ -5539,8 +5659,8 @@ program
           strictGates: options.strictGates,
           skipEnvValidation: options.skipEnvValidation,
           forceOnboard: options.forceOnboard,
-          // Default: skip redundant onboard — ProtocolInterceptor already ran Turn Zero.
-          skipOnboard: !options.forceOnboard,
+          // First interaction point: run canonical onboarding during boot unless explicitly skipped
+          skipOnboard: isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD) && !options.forceOnboard,
           withClaude: options.withClaude,
           requireCore: options.requireCore,
           autonomous: options.autonomous,
@@ -5915,12 +6035,13 @@ program
 
         console.log(chalk.dim(`  ⚿ Permissions — ${permissions.summary}`));
 
-        // Main() already ran ProtocolInterceptor (Turn Zero + disclosure) before
-        // this handler. Re-running scripts/tnf-onboard.cjs here duplicated the
-        // entire bootstrap wall on every `tnf tui` — opt-in only.
-        if (options.onboard || options.repair) {
-          await runTurnZeroOnboardSurface({ repair: Boolean(options.repair) });
-        }
+        // First interaction point connecting with backend LLM: ensure canonical onboarding has run
+        await ensureCanonicalOnboard({
+          task:
+            options.task ||
+            (promptParts && promptParts.length > 0 ? promptParts.join(' ') : undefined),
+          force: Boolean(options.onboard || options.repair),
+        });
         if (!options.skipVoiceKws && process.env.VOICE_KWS_ALWAYS_ON !== '0') {
           await ensureVoiceKwsAlwaysOn();
         }
@@ -7034,7 +7155,9 @@ async function resolveResidency(root: string, agentId: string): Promise<string> 
   } catch {
     /* fall through to the environment */
   }
-  const declared = String(process.env.TNF_RESIDENCY || '').trim().toLowerCase();
+  const declared = String(process.env.TNF_RESIDENCY || '')
+    .trim()
+    .toLowerCase();
   if (declared === 'cloud' || declared === 'local') return declared;
   return 'local';
 }
@@ -8101,7 +8224,9 @@ authority
       }
       identity.setAgentRole(agentId, role, { note: options.note });
       const resolved = identity.resolveRole(agentId);
-      console.log(chalk.green(`granted  ${agentId}  ->  ${resolved.role}  (source: ${resolved.source})`));
+      console.log(
+        chalk.green(`granted  ${agentId}  ->  ${resolved.role}  (source: ${resolved.source})`)
+      );
     } catch (err: any) {
       console.error(chalk.red(`Error: ${err.message}`));
       process.exit(1);
@@ -8110,7 +8235,9 @@ authority
 
 authority
   .command('init')
-  .description('Interactive operator setup: identify yourself, provision the bus secret, seat the directors')
+  .description(
+    'Interactive operator setup: identify yourself, provision the bus secret, seat the directors'
+  )
   .option('--rotate-secret', 'Replace an existing bus secret (invalidates in-flight signatures)')
   .action(async (options: { rotateSecret?: boolean }) => {
     try {
@@ -8119,7 +8246,9 @@ authority
       const fsMod = await import('fs');
 
       console.log(chalk.bold('\nTNF authority setup'));
-      console.log(chalk.gray('Everything below is written to ~/.tnf/authority/ (0700), owned by you.\n'));
+      console.log(
+        chalk.gray('Everything below is written to ~/.tnf/authority/ (0700), owned by you.\n')
+      );
 
       // 1. The operator. This is the only tier above every agent.
       const rawName = await askOperator('Your name (for your super-admin identity): ');
@@ -8130,7 +8259,9 @@ authority
         provider: 'tnf',
         name: rawName,
       });
-      identity.setAgentRole(operatorDid, 'super-admin', { note: 'operator, via tnf authority init' });
+      identity.setAgentRole(operatorDid, 'super-admin', {
+        note: 'operator, via tnf authority init',
+      });
       console.log(chalk.green(`  super-admin     ${operatorDid}`));
 
       // 2. The bus secret. Until this exists every publisher falls back to the
@@ -8138,13 +8269,21 @@ authority
       const secretPath = auth.A2A_SECRET_FILE;
       const exists = fsMod.existsSync(secretPath);
       if (exists && !options.rotateSecret) {
-        console.log(chalk.cyan(`  bus secret      already present at ${secretPath} (--rotate-secret to replace)`));
+        console.log(
+          chalk.cyan(
+            `  bus secret      already present at ${secretPath} (--rotate-secret to replace)`
+          )
+        );
       } else {
         const crypto = await import('crypto');
         identity.ensureAuthorityLayout();
-        fsMod.writeFileSync(secretPath, `${crypto.randomBytes(32).toString('hex')}\n`, { mode: 0o600 });
+        fsMod.writeFileSync(secretPath, `${crypto.randomBytes(32).toString('hex')}\n`, {
+          mode: 0o600,
+        });
         fsMod.chmodSync(secretPath, 0o600);
-        console.log(chalk.green(`  bus secret      ${exists ? 'rotated' : 'written'} at ${secretPath}`));
+        console.log(
+          chalk.green(`  bus secret      ${exists ? 'rotated' : 'written'} at ${secretPath}`)
+        );
       }
 
       // 3. The cloud orchestration agent — the singular Super Director.
@@ -8168,7 +8307,9 @@ authority
         provider: 'tnfcli',
         name: host,
       });
-      identity.setAgentRole(localDid, 'sub-director', { note: 'local harness, via tnf authority init' });
+      identity.setAgentRole(localDid, 'sub-director', {
+        note: 'local harness, via tnf authority init',
+      });
       console.log(chalk.green(`  sub-director    ${localDid}`));
 
       console.log(chalk.gray('\nVerify:  node scripts/protocols/role-coherence-gate.cjs --strict'));
@@ -10237,17 +10378,78 @@ ai.command('start')
 
 ai.command('models')
   .description('List available models for the current provider')
-  .action(async () => {
+  .argument('[search]', 'Filter models by name or keyword')
+  .option('-s, --search <query>', 'Filter models by name or keyword')
+  .action(async (searchArg?: string, options?: { search?: string }) => {
     try {
+      const query = (options?.search || searchArg || '').trim();
       const { LLMClient } = await import('./utils/llm-client.js');
       const client = await LLMClient.create();
-      console.log(chalk.blue('\nFetching available models...'));
+      console.log(
+        chalk.blue(
+          `\nFetching available models for ${client.providerName || 'current provider'}...`
+        )
+      );
       const models = await client.fetchAvailableModels();
-      if (models.length === 0) {
-        console.log(chalk.yellow('No models found or provider does not support listing.'));
+      let matched = models;
+      if (query) {
+        const q = query.toLowerCase();
+        matched = models.filter((m: string) => m.toLowerCase().includes(q));
+      }
+
+      if (matched.length > 0) {
+        const header = query
+          ? `\nAvailable models matching "${query}" (${matched.length}/${models.length}):`
+          : `\nAvailable models (${models.length}):`;
+        console.log(chalk.green(header));
+        matched.forEach((m: string) => console.log(` - ${m}`));
+      } else if (models.length > 0) {
+        console.log(
+          chalk.yellow(
+            `No models matching "${query}" for provider ${client.providerName || 'current'}.`
+          )
+        );
+        console.log(chalk.dim(`Searching across all configured providers for "${query}"...`));
+        const { ModelsService } = await import('./services/ModelsService.js');
+        const modelsService = new ModelsService();
+        const allModels = await modelsService.listModels(undefined, { refresh: false });
+        const q = query.toLowerCase();
+        const crossMatches = allModels.filter(
+          (m) => m.id.toLowerCase().includes(q) || (m.name && m.name.toLowerCase().includes(q))
+        );
+        if (crossMatches.length > 0) {
+          console.log(chalk.cyan(`\nFound in other providers (${crossMatches.length}):`));
+          crossMatches
+            .slice(0, 30)
+            .forEach((m) => console.log(` - ${chalk.green(m.id)} ${chalk.dim(`(${m.provider})`)}`));
+          if (crossMatches.length > 30) {
+            console.log(
+              chalk.dim(
+                ` ... and ${crossMatches.length - 30} more (run 'tnf models -s ${query}' to view all)`
+              )
+            );
+          }
+        }
       } else {
-        console.log(chalk.green(`\nAvailable models:`));
-        models.forEach((m: string) => console.log(` - ${m}`));
+        console.log(chalk.yellow('No models found or provider does not support listing.'));
+        if (query) {
+          console.log(chalk.dim(`Searching across all configured providers for "${query}"...`));
+          const { ModelsService } = await import('./services/ModelsService.js');
+          const modelsService = new ModelsService();
+          const allModels = await modelsService.listModels(undefined, { refresh: false });
+          const q = query.toLowerCase();
+          const crossMatches = allModels.filter(
+            (m) => m.id.toLowerCase().includes(q) || (m.name && m.name.toLowerCase().includes(q))
+          );
+          if (crossMatches.length > 0) {
+            console.log(chalk.cyan(`\nFound across providers (${crossMatches.length}):`));
+            crossMatches
+              .slice(0, 30)
+              .forEach((m) =>
+                console.log(` - ${chalk.green(m.id)} ${chalk.dim(`(${m.provider})`)}`)
+              );
+          }
+        }
       }
       console.log('');
     } catch (err: any) {
@@ -10263,6 +10465,7 @@ ai.command('chat')
   .option('--system <prompt>', 'System prompt')
   .action(async (opts) => {
     try {
+      await ensureCanonicalOnboard();
       const readline = await import('readline');
       const { LLMClient } = await import('./utils/llm-client.js');
       const client = await LLMClient.create('orchestrator');
@@ -18710,6 +18913,8 @@ program
   .command('models')
   .description('List or interactively select dynamically discovered models')
   .argument('[provider]', 'Provider ID to filter models by')
+  .argument('[search]', 'Search or filter models by ID, name, or keyword')
+  .option('-s, --search <query>', 'Search or filter models by ID, name, or keyword')
   .option('--verbose', 'Show detailed model information')
   .option('--refresh', 'Refresh the models cache')
   .option('--select', 'Choose provider/model with arrow keys and set it as the default')
@@ -18717,11 +18922,40 @@ program
   .action(
     async (
       provider?: string,
-      options?: { verbose?: boolean; refresh?: boolean; select?: boolean; json?: boolean }
+      searchArg?: string,
+      options?: {
+        search?: string;
+        verbose?: boolean;
+        refresh?: boolean;
+        select?: boolean;
+        json?: boolean;
+      }
     ) => {
       try {
         const modelsService = new ModelsService();
-        let selectedProvider = provider;
+        const knownProviders = (await modelsService.listProviders({ probe: false })).map((p) =>
+          p.id.toLowerCase()
+        );
+
+        let selectedProvider: string | undefined = undefined;
+        let searchQuery = (options?.search || '').trim();
+
+        if (provider) {
+          if (knownProviders.includes(provider.toLowerCase())) {
+            selectedProvider = provider;
+            if (searchArg) {
+              searchQuery = searchQuery || searchArg.trim();
+            }
+          } else {
+            // First argument is a search term (e.g. `tnf models claude` or `tnf models gpt`)
+            searchQuery = searchQuery || provider.trim();
+            if (searchArg) {
+              searchQuery = `${searchQuery} ${searchArg.trim()}`.trim();
+            }
+          }
+        } else if (searchArg) {
+          searchQuery = searchQuery || searchArg.trim();
+        }
 
         if (options?.select) {
           if (options.json) throw new Error('--select and --json cannot be used together');
@@ -18751,9 +18985,21 @@ program
 
           // A menu selection is a freshness request: probe only the chosen
           // provider and bypass the cache instead of making N slow calls.
-          const models = await modelsService.listModels(selectedProvider, { refresh: true });
-          if (models.length === 0) {
+          const rawModels = await modelsService.listModels(selectedProvider, { refresh: true });
+          if (rawModels.length === 0) {
             throw new Error(`No models are available for provider "${selectedProvider}"`);
+          }
+          let models = rawModels;
+          if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            models = rawModels.filter(
+              (m) => m.id.toLowerCase().includes(q) || (m.name && m.name.toLowerCase().includes(q))
+            );
+            if (models.length === 0) {
+              throw new Error(
+                `No models match "${searchQuery}" for provider "${selectedProvider}" (${rawModels.length} available)`
+              );
+            }
           }
           const selected = await interactiveSelect(
             models.map((model) => ({
@@ -18766,7 +19012,9 @@ program
                 .filter(Boolean)
                 .join(' · '),
             })),
-            { title: `Select a ${selectedProvider} model` }
+            {
+              title: `Select a ${selectedProvider} model${searchQuery ? ` (filter: "${searchQuery}")` : ''}`,
+            }
           );
           if (!selected) {
             console.log(chalk.dim('Model selection cancelled.'));
@@ -18779,18 +19027,34 @@ program
           return;
         }
 
-        const models = await modelsService.listModels(selectedProvider, {
+        const rawModels = await modelsService.listModels(selectedProvider, {
           refresh: options?.refresh,
         });
+
+        let models = rawModels;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          models = rawModels.filter(
+            (m) =>
+              m.id.toLowerCase().includes(q) ||
+              (m.name && m.name.toLowerCase().includes(q)) ||
+              (m.provider && m.provider.toLowerCase().includes(q))
+          );
+        }
 
         if (options?.json) {
           console.log(JSON.stringify(models, null, 2));
           return;
         }
 
-        console.log(chalk.bold('\nAvailable Models\n'));
+        const countLabel = searchQuery
+          ? ` (matching "${searchQuery}": ${models.length}/${rawModels.length})`
+          : ` (${models.length})`;
+        console.log(chalk.bold(`\nAvailable Models${countLabel}\n`));
         if (models.length === 0) {
-          console.log(chalk.dim('No models found'));
+          console.log(
+            chalk.dim(`No models found${searchQuery ? ` matching "${searchQuery}"` : ''}`)
+          );
         } else {
           for (const m of models) {
             if (options?.verbose) {
@@ -18803,7 +19067,7 @@ program
                 console.log(`  Output: $${(m.outputCost / 1000000).toFixed(4)}/1M tokens`);
               console.log('');
             } else {
-              console.log(`  ${chalk.cyan(m.id)}`);
+              console.log(`  ${chalk.cyan(m.id)} ${chalk.dim(`(${m.provider})`)}`);
             }
           }
         }
@@ -21454,6 +21718,9 @@ async function runTuiOneshot(options: {
     process.exit(2);
   }
 
+  // First interaction point connecting with backend LLM: ensure canonical onboarding has run
+  await ensureCanonicalOnboard({ task: resolved.text });
+
   const { runAgentsRun } = await import('./commands/agents-run.js');
   const format = String(options.outputFormat || 'text').toLowerCase();
   const result = await runAgentsRun({
@@ -21477,6 +21744,9 @@ async function runTuiOneshot(options: {
 }
 
 async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
+  // First interaction point before making connection with backend LLM:
+  await ensureCanonicalOnboard({ task: options?.task });
+
   syncHomeHandoffCache();
   const voiceTty = lockVoiceGroundInputToThisSession('tnf-cli');
   const rl = readline.createInterface({
@@ -21964,6 +22234,18 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       autonomousState.continuePending = true;
     }
 
+    if (!fromAutonomousContinue) {
+      const { expandedPrompt, attachments } = expandPromptMentions(outbound, repoRoot);
+      if (attachments.length > 0) {
+        for (const att of attachments) {
+          console.log(
+            chalk.dim(`  📎 Attached context for ${chalk.cyan(att.name)} (${att.lines} lines)`)
+          );
+        }
+        outbound = expandedPrompt;
+      }
+    }
+
     outbound = sanitizeUtf8Prompt(outbound);
     messages.push({ role: 'user', content: outbound });
 
@@ -21993,7 +22275,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
           nativeToolCallsMade = Math.max(native.toolCallsMade, native.executed.length);
           turnResponseText = native.content;
           if (native.content) {
-            console.log(chalk.cyan('\n  ' + native.content.replace(/\n/g, '\n  ')));
+            console.log('\n' + renderTuiMarkdown(native.content, { indent: '  ' }));
           } else if (native.executed.length > 0) {
             console.log(
               chalk.dim(
@@ -22024,7 +22306,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
         if (!nativeSucceeded) {
           const response = await client.chatComplete(messages, { temperature: 0.7 });
           stopProcessingIndicator(true);
-          console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
+          console.log('\n' + renderTuiMarkdown(response, { indent: '  ' }));
           messages.push({ role: 'assistant', content: response });
           turnResponseText = response;
         }
@@ -22044,7 +22326,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
         // Non-streaming mode: wait for complete response
         const response = await client.chatComplete(messages, { temperature: 0.7 });
         stopProcessingIndicator(true);
-        console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
+        console.log('\n' + renderTuiMarkdown(response, { indent: '  ' }));
         messages.push({ role: 'assistant', content: response });
         turnResponseText = response;
       }

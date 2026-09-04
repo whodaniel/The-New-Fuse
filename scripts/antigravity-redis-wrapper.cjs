@@ -41,39 +41,39 @@ const CONFIG = {
 const WORKFLOWS = {
   'code-review': {
     name: 'Code Review Workflow',
-    description: 'Comprehensive code review using multiple AI agents',
+    description: 'Comprehensive code review using dynamically routed AI agents',
     steps: [
-      { agent: 'claude', task: 'Perform high-level architecture review', role: 'broker' },
-      { agent: 'gemini', task: 'Analyze code for bugs and issues', role: 'worker' },
-      { agent: 'jules', task: 'Implement suggested fixes', role: 'worker' },
+      { role: 'reviewer', task: 'Perform high-level architecture review' },
+      { role: 'analyzer', task: 'Analyze code for bugs and issues' },
+      { role: 'implementer', task: 'Implement suggested fixes' },
     ],
   },
   'feature-implementation': {
     name: 'Feature Implementation Workflow',
-    description: 'Multi-agent feature development',
+    description: 'Multi-agent feature development with dynamic role assignment',
     steps: [
-      { agent: 'claude', task: 'Design feature architecture', role: 'broker' },
-      { agent: 'gemini', task: 'Write unit tests', role: 'worker' },
-      { agent: 'jules', task: 'Implement feature code', role: 'worker' },
-      { agent: 'claude', task: 'Review implementation', role: 'broker' },
+      { role: 'architect', task: 'Design feature architecture' },
+      { role: 'tester', task: 'Write unit tests' },
+      { role: 'implementer', task: 'Implement feature code' },
+      { role: 'reviewer', task: 'Review implementation' },
     ],
   },
   'codebase-analysis': {
     name: 'Codebase Analysis Workflow',
     description: 'Deep analysis of codebase structure and quality',
     steps: [
-      { agent: 'gemini', task: 'Analyze file structure and dependencies', role: 'worker' },
-      { agent: 'claude', task: 'Identify architectural patterns', role: 'broker' },
-      { agent: 'gemini', task: 'Calculate metrics and generate report', role: 'worker' },
+      { role: 'analyzer', task: 'Analyze file structure and dependencies' },
+      { role: 'architect', task: 'Identify architectural patterns' },
+      { role: 'reporter', task: 'Calculate metrics and generate report' },
     ],
   },
   documentation: {
     name: 'Documentation Generation Workflow',
     description: 'Generate comprehensive documentation',
     steps: [
-      { agent: 'gemini', task: 'Extract code structure and exports', role: 'worker' },
-      { agent: 'claude', task: 'Write documentation prose', role: 'broker' },
-      { agent: 'jules', task: 'Add documentation to codebase', role: 'worker' },
+      { role: 'analyzer', task: 'Extract code structure and exports' },
+      { role: 'writer', task: 'Write documentation prose' },
+      { role: 'implementer', task: 'Add documentation to codebase' },
     ],
   },
 };
@@ -236,6 +236,34 @@ class AntigravityAgent {
   }
 
   /**
+   * Dynamically resolve an agent capable of fulfilling a role
+   */
+  async resolveTargetAgent(role, hintAgent = null) {
+    if (hintAgent && !this.providerFailoverMap.has(hintAgent)) {
+      return hintAgent;
+    }
+    // Dynamic role routing based on live registered agents
+    try {
+      const agents = await this.client.listAgents();
+      if (Array.isArray(agents) && agents.length > 0) {
+        const live = agents.filter((a) => a && a.isOnline !== false);
+        // Find matching role
+        const match = live.find((a) => a.role === role || a.capabilities?.includes(role));
+        if (match && match.name) return match.name;
+        // Or any online worker
+        const worker = live.find((a) => a.routing?.callableWorker || a.role === 'worker');
+        if (worker && worker.name) return worker.name;
+      }
+    } catch {}
+
+    // Fallback: choose agent platform dynamically based on role requirement
+    if (['architect', 'reviewer', 'broker'].includes(role)) {
+      return process.env.TNF_REASONING_AGENT || 'claude';
+    }
+    return process.env.TNF_WORKER_AGENT || 'gemini';
+  }
+
+  /**
    * Execute a workflow
    */
   async executeWorkflow(workflowId, context = {}) {
@@ -259,13 +287,16 @@ class AntigravityAgent {
     try {
       for (let i = 0; i < workflow.steps.length; i++) {
         const step = workflow.steps[i];
+        const role = step.role || 'worker';
+        const targetAgent = await this.resolveTargetAgent(role, step.agent);
         console.log(`\n📋 Step ${i + 1}/${workflow.steps.length}: ${step.task}`);
-        console.log(`   Assigning to: ${step.agent} (${step.role})`);
+        console.log(`   Role: ${role} (assigned to: ${targetAgent})`);
 
         // Send task to agent
-        const result = await this.assignTask(step.agent, step.task, {
+        const result = await this.assignTask(targetAgent, step.task, {
           workflowId,
           executionId,
+          role,
           step: i + 1,
           totalSteps: workflow.steps.length,
           ...context,
@@ -274,7 +305,8 @@ class AntigravityAgent {
         // Store result
         this.activeWorkflows.get(executionId).results.push({
           step: i + 1,
-          agent: step.agent,
+          agent: targetAgent,
+          role,
           task: step.task,
           result: result?.content || 'No response',
         });
