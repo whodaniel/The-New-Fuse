@@ -1,28 +1,30 @@
 name: Skills Governance Gate
 
 on:
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - ".skills/**"
-      - ".agent/skills/**"
-      - ".agent/skill-bank/snapshots/**"
-      - ".skills/skill-catalog/**"
-      - "scripts/skills/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/skills-governance-gate.yml"
-  push:
-    branches: [main, develop]
-    paths:
-      - ".skills/**"
-      - ".agent/skills/**"
-      - ".agent/skill-bank/snapshots/**"
-      - ".skills/skill-catalog/**"
-      - "scripts/skills/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/skills-governance-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: [main, develop]
+  #   paths:
+  #     - ".skills/**"
+  #     - ".agent/skills/**"
+  #     - ".agent/skill-bank/snapshots/**"
+  #     - ".skills/skill-catalog/**"
+  #     - "scripts/skills/**"
+  #     - "package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/skills-governance-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main, develop]
+  #   paths:
+  #     - ".skills/**"
+  #     - ".agent/skills/**"
+  #     - ".agent/skill-bank/snapshots/**"
+  #     - ".skills/skill-catalog/**"
+  #     - "scripts/skills/**"
+  #     - "package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/skills-governance-gate.yml"
   workflow_dispatch:
 
 jobs:

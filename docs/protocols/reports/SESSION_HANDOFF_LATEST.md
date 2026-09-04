@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-04T20:30:12.900Z` Handoff ID: `c063a700-0dd9-45c2-b313-f928a0c88e1e`
+`2026-09-04T22:07:51.711Z` Handoff ID: `9a369abb-2e87-492a-9ae7-ee0de8aa8f43`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `chore/worktree-consolidation-20260904`
-- Head SHA: `0a62bca4f4f48f12cef679d174778a156aaa5077`
+- Branch: `feat/ci-billing-safety-and-cloud-agents`
+- Head SHA: `eb48a66c5d67ca2d076befe383208bfabe28652d`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -26,10 +26,57 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Changed Paths
 
+- .github/workflows/agent-registry-ubiquity-gate.yml
+- .github/workflows/build-electron.yml
+- .github/workflows/ci-build.yml
+- .github/workflows/claude.yml
+- .github/workflows/close-jules-persona-prs.yml
+- .github/workflows/deploy-frontend-pages.yml
+- .github/workflows/frontload-nightly.yml
+- .github/workflows/gcp-rollout.yml
+- .github/workflows/gitlink-integrity.yml
+- .github/workflows/honest-failure-gate.yml
+- .github/workflows/integration-train-gate.yml
+- .github/workflows/openapi-drift-gate.yml
+- .github/workflows/pi-bridge-gate.yml
+- .github/workflows/poker-qa.yml
+- .github/workflows/pr-automation.yml
+- .github/workflows/privacy-security-gate.yml
+- .github/workflows/protocol-schema-gate.yml
+- .github/workflows/repo-boundary-gate.yml
+- .github/workflows/repo-sync.yml
+- .github/workflows/route-surface-parity-gate.yml
+- .github/workflows/skills-governance-gate.yml
+- .github/workflows/tauri-desktop-dmg.yml
+- .github/workflows/tauri-desktop-qa.yml
+- apps/frontend/src/data/codebase_map.json
+- cloudflare-openclaw-runtime/src/index.ts
+- docs/operations/CLOUD_HOSTED_AGENT_DEPLOYMENT_BLUEPRINT.md
+- package.json
+- scripts/deployment/deploy-frontend-pages-direct.sh
+- scripts/deployment/setup-self-hosted-runner.sh
 - .agent/agents/sub-director.md
 - .agent/agents/super-director.md
+- .agent/skills/tnf-agent-deadlock-rescue/SKILL.md
 - .agent/skills/tnf-headless-elevation-broker/SKILL.md
+- .gitignore
 - KNOWLEDGE_TREE.json
+- apps/api-gateway/.env.example
+- apps/api-gateway/src/auth/auth.controller.ts
+- apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json
+- apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json
+- apps/api/package.json
+- apps/api/src/app.module.ts
+- apps/api/src/controllers/admin.controller.ts
+- apps/api/src/controllers/extension-auth.controller.ts
+- apps/api/src/controllers/stripe-webhook.controller.ts
+- apps/api/src/main.ts
+- apps/api/src/modules/admin/admin.module.ts
+- apps/chrome-extension/dist-v7/content/index.js
+- apps/chrome-extension/dist-v7/manifest.json
+- apps/chrome-extension/dist-v7/service-worker.js
+- apps/frontend/.pagesignore
+- apps/frontend/exclude-visualizations.js
 - apps/frontend/public/visualizations/TNF_INTELLIGENCE_DASHBOARD.html
 - apps/frontend/public/visualizations/dashboard.html
 - apps/frontend/public/visualizations/data/graph-artifacts.index.json
@@ -50,7 +97,17 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - apps/frontend/public/visualizations/monitoring-dashboard.html
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
 - apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
-- apps/frontend/src/data/codebase_map.json
+- apps/frontend/src/pages/GeneralSettingsPage.tsx
+- apps/frontend/src/pages/VirtualLibrary/VirtualLibraryPage.tsx
+- apps/frontend/vite.config.ts
+- apps/tauri-desktop/src-tauri/src/service_lifecycle.rs
+- apps/tauri-desktop/src/components/route-context.tsx
+- apps/tauri-desktop/src/hooks/useAuth.tsx
+- apps/tauri-desktop/src/pages/OAGIHub.tsx
+- apps/tauri-desktop/src/pages/VirtualLibraryHub.tsx
+- apps/tauri-desktop/src/services/api.ts
+- apps/tauri-desktop/vite.config.ts
+- cloudflare-api-proxy/src/index.ts
 - data/agent-registry/onboarding-agent.json
 - data/harness/ANOMALY_PAYLOAD.md
 - data/harness/active-sieve-manifest.json
@@ -62,7 +119,6 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - data/llm-provider-status.json
 - data/marketplace/catalog-items.json
 - docs/ai-arcade/MARKETPLACE_LISTING_GATE_DESIGN.md
-- docs/core/FRONTLOAD_MANIFEST.md
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
@@ -71,6 +127,7 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - docs/protocols/DIRECTIVES.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/SESSION_HANDOFF_ENFORCEMENT.md
+- docs/protocols/TNF_AGENT_SHELL_HYGIENE.md
 - docs/protocols/TNF_BOOK_OF_AXIOMS.md
 - docs/protocols/TNF_INFORMATION_INGESTION_PIPELINE.md
 - docs/protocols/TNF_VIDEO_INTELLIGENCE_SPECIFICATION.md
@@ -81,32 +138,60 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - docs/protocols/challenge-rationales/2026-09-03-turn-zero-classification-source.md
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
 - docs/protocols/reports/OS_KEYSTORE_SIGNING_FEASIBILITY_BRIEF.md
+- docs/protocols/reports/SESSION_HANDOFF_FUSE_CONNECT_COMMERCIALIZATION.json
+- docs/protocols/reports/SESSION_HANDOFF_FUSE_CONNECT_COMMERCIALIZATION.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/TNF_WORLD_CLASS_CAMPAIGN_BRIEF_20260902.md
 - docs/protocols/reports/TURN_ZERO_V2_PATHWAY_RECONCILIATION_2026-09-03.md
 - docs/protocols/reports/WORLD_CLASS_CAMPAIGN_PHASE2_VERIFICATION_20260904.md
-- docs/protocols/reports/session_handoff_gate-repair-pi-20260902.json
-- docs/protocols/reports/session_handoff_gate-repair-pi-20260902.md
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
-- tools/agent-relationship-graph/agent-relationship-graph.json
-- apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json
-- apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json
-- apps/chrome-extension/dist-v7/content/index.js
-- apps/chrome-extension/dist-v7/manifest.json
-- apps/chrome-extension/dist-v7/service-worker.js
-- cloudflare-api-proxy/src/index.ts
-- package.json
+- packages/contracts-legacy/AgentNFTFactory.sol
+- packages/contracts-legacy/AgentProvenance.sol
+- packages/contracts-legacy/AgentSponsorshipSFT.sol
+- packages/contracts-legacy/FractionalizationVault.sol
+- packages/contracts-legacy/RentalMarketplace.sol
+- packages/contracts-legacy/RoyaltySplitter.sol
+- packages/contracts-legacy/shared/BaseAgentContract.sol
+- packages/contracts-legacy/shared/IERC4907.sol
+- packages/contracts/contracts-legacy-proof
+- packages/contracts/proof-unshelve.hh.config.js
+- packages/contracts/proof.hh.config.js
+- packages/control-plane-contracts/src/authority-primitives.ts
+- packages/control-plane-contracts/src/grant-issuer.ts
+- packages/control-plane-contracts/src/index.ts
+- packages/database/src/drizzle/schema/users.ts
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/boot/agent-roster.ts
+- packages/tnf-cli/src/boot/pipeline.test.ts
+- packages/tnf-cli/src/boot/pipeline.ts
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/slashCommands.test.ts
+- packages/tnf-cli/src/slashCommands.ts
+- packages/tnf-cli/src/utils/tui-markdown-renderer.test.ts
+- packages/tnf-cli/src/utils/tui-markdown-renderer.ts
+- packages/tnf-cli/src/utils/tui-mention-expander.test.ts
+- packages/tnf-cli/src/utils/tui-mention-expander.ts
 - packages/ui-consolidated/vite.config.ts
-- apps/frontend/.wrangler/tmp/pages-XOF4nE/functions-filepath-routing-config-0.3241775630825481.json
-- apps/frontend/.wrangler/tmp/pages-XOF4nE/functionsRoutes-0.8421570143385246.mjs
-- apps/frontend/.wrangler/tmp/pages-XOF4nE/functionsWorker-0.06752331002577305.js
+- pnpm-lock.yaml
+- scripts/agent-registry/agent-registry-prune.cjs
+- scripts/agent-registry/build-agent-registry.mjs
+- scripts/agent-registry/check-agent-registry.mjs
+- scripts/agents/tnf-agent-daemon.py
+- scripts/antigravity-redis-wrapper.cjs
+- scripts/autonomy/brain_sync.sh
+- scripts/library/ensure-library-audio-stack.cjs
+- scripts/protocols/synthetic-federation-gate-check.cjs
+- scripts/runtime/resolve-harness-context.cjs
+- scripts/start-agent-network.sh
+- tools/agent-relationship-graph/agent-relationship-graph.json
 
 ## Verification
 
-- privacy_guard: `pass`
-- secret_sweep: `pass`
-- docs_pii_guard: `pass`
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
 - supabase_rls_audit: `na`
 
 ## Continuation

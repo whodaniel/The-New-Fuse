@@ -12,9 +12,11 @@ name: Honest Failure Gate
 # What it catches is documented in scripts/protocols/verify-honest-failure.cjs.
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main]
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
   workflow_dispatch:
 
 permissions:

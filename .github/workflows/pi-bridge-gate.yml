@@ -1,32 +1,34 @@
 name: Pi Bridge Gate
 
 on:
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - "scripts/pi-redis-wrapper.cjs"
-      - "scripts/pi-session-handoff.cjs"
-      - "scripts/tests/pi-bridge.integration.test.cjs"
-      - "packages/relay-core/src/protocol/handoff-protocol.ts"
-      - "packages/relay-core/src/protocol/handoff-protocol.js"
-      - "packages/relay-core/src/transports/MCPTransport.ts"
-      - "packages/relay-core/src/adapters/TerminalFederationBridge.ts"
-      - "packages/relay-core/tsconfig.json"
-      - "package.json"
-      - ".github/workflows/pi-bridge-gate.yml"
-  push:
-    branches: [main, develop]
-    paths:
-      - "scripts/pi-redis-wrapper.cjs"
-      - "scripts/pi-session-handoff.cjs"
-      - "scripts/tests/pi-bridge.integration.test.cjs"
-      - "packages/relay-core/src/protocol/handoff-protocol.ts"
-      - "packages/relay-core/src/protocol/handoff-protocol.js"
-      - "packages/relay-core/src/transports/MCPTransport.ts"
-      - "packages/relay-core/src/adapters/TerminalFederationBridge.ts"
-      - "packages/relay-core/tsconfig.json"
-      - "package.json"
-      - ".github/workflows/pi-bridge-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: [main, develop]
+  #   paths:
+  #     - "scripts/pi-redis-wrapper.cjs"
+  #     - "scripts/pi-session-handoff.cjs"
+  #     - "scripts/tests/pi-bridge.integration.test.cjs"
+  #     - "packages/relay-core/src/protocol/handoff-protocol.ts"
+  #     - "packages/relay-core/src/protocol/handoff-protocol.js"
+  #     - "packages/relay-core/src/transports/MCPTransport.ts"
+  #     - "packages/relay-core/src/adapters/TerminalFederationBridge.ts"
+  #     - "packages/relay-core/tsconfig.json"
+  #     - "package.json"
+  #     - ".github/workflows/pi-bridge-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main, develop]
+  #   paths:
+  #     - "scripts/pi-redis-wrapper.cjs"
+  #     - "scripts/pi-session-handoff.cjs"
+  #     - "scripts/tests/pi-bridge.integration.test.cjs"
+  #     - "packages/relay-core/src/protocol/handoff-protocol.ts"
+  #     - "packages/relay-core/src/protocol/handoff-protocol.js"
+  #     - "packages/relay-core/src/transports/MCPTransport.ts"
+  #     - "packages/relay-core/src/adapters/TerminalFederationBridge.ts"
+  #     - "packages/relay-core/tsconfig.json"
+  #     - "package.json"
+  #     - ".github/workflows/pi-bridge-gate.yml"
   workflow_dispatch:
 
 jobs:

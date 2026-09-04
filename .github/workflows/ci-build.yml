@@ -5,16 +5,17 @@
 name: CI Build (Self-hosted)
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - "apps/api/**"
-      - "apps/frontend/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - "turbo.json"
-      - ".github/workflows/ci-build.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: [main]
+  #   paths:
+  #     - "apps/api/**"
+  #     - "apps/frontend/**"
+  #     - "packages/**"
+  #     - "package.json"
+  #     - "pnpm-lock.yaml"
+  #     - "turbo.json"
+  #     - ".github/workflows/ci-build.yml"
   workflow_dispatch:
 
 concurrency:

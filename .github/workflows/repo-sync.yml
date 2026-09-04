@@ -3,9 +3,10 @@ name: TNF Repo Separation Sync
 # Auto-running on monorepo main push was disabled after an orphan commit was force-pushed.
 # The sync path now correctly uses PRs instead of force-pushing main.
 on:
-  push:
-    branches:
-      - main
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
     inputs:
       force:

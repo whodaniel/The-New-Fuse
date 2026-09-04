@@ -10,12 +10,13 @@
 name: Deploy Frontend to Cloudflare Pages
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/frontend/**"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/deploy-frontend-pages.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "apps/frontend/**"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/deploy-frontend-pages.yml"
   workflow_dispatch:
 
 concurrency:

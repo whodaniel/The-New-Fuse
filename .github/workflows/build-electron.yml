@@ -1,12 +1,13 @@
 name: Build Electron Desktop
 
 on:
-  push:
-    branches: ["main"]
-    paths:
-      - "apps/electron-desktop/**"
-      - "apps/browser-hub/**"
-      - "packages/**"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: ["main"]
+  #   paths:
+  #     - "apps/electron-desktop/**"
+  #     - "apps/browser-hub/**"
+  #     - "packages/**"
   workflow_dispatch:
 
 jobs:

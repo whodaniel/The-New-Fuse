@@ -335,6 +335,74 @@ const worker = {
       });
     }
 
+    // Customer Cloud-Hosted Agent Invocations
+    if (
+      (url.pathname === '/v1/agents/invoke' || url.pathname === '/v1/agents/chat') &&
+      req.method === 'POST'
+    ) {
+      const authHeader = req.headers.get('authorization') || req.headers.get('x-api-key');
+      if (!authHeader && !localRuntime) {
+        return json({ ok: false, error: 'UNAUTHORIZED_AGENT_CALL' }, { status: 401 });
+      }
+
+      const body = (await req.json().catch(() => null)) as {
+        agentId?: string;
+        tenantId?: string;
+        prompt?: string;
+        context?: Record<string, unknown>;
+        budgetCap?: number;
+      } | null;
+
+      if (!body || typeof body.prompt !== 'string' || body.prompt.trim().length === 0) {
+        return json({ ok: false, error: 'INVALID_PAYLOAD_PROMPT_REQUIRED' }, { status: 400 });
+      }
+
+      const requestId = `agent_${crypto.randomUUID()}`;
+      const tenantId = body.tenantId || req.headers.get('x-tenant-id') || 'default-tenant';
+      const agentId = body.agentId || 'default-agent';
+
+      // 1. Audit Receipt in SharedState
+      const receipt: Receipt = {
+        by: 'openclaw-runtime',
+        type: 'deposit',
+        scope: { runtime: 'customer-cloud-agent', agent: agentId, tenant: tenantId },
+        perm: { visibility: 'tenant', writeScope: 'sharedstate' },
+        refs: [{ kind: 'task', ref: requestId }],
+        data: {
+          kind: 'agent.invocation',
+          requestId,
+          tenantId,
+          agentId,
+          promptLength: body.prompt.length,
+          timestamp: new Date().toISOString(),
+        },
+      };
+      const deposited = await depositReceipt(env, receipt);
+
+      // 2. Forward to OpenClaw / TNF Agent Gateway
+      const invocationPayload = {
+        action: 'invoke',
+        requestId,
+        tenantId,
+        agentId,
+        prompt: body.prompt,
+        context: body.context || {},
+      };
+      const gatewayRes = await callGateway(env, invocationPayload, requestId);
+
+      return json(
+        {
+          ok: gatewayRes.ok,
+          requestId,
+          tenantId,
+          agentId,
+          gateway: gatewayRes,
+          receipt: deposited,
+        },
+        { status: gatewayRes.ok ? 200 : gatewayRes.status || 502 }
+      );
+    }
+
     return json({ ok: false, error: 'NOT_FOUND' }, { status: 404 });
   },
 };

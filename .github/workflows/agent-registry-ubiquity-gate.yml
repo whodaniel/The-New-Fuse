@@ -3,18 +3,19 @@ name: Agent Registry Ubiquity Gate
 # Cost policy: validate once on relevant PRs using operator-owned capacity; do
 # not repeat the same install/check after merge.
 on:
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - ".agent/agents/**"
-      - ".claude/agents/**"
-      - "config/ai-agents/**"
-      - "config/agents/**"
-      - "scripts/agent-registry/**"
-      - "data/agent-registry/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/agent-registry-ubiquity-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: [main, develop]
+  #   paths:
+  #     - ".agent/agents/**"
+  #     - ".claude/agents/**"
+  #     - "config/ai-agents/**"
+  #     - "config/agents/**"
+  #     - "scripts/agent-registry/**"
+  #     - "data/agent-registry/**"
+  #     - "package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/agent-registry-ubiquity-gate.yml"
   workflow_dispatch:
 
 jobs:
