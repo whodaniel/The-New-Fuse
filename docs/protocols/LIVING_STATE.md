@@ -332,7 +332,11 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-09-03T05:54:04.228Z New script(s) created: agent-registry-prune.cjs
 - [✅] 2026-09-03T05:54:04.228Z Fix MEMORY.md drift: canonicalize § delimiter
 - [✅] 2026-09-03T21:38:12.328Z New script(s) created: agent-registry-prune.cjs,
+- [✅] 2026-09-04T23:28:24.782Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+
   validate-session-handoff.cjs
+
 - [✅] 2026-09-03T21:38:12.328Z Fix MEMORY.md drift: canonicalize § delimiter
   format, split oversized entry
 - [✅] 2026-09-04T05:35:33.431Z New script(s) created: agent-registry-prune.cjs,
@@ -1235,6 +1239,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-04T23:32:27.726Z handoff `f1b43276-289a-45e9-a849-291dfa15d45f` head
+  `fdcfd006f59f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-09-04T23:28:18.473Z handoff `f53ab339-6bb3-4ff7-9ac6-5ca619cd2fec` head
+  `fdcfd006f59f` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-09-04T22:55:58.501Z handoff `cb1bff83-43dc-4196-b17a-9bcd05fb9c0f` head
   `132398e3ddb8` project `TNF-SESSION` — Continue priority queue from
