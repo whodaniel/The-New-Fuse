@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-04T22:07:51.711Z` Handoff ID: `9a369abb-2e87-492a-9ae7-ee0de8aa8f43`
+`2026-09-04T22:20:19.613Z` Handoff ID: `a527b4d2-fc03-4f60-b842-93177833ba11`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `feat/ci-billing-safety-and-cloud-agents`
-- Head SHA: `eb48a66c5d67ca2d076befe383208bfabe28652d`
+- Branch: `main`
+- Head SHA: `37be0e3496736632a850d32f95f7496ff62304ae`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -26,6 +26,21 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Changed Paths
 
+- cloudbuild.ci.yaml
+- docs/operations/GCP_CI_CD_AND_RELEASE_MANUAL.md
+- package.json
+- scripts/packaging/distribute-desktop-dmg.sh
+- apps/browser-control-surfaces/BROWSER_CONTROL_SURFACE.css
+- apps/browser-control-surfaces/BROWSER_CONTROL_SURFACE.tsx
+- apps/browser-control-surfaces/index.ts
+- apps/frontend/src/ComprehensiveRouter.tsx
+- apps/frontend/src/config/routeCatalog.ts
+- apps/frontend/src/config/sitemap.ts
+- apps/frontend/src/data/codebase_map.json
+- apps/tauri-desktop/src/config/routeComponents.test.ts
+- apps/tauri-desktop/src/config/routeComponents.tsx
+- apps/tauri-desktop/src/config/routes.test.ts
+- apps/tauri-desktop/src/config/routes.ts
 - .github/workflows/agent-registry-ubiquity-gate.yml
 - .github/workflows/build-electron.yml
 - .github/workflows/ci-build.yml
@@ -49,143 +64,18 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 - .github/workflows/skills-governance-gate.yml
 - .github/workflows/tauri-desktop-dmg.yml
 - .github/workflows/tauri-desktop-qa.yml
-- apps/frontend/src/data/codebase_map.json
 - cloudflare-openclaw-runtime/src/index.ts
 - docs/operations/CLOUD_HOSTED_AGENT_DEPLOYMENT_BLUEPRINT.md
-- package.json
-- scripts/deployment/deploy-frontend-pages-direct.sh
-- scripts/deployment/setup-self-hosted-runner.sh
-- .agent/agents/sub-director.md
-- .agent/agents/super-director.md
-- .agent/skills/tnf-agent-deadlock-rescue/SKILL.md
-- .agent/skills/tnf-headless-elevation-broker/SKILL.md
-- .gitignore
-- KNOWLEDGE_TREE.json
-- apps/api-gateway/.env.example
-- apps/api-gateway/src/auth/auth.controller.ts
-- apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json
-- apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json
-- apps/api/package.json
-- apps/api/src/app.module.ts
-- apps/api/src/controllers/admin.controller.ts
-- apps/api/src/controllers/extension-auth.controller.ts
-- apps/api/src/controllers/stripe-webhook.controller.ts
-- apps/api/src/main.ts
-- apps/api/src/modules/admin/admin.module.ts
-- apps/chrome-extension/dist-v7/content/index.js
-- apps/chrome-extension/dist-v7/manifest.json
-- apps/chrome-extension/dist-v7/service-worker.js
-- apps/frontend/.pagesignore
-- apps/frontend/exclude-visualizations.js
-- apps/frontend/public/visualizations/TNF_INTELLIGENCE_DASHBOARD.html
-- apps/frontend/public/visualizations/dashboard.html
-- apps/frontend/public/visualizations/data/graph-artifacts.index.json
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/agent-relationship-graph.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/neo4j-package/README.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/snapshots/latest-alert.json
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/snapshots/latest-alert.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/snapshots/latest-delta.json
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/snapshots/latest-delta.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/snapshots/latest-snapshot.json
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-brand-subgraph.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-content-subgraph.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-funnel-subgraph.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-ops-subgraph.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-podcast-subgraph.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-seo-subgraph.md
-- apps/frontend/public/visualizations/graphs/agent-relationship-graph/subgraphs/agent-relationship-social-subgraph.md
-- apps/frontend/public/visualizations/monitoring-dashboard.html
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
-- apps/frontend/src/pages/GeneralSettingsPage.tsx
-- apps/frontend/src/pages/VirtualLibrary/VirtualLibraryPage.tsx
-- apps/frontend/vite.config.ts
-- apps/tauri-desktop/src-tauri/src/service_lifecycle.rs
-- apps/tauri-desktop/src/components/route-context.tsx
-- apps/tauri-desktop/src/hooks/useAuth.tsx
-- apps/tauri-desktop/src/pages/OAGIHub.tsx
-- apps/tauri-desktop/src/pages/VirtualLibraryHub.tsx
-- apps/tauri-desktop/src/services/api.ts
-- apps/tauri-desktop/vite.config.ts
-- cloudflare-api-proxy/src/index.ts
-- data/agent-registry/onboarding-agent.json
-- data/harness/ANOMALY_PAYLOAD.md
-- data/harness/active-sieve-manifest.json
-- data/llm-intel/arena-intel-latest.json
-- data/llm-intel/arena-intel.json
-- data/llm-intel/history/intel_2026-09-03.json
-- data/llm-intel/ranking-recommendations.json
-- data/llm-intel/ranking-report-latest.md
-- data/llm-provider-status.json
-- data/marketplace/catalog-items.json
-- docs/ai-arcade/MARKETPLACE_LISTING_GATE_DESIGN.md
-- docs/operations/tnf-master-reconciliation-report-latest.json
-- docs/operations/tnf-master-reconciliation-report-latest.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/CHALLENGE_RATIONALE_LOG.md
-- docs/protocols/CORE_SYSTEM_PROMPT_ARCHITECTURE.md
-- docs/protocols/DIRECTIVES.md
 - docs/protocols/LIVING_STATE.md
-- docs/protocols/SESSION_HANDOFF_ENFORCEMENT.md
-- docs/protocols/TNF_AGENT_SHELL_HYGIENE.md
-- docs/protocols/TNF_BOOK_OF_AXIOMS.md
-- docs/protocols/TNF_INFORMATION_INGESTION_PIPELINE.md
-- docs/protocols/TNF_VIDEO_INTELLIGENCE_SPECIFICATION.md
-- docs/protocols/TNF_WORKTREE_RECLAMATION_LEDGER.md
-- docs/protocols/TURN_END_MANDATE.md
-- docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.report.md
-- docs/protocols/bridges/tnf-cli-multi-slash-skill-chain.yml
-- docs/protocols/challenge-rationales/2026-09-03-turn-zero-classification-source.md
-- docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
-- docs/protocols/reports/OS_KEYSTORE_SIGNING_FEASIBILITY_BRIEF.md
-- docs/protocols/reports/SESSION_HANDOFF_FUSE_CONNECT_COMMERCIALIZATION.json
-- docs/protocols/reports/SESSION_HANDOFF_FUSE_CONNECT_COMMERCIALIZATION.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/TNF_WORLD_CLASS_CAMPAIGN_BRIEF_20260902.md
-- docs/protocols/reports/TURN_ZERO_V2_PATHWAY_RECONCILIATION_2026-09-03.md
-- docs/protocols/reports/WORLD_CLASS_CAMPAIGN_PHASE2_VERIFICATION_20260904.md
-- docs/protocols/reports/twip-terminal-macro-board-latest.md
-- packages/contracts-legacy/AgentNFTFactory.sol
-- packages/contracts-legacy/AgentProvenance.sol
-- packages/contracts-legacy/AgentSponsorshipSFT.sol
-- packages/contracts-legacy/FractionalizationVault.sol
-- packages/contracts-legacy/RentalMarketplace.sol
-- packages/contracts-legacy/RoyaltySplitter.sol
-- packages/contracts-legacy/shared/BaseAgentContract.sol
-- packages/contracts-legacy/shared/IERC4907.sol
-- packages/contracts/contracts-legacy-proof
-- packages/contracts/proof-unshelve.hh.config.js
-- packages/contracts/proof.hh.config.js
-- packages/control-plane-contracts/src/authority-primitives.ts
-- packages/control-plane-contracts/src/grant-issuer.ts
-- packages/control-plane-contracts/src/index.ts
-- packages/database/src/drizzle/schema/users.ts
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/boot/agent-roster.ts
-- packages/tnf-cli/src/boot/pipeline.test.ts
-- packages/tnf-cli/src/boot/pipeline.ts
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/command-surface.snapshot.json
-- packages/tnf-cli/src/slashCommands.test.ts
-- packages/tnf-cli/src/slashCommands.ts
-- packages/tnf-cli/src/utils/tui-markdown-renderer.test.ts
-- packages/tnf-cli/src/utils/tui-markdown-renderer.ts
-- packages/tnf-cli/src/utils/tui-mention-expander.test.ts
-- packages/tnf-cli/src/utils/tui-mention-expander.ts
-- packages/ui-consolidated/vite.config.ts
-- pnpm-lock.yaml
-- scripts/agent-registry/agent-registry-prune.cjs
-- scripts/agent-registry/build-agent-registry.mjs
-- scripts/agent-registry/check-agent-registry.mjs
-- scripts/agents/tnf-agent-daemon.py
-- scripts/antigravity-redis-wrapper.cjs
-- scripts/autonomy/brain_sync.sh
-- scripts/library/ensure-library-audio-stack.cjs
-- scripts/protocols/synthetic-federation-gate-check.cjs
-- scripts/runtime/resolve-harness-context.cjs
-- scripts/start-agent-network.sh
-- tools/agent-relationship-graph/agent-relationship-graph.json
+- scripts/deployment/deploy-frontend-pages-direct.sh
+- scripts/deployment/setup-self-hosted-runner.sh
+- apps/browser-control-surfaces/components/GoogleEcosystemControl.tsx
+- apps/browser-control-surfaces/types/googleEcosystem.ts
+- apps/frontend/src/pages/GoogleEcosystemHub.tsx
+- apps/tauri-desktop/src/pages/GoogleEcosystemHub.tsx
 
 ## Verification
 
