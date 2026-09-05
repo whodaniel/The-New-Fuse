@@ -1,19 +1,22 @@
 {
   "spec": "tnf/session-handoff/0.2",
   "handoff_id": "9a5a35f6-fb6e-4977-b6cc-b1697bce83f3",
-  "created_at": "2026-09-05T10:26:00.128Z",
+  "created_at": "2026-09-05T10:54:20.122Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "994a8ba0cd7e30f259df8fda9759524b82ed0f85",
+  "head_sha": "fafd71080a9add79b5116c76b611d60c5cfab13f",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [
     "TNF-SESSION"
   ],
-  "work_summary": "sweep: harness anomaly payload and sieve manifest (2 files)",
+  "work_summary": "sweep: terminal board data, reconciliation reports, board report (5 files)",
   "changed_paths": [
-    "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json"
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -36,12 +39,14 @@
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Move CLI wizard/cli.ts to task branch",
+    "Decide on onboarding-contract.json (protocol contract)",
+    "Classify assimilation docs",
+    "Push task branch for review"
   ],
   "artifacts": {
     "commits": [
-      "1b184a646f39b3b25e719e40a342831a394d096f"
+      "fafd71080a9add79b5116c76b611d60c5cfab13f"
     ]
   },
   "repository_context": {
@@ -132,7 +137,5 @@
       "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
   ],
-  "files_changed_count": 2,
-  "head": "1f387c659249e104adebb263ef9f5fb7c3c15f3f",
-  "updated_at": "2026-09-05T10:47:39.285Z"
+  "priority": "high"
 }

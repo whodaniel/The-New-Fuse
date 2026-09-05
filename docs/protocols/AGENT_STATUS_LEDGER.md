@@ -41,4 +41,8 @@ updated automatically by the agent status reporting mechanism.
 | ------------- | --------------------------------- | ----------------------- |
 | tnf-cli-agent | TNF:LOCAL:AGENT:TNF-CLI-AGENT:001 | Available, dispatchable |
 
-| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST (9a5a35f6-fb6e-4977-b6cc-b1697bce83f3) | ✅ HANDOFF_READY |
+| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(9a5a35f6-fb6e-4977-b6cc-b1697bce83f3) | ✅ HANDOFF_READY |
+
+| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(752298a2-8da2-4bec-9165-8bd735d80b7f) | ✅ HANDOFF_READY |

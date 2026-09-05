@@ -3,7 +3,9 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
+
 **Current Directive:** Lane F1 roster truth: derive liveness from lastSeen vs
+
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-09-04 Turn Zero naming — V2 is current Turn Zero**:
@@ -1269,7 +1271,13 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-09-05T10:26:00.658Z handoff `9a5a35f6-fb6e-4977-b6cc-b1697bce83f3` head `1b184a646f39` project `TNF-SESSION` — Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- 2026-09-05T10:50:40.739Z handoff `752298a2-8da2-4bec-9165-8bd735d80b7f` head
+  `fafd71080a9a` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-09-05T10:26:00.658Z handoff `9a5a35f6-fb6e-4977-b6cc-b1697bce83f3` head
+  `1b184a646f39` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-09-05T03:30:59.903Z handoff `13d9bd69-f6f1-4d02-bf3d-517c132688fa` head
   `d0cd89ea152e` project `TNF-SESSION` — Continue priority queue from

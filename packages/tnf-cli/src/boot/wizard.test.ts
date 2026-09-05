@@ -10,8 +10,13 @@ import path from 'node:path';
 import {
   EMBEDDED_STEP_CATALOG,
   loadUserFacingCatalog,
+<<<<<<< Updated upstream
   resolveSubdirectorChoice,
   sanitizeHandle,
+=======
+  sanitizeHandle,
+  resolveSubdirectorChoice,
+>>>>>>> Stashed changes
 } from './wizard.js';
 
 let passed = 0;
@@ -23,9 +28,13 @@ function test(name: string, fn: () => void): void {
 
 test('sanitizeHandle strips path traversal', () => {
   assert.strictEqual(sanitizeHandle('../../evil'), 'evil');
+<<<<<<< Updated upstream
   assert.ok(
     !sanitizeHandle('../../evil').includes('/') && !sanitizeHandle('../../evil').includes('.')
   );
+=======
+  assert.ok(!sanitizeHandle('../../evil').includes('/') && !sanitizeHandle('../../evil').includes('.'));
+>>>>>>> Stashed changes
 });
 
 test('sanitizeHandle enforces safe charset and length', () => {
@@ -40,6 +49,7 @@ test('loadUserFacingCatalog reads contract with embedded fallback', () => {
   const fromContract = loadUserFacingCatalog(repoRoot);
   assert.strictEqual(fromContract.source, 'contract');
   assert.ok(fromContract.steps.length >= EMBEDDED_STEP_CATALOG.length);
+<<<<<<< Updated upstream
   for (const id of [
     'identity',
     'swarm-topology',
@@ -51,6 +61,10 @@ test('loadUserFacingCatalog reads contract with embedded fallback', () => {
       fromContract.steps.some((s) => s.id === id),
       `catalog contains ${id}`
     );
+=======
+  for (const id of ['identity', 'swarm-topology', 'workspace-ingestion', 'context-storage', 'first-goal']) {
+    assert.ok(fromContract.steps.some((s) => s.id === id), `catalog contains ${id}`);
+>>>>>>> Stashed changes
   }
 
   const bogusRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-wizard-'));
