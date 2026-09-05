@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T12:30:45.402Z",
+  "generatedAt": "2026-09-05T13:00:52.173Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T12:30:35.924Z",
+    "lastScanAt": "2026-09-05T13:00:36.950Z",
     "totalTerminals": 5,
     "returned": 5,
     "source": "ps+tmux+capture+terminal-history",
@@ -88,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑1.2M ↓236k R21M CH97.1% 37.3%/128k (auto)              (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑1.2M ↓268k R23M CH99.2% 70.5%/128k (auto)              (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -120,7 +120,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "Auto · 24.3% · 27 files edited                                Run Everything | ~",
+        "contextPreview": "Auto · 29.8% · 27 files edited                                Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       }
