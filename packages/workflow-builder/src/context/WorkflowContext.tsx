@@ -57,6 +57,8 @@ interface WorkflowContextType {
     executeWorkflow: () => void;
     saveWorkflow: () => Promise<string>;
     loadWorkflow: (id: string) => Promise<void>;
+    /** Replace the entire graph (AI apply / local-ai bootstrap). */
+    replaceGraph: (nodes: WorkflowNode[], edges: WorkflowEdge[]) => void;
   };
 }
 
@@ -265,6 +267,16 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
     }
   }, [nodes, edges, workflowApi]);
 
+  const replaceGraph = useCallback(
+    (nextNodes: WorkflowNode[], nextEdges: WorkflowEdge[]) => {
+      setNodes(nextNodes);
+      setEdges(nextEdges);
+      setSelectedNode(null);
+      setSelectedEdge(null);
+    },
+    [setNodes, setEdges]
+  );
+
   const loadWorkflow = useCallback(
     async (id: string) => {
       try {
@@ -294,8 +306,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
             data: edge.data || { label: '' },
           }));
 
-          setNodes(loadedNodes);
-          setEdges(loadedEdges);
+          replaceGraph(loadedNodes, loadedEdges);
         } else {
           throw new Error(responseError || 'Failed to load workflow');
         }
@@ -304,7 +315,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
         throw error;
       }
     },
-    [setNodes, setEdges, workflowApi]
+    [replaceGraph, workflowApi]
   );
 
   // Create context value
@@ -332,6 +343,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
       executeWorkflow,
       saveWorkflow,
       loadWorkflow,
+      replaceGraph,
     },
   };
 

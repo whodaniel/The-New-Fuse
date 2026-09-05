@@ -1,0 +1,312 @@
+{
+  "id": "wf_factory_automation_v1",
+  "name": "Workflow Factory Automation",
+  "description": "Automation sequence expanded from meta design-agent graph: intake → parse → design → validate → refine loop → Nest normalize → persist/sync → notify → builder URL",
+  "nodes": [
+    {
+      "id": "input-start",
+      "type": "input",
+      "position": {
+        "x": 80,
+        "y": 200
+      },
+      "data": {
+        "label": "Start",
+        "type": "input"
+      }
+    },
+    {
+      "id": "in-brief",
+      "type": "input",
+      "position": {
+        "x": 60,
+        "y": 220
+      },
+      "data": {
+        "label": "Intake brief",
+        "type": "input",
+        "id": "in-brief",
+        "kind": "input",
+        "x": 60,
+        "y": 220
+      }
+    },
+    {
+      "id": "prompt-parse",
+      "type": "prompt",
+      "position": {
+        "x": 280,
+        "y": 80
+      },
+      "data": {
+        "label": "Parse requirements",
+        "type": "prompt",
+        "id": "prompt-parse",
+        "kind": "prompt",
+        "x": 280,
+        "y": 80,
+        "data": {
+          "system": "Extract goals, actors, tools, success criteria from brief"
+        }
+      }
+    },
+    {
+      "id": "agent-design",
+      "type": "agent",
+      "position": {
+        "x": 520,
+        "y": 80
+      },
+      "data": {
+        "label": "Design agent",
+        "type": "agent",
+        "id": "agent-design",
+        "kind": "agent",
+        "x": 520,
+        "y": 80,
+        "data": {
+          "taskId": "design-agent",
+          "role": "architect"
+        }
+      }
+    },
+    {
+      "id": "tool-catalog",
+      "type": "mcpTool",
+      "position": {
+        "x": 760,
+        "y": 40
+      },
+      "data": {
+        "label": "Builder catalog tools",
+        "type": "mcpTool",
+        "id": "tool-catalog",
+        "kind": "mcpTool",
+        "x": 760,
+        "y": 40,
+        "data": {
+          "tools": [
+            "addNode",
+            "addEdge",
+            "setStatus"
+          ]
+        }
+      }
+    },
+    {
+      "id": "cond-valid",
+      "type": "condition",
+      "position": {
+        "x": 760,
+        "y": 220
+      },
+      "data": {
+        "label": "Graph valid?",
+        "type": "condition",
+        "id": "cond-valid",
+        "kind": "condition",
+        "x": 760,
+        "y": 220,
+        "data": {
+          "predicate": "nodes>=3 && edges>=2"
+        }
+      }
+    },
+    {
+      "id": "loop-refine",
+      "type": "loop",
+      "position": {
+        "x": 1000,
+        "y": 320
+      },
+      "data": {
+        "label": "Refine until valid",
+        "type": "loop",
+        "id": "loop-refine",
+        "kind": "loop",
+        "x": 1000,
+        "y": 320,
+        "data": {
+          "maxIterations": 3,
+          "reenter": "agent-design"
+        }
+      }
+    },
+    {
+      "id": "xform-nest",
+      "type": "transform",
+      "position": {
+        "x": 1000,
+        "y": 80
+      },
+      "data": {
+        "label": "Normalize to Nest shape",
+        "type": "transform",
+        "id": "xform-nest",
+        "kind": "transform",
+        "x": 1000,
+        "y": 80,
+        "data": {
+          "map": "{ name, nodes, edges, status: DRAFT }"
+        }
+      }
+    },
+    {
+      "id": "tool-persist",
+      "type": "mcpTool",
+      "position": {
+        "x": 1240,
+        "y": 80
+      },
+      "data": {
+        "label": "Persist + optional API sync",
+        "type": "mcpTool",
+        "id": "tool-persist",
+        "kind": "mcpTool",
+        "x": 1240,
+        "y": 80,
+        "data": {
+          "actions": [
+            "WorkflowGraphBridge.save",
+            "POST /api/workflows"
+          ]
+        }
+      }
+    },
+    {
+      "id": "notify",
+      "type": "notification",
+      "position": {
+        "x": 1480,
+        "y": 80
+      },
+      "data": {
+        "label": "Notify builder ready",
+        "type": "notification",
+        "id": "notify",
+        "kind": "notification",
+        "x": 1480,
+        "y": 80,
+        "data": {
+          "channel": "workflow-builder",
+          "event": "applied"
+        }
+      }
+    },
+    {
+      "id": "out-url",
+      "type": "output",
+      "position": {
+        "x": 1720,
+        "y": 220
+      },
+      "data": {
+        "label": "Builder URL",
+        "type": "output",
+        "id": "out-url",
+        "kind": "output",
+        "x": 1720,
+        "y": 220
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-start-first",
+      "source": "input-start",
+      "target": "in-brief",
+      "data": {
+        "label": "begin"
+      }
+    },
+    {
+      "id": "e1",
+      "source": "in-brief",
+      "target": "prompt-parse",
+      "data": {
+        "label": "brief"
+      }
+    },
+    {
+      "id": "e2",
+      "source": "prompt-parse",
+      "target": "agent-design",
+      "data": {
+        "label": "spec"
+      }
+    },
+    {
+      "id": "e3",
+      "source": "agent-design",
+      "target": "tool-catalog",
+      "data": {
+        "label": "toolCalls"
+      }
+    },
+    {
+      "id": "e4",
+      "source": "tool-catalog",
+      "target": "cond-valid",
+      "data": {
+        "label": "candidate graph"
+      }
+    },
+    {
+      "id": "e5",
+      "source": "cond-valid",
+      "target": "xform-nest",
+      "data": {
+        "label": "yes"
+      }
+    },
+    {
+      "id": "e6",
+      "source": "cond-valid",
+      "target": "loop-refine",
+      "data": {
+        "label": "no"
+      }
+    },
+    {
+      "id": "e7",
+      "source": "loop-refine",
+      "target": "agent-design",
+      "data": {
+        "label": "retry"
+      }
+    },
+    {
+      "id": "e8",
+      "source": "xform-nest",
+      "target": "tool-persist",
+      "data": {
+        "label": "definition"
+      }
+    },
+    {
+      "id": "e9",
+      "source": "tool-persist",
+      "target": "notify",
+      "data": {
+        "label": "saved"
+      }
+    },
+    {
+      "id": "e10",
+      "source": "notify",
+      "target": "out-url",
+      "data": {
+        "label": "open"
+      }
+    }
+  ],
+  "version": 1,
+  "status": "draft",
+  "tags": [
+    "ai-designed",
+    "durable-task"
+  ],
+  "source": "durable-design-agent",
+  "createdAt": "2026-09-05T13:02:20.439Z",
+  "updatedAt": "2026-09-05T13:02:20.440Z"
+}

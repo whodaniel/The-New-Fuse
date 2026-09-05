@@ -101261,8 +101261,420 @@
       "createdBy": "community",
       "createdAt": "2026-09-05T12:30:02Z",
       "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-model-enterprise-model-796",
+      "slug": "enterprise-model-796",
+      "name": "Enterprise Model",
+      "description": "High-performance data extraction model optimized for low-latency inference",
+      "kind": "model",
+      "category": "nexus",
+      "tags": [
+        "model",
+        "backbone",
+        "inference",
+        "neural"
+      ],
+      "capabilities": [
+        "labs",
+        "quantization",
+        "few-shot-learning",
+        "skill-composition"
+      ],
+      "rating": 5.0,
+      "totalRuns": 21840,
+      "successRate": 98.9,
+      "pricePerRun": 0.2,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-mcp_server-protocol-adapter-224",
+      "slug": "protocol-adapter-224",
+      "name": "Protocol Adapter",
+      "description": "MCP-compliant server for report generation with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "nft",
+      "tags": [
+        "mcp",
+        "server",
+        "integration"
+      ],
+      "capabilities": [
+        "curriculum",
+        "agent-handoff",
+        "state-checkpointing",
+        "notification-hooks"
+      ],
+      "rating": 4.0,
+      "totalRuns": 651,
+      "successRate": 96.2,
+      "pricePerRun": 0.22,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-mcp_server-bridge-connector-928",
+      "slug": "bridge-connector-928",
+      "name": "Bridge Connector",
+      "description": "MCP-compliant server for resource scheduling with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "automation",
+      "tags": [
+        "integration",
+        "server",
+        "mcp",
+        "protocol"
+      ],
+      "capabilities": [
+        "benchmark",
+        "output-validation",
+        "ci-cd",
+        "few-shot-learning"
+      ],
+      "rating": 4.1,
+      "totalRuns": 29856,
+      "successRate": 90.1,
+      "pricePerRun": 0.04,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-agent_template-blueprint-blueprint-845",
+      "slug": "blueprint-blueprint-845",
+      "name": "Blueprint Blueprint",
+      "description": "Ready-to-deploy agent template for content generation with configuration and example flows",
+      "kind": "agent_template",
+      "category": "analytics",
+      "tags": [
+        "starter",
+        "template"
+      ],
+      "capabilities": [
+        "chain-of-thought",
+        "run-tracking"
+      ],
+      "rating": 4.8,
+      "totalRuns": 29591,
+      "successRate": 97.5,
+      "pricePerRun": 0.22,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-agent_template-blueprint-template-772",
+      "slug": "blueprint-template-772",
+      "name": "Blueprint Template",
+      "description": "Ready-to-deploy agent template for code review with configuration and example flows",
+      "kind": "agent_template",
+      "category": "productivity",
+      "tags": [
+        "template",
+        "starter",
+        "blueprint",
+        "scaffold"
+      ],
+      "capabilities": [
+        "output-validation",
+        "prompt-engineering"
+      ],
+      "rating": 4.5,
+      "totalRuns": 47091,
+      "successRate": 94.7,
+      "pricePerRun": 0.19,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-skill-portable-module-636",
+      "slug": "portable-module-636",
+      "name": "Portable Module",
+      "description": "Reusable skill module for anomaly detection with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "automation",
+      "tags": [
+        "module",
+        "skill",
+        "capability",
+        "reusable"
+      ],
+      "capabilities": [
+        "testing-harness",
+        "fine-tuning"
+      ],
+      "rating": 3.6,
+      "totalRuns": 47657,
+      "successRate": 96.4,
+      "pricePerRun": 0.07,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-model-foundation-inference-unit-242",
+      "slug": "foundation-inference-unit-242",
+      "name": "Foundation Inference Unit",
+      "description": "High-performance anomaly detection model optimized for low-latency inference",
+      "kind": "model",
+      "category": "forge",
+      "tags": [
+        "model",
+        "backbone",
+        "neural",
+        "inference"
+      ],
+      "capabilities": [
+        "inference",
+        "state-management"
+      ],
+      "rating": 4.8,
+      "totalRuns": 33591,
+      "successRate": 91.6,
+      "pricePerRun": 0.36,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-mcp_server-mcp-adapter-741",
+      "slug": "mcp-adapter-741",
+      "name": "MCP Adapter",
+      "description": "MCP-compliant server for lead scoring with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "nexus",
+      "tags": [
+        "integration",
+        "protocol",
+        "mcp",
+        "server"
+      ],
+      "capabilities": [
+        "fine-tuning",
+        "state-persistence"
+      ],
+      "rating": 4.6,
+      "totalRuns": 2927,
+      "successRate": 95.3,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-experience-premium-experience-421",
+      "slug": "premium-experience-421",
+      "name": "Premium Experience",
+      "description": "Structured learning experience for customer support with hands-on labs",
+      "kind": "experience",
+      "category": "sensory",
+      "tags": [
+        "workshop",
+        "course"
+      ],
+      "capabilities": [
+        "state-persistence",
+        "rapid-deployment",
+        "chain-of-thought",
+        "retry-logic"
+      ],
+      "rating": 4.8,
+      "totalRuns": 34300,
+      "successRate": 91.3,
+      "pricePerRun": 0.22,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-mcp_server-relay-connector-752",
+      "slug": "relay-connector-752",
+      "name": "Relay Connector",
+      "description": "MCP-compliant server for compliance checking with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "nexus",
+      "tags": [
+        "server",
+        "protocol",
+        "integration",
+        "mcp"
+      ],
+      "capabilities": [
+        "skill-composition",
+        "state-management",
+        "configuration",
+        "few-shot-learning"
+      ],
+      "rating": 4.7,
+      "totalRuns": 29307,
+      "successRate": 93.1,
+      "pricePerRun": 0.12,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-experience-interactive-journey-558",
+      "slug": "interactive-journey-558",
+      "name": "Interactive Journey",
+      "description": "Structured learning experience for threat detection with hands-on labs",
+      "kind": "experience",
+      "category": "analytics",
+      "tags": [
+        "workshop",
+        "experience"
+      ],
+      "capabilities": [
+        "inference",
+        "state-persistence",
+        "few-shot-learning",
+        "error-handling"
+      ],
+      "rating": 3.7,
+      "totalRuns": 32938,
+      "successRate": 97.3,
+      "pricePerRun": 0.25,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-agent-resilient-swarm-788",
+      "slug": "resilient-swarm-788",
+      "name": "Resilient Swarm",
+      "description": "Complete multi-agent system for resource scheduling with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "developer-tools",
+      "tags": [
+        "agent",
+        "production",
+        "autonomous",
+        "orchestration"
+      ],
+      "capabilities": [
+        "pipeline-orchestration",
+        "configuration",
+        "agent-handoff"
+      ],
+      "rating": 5.0,
+      "totalRuns": 24986,
+      "successRate": 93.3,
+      "pricePerRun": 0.46,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-workflow-automated-automation-543",
+      "slug": "automated-automation-543",
+      "name": "Automated Automation",
+      "description": "Full workflow for document processing with step tracking, retry logic, and notification hooks",
+      "kind": "workflow",
+      "category": "development",
+      "tags": [
+        "automation",
+        "workflow",
+        "process"
+      ],
+      "capabilities": [
+        "mcp-integration",
+        "configuration",
+        "labs"
+      ],
+      "rating": 4.9,
+      "totalRuns": 8067,
+      "successRate": 90.8,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-model-deep-model-882",
+      "slug": "deep-model-882",
+      "name": "Deep Model",
+      "description": "High-performance code review model optimized for low-latency inference",
+      "kind": "model",
+      "category": "developer-tools",
+      "tags": [
+        "model",
+        "backbone",
+        "inference",
+        "neural"
+      ],
+      "capabilities": [
+        "few-shot-learning",
+        "pipeline-orchestration"
+      ],
+      "rating": 4.6,
+      "totalRuns": 4523,
+      "successRate": 94.6,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-workflow-optimized-automation-590",
+      "slug": "optimized-automation-590",
+      "name": "Optimized Automation",
+      "description": "Full workflow for compliance checking with step tracking, retry logic, and notification hooks",
+      "kind": "workflow",
+      "category": "education",
+      "tags": [
+        "automation",
+        "pipeline",
+        "workflow"
+      ],
+      "capabilities": [
+        "state-persistence",
+        "configuration",
+        "prompt-engineering",
+        "state-management"
+      ],
+      "rating": 3.6,
+      "totalRuns": 2252,
+      "successRate": 96.2,
+      "pricePerRun": 0.25,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-09-05T13:00:02Z",
+      "updatedAt": "2026-09-05T13:00:02Z"
     }
   ],
-  "total": 3757,
-  "generated_at": "2026-09-05T12:30:02Z"
+  "total": 3772,
+  "generated_at": "2026-09-05T13:00:02Z"
 }

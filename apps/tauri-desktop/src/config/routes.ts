@@ -136,42 +136,62 @@ export const KNOWN_ROUTE_PATHS = new Set(DESKTOP_ROUTES.map((route) => route.pat
 
 export const DEFAULT_ROUTE = '/dashboard';
 
+/**
+ * Hash deep-links may carry query (`#/workflows?id=…&source=local-ai`).
+ * Route matching must use the path only; the page reads the query itself.
+ */
+export function splitHashPathAndQuery(raw: string): { path: string; search: string } {
+  const trimmed = String(raw || '').trim();
+  if (!trimmed) return { path: '', search: '' };
+  const q = trimmed.indexOf('?');
+  if (q < 0) return { path: trimmed, search: '' };
+  return { path: trimmed.slice(0, q), search: trimmed.slice(q + 1) };
+}
+
 export function resolveLegacyRedirect(path: string): string {
-  return LEGACY_ROUTE_REDIRECTS[path] || path;
+  const { path: clean } = splitHashPathAndQuery(path);
+  return LEGACY_ROUTE_REDIRECTS[clean] || clean;
 }
 
 export function isKnownRoute(path: string): boolean {
   const resolved = resolveLegacyRedirect(path);
-  return KNOWN_ROUTE_PATHS.has(resolved) || KNOWN_ROUTE_PATHS.has(path);
+  return KNOWN_ROUTE_PATHS.has(resolved);
 }
 
 export function getRouteByPath(path: string): DesktopRoute | undefined {
   const resolved = resolveLegacyRedirect(path);
-  return DESKTOP_ROUTES.find((route) => route.path === resolved || route.path === path);
+  return DESKTOP_ROUTES.find((route) => route.path === resolved);
 }
 
 export function routesForGroup(groupId: NavGroupId): DesktopRoute[] {
   return DESKTOP_ROUTES.filter((route) => route.group === groupId && !route.navHidden);
 }
 
-function readBootRouteFromUrl(): string | null {
+function readBootRouteFromUrl(): { path: string; search: string } | null {
   if (typeof window === 'undefined') return null;
   try {
     const hashRoute = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : '';
+    if (hashRoute) return splitHashPathAndQuery(hashRoute);
     const params = new URLSearchParams(window.location.search);
     const queryRoute = params.get('route') || '';
-    return hashRoute || queryRoute || null;
+    return queryRoute ? splitHashPathAndQuery(queryRoute) : null;
   } catch {
     return null;
   }
 }
 
+/** Preserve `?…` when normalizing the hash so local-ai deep links survive boot. */
+export function formatHashRoute(path: string, search = ''): string {
+  const clean = resolveLegacyRedirect(path);
+  return search ? `#${clean}?${search}` : `#${clean}`;
+}
+
 export function resolveBootRoute(initialRoute?: string): string {
   const fromUrl = readBootRouteFromUrl();
-  if (fromUrl) {
+  if (fromUrl?.path) {
     // An explicit deep link is authoritative even when it is unknown so the
     // router can render its recovery screen instead of silently opening home.
-    return resolveLegacyRedirect(fromUrl);
+    return resolveLegacyRedirect(fromUrl.path);
   }
 
   const persisted = safeStorage.getItem(ROUTE_STORAGE_KEY);

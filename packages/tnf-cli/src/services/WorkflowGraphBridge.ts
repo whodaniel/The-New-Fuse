@@ -190,6 +190,7 @@ export class WorkflowGraphBridge {
       spec,
       graph,
       builderPath: `/workflows/builder?id=${encodeURIComponent(graph.id)}&source=local-ai`,
+      desktopBuilderPath: `/#/workflows?id=${encodeURIComponent(graph.id)}&source=local-ai`,
       apiSynced: false,
       apiId: undefined,
     };
@@ -204,6 +205,7 @@ export class WorkflowGraphBridge {
     spec: AiWorkflowSpec;
     graph: PersistedWorkflowGraphDoc;
     builderPath: string;
+    desktopBuilderPath: string;
     apiSynced: boolean;
     apiId?: string;
     apiSync?: WorkflowApiSyncResult;
@@ -214,7 +216,12 @@ export class WorkflowGraphBridge {
       process.env.TNF_DURABLE_SYNC_WORKFLOW_API === '1' ||
       process.env.TNF_DURABLE_SYNC_WORKFLOW_API === 'true';
 
-    if (!wantSync) return { ...applied };
+    if (!wantSync) {
+      return {
+        ...applied,
+        desktopBuilderPath: `/#/workflows?id=${encodeURIComponent(applied.graph.id)}&source=local-ai`,
+      };
+    }
 
     const sync = await this.syncToApi(applied.graph, { token: input.token });
     if (sync.ok && sync.id) {
@@ -240,13 +247,19 @@ export class WorkflowGraphBridge {
         spec: applied.spec,
         graph: merged,
         builderPath: `/workflows/builder?id=${encodeURIComponent(sync.id)}`,
+        desktopBuilderPath: `/#/workflows?id=${encodeURIComponent(sync.id)}`,
         apiSynced: true,
         apiId: sync.id,
         apiSync: sync,
       };
     }
 
-    return { ...applied, apiSynced: false, apiSync: sync };
+    return {
+      ...applied,
+      desktopBuilderPath: `/#/workflows?id=${encodeURIComponent(applied.graph.id)}&source=local-ai`,
+      apiSynced: false,
+      apiSync: sync,
+    };
   }
 
   async syncToApi(

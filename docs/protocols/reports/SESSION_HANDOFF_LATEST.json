@@ -7,10 +7,15 @@
   "head_sha": "3e1e3447aede9300a1672a7b7e7b3f6c2fb8a1c1",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [
+    "TNF-SESSION"
+  ],
   "work_summary": [
-    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
-    "CI/hook gates now block critical changes without fresh handoff artifacts."
+    "Feature: Tauri desktop workflow builder integration",
+    "Feature: WorkflowCanvas and WorkflowContext updates",
+    "Feature: WorkflowGraphBridge enhancements",
+    "Sweep: Terminal macro board data updates",
+    "Sweep: Marketplace catalog updates"
   ],
   "changed_paths": [
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
@@ -20,27 +25,10 @@
     "apps/tauri-desktop/src/pages/WorkflowBuilder.tsx",
     "apps/tauri-desktop/vite.config.ts",
     "data/marketplace/catalog-items.json",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "docs/protocols/workspace-leases.json",
     "packages/tnf-cli/src/services/WorkflowGraphBridge.ts",
     "packages/workflow-builder/src/canvas/WorkflowCanvas.tsx",
-    "packages/workflow-builder/src/context/WorkflowContext.tsx",
-    "scripts/runtime/tnf-swarm-context-bridge.cjs",
-    "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.md",
-    ".tnf-temp/",
-    "apps/tauri-desktop/public/local-ai-workflows/",
-    "apps/tauri-desktop/src/pages/WorkflowBuilder.legacy.tsx",
-    "packages/tnf-cli/src/services/wf_factory_automation_v1.preview.png",
-    "packages/tnf-cli/src/services/wf_factory_in_builder.png",
-    "packages/tnf-cli/src/services/wf_mtodqxjj_34oby2.preview.png",
-    "packages/tnf-cli/src/services/wf_mtodqxjj_34oby2.preview.svg"
+    "packages/workflow-builder/src/context/WorkflowContext.tsx"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -51,7 +39,10 @@
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
     "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -60,11 +51,13 @@
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Push feature/durable-task-runtime to update PR",
+    "Emit fresh handoff artifact"
   ],
   "artifacts": {
-    "commits": ["3e1e3447aede9300a1672a7b7e7b3f6c2fb8a1c1"]
+    "commits": [
+      "3e1e3447aede9300a1672a7b7e7b3f6c2fb8a1c1"
+    ]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -153,5 +146,6 @@
       "observed_at": "2026-09-05T06:15:21.243Z",
       "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
-  ]
+  ],
+  "priority": "high"
 }
