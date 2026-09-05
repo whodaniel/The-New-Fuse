@@ -9,7 +9,6 @@ const LaunchpadDashboard = lazy(() => import('./pages/LaunchpadDashboard'));
 const PremiumLayout = lazy(() => import('./layouts/PremiumLayout'));
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 const FullscreenBrandLayout = lazy(() => import('./layouts/FullscreenBrandLayout'));
-const AppShell = lazy(() => import('./layouts/AppShell'));
 
 // Core components (keep loaded)
 import LoginPage from './pages/auth/Login';
@@ -453,8 +452,10 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
     location.pathname.startsWith('/nexus') ||
     location.pathname.startsWith('/debug/orphans');
 
-  // Use AppShell for authenticated routes, except those with their own layout
-  let Layout: React.ComponentType<any> = AppShell;
+  // PremiumLayout accepts children (and falls back to Outlet). AppShell only
+  // renders <Outlet />, so using it as the default dropped page content when
+  // ComprehensiveRouter passes <Routes> as children — shell-only chrome.
+  let Layout: React.ComponentType<any> = PremiumLayout;
   if (
     isPublicRoute &&
     !location.pathname.startsWith('/auth') &&
