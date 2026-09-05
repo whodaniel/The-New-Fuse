@@ -10,11 +10,13 @@
   "project_ids": [
     "TNF-SESSION"
   ],
-  "work_summary": "sweep: terminal macro board data + report (3 files)",
+  "work_summary": "Committed harness sweep (2 files) + previous terminal board sweep (3 files) + durable task protocol files (7 untracked)",
   "changed_paths": [
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "data/harness/ANOMALY_PAYLOAD.md",
+    "data/harness/active-sieve-manifest.json"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -37,6 +39,10 @@
     ]
   },
   "next_actions": [
+    "Decide on durable task protocol files (commit to task branch or new feature branch)",
+    "Decide on assimilation docs (sweep vs protocol vs private)",
+    "Decide on onboarding-contract.json (protocol contract)",
+    "Push task branch for review",
     "Resolve UU merge conflicts on main (terminal board data)",
     "Commit harness sweep (ANOMALY_PAYLOAD.md, active-sieve-manifest.json)",
     "Decide on durable task protocol files (commit to task branch or new feature branch)",
@@ -137,5 +143,6 @@
     }
   ],
   "basis_head": "c7bd8eabd26118549bc4f66173f3c2f09b07c4c2",
-  "updated_at": "2026-09-05T11:26:28.830Z"
+  "updated_at": "2026-09-05T11:32:16.449Z",
+  "head": "2d99d9c77554ca1ea8d4bd8202d12de89962f53d"
 }
