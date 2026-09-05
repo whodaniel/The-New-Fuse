@@ -4,7 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Merge Authority Lane PR #301 and finalize interactive
+**Current Directive:** Sub-director: run Turn Zero, re-probe the program doc
+section 4, set fleet autonomy, enqueue lanes A-E and assign by capability
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -333,6 +334,9 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-09-03T05:54:04.228Z Fix MEMORY.md drift: canonicalize § delimiter
 - [✅] 2026-09-03T21:38:12.328Z New script(s) created: agent-registry-prune.cjs,
 - [✅] 2026-09-04T23:28:24.782Z Fix MEMORY.md drift: canonicalize § delimiter
+- [✅] 2026-09-05T00:17:43.489Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+
   format, split oversized entry
 
   validate-session-handoff.cjs
@@ -1239,6 +1243,36 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-05T00:59:48.554Z handoff `d73e7a3e-268a-4448-9fcf-92045fdeab35` head
+  `b0ae1dd278d0` project `TNF-SESSION` — Sub-director: run Turn Zero, re-probe
+  the program doc section 4, set fleet autonomy, enqueue lanes A-E and assign by
+  capability
+
+- 2026-09-05T00:58:42.818Z handoff `2e4e07b8-4049-4be7-834a-393a5afec66c` head
+  `b0ae1dd278d0` project `TNF-SESSION` — Commit staged handoff artifacts on main
+
+- 2026-09-05T00:55:42.732Z handoff `f48e9e6b-443c-4c47-a743-635f4b31e9d1` head
+  `b0ae1dd278d0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-09-05T00:49:40.605Z handoff `24a9e7f9-2ea0-439e-bbaa-dc53de06f1cf` head
+  `b0ae1dd278d0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-09-05T00:39:05.298Z handoff `5a0b2f7a-2793-44a7-828b-21574cdbfd8e` head
+  `b0ae1dd278d0` project `TNF-SESSION` — Optional: apply the same
+  registry-driven pattern to WorkflowBuilder.tsx provider dropdown and
+  verifiedModels.ts fallback catalog
+
+- 2026-09-05T00:34:17.894Z handoff `64af69c9-9b8b-4883-8152-67dd4aceeb8e` head
+  `b0ae1dd278d0` project `TNF-SESSION` — Settings
+  defaultProvider/fallbackProvider are still local useState (not persisted to
+  settingsStore) — candidate follow-up
+
+- 2026-09-04T23:57:31.959Z handoff `057c649f-f743-4ac4-812d-6cea1a09b837` head
+  `b0ae1dd278d0` project `TNF-SESSION` — New terminal shells pick up .zshrc
+  exports automatically; already-open shells need: source ~/.zshrc
 
 - 2026-09-04T23:47:50.114Z handoff `664f7bbb-72ae-4d60-9b66-445efff61d66` head
   `778b6187ccb7` project `TNF-SESSION` — Continue priority queue from

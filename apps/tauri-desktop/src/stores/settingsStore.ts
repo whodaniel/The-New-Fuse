@@ -6,6 +6,7 @@ import {
   type EndpointSet,
   type TnfDesktopEnvironment,
 } from '../config/endpoints';
+import { DEFAULT_PROVIDER_NAME } from '../config/llmProviders';
 import { safeStorage } from '../lib/safeStorage';
 import FederationNodeService from '../services/FederationNodeService';
 import apiService from '../services/api';
@@ -22,11 +23,16 @@ interface SettingsState {
   apiUrl: string;
   customApiUrl: string;
   isCloudMode: boolean;
+  /** Persisted AI Configuration selections (display names from llmProviders). */
+  defaultProvider: string;
+  fallbackProvider: string;
 
   // Actions
   setEnvironment: (env: Environment) => void;
   setCustomApiUrl: (url: string) => void;
   toggleCloudMode: () => void;
+  setDefaultProvider: (name: string) => void;
+  setFallbackProvider: (name: string) => void;
 }
 
 const ENV_CONFIG: Record<Exclude<Environment, 'custom'>, EndpointSet> = ENV_ENDPOINTS;
@@ -38,6 +44,8 @@ export const useSettingsStore = create<SettingsState>()(
       apiUrl: ENV_CONFIG.local.api,
       customApiUrl: '',
       isCloudMode: false,
+      defaultProvider: DEFAULT_PROVIDER_NAME,
+      fallbackProvider: DEFAULT_PROVIDER_NAME,
 
       setEnvironment: (env) => {
         let apiUrl = '';
@@ -85,6 +93,14 @@ export const useSettingsStore = create<SettingsState>()(
         } else if (!newMode && get().environment !== 'local') {
           get().setEnvironment('local');
         }
+      },
+
+      setDefaultProvider: (name) => {
+        set({ defaultProvider: name });
+      },
+
+      setFallbackProvider: (name) => {
+        set({ fallbackProvider: name });
       },
     }),
     {

@@ -387,7 +387,7 @@ export class LLMClient {
         const p = path.join(rootDir, file);
         if (fs.existsSync(p)) {
           fs.readFileSync(p, 'utf8')
-            .split('\\n')
+            .split('\n')
             .forEach((line) => {
               const match = line.match(/^([^#=]+)=(.*)$/);
               if (match) {

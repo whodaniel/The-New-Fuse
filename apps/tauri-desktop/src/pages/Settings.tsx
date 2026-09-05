@@ -16,6 +16,12 @@ import PageShell from '../components/layout/PageShell';
 import { useTheme } from '../providers/ThemeProvider';
 
 import { probeRestApiUrl } from '../config/endpointDiscovery';
+import {
+  FALLBACK_PROVIDER_NONE,
+  LLM_PROVIDERS,
+  LLM_PROVIDER_ENV_KEYS,
+  resolveProviderName,
+} from '../config/llmProviders';
 import { getVoicePort } from '../config/voiceBridge';
 import { resolveWebAppBaseUrl } from '../config/webSurfaces';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
@@ -35,6 +41,10 @@ type SettingsSection = {
 const Settings: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { environment, setEnvironment, customApiUrl, setCustomApiUrl, apiUrl } = useSettingsStore();
+  const defaultProvider = useSettingsStore((s) => s.defaultProvider);
+  const setDefaultProvider = useSettingsStore((s) => s.setDefaultProvider);
+  const fallbackProvider = useSettingsStore((s) => s.fallbackProvider);
+  const setFallbackProvider = useSettingsStore((s) => s.setFallbackProvider);
   const { state: synergy, rediscover } = useOperatorSynergy();
   const webAppUrl = resolveWebAppBaseUrl(environment);
   const [apiKey, setApiKey] = useState('');
@@ -52,8 +62,6 @@ const Settings: React.FC = () => {
   const [activeSection, setActiveSection] = useState('connection');
   const [isPolling, setIsPolling] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
-  const [fallbackProvider, setFallbackProvider] = useState('NVIDIA NIM');
-  const [defaultProvider, setDefaultProvider] = useState('NVIDIA NIM');
   const [integrityStatus, setIntegrityStatus] = useState<string | null>(null);
 
   const handleRediscover = async () => {
@@ -387,17 +395,14 @@ const Settings: React.FC = () => {
               </div>
               <select
                 className="select-input"
-                value={defaultProvider}
+                value={resolveProviderName(defaultProvider)}
                 onChange={(e) => setDefaultProvider(e.target.value)}
               >
-                <option>NVIDIA NIM</option>
-                <option>Groq</option>
-                <option>SambaNova</option>
-                <option>Cerebras</option>
-                <option>DeepSeek</option>
-                <option>Google Gemini</option>
-                <option>OpenAI</option>
-                <option>OpenRouter</option>
+                {LLM_PROVIDERS.map((provider) => (
+                  <option key={provider.id} value={provider.name}>
+                    {provider.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -408,18 +413,15 @@ const Settings: React.FC = () => {
               </div>
               <select
                 className="select-input"
-                value={fallbackProvider}
+                value={resolveProviderName(fallbackProvider, true)}
                 onChange={(e) => setFallbackProvider(e.target.value)}
               >
-                <option>NVIDIA NIM</option>
-                <option>Groq</option>
-                <option>SambaNova</option>
-                <option>Cerebras</option>
-                <option>DeepSeek</option>
-                <option>Google Gemini</option>
-                <option>OpenAI</option>
-                <option>OpenRouter</option>
-                <option>None</option>
+                {LLM_PROVIDERS.map((provider) => (
+                  <option key={provider.id} value={provider.name}>
+                    {provider.name}
+                  </option>
+                ))}
+                <option>{FALLBACK_PROVIDER_NONE}</option>
               </select>
             </div>
 
@@ -427,8 +429,11 @@ const Settings: React.FC = () => {
               <div className="setting-info">
                 <label>API Key</label>
                 <p>
-                  Provider API key (e.g. NVIDIA_API_KEY, GROQ_API_KEY, OPENAI_API_KEY,
-                  GEMINI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY) — stored securely
+                  Provider API key ({LLM_PROVIDER_ENV_KEYS.slice(0, 6).join(', ')}
+                  {LLM_PROVIDER_ENV_KEYS.length > 6
+                    ? `, +${LLM_PROVIDER_ENV_KEYS.length - 6} more`
+                    : ''}
+                  ) — stored securely
                 </p>
               </div>
               <div className="password-input-wrapper">
