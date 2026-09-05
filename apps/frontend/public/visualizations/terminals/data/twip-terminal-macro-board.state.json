@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T08:40:32.177Z",
+  "generatedAt": "2026-09-05T09:00:38.045Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T08:40:29.230Z",
+    "lastScanAt": "2026-09-05T09:00:34.530Z",
     "totalTerminals": 5,
     "returned": 5,
     "source": "ps+tmux+capture+terminal-history",

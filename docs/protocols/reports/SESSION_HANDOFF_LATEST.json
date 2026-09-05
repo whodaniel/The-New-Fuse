@@ -4,11 +4,13 @@
   "created_at": "2026-09-05T05:12:09.994Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "d3e52f001fd6ebe325a92cfb2246d04c8394893f",
+  "head_sha": "c7bd8eabd26118549bc4f66173f3c2f09b07c4c2",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": ["Modified 4 file(s)"],
+  "work_summary": [
+    "Sweep: harness anomaly/sieve, marketplace catalog (3 files)"
+  ],
   "changed_paths": [
     "data/llm-provider-status.json",
     "packages/tnf-cli/src/cli.ts",

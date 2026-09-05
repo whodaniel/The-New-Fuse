@@ -28,3 +28,15 @@ updated automatically by the agent status reporting mechanism.
 | thenewfuse-frontend-tester  | `TNF:LOCAL:AGENT:THENEWFUSE-FRONTEND-TESTER:001`  | **NEW** — registered at 2026-09-05T07:42:13.668Z |
 | tnf-fleet-health-probe      | `TNF:LOCAL:AGENT:TNF-FLEET-HEALTH-PROBE:001`      | **NEW** — registered at 2026-09-05T07:42:13.668Z |
 | LLM Validation Worker Agent | `TNF:LOCAL:AGENT:LLM-VALIDATION-WORKER-AGENT:001` | **NEW** — registered at 2026-09-05T07:42:13.668Z |
+
+### Sweep Cycle Update
+
+| Agent         | Identity                            | Status                                                        |
+| ------------- | ----------------------------------- | ------------------------------------------------------------- |
+| tnf-cli-agent | `TNF:LOCAL:AGENT:TNF-CLI-AGENT:001` | **SWEEP** — sweep cycle completed at 2026-09-05T08:45:00.000Z |
+
+### Sweep Cycle Update — 2026-09-05T08:45:00Z
+
+| Agent         | Identity                          | Status                  |
+| ------------- | --------------------------------- | ----------------------- |
+| tnf-cli-agent | TNF:LOCAL:AGENT:TNF-CLI-AGENT:001 | Available, dispatchable |
