@@ -122,6 +122,25 @@
       ],
       "acquiredAt": "2026-09-05T13:26:22.510Z",
       "ttlMinutes": 120
+    },
+    {
+      "agent": "danielgoldberg",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+        "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+        "data/harness/ANOMALY_PAYLOAD.md",
+        "data/harness/active-sieve-manifest.json",
+        "data/marketplace/catalog-items.json",
+        "docs/operations/tnf-master-reconciliation-report-latest.json",
+        "docs/operations/tnf-master-reconciliation-report-latest.md",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+        "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+        "docs/protocols/AGENT_STATUS_LEDGER.md"
+      ],
+      "acquiredAt": "2026-09-05T14:32:43.876Z",
+      "ttlMinutes": 120
     }
   ]
 }

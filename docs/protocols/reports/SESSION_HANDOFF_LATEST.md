@@ -1,39 +1,48 @@
-# Session Handoff — 010dc001-20fd-4605-ab13-f65b4cc1a8b3
+# Session Handoff — e641350b-a0f7-4b31-9cf6-aa9c85cb5c61
 
-**Created:** 2026-09-05T13:26:19.838Z
+**Created:** 2026-09-05T14:37:28.023Z
+
+**Head SHA:** 9339b72af
+
 **Priority:** high
 
-## Next Actions
-- Push feature/durable-task-runtime to update PR
-- Emit fresh handoff artifact
+## Work Summary
+
+- Committed protocol enforcement layer sweep on feature/durable-task-runtime
+- Updated terminal board data, reconciliation reports, handoff receipts
+- Updated AGENT_STATUS_LEDGER.md for handoff validation
+- Ready for PR review
 
 ## Changed Paths
+
 - `apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md`
 - `apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json`
-- `apps/tauri-desktop/src/components/route-context.tsx`
-- `apps/tauri-desktop/src/config/routes.ts`
-- `apps/tauri-desktop/src/pages/WorkflowBuilder.tsx`
-- `apps/tauri-desktop/vite.config.ts`
-- `data/marketplace/catalog-items.json`
+- `data/harness/ANOMALY_PAYLOAD.md`
+- `data/harness/active-sieve-manifest.json`
+- `docs/operations/tnf-master-reconciliation-report-latest.json`
+- `docs/operations/tnf-master-reconciliation-report-latest.md`
+- `docs/protocols/AGENT_STATUS_LEDGER.md`
+- `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
+- `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 - `docs/protocols/reports/twip-terminal-macro-board-latest.md`
-- `packages/tnf-cli/src/services/WorkflowGraphBridge.ts`
-- `packages/workflow-builder/src/canvas/WorkflowCanvas.tsx`
-- `packages/workflow-builder/src/context/WorkflowContext.tsx`
+- `packages/tnf-cli/src/cli.ts`
+- `packages/tnf-cli/src/command-surface.snapshot.json`
+- `packages/tnf-cli/src/commands/durable-tasks.ts`
 
-## Work Summary
-- Feature: Tauri desktop workflow builder integration
-- Feature: WorkflowCanvas and WorkflowContext updates
-- Feature: WorkflowGraphBridge enhancements
-- Sweep: Terminal macro board data updates
-- Sweep: Marketplace catalog updates
+## Next Actions
 
-## Resume Checklist
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+1. Push feature/durable-task-runtime to update PR
+2. Emit fresh handoff artifact
 
-## Metadata
-- **Base Branch:** undefined
-- **Head SHA:** 3e1e3447aede9300a1672a7b7e7b3f6c2fb8a1c1
-- **Agent:** undefined
-- **Session Type:** undefined
+## Continuation
+
+### Resume Checklist
+
+- Read SESSION_HANDOFF_LATEST.md
+- Validate JSON against schema using Ajv2020
+- Execute next actions in order and preserve privacy/security gates
+
+### Priority Queue
+
+- push-feature-branch
+- emit-handoff

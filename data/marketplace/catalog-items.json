@@ -101673,8 +101673,412 @@
       "createdBy": "community",
       "createdAt": "2026-09-05T13:00:02Z",
       "updatedAt": "2026-09-05T13:00:02Z"
+    },
+    {
+      "id": "marketplace-prompt-precision-framework-496",
+      "slug": "precision-framework-496",
+      "name": "Precision Framework",
+      "description": "Production-tested instruction templates for consistent customer support outputs",
+      "kind": "prompt",
+      "category": "forge",
+      "tags": [
+        "prompt",
+        "llm",
+        "instruction"
+      ],
+      "capabilities": [
+        "testing-harness",
+        "rapid-deployment",
+        "state-checkpointing",
+        "curriculum"
+      ],
+      "rating": 4.3,
+      "totalRuns": 16087,
+      "successRate": 96.4,
+      "pricePerRun": 0.31,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-agent-cognitive-swarm-688",
+      "slug": "cognitive-swarm-688",
+      "name": "Cognitive Swarm",
+      "description": "Complete multi-agent system for threat detection with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "operations",
+      "tags": [
+        "production",
+        "orchestration",
+        "autonomous"
+      ],
+      "capabilities": [
+        "fine-tuning",
+        "state-checkpointing",
+        "few-shot-learning"
+      ],
+      "rating": 4.4,
+      "totalRuns": 7783,
+      "successRate": 99.7,
+      "pricePerRun": 0.21,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-skill-universal-function-pack-476",
+      "slug": "universal-function-pack-476",
+      "name": "Universal Function Pack",
+      "description": "Reusable skill module for lead scoring with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "nft",
+      "tags": [
+        "reusable",
+        "capability",
+        "skill"
+      ],
+      "capabilities": [
+        "ci-cd",
+        "agent-handoff",
+        "state-management"
+      ],
+      "rating": 4.3,
+      "totalRuns": 18009,
+      "successRate": 98.9,
+      "pricePerRun": 0.28,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-agent_template-scaffold-starter-kit-863",
+      "slug": "scaffold-starter-kit-863",
+      "name": "Scaffold Starter Kit",
+      "description": "Ready-to-deploy agent template for threat detection with configuration and example flows",
+      "kind": "agent_template",
+      "category": "development",
+      "tags": [
+        "starter",
+        "blueprint",
+        "template",
+        "scaffold"
+      ],
+      "capabilities": [
+        "labs",
+        "curriculum",
+        "testing-harness"
+      ],
+      "rating": 4.8,
+      "totalRuns": 30698,
+      "successRate": 96.3,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-experience-premium-tutorial-series-981",
+      "slug": "premium-tutorial-series-981",
+      "name": "Premium Tutorial Series",
+      "description": "Structured learning experience for code review with hands-on labs",
+      "kind": "experience",
+      "category": "automation",
+      "tags": [
+        "education",
+        "workshop"
+      ],
+      "capabilities": [
+        "state-checkpointing",
+        "inference",
+        "pipeline-orchestration",
+        "fine-tuning"
+      ],
+      "rating": 3.9,
+      "totalRuns": 10998,
+      "successRate": 95.6,
+      "pricePerRun": 0.1,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-agent_template-quick-start-foundation-pack-931",
+      "slug": "quick-start-foundation-pack-931",
+      "name": "Quick-Start Foundation Pack",
+      "description": "Ready-to-deploy agent template for performance monitoring with configuration and example flows",
+      "kind": "agent_template",
+      "category": "nexus",
+      "tags": [
+        "template",
+        "starter",
+        "blueprint"
+      ],
+      "capabilities": [
+        "configuration",
+        "curriculum",
+        "notification-hooks"
+      ],
+      "rating": 4.0,
+      "totalRuns": 44618,
+      "successRate": 95.9,
+      "pricePerRun": 0.08,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-agent_template-starter-starter-kit-882",
+      "slug": "starter-starter-kit-882",
+      "name": "Starter Starter Kit",
+      "description": "Ready-to-deploy agent template for threat detection with configuration and example flows",
+      "kind": "agent_template",
+      "category": "automation",
+      "tags": [
+        "scaffold",
+        "template",
+        "blueprint"
+      ],
+      "capabilities": [
+        "prompt-engineering",
+        "rapid-deployment"
+      ],
+      "rating": 3.7,
+      "totalRuns": 20171,
+      "successRate": 97.5,
+      "pricePerRun": 0.1,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-skill-modular-plugin-564",
+      "slug": "modular-plugin-564",
+      "name": "Modular Plugin",
+      "description": "Reusable skill module for anomaly detection with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "education",
+      "tags": [
+        "reusable",
+        "skill"
+      ],
+      "capabilities": [
+        "notification-hooks",
+        "output-validation",
+        "certification",
+        "agent-handoff"
+      ],
+      "rating": 4.4,
+      "totalRuns": 26941,
+      "successRate": 97.0,
+      "pricePerRun": 0.05,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-agent-cognitive-orchestrator-239",
+      "slug": "cognitive-orchestrator-239",
+      "name": "Cognitive Orchestrator",
+      "description": "Complete multi-agent system for sentiment analysis with built-in monitoring and self-healing",
+      "kind": "agent",
+      "category": "education",
+      "tags": [
+        "production",
+        "autonomous"
+      ],
+      "capabilities": [
+        "state-management",
+        "retry-logic"
+      ],
+      "rating": 3.9,
+      "totalRuns": 30583,
+      "successRate": 96.7,
+      "pricePerRun": 0.21,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-agent_template-quick-start-starter-kit-445",
+      "slug": "quick-start-starter-kit-445",
+      "name": "Quick-Start Starter Kit",
+      "description": "Ready-to-deploy agent template for anomaly detection with configuration and example flows",
+      "kind": "agent_template",
+      "category": "forge",
+      "tags": [
+        "starter",
+        "blueprint"
+      ],
+      "capabilities": [
+        "mcp-integration",
+        "labs",
+        "benchmark",
+        "pipeline-orchestration"
+      ],
+      "rating": 3.8,
+      "totalRuns": 37338,
+      "successRate": 93.4,
+      "pricePerRun": 0.24,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-experience-interactive-workshop-315",
+      "slug": "interactive-workshop-315",
+      "name": "Interactive Workshop",
+      "description": "Structured learning experience for workflow automation with hands-on labs",
+      "kind": "experience",
+      "category": "analytics",
+      "tags": [
+        "education",
+        "workshop"
+      ],
+      "capabilities": [
+        "certification",
+        "chain-of-thought"
+      ],
+      "rating": 4.2,
+      "totalRuns": 33664,
+      "successRate": 93.5,
+      "pricePerRun": 0.2,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-model-lightweight-backbone-324",
+      "slug": "lightweight-backbone-324",
+      "name": "Lightweight Backbone",
+      "description": "High-performance data extraction model optimized for low-latency inference",
+      "kind": "model",
+      "category": "analytics",
+      "tags": [
+        "model",
+        "backbone",
+        "inference"
+      ],
+      "capabilities": [
+        "run-tracking",
+        "output-validation",
+        "inference"
+      ],
+      "rating": 3.9,
+      "totalRuns": 17559,
+      "successRate": 99.9,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-workflow-optimized-automation-390",
+      "slug": "optimized-automation-390",
+      "name": "Optimized Automation",
+      "description": "Full workflow for code review with step tracking, retry logic, and notification hooks",
+      "kind": "workflow",
+      "category": "development",
+      "tags": [
+        "workflow",
+        "process",
+        "pipeline",
+        "automation"
+      ],
+      "capabilities": [
+        "ci-cd",
+        "curriculum"
+      ],
+      "rating": 4.5,
+      "totalRuns": 28478,
+      "successRate": 94.7,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-skill-reusable-function-pack-890",
+      "slug": "reusable-function-pack-890",
+      "name": "Reusable Function Pack",
+      "description": "Reusable skill module for workflow automation with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "forge",
+      "tags": [
+        "skill",
+        "module",
+        "capability",
+        "reusable"
+      ],
+      "capabilities": [
+        "task-routing",
+        "state-persistence",
+        "testing-harness",
+        "rapid-deployment"
+      ],
+      "rating": 4.4,
+      "totalRuns": 39523,
+      "successRate": 91.2,
+      "pricePerRun": 0.21,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
+    },
+    {
+      "id": "marketplace-skill-universal-skill-718",
+      "slug": "universal-skill-718",
+      "name": "Universal Skill",
+      "description": "Reusable skill module for sentiment analysis with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "nexus",
+      "tags": [
+        "capability",
+        "skill",
+        "reusable",
+        "module"
+      ],
+      "capabilities": [
+        "notification-hooks",
+        "prompt-engineering"
+      ],
+      "rating": 4.8,
+      "totalRuns": 9063,
+      "successRate": 93.0,
+      "pricePerRun": 0.15,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T14:00:05Z",
+      "updatedAt": "2026-09-05T14:00:05Z"
     }
   ],
-  "total": 3772,
-  "generated_at": "2026-09-05T13:00:02Z"
+  "total": 3787,
+  "generated_at": "2026-09-05T14:00:05Z"
 }

@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-05T12:48:30.057Z",
+  "timestamp": "2026-09-05T13:48:47.818Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 58,
+      "durationMs": 1699,
       "data": {
         "branch": "feature/durable-task-runtime",
-        "commit": "e03b2244a",
+        "commit": "f97cd060d",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 91,
+      "durationMs": 9514,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -33,7 +33,7 @@
     "codebaseLineage": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 1,
+      "durationMs": 0,
       "data": {
         "status": "skipped"
       }
@@ -41,13 +41,16 @@
     "processHealth": {
       "ok": false,
       "verdict": "findings",
-      "findings": 2,
-      "durationMs": 130,
+      "findings": 5,
+      "durationMs": 16659,
       "data": {
-        "findings": 2,
-        "healthy": 18,
+        "findings": 5,
+        "healthy": 15,
         "detail": [
+          "stale: tnf-recursive-logic-sieve",
           "error: tnf-growth-blocker-audit",
+          "stale: tnf-master-clock-super-cycle",
+          "stale: tnf-openclaw-runtime-sync",
           "error: tnf-swarm-role-call-and-scheduling"
         ]
       }
@@ -55,19 +58,19 @@
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 2,
+      "durationMs": 349,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 287,
+  "totalDurationMs": 28505,
   "summary": {
     "clean": 3,
     "findings": 1,
     "unresolved": 2,
     "errored": 0,
-    "totalFindings": 2
+    "totalFindings": 5
   }
 }

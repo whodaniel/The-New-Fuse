@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T13:20:44.411Z",
+  "generatedAt": "2026-09-05T13:51:54.896Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T13:20:31.520Z",
+    "lastScanAt": "2026-09-05T13:50:54.050Z",
     "totalTerminals": 5,
     "returned": 5,
     "source": "ps+tmux+capture+terminal-history",
@@ -72,7 +72,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "⏳ Thinking… | ⠇ Thinking...",
+        "contextPreview": "⟳ Handoff context refresh queued for next autonomous turn | ⠇ Thinking...",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -88,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑1.3M ↓276k R24M CH99.1% 77.5%/128k (auto)              (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑1.3M ↓285k R26M 87.6%/128k (auto)                      (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -120,7 +120,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "Auto · 59.3% · 28 files edited                                Run Everything | ~",
+        "contextPreview": "Auto · 79% · 31 files edited                                  Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       }
