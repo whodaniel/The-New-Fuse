@@ -1,15 +1,13 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "c02d0968-ea94-459f-ba89-c0b86dc4451d",
-  "created_at": "2026-09-05T12:25:55.321Z",
+  "handoff_id": "3cfbf90a-b113-4520-ac7d-8a4f5984b97d",
+  "created_at": "2026-09-05T12:29:15.128Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "a707b25a25d6dd14ee0d50eaecf18c76fdce5a0f",
+  "head_sha": "a6b741fb6dcafdc2b97223340a33c7d481ac5f4c",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-SESSION"
-  ],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
     "Protocol enforcement layer implemented for mandatory session handoff continuity.",
     "CI/hook gates now block critical changes without fresh handoff artifacts."
@@ -17,14 +15,15 @@
   "changed_paths": [
     "data/harness/ANOMALY_PAYLOAD.md",
     "data/harness/active-sieve-manifest.json",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/lessons/2026-09-05-stale-buffer-clobber-and-critical-sections.md",
+    "docs/protocols/lessons/INDEX.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "packages/shared/src/index.ts",
-    "packages/tnf-cli/src/cli.ts",
-    "docs/protocols/lessons/INDEX.md",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "docs/protocols/lessons/2026-09-05-stale-buffer-clobber-and-critical-sections.md",
     "packages/shared/src/workflow-ai-spec.ts",
     "packages/tnf-cli/src/commands/durable-tasks.ts",
     "packages/tnf-cli/src/services/DurableAiHandlers.ts",
@@ -44,26 +43,20 @@
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": [
-      "story-architect",
-      "librarian"
-    ],
+    "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
-      "Read SESSION_HANDOFF_LATEST.md",
-      "Validate JSON against schema",
-      "Execute next actions preserving privacy/security gates"
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
   "next_actions": [
-    "Commit untracked durable task files to feature branch",
-    "Push task/frontend-onboarding-updates for review",
-    "Emit fresh handoff artifact"
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
   "artifacts": {
-    "commits": [
-      "a707b25a25d6dd14ee0d50eaecf18c76fdce5a0f"
-    ]
+    "commits": ["a6b741fb6dcafdc2b97223340a33c7d481ac5f4c"]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -152,6 +145,5 @@
       "observed_at": "2026-09-05T06:15:21.243Z",
       "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
-  ],
-  "priority": "high"
+  ]
 }
