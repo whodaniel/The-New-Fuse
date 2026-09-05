@@ -487,6 +487,14 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
     cliCommand: ['department', 'show', 'ops'],
   },
   {
+    name: 'reflect',
+    summary: 'Run TNF self-improvement reflect (handoff diff + lessons + report).',
+    usage: '/reflect',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['reflect'],
+  },
+  {
     name: 'remember',
     summary: 'Retain or recall a durable operator fact.',
     usage: '/remember [retain|recall|status] <text>',

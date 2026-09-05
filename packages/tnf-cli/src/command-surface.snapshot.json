@@ -203,7 +203,7 @@
             },
             {
               "flags": "--name <name>",
-              "description": "Agent display name"
+              "description": "Agent display name (default: TNF_AGENT_NAME or tnf-<platform>-worker)"
             },
             {
               "flags": "--offline",
@@ -211,7 +211,7 @@
             },
             {
               "flags": "--platform <platform>",
-              "description": "Platform taxonomy token"
+              "description": "Platform taxonomy token (default: TNF_PLATFORM or auto-detect; not Claude-bound)"
             },
             {
               "flags": "--role <role>",
@@ -5196,6 +5196,13 @@
           "commands": []
         }
       ]
+    },
+    {
+      "name": "reflect",
+      "aliases": [],
+      "description": "Run TNF self-improvement reflect (handoff diff + lessons + report)",
+      "options": [],
+      "commands": []
     },
     {
       "name": "refresh-context",

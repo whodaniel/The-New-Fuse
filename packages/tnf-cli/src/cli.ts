@@ -48,6 +48,7 @@ import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.j
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
+import { registerReflectCommand } from './commands/reflect.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerRememberCommands } from './commands/remember.js';
 import { registerScoutCommands } from './commands/scout.js';
@@ -4009,6 +4010,10 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
         {
           path: 'tnf hooks explain --run <run_id>',
           description: 'Explain HookChain status, gates, and step decisions',
+        },
+        {
+          path: 'tnf reflect',
+          description: 'Run handoff-diff + lessons reflect report (self-improvement loop)',
         },
         {
           path: 'tnf self-improvement run',
@@ -20769,6 +20774,7 @@ registerRefreshContextCommand(program, repoRoot);
 registerAgentStateQuotaEcosystemCommands(program, repoRoot);
 registerStaffingCommands(program);
 registerDepartmentCommands(program, repoRoot);
+registerReflectCommand(program);
 registerRememberCommands(program, repoRoot);
 registerScoutCommands(program, repoRoot);
 registerFleetCommands(program);
