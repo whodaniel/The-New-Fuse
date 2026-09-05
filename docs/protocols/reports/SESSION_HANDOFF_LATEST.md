@@ -1,123 +1,82 @@
-# Session Handoff — 73c44258-c801-4e4b-8f97-836660edfb88
+# SESSION_HANDOFF_LATEST
 
-**Spec:** tnf/session-handoff/0.2 **Created:** 2026-09-05T05:12:09.994Z
-**Repository:** whodaniel/tnf-monorepo (main) **HEAD:**
-d3e52f001fd6ebe325a92cfb2246d04c8394893f **Protocol ACK:** TNF_PROTOCOL_ACK
-**Sensitive Scope:** internal
+Protocol ACK: `TNF_PROTOCOL_ACK`
+Spec: `tnf/session-handoff/0.2`
+Created At: `2026-09-05T10:26:00.128Z`
+Handoff ID: `9a5a35f6-fb6e-4977-b6cc-b1697bce83f3`
 
----
-
-## Work Summary
-
-sweep: harness anomaly payload and active sieve manifest updates
-
-## Changed Paths
-
-- `data/harness/ANOMALY_PAYLOAD.md`
-- `data/harness/active-sieve-manifest.json`
-
-## Verification
-
-| Check              | State |
-| ------------------ | ----- |
-| Privacy Guard      | na    |
-| Secret Sweep       | na    |
-| Docs PII Guard     | na    |
-| Supabase RLS Audit | na    |
-
----
-
-## Continuation
-
-- **Owner:** operator
-- **Targets:** orchestrator
-- **Priority:** medium
-- **Resume Checklist:**
-  - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-  - Validate SESSION_HANDOFF_LATEST.json against schema
-  - Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
-    CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md,
-    stop and get live operator confirmation before running git commit/push for
-    those, do not auto-execute them
-
----
-
-## Next Actions
-
-1. Move CLI wizard/cli.ts to task branch
-2. Decide on onboarding-contract.json (protocol contract)
-
-## Artifacts
-
-- **Commits:** 9ea5f51f0e6f08a980c5b06454a7e861e8e6a2ec
-- **Deployment URLs:** none
-- **Database Migrations:** none
-
----
-
-## Repository Context
-
-- **Canonical Source:** whodaniel/tnf-monorepo
-- **Actual:** whodaniel/tnf-monorepo
-- **Origin:** https://github.com/whodaniel/tnf-monorepo.git
-- **Dirty:** true
-- **Operation In Progress:** none
-- **Publication Targets:** whodaniel/The-New-Fuse, whodaniel/fuse-control-plane
-
----
+## Scope
+- Repository: `whodaniel/tnf-monorepo`
+- Canonical Source: `whodaniel/tnf-monorepo`
+- Branch: `main`
+- Head SHA: `1b184a646f39b3b25e719e40a342831a394d096f`
+- Sensitive Scope: `internal`
 
 ## Classification
+- Work Domain: `unknown`
+- Artifact Destination: `unknown`
+- Data Residency: `unknown`
+- Sensitivity: `unknown`
 
-| Field                | Value   |
-| -------------------- | ------- |
-| Work Domain          | unknown |
-| Artifact Destination | unknown |
-| Data Residency       | unknown |
-| Sensitivity          | unknown |
+## Work Summary
+- Protocol enforcement layer implemented for mandatory session handoff continuity.
+- CI/hook gates now block critical changes without fresh handoff artifacts.
 
----
+## Changed Paths
+- `apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md`
+- `apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json`
+- `data/harness/onboarding-contract.json`
+- `docs/protocols/reports/twip-terminal-macro-board-latest.md`
+- `packages/tnf-cli/src/services/LocalSubdirectorAuthorityService.test.ts`
+- `apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json`
+- `cloudflare-api-proxy/package.json`
+- `cloudflare-api-proxy/src/index.ts`
+- `cloudflare-api-proxy/wrangler.toml`
+- `data/agent-registry/onboarding-agent.json`
+- `data/harness/ANOMALY_PAYLOAD.md`
+- `data/harness/active-sieve-manifest.json`
+- `data/llm-intel/arena-intel-latest.json`
+- `data/llm-intel/arena-intel.json`
+- `data/llm-intel/history/intel_2026-09-05.json`
+- `data/llm-intel/ranking-recommendations.json`
+- `data/llm-intel/ranking-report-latest.md`
+- `data/llm-provider-status.json`
+- `data/marketplace/catalog-items.json`
+- `docs/operations/tnf-master-reconciliation-report-latest.json`
+- `docs/operations/tnf-master-reconciliation-report-latest.md`
+- `docs/protocols/AGENT_STATUS_LEDGER.md`
+- `docs/protocols/AGENT_WHO_IS_WHO.md`
+- `docs/protocols/LIVING_STATE.md`
+- `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
+- `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
+- `apps/frontend/src/components/wizard/GreeterAgent.tsx`
+- `apps/frontend/src/components/wizard/WizardProvider.tsx`
+- `apps/frontend/src/components/wizard/steps/APIProviderSetupStep.tsx`
+- `apps/frontend/src/components/wizard/steps/GreeterAgentStep.tsx`
+- `apps/frontend/src/components/wizard/steps/WorkspaceSetupStep.tsx`
+- `apps/frontend/src/services/onboardingGreeter.ts`
+- `apps/frontend/src/services/onboardingSecrets.test.ts`
+- `apps/frontend/src/services/onboardingSecrets.ts`
+- `apps/frontend/src/stubs/lucide-react.tsx`
+- `packages/tnf-cli/src/boot/wizard.test.ts`
 
-## Capabilities
+## Verification
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
 
-- **Required:** none
-- **Staffed By:** none
+## Continuation
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
+- Priority: `high`
 
----
+### Resume Checklist
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
 
-## Publication Impact
+## Next Actions
+- Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical work unit.
 
-- **Public Runtime Affected:** false
-- **Control Plane Affected:** false
-- **Satellites:** none
-
----
-
-## Freshness Receipts
-
-- **github.dev.main**: STALE (observed 2026-09-04T05:09:35.493Z) —
-  c3127836f7c0b7e9e651b8487a6b2200ba9557e9
-- **github.public.main**: STALE (observed 2026-09-04T05:09:36.703Z) —
-  1e680a2108b66d921a8d827daf3fad36cfc78c86
-- **github.control-plane.main**: STALE (observed 2026-09-04T05:09:38.800Z) —
-  ccf213195fb5064f5d708fe75b87d1cb72b37e15
-- **github.public.pr-queue**: STALE (observed 2026-09-04T05:09:41.000Z) — []
-- **github.public.ruleset**: STALE (observed 2026-09-04T05:09:42.366Z) —
-  deletion,non_fast_forward,pull_request,required_status_checks
-- **github.public.proprietary-leak**: STALE (observed 2026-09-04T05:09:44.298Z)
-  — STUB_OK:packages/relay-core/src/master-clock.ts
-  STUB_OK:packages/relay-core/src/broker-agent.ts OK
-- **tnf.product-repo-map**: STALE (observed 2026-09-04T05:09:44.487Z) —
-  09c91416988e7c770a04df6f0b949cfaa48cac5d 2026-08-13
-- **tnf.oss-app-boundary**: STALE (observed 2026-09-04T05:09:44.665Z) —
-  155a3b9273bad34ec15046ebf323d53e0854dc31 2026-09-01
-- **git.repository.identity**: STALE (observed 2026-09-04T05:09:45.874Z) —
-  origin=https://github.com/whodaniel/tnf-monorepo.git
-  head=9ac13b277ceea23a5f27e1dcf2b6dab1b978f363
-  branch=docs/gate-crash-is-not-permission dirty=82
-- **runtime.services**: STALE (observed 2026-09-04T05:09:45.926Z) —
-  REDIS_UNREACHABLE RELAY_OK
-
----
-
-> This handoff is generated by TNF Turn End protocol. Do not edit manually —
-> update via `tnf handoff` or the canonical scripts.

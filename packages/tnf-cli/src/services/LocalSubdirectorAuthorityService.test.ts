@@ -23,18 +23,25 @@ const { LocalSubdirectorAuthorityService, DEFAULT_LOCAL_SUBDIRECTOR_CONFIG } =
 try {
   const authority = new LocalSubdirectorAuthorityService(authorityHome);
 
-  // First run ships autonomous. This is deliberate: the disabled-by-default
-  // fallback is what silently denied every tool call in `tnf agents run`,
-  // because no config file had ever been written on the machine.
+  // First run ships FAIL-CLOSED. Absence is not consent: a fresh clone, a new
+  // node, or a wiped ~/.tnf must not receive full autonomy just because no
+  // config has ever been written. The enable-by-default default let an
+  // authority-less machine run wide open, while a purely disabled fallback
+  // silently denied every `tnf agents run` tool call — both are resolved by
+  // failing closed and asking the operator once (the onboarding wizard is the
+  // consent surface that writes the config).
   assert(authority.isFirstRun() === true, 'no config file yet means first run');
   assert(
-    authority.getConfig().autonomyEnabled === true,
-    'shipped default must enable autonomy on first run'
+    authority.getConfig().autonomyEnabled === false,
+    'shipped default must fail closed (autonomy disabled on first run)'
   );
-  assert(authority.getConfig().agentId === 'tnf-cli-agent', 'authority binds to tnf-cli-agent');
-  assert(authority.isAuthorized('write_file') === true, 'default "all" grant authorizes any tool');
+  assert(authority.getConfig().capabilities.length === 0, 'shipped default grants no capabilities');
   assert(
-    DEFAULT_LOCAL_SUBDIRECTOR_CONFIG.capabilities.includes('all'),
+    authority.isAuthorized('write_file') === false,
+    'fail-closed default must deny capabilities'
+  );
+  assert(
+    DEFAULT_LOCAL_SUBDIRECTOR_CONFIG.autonomyEnabled === false,
     'exported default must be the same shape callers write'
   );
 
@@ -83,8 +90,8 @@ try {
     'config must resolve under the authority home, not the caller path'
   );
 
-  // A config that exists but cannot be parsed must fail closed. Falling back to
-  // the shipped "all" default here would let a truncated write widen authority.
+  // A config that exists but cannot be parsed must fail closed. Falling back
+  // to an enabled default here would let a truncated write widen authority.
   fs.writeFileSync(authority.configLocation(), '{ not json', 'utf8');
   assert(
     authority.getConfig().autonomyEnabled === false,

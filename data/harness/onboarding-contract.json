@@ -137,6 +137,160 @@
     "repairCommand": "node scripts/harness/provision-injection-surfaces.cjs --repair",
     "policy": "Host surfaces contain pointers to the canonical onboarder/manifest, not copied Stage A rail lists. Reusable host resources should converge through TNF_AGENT_RESOURCE_CONVERGENCE when an adapter is verified."
   },
+  "userFacing": {
+    "version": 1,
+    "description": "User-facing onboarding step catalog shared by every onboarding surface. The CLI interactive wizard (packages/tnf-cli/src/boot/wizard.ts via 'tnf onboard --interactive'), the web onboarding wizard (apps/frontend/src/components/wizard), and future proactive AI surfaces render from this catalog. Per audit-loop Gate 1 (possibility completeness), newly added agent runtimes, MCP tools, database providers, and CLI commands must be represented either statically in a step's options or dynamically through dynamicSources.",
+    "gates": {
+      "possibilityCompleteness": "Every new capability must appear in the selectable choices of at least one surface — statically in the catalog or via the step's dynamicSources.",
+      "sovereignWriteIn": "Every prompt offers standard choices plus an explicit custom write-in fallback. Custom values outside a protocol enum are captured verbatim in a companion field while the enum field falls back to its safe default, so user voice is preserved without breaking consumers.",
+      "coldStartResilience": "Non-TTY/CI runs and missing daemon dependencies take documented defaults, print exactly what was applied, and never crash or block.",
+      "personalizationMemoryIngestion": "Every surface persists a profile JSON compatible with the profileContract and grants an immediate personalized launch command."
+    },
+    "profileContract": {
+      "location": "~/.tnf/profiles/<handle>.json",
+      "handlePattern": "^[a-zA-Z0-9_-]{1,64}$",
+      "launchCommand": "tnf boot <handle>",
+      "readerAuthority": "packages/tnf-cli/src/services/ProfileSessionService.ts"
+    },
+    "dynamicSources": {
+      "agentRuntimes": "packages/tnf-cli/src/boot/agent-roster.ts#PROTOCOL_NETWORK_AGENTS",
+      "mcpServers": "data/mcp_config.json",
+      "cliCommandSurface": "packages/tnf-cli/src/command-surface.snapshot.json"
+    },
+    "steps": [
+      {
+        "id": "subdirector-authority",
+        "label": "Local Subdirector Authority",
+        "surfaces": ["cli-wizard"],
+        "when": "firstRun",
+        "options": [
+          {
+            "key": "defaults",
+            "label": "Keep defaults — full autonomy (recommended)"
+          },
+          { "key": "restricted", "label": "Enabled, read-only capabilities" },
+          { "key": "disabled", "label": "Disabled — approve every action" }
+        ],
+        "writeIn": true,
+        "writeInPrompt": "Enter a comma-separated capability allowlist (e.g. read_file, web_search) or 'disabled'",
+        "nonTtyDefault": "shipped full-autonomy defaults; print applied config and the 'tnf subdirector autonomy' change command"
+      },
+      {
+        "id": "identity",
+        "label": "Identity & Sync Mode",
+        "surfaces": ["cli-wizard", "web-wizard"],
+        "webSteps": ["Welcome", "Your Profile"],
+        "options": [
+          { "key": "local", "label": "Autonomous Local-First" },
+          {
+            "key": "cloud",
+            "label": "Connect to thenewfuse.com (Cloud Sync & Webhook Relay)"
+          },
+          {
+            "key": "sandbox",
+            "label": "Air-Gapped Sandbox (Ephemeral Session)"
+          }
+        ],
+        "writeIn": true,
+        "writeInPrompt": "Custom handle or self-hosted relay endpoint URL"
+      },
+      {
+        "id": "swarm-topology",
+        "label": "Agent Swarm Topology",
+        "surfaces": ["cli-wizard", "web-wizard"],
+        "webSteps": ["Agent Profile"],
+        "options": [
+          { "key": "full-swarm", "label": "Full Autonomous Swarm" },
+          {
+            "key": "dual-core",
+            "label": "Dual-Core Specialist (Architect + Implementer)"
+          },
+          { "key": "solo", "label": "Solo Fast Assistant" }
+        ],
+        "writeIn": true,
+        "writeInPrompt": "Custom LLM tag or model endpoint (e.g. ollama/llama3.3:70b, openrouter/...)",
+        "dynamicSourcesNote": "Renderers must merge current agent runtimes from dynamicSources.agentRuntimes into the choice descriptions"
+      },
+      {
+        "id": "workspace-ingestion",
+        "label": "Workspace Scaffolding & Data Ingestion",
+        "surfaces": ["cli-wizard", "web-wizard"],
+        "webSteps": ["Workspace Setup"],
+        "options": [
+          { "key": "current-repo", "label": "Current Directory" },
+          { "key": "clean-slate", "label": "Scaffold New Workspace" },
+          { "key": "vault", "label": "Personal Knowledge Vault / Notes Folder" }
+        ],
+        "writeIn": true,
+        "writeInPrompt": "Custom directory path, database URI, or document folder to ingest"
+      },
+      {
+        "id": "context-storage",
+        "label": "User Context Storage Strategy",
+        "surfaces": ["cli-wizard", "web-wizard"],
+        "options": [
+          {
+            "key": "local-primary",
+            "label": "Local Primary + Optional Google Drive Mirror (Recommended)"
+          },
+          {
+            "key": "google-drive-primary",
+            "label": "Google Drive Primary + Local Cache"
+          },
+          { "key": "mirrored", "label": "Mirrored Local + Google Drive" },
+          { "key": "local-only", "label": "Local Only" }
+        ],
+        "writeIn": true,
+        "writeInPrompt": "Describe your custom storage strategy (captured in profile customStrategy; enum falls back to local-primary until the user-context storage mandate lands)",
+        "enumPolicy": "Value space is owned by the user-context storage workstream (docs/protocols/USER_CONTEXT_STORAGE_MANDATE.md when present on branch). Custom write-ins are preserved under contextStorage.customStrategy; strategy keeps a valid enum value."
+      },
+      {
+        "id": "first-goal",
+        "label": "Turn Zero Mission / First Goal",
+        "surfaces": ["cli-wizard", "web-wizard"],
+        "webSteps": ["AI Preferences"],
+        "options": [
+          { "key": "tour", "label": "Guided Interactive Harness Tour" },
+          {
+            "key": "health",
+            "label": "System & Codebase Health Audit (tnf doctor)"
+          },
+          { "key": "dev", "label": "Start Active Development Sprint" }
+        ],
+        "writeIn": true,
+        "writeInPrompt": "Your own custom initial goal or prompt for the swarm"
+      },
+      {
+        "id": "provider-setup",
+        "label": "API & Provider Setup",
+        "surfaces": ["web-wizard"],
+        "webSteps": ["API & Provider"],
+        "options": [
+          {
+            "key": "hosted",
+            "label": "Hosted provider key (OpenAI / Anthropic / Google / OpenRouter)"
+          },
+          {
+            "key": "custom-endpoint",
+            "label": "Custom or self-hosted endpoint"
+          }
+        ],
+        "writeIn": true,
+        "writeInPrompt": "Custom provider endpoint or provider tag",
+        "dynamicSourcesNote": "Must list current MCP servers from dynamicSources.mcpServers as integrations"
+      },
+      {
+        "id": "tools-integrations",
+        "label": "Tools & Integrations",
+        "surfaces": ["web-wizard"],
+        "webSteps": ["Tools & Integrations"],
+        "options": [],
+        "optionsPolicy": "Rendered dynamically from dynamicSources.mcpServers — no static option list",
+        "writeIn": true,
+        "writeInPrompt": "Add a custom MCP server or integration endpoint"
+      }
+    ]
+  },
   "verification": [
     "node --test scripts/protocols/frontload-manifest.test.cjs",
     "node --test scripts/protocols/turn-zero-v2-gate.test.cjs",
