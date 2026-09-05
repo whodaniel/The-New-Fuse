@@ -4,53 +4,16 @@
   "created_at": "2026-09-05T10:26:00.128Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "1b184a646f39b3b25e719e40a342831a394d096f",
+  "head_sha": "ec7f4eb24ed5919ba91543404169abf59b153b07",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [
     "TNF-SESSION"
   ],
-  "work_summary": [
-    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
-    "CI/hook gates now block critical changes without fresh handoff artifacts."
-  ],
+  "work_summary": "Sweep: harness anomaly payload and sieve manifest",
   "changed_paths": [
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "data/harness/onboarding-contract.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "packages/tnf-cli/src/services/LocalSubdirectorAuthorityService.test.ts",
-    "apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json",
-    "cloudflare-api-proxy/package.json",
-    "cloudflare-api-proxy/src/index.ts",
-    "cloudflare-api-proxy/wrangler.toml",
-    "data/agent-registry/onboarding-agent.json",
     "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json",
-    "data/llm-intel/arena-intel-latest.json",
-    "data/llm-intel/arena-intel.json",
-    "data/llm-intel/history/intel_2026-09-05.json",
-    "data/llm-intel/ranking-recommendations.json",
-    "data/llm-intel/ranking-report-latest.md",
-    "data/llm-provider-status.json",
-    "data/marketplace/catalog-items.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.md",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/AGENT_WHO_IS_WHO.md",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "apps/frontend/src/components/wizard/GreeterAgent.tsx",
-    "apps/frontend/src/components/wizard/WizardProvider.tsx",
-    "apps/frontend/src/components/wizard/steps/APIProviderSetupStep.tsx",
-    "apps/frontend/src/components/wizard/steps/GreeterAgentStep.tsx",
-    "apps/frontend/src/components/wizard/steps/WorkspaceSetupStep.tsx",
-    "apps/frontend/src/services/onboardingGreeter.ts",
-    "apps/frontend/src/services/onboardingSecrets.test.ts",
-    "apps/frontend/src/services/onboardingSecrets.ts",
-    "apps/frontend/src/stubs/lucide-react.tsx",
-    "packages/tnf-cli/src/boot/wizard.test.ts"
+    "data/harness/active-sieve-manifest.json"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -168,5 +131,6 @@
       "observed_at": "2026-09-05T06:15:21.243Z",
       "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
-  ]
+  ],
+  "files_changed_count": 2
 }
