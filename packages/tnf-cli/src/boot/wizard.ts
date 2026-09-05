@@ -301,14 +301,8 @@ export function resolveSubdirectorChoice(customInput: string): {
  * nothing about authorization (Gate 3).
  */
 export async function ensureLocalSubdirectorAuthority(repoRoot: string): Promise<void> {
-<<<<<<< Updated upstream
   const { LocalSubdirectorAuthorityService } =
     await import('../services/LocalSubdirectorAuthorityService.js');
-=======
-  const { LocalSubdirectorAuthorityService } = await import(
-    '../services/LocalSubdirectorAuthorityService.js'
-  );
->>>>>>> Stashed changes
   const auth = new LocalSubdirectorAuthorityService(repoRoot);
   if (!auth.isFirstRun()) return;
 
@@ -323,13 +317,7 @@ export async function ensureLocalSubdirectorAuthority(repoRoot: string): Promise
     return;
   }
 
-<<<<<<< Updated upstream
   const choice = await promptChoiceWithWriteIn<'grant-full' | 'grant-readonly' | 'keep-disabled'>({
-=======
-  const choice = await promptChoiceWithWriteIn<
-    'grant-full' | 'grant-readonly' | 'keep-disabled'
-  >({
->>>>>>> Stashed changes
     title: 'Local Subdirector Authority',
     subtitle:
       'The harness ships fail-closed: with no authority config, `tnf-cli-agent` is denied ' +
@@ -510,12 +498,7 @@ export async function runNonInteractiveOnboarding(
         agent: 'inherit-parent',
       },
     },
-<<<<<<< Updated upstream
     initialGoal: 'Guided harness tour deferred — run `tnf onboard --interactive` to personalize.',
-=======
-    initialGoal:
-      'Guided harness tour deferred — run `tnf onboard --interactive` to personalize.',
->>>>>>> Stashed changes
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -573,14 +556,8 @@ export async function runInteractiveOnboardingWizard(
     )
   );
   console.log(
-<<<<<<< Updated upstream
     chalk.cyan("Welcome! Let's tailor your local environment, agent swarm, and memory harness.") +
       chalk.dim(`  [step catalog: ${catalogSource}]`)
-=======
-    chalk.cyan(
-      "Welcome! Let's tailor your local environment, agent swarm, and memory harness."
-    ) + chalk.dim(`  [step catalog: ${catalogSource}]`)
->>>>>>> Stashed changes
   );
 
   // Authority before anything else: every later step assumes the local agent
