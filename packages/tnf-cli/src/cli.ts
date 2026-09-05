@@ -39,6 +39,7 @@ import { registerCatalogCommand } from './commands/catalog.js';
 import { registerChannelCommands } from './commands/channels/index.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerDepartmentCommands } from './commands/department.js';
+import { registerDurableTasksCommand } from './commands/durable-tasks.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerFleetCommands } from './commands/fleet/index.js';
 import { registerGoogleAiCommand } from './commands/google-ai.js';
@@ -20758,6 +20759,7 @@ cronCommand
 
 registerAssimilateCommand(program, repoRoot);
 registerBrowserCommand(program, repoRoot);
+registerDurableTasksCommand(program);
 registerTelegramCommands(program, repoRoot);
 registerSlackCommands(program, repoRoot);
 registerWhatsappCommands(program, repoRoot);

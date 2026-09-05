@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T11:20:38.112Z",
+  "generatedAt": "2026-09-05T12:10:43.326Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,21 +12,21 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T11:20:29.951Z",
-    "totalTerminals": 6,
-    "returned": 6,
+    "lastScanAt": "2026-09-05T12:10:30.076Z",
+    "totalTerminals": 5,
+    "returned": 5,
     "source": "ps+tmux+capture+terminal-history",
     "tenant_id": "tnf-local",
     "include_commands": true,
     "include_content": true,
     "content_max_lines": 80,
     "content_max_chars": 8000,
-    "terminal_history_tabs": 6,
-    "content_excerpts_captured": 6
+    "terminal_history_tabs": 5,
+    "content_excerpts_captured": 5
   },
   "summary": {
-    "totalTerminals": 6,
-    "activeTerminals": 6,
+    "totalTerminals": 5,
+    "activeTerminals": 5,
     "idleTerminals": 0,
     "activeRatio": 1,
     "topWorkExecutables": [
@@ -36,7 +36,7 @@
       },
       {
         "name": "cursor-agent",
-        "count": 2
+        "count": 1
       },
       {
         "name": "pi",
@@ -56,7 +56,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "📨 [Unknown] (message): | 📨 [Unknown] (message):",
+        "contextPreview": "👑 [ORCHESTRATOR] (event): | {\"eventType\":\"SELF_PROMPT\",\"data\":{\"kind\":\"agent-stall\",\"channel\":\"General\",\"prompt\":\"🔔 [SYSTEM] Agent AGENT-11, please respond with a heartbeat or acknowledgment.\",\"reason\":\"agent_stalled\",",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -88,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑751k ↓142k R12M CH97.2% 63.4%/128k (auto)              (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑1.0M ↓212k R19M CH99.5% 74.0%/128k (auto)              (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -109,22 +109,6 @@
         "hasContext": true
       },
       {
-        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
-        "tty": "/dev/ttys004",
-        "paneId": "tty:ttys004",
-        "shellPid": 85100,
-        "processCount": 3,
-        "multiplexer": "none",
-        "workExecutables": [
-          "cursor-agent"
-        ],
-        "bypassApproval": false,
-        "usesRemoteMcp": false,
-        "contextPreview": "Auto · 38.5% · 7 files edited                                 Run Everything | ~",
-        "contextRedactions": 0,
-        "hasContext": true
-      },
-      {
         "twid": "f5ae7e85-9524-52e2-98b9-09284e8196f2",
         "tty": "/dev/ttys005",
         "paneId": "tty:ttys005",
@@ -136,7 +120,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "Auto · 25.1% · 13 files edited                                Run Everything | ~",
+        "contextPreview": "Auto · 87.4% · 27 files edited                                Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       }
@@ -144,7 +128,7 @@
     "safetySignals": {
       "approvalsBypassTerminals": 0,
       "remoteMcpTerminals": 0,
-      "contextCapturedTerminals": 6,
+      "contextCapturedTerminals": 5,
       "contextRedactions": 0
     }
   },
