@@ -70,12 +70,71 @@ function readFleetMode() {
 }
 
 /**
+ * Priority admission through a LOAD-INDUCED pause.
+ *
+ * The problem this solves, observed 2026-09-05: the resource watchdog paused
+ * the fleet under load, which stopped the local sub-director from starting,
+ * which meant an operator directive could not reach the one agent whose job is
+ * to delegate the work — including the work of reducing the load. A pause that
+ * silences the delegation path along with everything else has no way back in.
+ *
+ * The admission is deliberately narrow. High priority passes ONLY when all of
+ * these hold; each `false` below is a boundary, not a knob to widen casually:
+ *   - the pause was set by the resource watchdog (load-induced). An operator
+ *     pause is a kill switch and stays absolute at every priority — the same
+ *     asymmetry maybeAutoResume() already enforces.
+ *   - the mode is 'paused', not 'injection-paused'. Keystroke/prompt injection
+ *     is the class that once corrupted an operator's live typing; priority
+ *     bandwidth must never reopen it.
+ *   - the mode file parsed cleanly. Unreadable means an operator's expressed
+ *     intent is unknown, which still fails safe to paused for everyone.
+ *   - a FRESH snapshot is under the priority ceiling (see
+ *     tnf-resource-guard.defaultThresholds). Above it nothing is admitted at
+ *     any priority.
+ *
+ * @param {{ priority?: 'normal'|'high' }} [opts]
+ * @returns {{ admit: boolean, reason: string, mode: string, priority: string, snapshot?: object }}
+ */
+function fleetAdmission({ priority } = {}) {
+  // Required lazily: tnf-resource-guard does not require this module, and
+  // keeping the edge one-directional and lazy means a bash caller paying for
+  // a plain mode read never loads the snapshot machinery.
+  const guard = require('./tnf-resource-guard.cjs');
+  const level = guard.normalizePriority(priority);
+  const state = readFleetMode();
+  const base = { mode: state.mode, priority: level };
+
+  if (state.mode !== 'paused') {
+    return { ...base, admit: true, reason: state.mode === 'injection-paused' ? 'injection-paused-only' : 'running' };
+  }
+  if (level !== 'high') return { ...base, admit: false, reason: 'fleet-paused' };
+  if (state.error) return { ...base, admit: false, reason: 'fleet-mode-unreadable' };
+  if (state.updatedBy !== 'resource-watchdog') {
+    return { ...base, admit: false, reason: 'operator-pause-is-absolute' };
+  }
+
+  const snapshot = guard.systemSnapshot({ fresh: true });
+  const ceiling = guard.isOverloaded(snapshot, guard.defaultThresholds(snapshot, 'high'));
+  if (ceiling.overloaded) {
+    return { ...base, admit: false, reason: 'above-priority-ceiling', snapshot };
+  }
+  return { ...base, admit: true, reason: 'priority-admitted', snapshot };
+}
+
+/**
  * Returns true if the fleet is fully paused (mode === 'paused').
  * Use this from cron-gated scripts as an early-exit guard.
+ *
+ * Called with no argument this is byte-for-byte the original blunt gate, so
+ * every existing caller keeps its current behaviour. Pass
+ * `{ priority: 'high' }` to route through fleetAdmission() instead.
  */
-function isFleetPaused() {
-  const state = readFleetMode();
-  return state.mode === 'paused';
+function isFleetPaused(opts) {
+  if (!opts || opts.priority === undefined) {
+    const state = readFleetMode();
+    return state.mode === 'paused';
+  }
+  return !fleetAdmission(opts).admit;
 }
 
 /**
@@ -134,6 +193,7 @@ module.exports = {
   VALID_MODES,
   readFleetMode,
   isFleetPaused,
+  fleetAdmission,
   isInjectionPaused,
   setFleetMode,
   clearFleetMode,

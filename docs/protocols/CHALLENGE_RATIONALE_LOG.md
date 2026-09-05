@@ -677,3 +677,37 @@ with no dependency on the commit landing first. Existing entries with
 - attributed_to: Daniel Goldberg (operator), 2026-09-04 chat: proceed with
   lessons learned codification
 - ledger_event_id: c4b1e892-3a5f-4d92-bf39-fifo-deadlock-hygiene-20260904
+
+### [2026-09-05] Priority admission through a load-induced fleet pause
+
+- file: scripts/lib/tnf-resource-guard.cjs
+- doc_hash:
+  sha256:0ef3eca3eb5065f8f572314dece06369f8bf30718d33c7971aaf6131db6baeca
+- file: scripts/lib/tnf-fleet-mode.cjs
+- doc_hash:
+  sha256:56f614a9a18f966139d4ea0d6b53878be74681d6ae57ca5c863837b759555059
+- rationale: This deliberately LOOSENS a safety guard, so it is logged here
+  even though neither file is in LEDGER_PROTECTED_FILES. Observed 2026-09-05:
+  the resource watchdog paused the fleet under load (load1=20.81,
+  memPressure=95.6%), which made `tnf-launchd-guard.sh` deny
+  `com.tnf.local-subdirector` every 5 minutes with `reason=load-average`, and
+  the sub-director runtime additionally self-exited on `fleet-paused`. The
+  delegation path went down with the work it was throttling, so an operator
+  directive had no agent to reach and `tnf send` dead-lettered — a pause with
+  no way back in. Adds a `high` admission tier at both gates. The boundaries,
+  each covered by a test in scripts/lib/tnf-fleet-mode-priority.test.cjs: an
+  operator pause stays absolute at every priority (the same asymmetry
+  maybeAutoResume already enforced); `injection-paused` is never reopened by
+  priority, so this grants no keystroke-injection licence; an unreadable mode
+  file still fails safe to paused; and a hard ceiling
+  (TNF_PRIORITY_LOAD_MULTIPLIER=2.5x load, 96% memory) refuses every priority
+  above it, because a directive that finishes the machine off delivers nothing.
+  The priority words are aliases of the vocabulary the broker already speaks
+  (TaskSchedulerService.taskPriorityWeight: p0/urgent/critical/p1/high) rather
+  than a third vocabulary — the broker orders what runs first, this guard
+  decides whether anything runs at all, and both now read the same field.
+- attributed_to: Daniel Goldberg (operator), 2026-09-05 chat: "loosen the
+  watchdog to allow higher priority directives to take the available bandwidth
+  so that you as local orchestrator can reach tnf who is local-subdirector, so
+  that tnf agent can delegate the required tasks"
+- ledger_event_id: priority-admission-load-pause-20260905

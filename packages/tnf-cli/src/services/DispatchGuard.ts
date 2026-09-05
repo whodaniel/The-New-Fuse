@@ -135,6 +135,48 @@ export function assessCapacity(agent: RegisteredAgent | undefined): CapacityAsse
  */
 export const DEFAULT_LIVENESS_WINDOW_MS = 60_000;
 
+/**
+ * Recipient ids that are drained from a LIST queue, not merely subscribed to.
+ *
+ * Mirrors DEFAULT_ALIASES in scripts/sub-director/drain_local_subdirector.py,
+ * which BRPOPLPUSHes `tnf:direct:sub-director:<id>` for each of these every
+ * five minutes via scripts/agents/subdirector-local-cli-agent-cycle.sh. Keep
+ * the two lists in step: an id here that nothing drains queues forever, and an
+ * id drained there but missing here loses its messages.
+ */
+export const QUEUE_DRAINED_RECIPIENTS = new Set([
+  'tnf-cli-agent',
+  'tnf-local-subdirector',
+  'sub-director',
+]);
+
+/**
+ * Whether a send should also LPUSH a durable envelope (Lane 3) rather than
+ * relying on PUBLISH alone.
+ *
+ * The rule used to be role-based: `worker`, or an id containing "worker". The
+ * local sub-director is registered `director`/`orchestrator` and matched
+ * neither, so directives addressed to the one agent whose whole job is
+ * delegation went out pub/sub-only and were dropped whenever it was not live
+ * at that instant — which, under a fleet pause, is exactly when a directive
+ * most needs to arrive. It dead-lettered on 2026-09-05 for that reason while
+ * its LIST queue sat drained and empty every five minutes.
+ *
+ * Durability is a property of how a recipient CONSUMES, not of what its role
+ * is called, so the id set above is consulted alongside the role.
+ */
+export function isDurableQueueRecipient(
+  agentId: string | undefined,
+  role: string | undefined
+): boolean {
+  const id = String(agentId ?? '')
+    .trim()
+    .toLowerCase();
+  if (QUEUE_DRAINED_RECIPIENTS.has(id)) return true;
+  if (String(role ?? '').trim().toLowerCase() === 'worker') return true;
+  return /worker/i.test(id);
+}
+
 function idOf(agent: RegisteredAgent): string {
   return String(agent.agentId ?? agent.id ?? '').trim();
 }
@@ -203,15 +245,24 @@ export function resolveRecipient(
   const lastSeenMs = match.lastSeen ? Date.parse(match.lastSeen) : NaN;
   const age = Number.isFinite(lastSeenMs) ? now - lastSeenMs : Number.POSITIVE_INFINITY;
 
-  // Prefer the registry's own isOnline when present so a future change to the
-  // heartbeat rule propagates here automatically rather than silently drifting.
-  // When it is absent, honour the agent's declared cadence before falling back
-  // to the flat window — otherwise this would call a healthy cron worker stale
-  // exactly as the old rule did.
+  // Honour the agent's declared cadence before falling back to the flat
+  // window — otherwise this would call a healthy cron worker stale exactly as
+  // the old rule did.
   const cadenceSec = Number(match.expectedCadenceSec);
   const effectiveWindowMs =
     Number.isFinite(cadenceSec) && cadenceSec > 0 ? cadenceSec * 1000 * 2 : windowMs;
-  const live = typeof match.isOnline === 'boolean' ? match.isOnline : age < effectiveWindowMs;
+  const heartbeatFresh = age < effectiveWindowMs;
+
+  // `isOnline` may only DOWNGRADE. An agent writing `false` is telling us it
+  // has stood down and is believed; a stored `true` is a claim from whenever
+  // the row was last written and cannot outvote the heartbeat clock. The
+  // registry carried exactly that contradiction on 2026-09-05 —
+  // tnf-local-subdirector sat at `isOnline: true` with a lastSeen over half an
+  // hour past its 300s cadence, because the process that would have refreshed
+  // it was itself blocked. Trusting the flag there would report a dead
+  // recipient as live and send an operator directive into a channel with no
+  // subscriber.
+  const live = match.isOnline === false ? false : heartbeatFresh;
 
   return {
     status: live ? 'live' : 'stale',

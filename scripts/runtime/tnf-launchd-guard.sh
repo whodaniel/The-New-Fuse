@@ -45,12 +45,19 @@ PATH="$HOME/.hermes/node/bin:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/
 
 job_label=""
 job_class="default"
+job_priority="normal"
 repo_root="$REPO_ROOT_DEFAULT"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --job) job_label="$2"; shift 2 ;;
     --class) job_class="$2"; shift 2 ;;
+    # --priority high: admitted through a load deferral that would stop a
+    # normal job, up to the hard ceiling in tnf-resource-guard. Reserve it for
+    # jobs that must run *because* the box is loaded — the sub-director
+    # delegation path above all, since a pause that silences it removes the
+    # only channel that can act on the load. See TNF_RESOURCE_GOVERNANCE_MANDATE.md.
+    --priority) job_priority="$2"; shift 2 ;;
     --repo-root) repo_root="$2"; shift 2 ;;
     --) shift; break ;;
     *) break ;;
@@ -58,7 +65,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$job_label" || $# -eq 0 ]]; then
-  echo "usage: tnf-launchd-guard.sh --job <label> [--class <class>] [--repo-root <path>] -- <command> [args...]" >&2
+  echo "usage: tnf-launchd-guard.sh --job <label> [--class <class>] [--priority normal|high] [--repo-root <path>] -- <command> [args...]" >&2
   exit 2
 fi
 
@@ -79,7 +86,7 @@ else
     # registered owner PID stays correct for the wrapped job's entire runtime
     # — liveness-based staleness detection in tnf-single-instance-guard.cjs
     # then just works without this script needing an explicit release hook.
-    if ! preflight_json="$("$node_bin" "$guard_script" preflight --job "$job_label" --class "$job_class" --pid "$$" --repo-root "$repo_root" 2>/dev/null)"; then
+    if ! preflight_json="$("$node_bin" "$guard_script" preflight --job "$job_label" --class "$job_class" --priority "$job_priority" --pid "$$" --repo-root "$repo_root" 2>/dev/null)"; then
       reason="$(printf '%s' "$preflight_json" | node -e 'try{const d=JSON.parse(require("fs").readFileSync(0,"utf8"));process.stdout.write(d.reason||"unknown")}catch{process.stdout.write("unknown")}' 2>/dev/null || echo unknown)"
       backoff=$(( (RANDOM % 20) + 20 ))
       log "preflight denied (reason=$reason) — backing off ${backoff}s before exit so KeepAlive doesn't hot-loop"

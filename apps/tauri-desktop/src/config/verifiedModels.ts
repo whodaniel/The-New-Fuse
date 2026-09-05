@@ -1,8 +1,28 @@
 /**
- * Verified LLM catalog for TNF desktop Create Agent.
- * Mirrors packages/tnf-cli/src/utils/llm-provider-detector.ts (NVIDIA-first).
- * Used as offline fallback when REST API models endpoint is unavailable.
+ * Offline fallback LLM catalog for TNF desktop Create Agent.
+ *
+ * Registry layer: provider entries are derived from data/providers/catalog.json
+ * (the same bytes read by packages/tnf-cli, apps/api's available-models
+ * endpoint and the Settings surface) via src/config/llmProviders.ts, so the
+ * offline fallback covers the FULL canonical registry instead of a
+ * hand-maintained subset that silently drifts.
+ *
+ * Model layer (hybrid, marked per provider):
+ *  - providers whose catalog entry carries inline models use those bytes
+ *    verbatim (nvidia, google, groq, perplexity, cohere, anthropic, openai);
+ *  - providers whose catalog entry has no inline models use a curated list in
+ *    CURATED_MODEL_FALLBACKS below;
+ *  - everything else ships with an empty model list — Create Agent renders a
+ *    "connect to API for live discovery" placeholder rather than stale ids.
+ *
+ * Desktop-only surfaces (chrome-ai, google-gemma, edge-slm) are on-device
+ * catalogs that exist only in this app; they are intentionally not part of
+ * the LLM provider registry. The "Cerebras" entry from earlier revisions was
+ * dropped: it is not in the canonical registry. NVIDIA-first default order is
+ * preserved (parity with packages/tnf-cli/src/utils/llm-provider-detector.ts).
  */
+import catalogJson from '../../../../data/providers/catalog.json';
+import { LLM_PROVIDERS } from './llmProviders';
 
 export interface CatalogProvider {
   id: string;
@@ -11,41 +31,33 @@ export interface CatalogProvider {
   priority: number;
 }
 
-export const VERIFIED_PROVIDER_CATALOG: CatalogProvider[] = [
-  {
-    id: 'nvidia',
-    name: 'NVIDIA NIM',
-    priority: 12,
-    models: [
-      'thinkingmachines/inkling',
-      'poolside/laguna-xs-2.1',
-      'z-ai/glm-5.2',
-      'minimaxai/minimax-m3',
-      'openai/gpt-oss-120b',
-      'qwen/qwen3-next-80b-a3b-instruct',
-      'meta/llama-3.3-70b-instruct',
-      'meta/llama-4-maverick-17b-128e-instruct',
-      'meta/llama-guard-4-12b',
-      'meta/llama-3.2-90b-vision-instruct',
-      'google/gemma-4-e2b-it',
-      'google/gemma-4-e4b-it',
-      'google/gemma-4-12b-it',
-      'google/gemma-4-26b-moe-it',
-      'google/gemma-4-31b-it',
-      'google/paligemma-2-10b-pt-896',
-      'mistralai/ministral-14b-instruct-2512',
-      'mistralai/mistral-small-4-119b-2603',
-      'mistralai/mistral-medium-3.5-128b',
-      'stockmark/stockmark-2-100b-instruct',
-      'deepseek-ai/deepseek-v4-flash',
-      'deepseek-ai/deepseek-v4-pro',
-      'qwen/qwen3.5-397b-a17b',
-      'z-ai/glm-5.1',
-      'z-ai/glm5',
-      'z-ai/glm4.7',
-      'qwen/qwen3-coder-480b-a35b-instruct',
-    ],
-  },
+interface CatalogEntry {
+  id: string;
+  models?: string[];
+}
+
+const CATALOG = catalogJson as { providers?: CatalogEntry[] };
+
+/** Model lists for registry providers whose catalog entry has no inline models. */
+const CURATED_MODEL_FALLBACKS: Record<string, string[]> = {
+  // Known-good AIHubMix coding-plan endpoints (user-layer provider; current
+  // session default model first).
+  aihubmix: ['coding-glm-5.3', 'glm-5.3'],
+  deepseek: ['deepseek-chat', 'deepseek-reasoner'],
+  openrouter: [
+    'meta-llama/llama-3.3-70b-instruct',
+    'deepseek/deepseek-chat-v3-0324',
+    'google/gemma-2-9b-it:free',
+    'google/gemma-3-12b-it:free',
+  ],
+  sambanova: ['Meta-Llama-3.1-405B-Instruct', 'DeepSeek-R1-Distill-Llama-70B'],
+};
+
+/**
+ * On-device / free surfaces specific to the desktop app. Not LLM registry
+ * providers — kept verbatim from earlier revisions.
+ */
+const DESKTOP_ONLY_SURFACES: CatalogProvider[] = [
   {
     id: 'chrome-ai',
     name: 'Chrome Built-in AI (On-Device / Free)',
@@ -92,59 +104,44 @@ export const VERIFIED_PROVIDER_CATALOG: CatalogProvider[] = [
       'phi-4-mini',
     ],
   },
-  {
-    id: 'groq',
-    name: 'Groq',
-    priority: 9,
-    models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'meta-llama/llama-3.1-8b-instruct'],
-  },
-  {
-    id: 'sambanova',
-    name: 'SambaNova',
-    priority: 8,
-    models: ['Meta-Llama-3.1-405B-Instruct', 'DeepSeek-R1-Distill-Llama-70B'],
-  },
-  {
-    id: 'cerebras',
-    name: 'Cerebras',
-    priority: 7,
-    models: ['llama-3.3-70b', 'llama-3.1-8b'],
-  },
-  {
-    id: 'deepseek',
-    name: 'DeepSeek',
-    priority: 6,
-    models: ['deepseek-chat', 'deepseek-reasoner'],
-  },
-  {
-    id: 'gemini',
-    name: 'Google Gemini',
-    priority: 4,
-    models: [
-      'gemini-2.5-flash',
-      'gemini-2.5-pro',
-      'gemini-2.0-flash',
-      'gemini-2.0-flash-thinking-exp',
-      'gemini-2.0-pro-exp-02-05',
-    ],
-  },
-  {
-    id: 'openai',
-    name: 'OpenAI',
-    priority: 3,
-    models: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'o3-mini', 'o1'],
-  },
-  {
-    id: 'openrouter',
-    name: 'OpenRouter',
-    priority: 0,
-    models: [
-      'meta-llama/llama-3.3-70b-instruct',
-      'deepseek/deepseek-chat-v3-0324',
-      'google/gemma-2-9b-it:free',
-      'google/gemma-3-12b-it:free',
-    ],
-  },
+];
+
+const catalogModelsById = new Map<string, string[]>();
+for (const entry of CATALOG.providers ?? []) {
+  if (entry && typeof entry.id === 'string') {
+    catalogModelsById.set(entry.id, Array.isArray(entry.models) ? entry.models : []);
+  }
+}
+
+/**
+ * Registry-derived entries: canonical LLM_PROVIDERS order (tier asc), NVIDIA
+ * hoisted to the front to preserve the NVIDIA-first default. Priorities are
+ * informational for the offline path; live mode replaces this list entirely.
+ */
+function buildRegistryEntries(): CatalogProvider[] {
+  let priority = 9;
+  return LLM_PROVIDERS.map((provider) => {
+    const curated = CURATED_MODEL_FALLBACKS[provider.id];
+    const models = (catalogModelsById.get(provider.id) ?? []).length
+      ? (catalogModelsById.get(provider.id) as string[])
+      : (curated ?? []);
+    const entry: CatalogProvider = {
+      id: provider.id,
+      name: provider.name,
+      models: [...models],
+      priority: provider.id === 'nvidia' ? 12 : Math.max(priority--, 0),
+    };
+    return entry;
+  }).sort((a, b) => {
+    if (a.id === 'nvidia') return -1;
+    if (b.id === 'nvidia') return 1;
+    return 0; // preserve canonical (tier) order otherwise
+  });
+}
+
+export const VERIFIED_PROVIDER_CATALOG: CatalogProvider[] = [
+  ...buildRegistryEntries(),
+  ...DESKTOP_ONLY_SURFACES,
 ];
 
 export function defaultProviderId(): string {

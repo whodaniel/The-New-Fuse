@@ -144,10 +144,58 @@ function envFlag(name, defaultValue = true) {
   return !['0', 'false', 'no', 'off'].includes(String(raw).trim().toLowerCase());
 }
 
-function defaultThresholds(snapshot) {
-  return {
+/** The two admission tiers this guard decides between. */
+const PRIORITY_LEVELS = new Set(['normal', 'high']);
+
+/**
+ * Priority words, taken from the vocabulary the broker already speaks.
+ *
+ * TNF had a message-priority protocol before this guard did:
+ * `TaskSchedulerService.taskPriorityWeight()`
+ * (packages/relay-core/src/services/task-scheduler.service.ts, live — the
+ * master clock instantiates it and ranks the dispatch queue by
+ * taskDispatchScore) scores p0/urgent=500, critical=400, p1/high=300,
+ * normal/p2=200, p3/low=100, and adds an itinerary-lane weight on top.
+ *
+ * The two layers answer different questions and neither replaces the other:
+ *   broker  → given capacity, WHICH message goes first (ordering).
+ *   guard   → whether ANY work may start at all right now (admission).
+ * They were never connected, so the broker could rank a directive p0 while
+ * this guard denied the process on load average without ever seeing the word.
+ * Rather than invent a third vocabulary, the tiers below are aliases of the
+ * broker's, so one `priority` field means the same thing at both layers.
+ */
+const HIGH_PRIORITY_ALIASES = new Set(['high', 'p0', 'p1', 'urgent', 'critical']);
+
+/** Anything unrecognised is 'normal' — priority is opt-in, never inferred. */
+function normalizePriority(priority) {
+  const value = String(priority ?? 'normal')
+    .trim()
+    .toLowerCase();
+  return HIGH_PRIORITY_ALIASES.has(value) ? 'high' : 'normal';
+}
+
+/**
+ * Load/memory bars a job must be under to start.
+ *
+ * `normal` is the bar the whole fleet has always been held to. `high` is a
+ * RAISED CEILING, not an off switch: it exists so an operator directive can
+ * still reach the sub-director while routine cron work stays deferred, which
+ * is the only way a loaded box ever gets told what to do about being loaded.
+ * Above the high bar even a priority job is refused — a directive that
+ * finishes the machine off delivers nothing.
+ */
+function defaultThresholds(snapshot, priority) {
+  const base = {
     loadThreshold: Number(process.env.TNF_CRON_MAX_LOAD_AVG || Math.max(8, snapshot.cpus * 4)),
     memPressureThreshold: Number(process.env.TNF_MAX_MEM_PRESSURE_PERCENT || 85),
+    priority: 'normal',
+  };
+  if (normalizePriority(priority) !== 'high') return base;
+  return {
+    loadThreshold: base.loadThreshold * Number(process.env.TNF_PRIORITY_LOAD_MULTIPLIER || 2.5),
+    memPressureThreshold: Number(process.env.TNF_PRIORITY_MAX_MEM_PRESSURE_PERCENT || 96),
+    priority: 'high',
   };
 }
 
@@ -223,20 +271,45 @@ function appendAlert({ severity = 'info', source = 'resource-guard', message }) 
  * @param {{ jobId: string, jobClass?: string, ownerPid?: number, locksDir?: string }} opts
  * @returns {{ allow: boolean, reason: string, snapshot: object, lock?: object }}
  */
-function preflight({ jobId, jobClass = 'default', ownerPid, locksDir } = {}) {
+function preflight({ jobId, jobClass = 'default', ownerPid, locksDir, priority } = {}) {
   if (!envFlag('TNF_RESOURCE_GUARD', true)) {
     return { allow: true, reason: 'guard-disabled', snapshot: systemSnapshot() };
   }
   const snapshot = systemSnapshot();
-  const overload = isOverloaded(snapshot);
+  const level = normalizePriority(priority);
+  const overload = isOverloaded(snapshot, defaultThresholds(snapshot, 'normal'));
   if (overload.overloaded) {
     const reason = overload.memOverloaded ? 'memory-pressure' : 'load-average';
+    const metrics = `load1=${snapshot.load1.toFixed(2)} memPressure=${snapshot.memPressurePercent.toFixed(1)}%`;
+
+    if (level === 'high') {
+      const ceiling = isOverloaded(snapshot, defaultThresholds(snapshot, 'high'));
+      if (!ceiling.overloaded) {
+        // Deliberately a warning, not info: a priority admission means the box
+        // was over the normal bar and something ran anyway. That should be
+        // visible in the same alert stream an operator already reads at Turn
+        // Zero, not silently swallowed.
+        appendAlert({
+          severity: 'warning',
+          source: 'resource-guard',
+          message: `preflight PRIORITY-ADMITTED job=${jobId} class=${jobClass} deferReason=${reason} ${metrics} (over normal bar load>=${overload.thresholds.loadThreshold}/mem>=${overload.thresholds.memPressureThreshold}%, under priority ceiling load>=${ceiling.thresholds.loadThreshold}/mem>=${ceiling.thresholds.memPressureThreshold}%)`,
+        });
+        return { allow: true, reason: 'priority-admitted', priority: level, deferReason: reason, snapshot };
+      }
+      appendAlert({
+        severity: 'error',
+        source: 'resource-guard',
+        message: `preflight REFUSED priority job=${jobId} class=${jobClass} reason=${reason} ${metrics} — above the priority ceiling, no admission at any priority`,
+      });
+      return { allow: false, reason: `${reason}-above-priority-ceiling`, priority: level, snapshot };
+    }
+
     appendAlert({
       severity: 'warning',
       source: 'resource-guard',
-      message: `preflight deferred job=${jobId} class=${jobClass} reason=${reason} load1=${snapshot.load1.toFixed(2)} memPressure=${snapshot.memPressurePercent.toFixed(1)}%`,
+      message: `preflight deferred job=${jobId} class=${jobClass} reason=${reason} ${metrics}`,
     });
-    return { allow: false, reason, snapshot };
+    return { allow: false, reason, priority: level, snapshot };
   }
 
   const budget = classify(jobClass);
@@ -269,6 +342,7 @@ function cliMain(argv) {
     else if (a === '--class') opts.jobClass = argv[++i];
     else if (a === '--pid') opts.ownerPid = Number(argv[++i]);
     else if (a === '--locks-dir') opts.locksDir = argv[++i];
+    else if (a === '--priority') opts.priority = argv[++i];
   }
 
   if (cmd === 'snapshot') {
@@ -286,6 +360,7 @@ function cliMain(argv) {
       jobClass: opts.jobClass || 'default',
       ownerPid: opts.ownerPid || (process.ppid > 1 ? process.ppid : process.pid),
       locksDir: opts.locksDir,
+      priority: opts.priority,
     });
     console.log(JSON.stringify(result));
     process.exit(result.allow ? 0 : 1);
@@ -334,6 +409,9 @@ module.exports = {
   systemSnapshot,
   isOverloaded,
   defaultThresholds,
+  normalizePriority,
+  PRIORITY_LEVELS,
+  HIGH_PRIORITY_ALIASES,
   classify,
   resourceBudgetFor,
   preflight,

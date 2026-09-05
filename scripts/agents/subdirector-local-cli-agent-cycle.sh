@@ -17,8 +17,13 @@ set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # shellcheck source=/dev/null
+# High priority: this cycle is the delegation path. When the watchdog pauses
+# the fleet under load, everything else stopping is the point — but this
+# stopping too is what left an operator directive with no way in on
+# 2026-09-05. Admitted through a load-induced pause only, up to the hard
+# ceiling; an operator pause still stops it dead.
 source "$REPO_ROOT/scripts/lib/tnf-fleet-mode.sh" 2>/dev/null || true
-if declare -F tnf_fleet_paused >/dev/null 2>&1 && tnf_fleet_paused; then
+if declare -F tnf_fleet_paused >/dev/null 2>&1 && tnf_fleet_paused high; then
   echo '{"ok":true,"skipped":"fleet-paused"}'
   exit 0
 fi

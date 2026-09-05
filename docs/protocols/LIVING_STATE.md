@@ -3,10 +3,7 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-
-**Current Directive:** Sub-director: run Turn Zero, re-probe the program doc
-section 4, set fleet autonomy, enqueue lanes A-E and assign by capability
-
+**Current Directive:** Lane F1 roster truth: derive liveness from lastSeen vs expectedCadenceSec at every read site, schedule agent-registry-prune (now pointed at the live bus), and find why registered agents never connect to :3007. Accept when mesh count and live-registry count agree within one
 <!-- CURRENT_DIRECTIVE:END -->
 
 - [✅] **2026-09-04 Cloudflare Pages Production Deployment & Authority Lane
@@ -1243,6 +1240,10 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-05T02:12:02.293Z handoff `0c344d99-2cb6-4b9d-b326-c4c937d19992` head `a2671b8dd071` project `TNF-SESSION` — Optional: commit tauri-desktop changes (5 modified + 1 new test file) and the llm-client.ts loadEnv fix from earlier this session
+
+- 2026-09-05T01:52:15.806Z handoff `158a5a36-3607-4b8c-aefa-8402cb3dc898` head `a2671b8dd071` project `TNF-SESSION` — Lane F1 roster truth: derive liveness from lastSeen vs expectedCadenceSec at every read site, schedule agent-registry-prune (now pointed at the live bus), and find why registered agents never connect to :3007. Accept when mesh count and live-registry count agree within one
 
 - 2026-09-05T00:59:48.554Z handoff `d73e7a3e-268a-4448-9fcf-92045fdeab35` head
   `b0ae1dd278d0` project `TNF-SESSION` — Sub-director: run Turn Zero, re-probe

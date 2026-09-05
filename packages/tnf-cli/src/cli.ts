@@ -69,7 +69,11 @@ import {
 } from './services/AgentFocusService.js';
 import { CommandSourceService } from './services/CommandSourceService.js';
 import { CronService } from './services/CronService.js';
-import { decideDispatch, resolveRecipient } from './services/DispatchGuard.js';
+import {
+  decideDispatch,
+  isDurableQueueRecipient,
+  resolveRecipient,
+} from './services/DispatchGuard.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
 import { MemoryCompactorEngine } from './services/MemoryCompactorEngine.js';
@@ -16533,8 +16537,10 @@ program
       if (
         options.to &&
         decision.resolution.agentId &&
-        (decision.resolution.role === 'worker' ||
-          /worker/i.test(decision.resolution.agentId || options.to))
+        isDurableQueueRecipient(
+          decision.resolution.agentId || options.to,
+          decision.resolution.role
+        )
       ) {
         try {
           workerQueue = await client.enqueueWorkerTask(decision.resolution.agentId!, message, {

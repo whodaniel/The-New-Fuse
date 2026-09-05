@@ -82,6 +82,12 @@ export const LLM_PROVIDERS: LLMProviderOption[] = [
 /** Sentinel for the fallback select — disables failover entirely. */
 export const FALLBACK_PROVIDER_NONE = 'None';
 
+/** Registry provider ids, for id-keyed consumers (workflow node data). */
+export const LLM_PROVIDER_IDS = LLM_PROVIDERS.map((p) => p.id);
+
+/** Canonical default provider id (NVIDIA-first, mirrors llm-provider-detector). */
+export const DEFAULT_PROVIDER_ID = LLM_PROVIDER_IDS.includes('nvidia') ? 'nvidia' : LLM_PROVIDER_IDS[0];
+
 /** Display name of the catalog default, used when nothing valid is stored. */
 export const DEFAULT_PROVIDER_NAME =
   LLM_PROVIDERS.find((p) => p.id === 'nvidia')?.name ?? LLM_PROVIDERS[0].name;
@@ -97,6 +103,18 @@ export function resolveProviderName(stored: string | undefined, allowNone = fals
   if (allowNone && stored === FALLBACK_PROVIDER_NONE) return stored;
   if (LLM_PROVIDERS.some((p) => p.name === stored)) return stored;
   return DEFAULT_PROVIDER_NAME;
+}
+
+/**
+ * Same guard for id-keyed stored values (workflow node data). `legacyIds`
+ * are pre-registry ids that saved graphs may still carry — they stay
+ * selectable so old drafts keep rendering, but new selections use registry
+ * ids. Unresolvable values fall back to the canonical default id.
+ */
+export function resolveProviderId(stored: string | undefined, legacyIds: string[] = []): string {
+  if (!stored) return DEFAULT_PROVIDER_ID;
+  if (LLM_PROVIDER_IDS.includes(stored) || legacyIds.includes(stored)) return stored;
+  return DEFAULT_PROVIDER_ID;
 }
 
 /** Env keys worth naming in the API key hint, in tier order. */

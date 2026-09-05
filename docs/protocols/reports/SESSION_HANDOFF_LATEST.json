@@ -1,22 +1,22 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "d73e7a3e-268a-4448-9fcf-92045fdeab35",
-  "created_at": "2026-09-05T00:59:47.244Z",
+  "handoff_id": "0c344d99-2cb6-4b9d-b326-c4c937d19992",
+  "created_at": "2026-09-05T02:11:59.989Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "b0ae1dd278d0d47c84e75fa8074241f2d7698c5a",
+  "head_sha": "a2671b8dd071119bdd7bae9aeb4020ee7449eed7",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
+  "project_ids": [
+    "TNF-SESSION"
+  ],
   "work_summary": [
-    "Execute the Platform Reconciliation Program (docs/operations/PLATFORM_RECONCILIATION_PROGRAM_2026-09-05.md) under the Sub-Director Directive (docs/operations/SUBDIRECTOR_DIRECTIVE_PLATFORM_RECONCILIATION_2026-09-05.md); the local sub-director orchestrates the fleet by capability",
-    "Ground truth 2026-09-05: app.thenewfuse.com (Production/main, deploy 195e7d31, commit 05e1189) and production.thenewfuse-main.pages.dev (Preview alias 'production', deploy 209ff5a6, commit 9ac13b2) are the same apps/frontend build; bundles byte-equivalent apart from 7 chunks under 151 bytes. Reconciliation = promote one verified build to main, not merge two UIs",
-    "Drag-and-drop workflow builder works at /workflows/builder (verified live); it was hidden by #278 folding Forge into the collapsed Advanced Controls toggle. Fixed on feat/platform-reconciliation-20260905 (commit b8366d440, worktree .claude/worktrees/platform-reconciliation): Forge first-class section, Workflows children Builder/Templates/Executions, regression test; tsc clean, sidebar tests 7/7",
-    "Cloud fleet gap: /api/harness/status reads ~/.tnf files + local Redis, empty on Cloud Run; local relay :3007 has 6 agents, Redis registry ~20, relay.thenewfuse.com/agents 0; openclaw-runtime /v1/agents/invoke live but uncalled by the frontend; no local-to-cloud uplink exists",
-    "Prior session 5a0b2f7a (Tauri Settings provider persistence) was accidentally overwritten by a probe emit 24a9e7f9; its summary is preserved in LIVING_STATE history"
+    "Registry-driven pattern extended to WorkflowBuilder + verifiedModels offline fallback",
+    "WorkflowBuilder ProviderSelect now renders all 23 canonical LLM_PROVIDERS (id-keyed, was 9 hardcoded incl. registry-inexistent Cerebras); legacy ids (gemini/cerebras/local) kept selectable for saved graphs via resolveProviderId guard",
+    "verifiedModels.ts rebuilt: provider layer derived from data/providers/catalog.json (full registry incl. aihubmix/anthropic/xai/qwen/moonshot etc.), model layer hybrid = catalog inline models verbatim + CURATED_MODEL_FALLBACKS for empty entries (aihubmix coding-glm-5.3 first) + desktop-only chrome-ai/google-gemma/edge-slm; stale Cerebras + gemini-2.x entries dropped; NVIDIA-first default preserved",
+    "AgentHub Create Agent model select shows placeholder when offline fallback has no models for a provider"
   ],
   "changed_paths": [
-    "apps/frontend/src/data/codebase_map.json",
     "apps/tauri-desktop/src/config/llmProviders.test.ts",
     "apps/tauri-desktop/src/config/llmProviders.ts",
     "apps/tauri-desktop/src/pages/Settings.tsx",
@@ -30,25 +30,43 @@
     "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "packages/tnf-cli/src/utils/llm-client.ts"
+    "packages/tnf-cli/src/utils/llm-client.ts",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "apps/frontend/src/data/codebase_map.json",
+    "apps/tauri-desktop/src/config/verifiedModels.ts",
+    "apps/tauri-desktop/src/pages/AgentHub.tsx",
+    "apps/tauri-desktop/src/pages/WorkflowBuilder.tsx",
+    "docs/protocols/CHALLENGE_RATIONALE_LOG.md",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/services/DispatchGuard.test.ts",
+    "packages/tnf-cli/src/services/DispatchGuard.ts",
+    "packages/tnf-cli/src/slack/slack.test.ts",
+    "scripts/agent-registry/agent-registry-prune.cjs",
+    "scripts/agents/subdirector-local-cli-agent-cycle.sh",
+    "scripts/lib/tnf-fleet-mode.cjs",
+    "scripts/lib/tnf-fleet-mode.sh",
+    "scripts/lib/tnf-resource-guard.cjs",
+    "scripts/runtime/local-subdirector-runtime.cjs",
+    "scripts/runtime/local-subdirector-service.sh",
+    "scripts/runtime/tnf-launchd-guard.sh",
+    "apps/tauri-desktop/src/config/verifiedModels.test.ts",
+    "scripts/lib/tnf-fleet-mode-priority.test.cjs",
+    "vitest.config.ts"
   ],
   "verification": {
     "privacy_guard": "na",
     "secret_sweep": "na",
     "docs_pii_guard": "na",
     "supabase_rls_audit": "na",
-    "notes": "frontend tsc --noEmit: 0 errors; vitest PremiumSidebar 7/7; live drag-drop verified in Chrome on the preview host; Pages deployment list and edge health probed 2026-09-05T00:46Z"
+    "notes": "vitest full suite 13 files 82 tests pass (22 in llmProviders+verifiedModels); tsc --noEmit clean; vite build succeeds in 2m20s"
   },
   "continuation": {
-    "owner": "tnf-local-subdirector",
+    "owner": "tnf-orchestrator",
     "targets": [
-      "tnf-local-subdirector",
-      "frontend",
-      "api",
-      "relay",
-      "cloudflare",
-      "tnf-cli",
-      "qa"
+      "story-architect",
+      "librarian"
     ],
     "priority": "high",
     "resume_checklist": [
@@ -58,15 +76,12 @@
     ]
   },
   "next_actions": [
-    "Sub-director: run Turn Zero, re-probe the program doc section 4, set fleet autonomy, enqueue lanes A-E and assign by capability",
-    "Lane A: land feat/platform-reconciliation-20260905, build apps/frontend, deploy preview, verify Forge + drag-drop + /api/agents, then wrangler pages deploy dist --project-name=thenewfuse-main --branch=main and verify on app.thenewfuse.com",
-    "Lane B: land fix/workflow-execution-engine via real worktree merge; triage feat/workflow-builder-tauri-migration vs main since #272; verify drag-drop save run round trip on the public site",
-    "Lane C: C1 cloud fleet source for harness/status and /api/agents on Cloud Run; C2 local-to-cloud roster uplink (relay REGISTER on wss://relay.thenewfuse.com/ws or SharedState deposit, operator login custody auth); C3 origin badges local/cloud; C4 Run -> POST /v1/agents/invoke with tenant + budgetCap, receipt visible in Audit Channels",
-    "Lane D: PR the 4 commits on chore/worktree-consolidation-20260904; re-verify retire-openclaw carries; fresh branch per PR",
-    "Lane E: every full-auto cycle fixes the highest-leverage measurable gap end-to-end with evidence and records a ledger row"
+    "Optional: commit tauri-desktop changes (5 modified + 1 new test file) and the llm-client.ts loadEnv fix from earlier this session"
   ],
   "artifacts": {
-    "commits": ["b0ae1dd278d0d47c84e75fa8074241f2d7698c5a"]
+    "commits": [
+      "a2671b8dd071119bdd7bae9aeb4020ee7449eed7"
+    ]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",

@@ -1050,6 +1050,13 @@ const CreateAgentModal: React.FC<{
               onChange={(e) => setModel(e.target.value)}
               disabled={catalogLoading || modelOptions.length === 0}
             >
+              {modelOptions.length === 0 && (
+                <option value="">
+                  {catalogSource === 'offline-fallback'
+                    ? 'Connect to API for live model discovery'
+                    : 'No models available'}
+                </option>
+              )}
               {modelOptions.map((id) => (
                 <option key={id} value={id}>
                   {id}

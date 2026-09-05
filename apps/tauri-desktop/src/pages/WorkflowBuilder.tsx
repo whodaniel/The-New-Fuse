@@ -23,6 +23,7 @@ import PageShell from '../components/layout/PageShell';
 import { useAuth } from '../hooks/useAuth';
 import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
 import { safeStorage } from '../lib/safeStorage';
+import { DEFAULT_PROVIDER_ID, LLM_PROVIDERS, resolveProviderId } from '../config/llmProviders';
 import { apiService } from '../services/api';
 import { useAgentStore } from '../stores/agentStore';
 
@@ -44,24 +45,38 @@ type WorkflowNodeData = {
   onChange?: (field: string, value: string) => void;
 };
 
+/**
+ * Pre-registry provider ids that saved workflow drafts may still carry.
+ * They stay selectable so old graphs keep rendering; new nodes use
+ * canonical registry ids from LLM_PROVIDERS.
+ */
+const LEGACY_PROVIDER_OPTIONS = [
+  { id: 'gemini', name: 'Google Gemini (legacy)' },
+  { id: 'cerebras', name: 'Cerebras (legacy)' },
+  { id: 'local', name: 'Local LLM (legacy)' },
+];
+
+const LEGACY_PROVIDER_IDS = LEGACY_PROVIDER_OPTIONS.map((p) => p.id);
+
 const ProviderSelect: React.FC<{
   value: string;
   onChange: (value: string) => void;
 }> = ({ value, onChange }) => (
   <select
     className="nodrag nopan"
-    value={value || 'nvidia'}
+    value={resolveProviderId(value, LEGACY_PROVIDER_IDS)}
     onChange={(e) => onChange(e.target.value)}
   >
-    <option value="nvidia">NVIDIA NIM</option>
-    <option value="groq">Groq</option>
-    <option value="sambanova">SambaNova</option>
-    <option value="cerebras">Cerebras</option>
-    <option value="deepseek">DeepSeek</option>
-    <option value="gemini">Gemini</option>
-    <option value="openai">OpenAI</option>
-    <option value="openrouter">OpenRouter</option>
-    <option value="local">Local LLM</option>
+    {LLM_PROVIDERS.map((provider) => (
+      <option key={provider.id} value={provider.id}>
+        {provider.name}
+      </option>
+    ))}
+    {LEGACY_PROVIDER_OPTIONS.map((provider) => (
+      <option key={provider.id} value={provider.id}>
+        {provider.name}
+      </option>
+    ))}
   </select>
 );
 
@@ -76,7 +91,7 @@ const AgentNode = ({ data }: { data: WorkflowNodeData }) => (
       <div className="node-field">
         <label>Provider</label>
         <ProviderSelect
-          value={data.provider || 'nvidia'}
+          value={data.provider || DEFAULT_PROVIDER_ID}
           onChange={(v) => data.onChange?.('provider', v)}
         />
       </div>

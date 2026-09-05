@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_PROVIDER_ID,
   DEFAULT_PROVIDER_NAME,
   FALLBACK_PROVIDER_NONE,
   LLM_PROVIDER_ENV_KEYS,
   LLM_PROVIDERS,
+  resolveProviderId,
   resolveProviderName,
   USER_LAYER_PROVIDERS,
 } from './llmProviders';
@@ -77,6 +79,29 @@ describe('llmProviders', () => {
 
   it('keeps the fallback none sentinel stable', () => {
     expect(FALLBACK_PROVIDER_NONE).toBe('None');
+  });
+
+  describe('resolveProviderId', () => {
+    it('accepts every registry provider id', () => {
+      for (const provider of LLM_PROVIDERS) {
+        expect(resolveProviderId(provider.id)).toBe(provider.id);
+      }
+    });
+
+    it('honors legacy pre-registry ids for saved graph data', () => {
+      for (const legacy of ['gemini', 'cerebras', 'local']) {
+        expect(resolveProviderId(legacy, [legacy])).toBe(legacy);
+        // Without the declared legacy set, they fall back to the default.
+        expect(resolveProviderId(legacy)).toBe(DEFAULT_PROVIDER_ID);
+      }
+    });
+
+    it('falls back to the canonical default for unresolvable values', () => {
+      expect(resolveProviderId('bogus-provider')).toBe(DEFAULT_PROVIDER_ID);
+      expect(resolveProviderId('')).toBe(DEFAULT_PROVIDER_ID);
+      expect(resolveProviderId(undefined)).toBe(DEFAULT_PROVIDER_ID);
+      expect(DEFAULT_PROVIDER_ID).toBe('nvidia');
+    });
   });
 
   describe('resolveProviderName', () => {

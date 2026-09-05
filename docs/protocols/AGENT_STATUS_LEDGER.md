@@ -167,7 +167,7 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-05T00:59:47.244Z** — handoff
+Updated: **2026-09-05T02:11:59.989Z** — handoff `0c344d99-2cb6-4b9d-b326-c4c937d19992` (`a2671b8dd071`).
 `d73e7a3e-268a-4448-9fcf-92045fdeab35` (`b0ae1dd278d0`).
 `664f7bbb-72ae-4d60-9b66-445efff61d66` (`778b6187ccb7`).
 `f1b43276-289a-45e9-a849-291dfa15d45f` (`fdcfd006f59f`).
@@ -421,14 +421,9 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                                                                                                                                                                                                                                                          |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0**   | Sub-director: run Turn Zero, re-probe the program doc section 4, set fleet autonomy, enqueue lanes A-E and assign by capability                                                                                                                                                                                                                 |
-| **P0**   | Lane A: land feat/platform-reconciliation-20260905, build apps/frontend, deploy preview, verify Forge + drag-drop + /api/agents, then wrangler pages deploy dist --project-name=thenewfuse-main --branch=main and verify on app.thenewfuse.com                                                                                                  |
-| **P0**   | Lane B: land fix/workflow-execution-engine via real worktree merge; triage feat/workflow-builder-tauri-migration vs main since #272; verify drag-drop save run round trip on the public site                                                                                                                                                    |
-| **P0**   | Lane C: C1 cloud fleet source for harness/status and /api/agents on Cloud Run; C2 local-to-cloud roster uplink (relay REGISTER on wss://relay.thenewfuse.com/ws or SharedState deposit, operator login custody auth); C3 origin badges local/cloud; C4 Run -> POST /v1/agents/invoke with tenant + budgetCap, receipt visible in Audit Channels |
-| **P1**   | Lane D: PR the 4 commits on chore/worktree-consolidation-20260904; re-verify retire-openclaw carries; fresh branch per PR                                                                                                                                                                                                                       |
-| **P1**   | Lane E: every full-auto cycle fixes the highest-leverage measurable gap end-to-end with evidence and records a ledger row                                                                                                                                                                                                                       |
+| Priority | Action                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| **P0**   | Optional: commit tauri-desktop changes (5 modified + 1 new test file) and the llm-client.ts loadEnv fix from earlier this session |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1908,3 +1903,7 @@ tnf-cli (cli.ts, slashCommands.ts) | ✅ COMPLETE |
 
 | 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (d73e7a3e-268a-4448-9fcf-92045fdeab35) | ✅ HANDOFF_READY |
+
+| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST (158a5a36-3607-4b8c-aefa-8402cb3dc898) | ✅ HANDOFF_READY |
+
+| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST (0c344d99-2cb6-4b9d-b326-c4c937d19992) | ✅ HANDOFF_READY |

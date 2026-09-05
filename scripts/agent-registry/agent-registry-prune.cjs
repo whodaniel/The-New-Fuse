@@ -13,10 +13,15 @@
 
 const redis = require('redis');
 
-// Redis client setup
+// Redis client setup.
+//
+// This pointed at 6380 (the docker-compose mapping) while the live TNF bus
+// every agent actually registers on runs at 127.0.0.1:6379 — so this script
+// has never pruned the registry it was written for; it connected to a port
+// with nothing on it, found no agents, and reported success. Default to the
+// live bus and let REDIS_URL override for a containerised run.
 const redisClient = redis.createClient({
-  host: 'localhost',
-  port: 6380, // TNF Redis port from docker-compose
+  url: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
 });
 
 // Configuration from TNF_AGENT_ROSTER_CLEANUP.md

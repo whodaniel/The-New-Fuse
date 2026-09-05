@@ -139,6 +139,8 @@ create_plist() {
     <string>${LABEL}</string>
     <string>--class</string>
     <string>probe</string>
+    <string>--priority</string>
+    <string>high</string>
     <string>--repo-root</string>
     <string>${ROOT_DIR}</string>
     <string>--</string>
