@@ -1,0 +1,97 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "a7e4c2b1-9f58-4d3a-8c6e-2b1d0f9a4e77",
+  "created_at": "2026-09-05T03:47:11.864Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": ["whodaniel/The-New-Fuse"]
+  },
+  "branch": "main",
+  "head_sha": "8f6fb9e8a32198c2810d6b3ce78173d8d452accb",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["cli", "protocol", "agent-dispatch"],
+    "staffed_by": ["Cursor-Composer"]
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": true,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "slash-announce-resolve",
+      "state": "pass",
+      "observed_at": "2026-09-05T03:45:00.000Z",
+      "value": "/announce resolves to cliCommand agents announce"
+    }
+  ],
+  "project_ids": ["agent-availability-announce"],
+  "work_summary": [
+    "Added /announce slash command (aliases /availability-announce, /dispatchable) wired to tnf agents announce.",
+    "Added skill tnf-agent-availability-announce with Claude/Cursor/fleet command mirrors."
+  ],
+  "changed_paths": [
+    "packages/tnf-cli/src/slashCommands.ts",
+    "docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md",
+    "docs/protocols/reports/session_handoff_announce-slash-skill.json",
+    "docs/protocols/reports/session_handoff_announce-slash-skill.md",
+    ".claude/commands/announce.md",
+    ".claude/commands/README.md",
+    ".claude/skills/tnf-agent-availability-announce/SKILL.md",
+    ".agent/skills/tnf-agent-availability-announce/SKILL.md",
+    ".agent/fleet/corporate/commands/announce.md",
+    ".agent/fleet/users/commands/announce.md",
+    "cursor-marketplace/plugins/tnf-harness/commands/tnf-announce.md"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Slash registry + skill/command docs only; no secrets or Supabase."
+  },
+  "continuation": {
+    "owner": "tnf-cli-agent",
+    "targets": ["librarian"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Confirm /announce appears in tnf slash help /commands",
+      "Agents starting interactive sessions should load tnf-agent-availability-announce when operator asks to announce"
+    ]
+  },
+  "next_actions": [
+    "Push announce slash+skill commit to main",
+    "Keep re-running tnf agents announce while Cursor session remains dispatchable"
+  ],
+  "artifacts": {
+    "commits": ["8f6fb9e8a32198c2810d6b3ce78173d8d452accb"]
+  },
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "recorded": [
+        "Interactive availability needs slash+skill discoverability; CLI alone is not enough for agent runtimes"
+      ],
+      "rationale": "Operators and agents look for /commands and skills first"
+    },
+    "skills": {
+      "considered": true,
+      "proposed": ["tnf-agent-availability-announce"],
+      "overlap_reviewed": true,
+      "rationale": "New skill paired with /announce; distinct from tnf register --daemon"
+    }
+  }
+}

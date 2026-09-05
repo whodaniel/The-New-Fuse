@@ -205,6 +205,16 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
     cliCommand: ['agents', 'list'],
   },
   {
+    name: 'announce',
+    aliases: ['availability-announce', 'dispatchable'],
+    summary:
+      'Announce this interactive session as available for local Subdirector dispatch (or --offline).',
+    usage: '/announce [--offline] [--json] [--name <name>] [--platform <platform>]',
+    source: 'tnf',
+    mode: 'cli',
+    cliCommand: ['agents', 'announce'],
+  },
+  {
     name: 'sessions',
     aliases: ['session'],
     summary: 'List stored TNF sessions.',

@@ -7,7 +7,10 @@
 local Subdirector drain (`tnf:direct:sub-director:<id>`)  
 **Executable:** `scripts/agents/announce-availability.cjs`  
 **Operator path:** `tnf agents announce` (wraps the script)  
-`node scripts/agents/announce-availability.cjs` remains valid.
+`node scripts/agents/announce-availability.cjs` remains valid.  
+**Slash:** `/announce` (aliases `/availability-announce`, `/dispatchable`)  
+**Skill:** `.agent/skills/tnf-agent-availability-announce/SKILL.md`  
+**Command file:** `.claude/commands/announce.md`
 
 ## Purpose
 
