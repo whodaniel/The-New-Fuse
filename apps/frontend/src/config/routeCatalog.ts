@@ -686,7 +686,8 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   {
     name: 'Personal Intelligence Hub',
     path: '/platform',
-    description: 'Google Gemini / Antigravity personal intelligence concordance hub',
+    description:
+      'Provider-neutral personal intelligence hub — multi-source ingest modules (Drive, notes, local, CLI, optional Google AI bridge)',
   },
   {
     name: 'Resources Skills',

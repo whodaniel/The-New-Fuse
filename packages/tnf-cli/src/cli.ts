@@ -28,6 +28,7 @@ import {
 } from './boot/pipeline.js';
 import { assertNoDuplicateCommands } from './commands/_registry.js';
 import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
+import { registerAgentsAnnounceCommand } from './commands/agents-announce.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAgentsMatchCommand } from './commands/agents-match.js';
 import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-run.js';
@@ -16537,10 +16538,7 @@ program
       if (
         options.to &&
         decision.resolution.agentId &&
-        isDurableQueueRecipient(
-          decision.resolution.agentId || options.to,
-          decision.resolution.role
-        )
+        isDurableQueueRecipient(decision.resolution.agentId || options.to, decision.resolution.role)
       ) {
         try {
           workerQueue = await client.enqueueWorkerTask(decision.resolution.agentId!, message, {
@@ -20756,6 +20754,8 @@ registerAgentsSpecsCommand(program, repoRoot);
 // frontmatter with live registry state. Registered on the existing `agents`
 // group so the surface stays `tnf agents match`, not a new top-level family.
 registerAgentsMatchCommand(agents, repoRoot);
+// Interactive session → local Subdirector availability (bus contract v1).
+registerAgentsAnnounceCommand(agents, repoRoot);
 registerStatusCommand(program, repoRoot);
 // `doctor` and `config` are already owned by cli.ts above. These modules nest
 // under the incumbent (`doctor health`, `config resolved`) via registerOrNest
