@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-05T12:15:53.940Z` Handoff ID: `5fd0bafe-cbfb-4b45-b268-d19a8f041200`
+`2026-09-05T12:24:20.418Z` Handoff ID: `c301bf8c-1057-4006-97cc-4e1cfa01430a`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `68a067811d38c26f36d9041809480c2e08c06c51`
+- Head SHA: `a707b25a25d6dd14ee0d50eaecf18c76fdce5a0f`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -26,26 +26,16 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Changed Paths
 
-- docs/protocols/workspace-leases.json
-- scripts/harness/check-workspace-lease.cjs
-- scripts/harness/check-workspace-lease.test.cjs
-- scripts/harness/resolve-workspace-tier.cjs
-- scripts/harness/resolve-workspace-tier.test.cjs
-- scripts/protocols/turn-zero-v2-gate.cjs
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
 - data/harness/ANOMALY_PAYLOAD.md
 - data/harness/active-sieve-manifest.json
-- docs/protocols/reports/twip-terminal-macro-board-latest.md
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - packages/shared/src/index.ts
 - packages/tnf-cli/src/cli.ts
-- AGENTS.md
-- CLAUDE.md
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- docs/protocols/lessons/INDEX.md
+- docs/protocols/reports/twip-terminal-macro-board-latest.md
+- docs/protocols/lessons/2026-09-05-stale-buffer-clobber-and-critical-sections.md
 - packages/shared/src/workflow-ai-spec.ts
 - packages/tnf-cli/src/commands/durable-tasks.ts
 - packages/tnf-cli/src/services/DurableAiHandlers.ts

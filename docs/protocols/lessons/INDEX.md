@@ -16,6 +16,11 @@ shall never be left as transactional transients."
   — 2026-09-03. A model overwrote the canonical handoff with an invented file.
   Consolidating writers cannot help when every agent with a file-write tool is a
   writer; validation has to happen at the read site.
+- [Stale-buffer write-back is a fourth clobber class](2026-09-05-stale-buffer-clobber-and-critical-sections.md)
+  — 2026-09-05. A live co-tenant agent erased on-disk edits twice by replaying
+  its stale in-memory file buffers — a path no git hook can see. Edit
+  co-tenant-owned files only inside a SIGSTOP freeze window, commit before
+  resume, and verify behavior (not just commit membership) on the target branch.
 
 ## Earlier lessons, recorded before this index existed
 
