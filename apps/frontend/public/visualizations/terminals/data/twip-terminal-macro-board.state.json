@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T10:00:42.982Z",
+  "generatedAt": "2026-09-05T03:20:10.430Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,21 +12,21 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T10:00:36.299Z",
-    "totalTerminals": 6,
-    "returned": 6,
+    "lastScanAt": "2026-09-05T03:20:08.669Z",
+    "totalTerminals": 5,
+    "returned": 5,
     "source": "ps+tmux+capture+terminal-history",
     "tenant_id": "tnf-local",
     "include_commands": true,
     "include_content": true,
     "content_max_lines": 80,
     "content_max_chars": 8000,
-    "terminal_history_tabs": 6,
-    "content_excerpts_captured": 6
+    "terminal_history_tabs": 5,
+    "content_excerpts_captured": 5
   },
   "summary": {
-    "totalTerminals": 6,
-    "activeTerminals": 6,
+    "totalTerminals": 5,
+    "activeTerminals": 5,
     "idleTerminals": 0,
     "activeRatio": 1,
     "topWorkExecutables": [
@@ -36,7 +36,7 @@
       },
       {
         "name": "cursor-agent",
-        "count": 2
+        "count": 1
       },
       {
         "name": "pi",
@@ -48,15 +48,15 @@
         "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
         "tty": "/dev/ttys000",
         "paneId": "tty:ttys000",
-        "shellPid": 31286,
-        "processCount": 5,
+        "shellPid": 42055,
+        "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
           "node"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "📨 [Unknown] (message): | 📨 [Unknown] (message):",
+        "contextPreview": "⠏ Thinking...   ✓ exit 0 | ⠹ Thinking...",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -88,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑313k ↓57k R5.6M CH99.0% 87.7%/128k (auto)              (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑41k ↓1.7k R171k 34.1%/128k (auto)                      (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -96,23 +96,23 @@
         "twid": "9c58a452-a486-59e1-902a-ae658f7c1ceb",
         "tty": "/dev/ttys003",
         "paneId": "tty:ttys003",
-        "shellPid": 13366,
-        "processCount": 35,
+        "shellPid": 63309,
+        "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
           "node"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "› Ask Codex to do anything | gpt-5.6-sol high · ~ · Main [default]",
+        "contextPreview": "⠋ Thinking...   ✓ exit 0 | ⠧ Thinking...",
         "contextRedactions": 0,
         "hasContext": true
       },
       {
-        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
-        "tty": "/dev/ttys004",
-        "paneId": "tty:ttys004",
-        "shellPid": 85100,
+        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
+        "tty": "/dev/ttys006",
+        "paneId": "tty:ttys006",
+        "shellPid": 29111,
         "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
@@ -120,39 +120,39 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "Auto · 38.5% · 7 files edited                                 Run Everything | ~",
+        "contextPreview": "Auto · 64.8% · 21 files edited                                Run Everything | ~",
         "contextRedactions": 0,
-        "hasContext": true
-      },
-      {
-        "twid": "f5ae7e85-9524-52e2-98b9-09284e8196f2",
-        "tty": "/dev/ttys005",
-        "paneId": "tty:ttys005",
-        "shellPid": 60079,
-        "processCount": 3,
-        "multiplexer": "none",
-        "workExecutables": [
-          "cursor-agent"
-        ],
-        "bypassApproval": false,
-        "usesRemoteMcp": false,
-        "contextPreview": "Auto · 47.2% · 2 files edited                                 Run Everything | ~",
-        "contextRedactions": 3,
         "hasContext": true
       }
     ],
     "safetySignals": {
       "approvalsBypassTerminals": 0,
       "remoteMcpTerminals": 0,
-      "contextCapturedTerminals": 6,
-      "contextRedactions": 3
+      "contextCapturedTerminals": 5,
+      "contextRedactions": 0
     }
   },
   "delta": {
     "hasBaseline": true,
     "terminalDelta": 0,
     "activeDelta": 0,
-    "activeGained": [],
-    "activeLost": []
+    "activeGained": [
+      {
+        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
+        "tty": "/dev/ttys006",
+        "workExecutables": [
+          "cursor-agent"
+        ]
+      }
+    ],
+    "activeLost": [
+      {
+        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
+        "tty": "/dev/ttys004",
+        "workExecutables": [
+          "node"
+        ]
+      }
+    ]
   }
 }

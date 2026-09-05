@@ -8,11 +8,10 @@
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": "Sweep: harness anomaly/sieve, intel (5 files), marketplace catalog",
+  "work_summary": "sweep: harness anomaly payload and active sieve manifest updates",
   "changed_paths": [
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
+    "data/harness/ANOMALY_PAYLOAD.md",
+    "data/harness/active-sieve-manifest.json"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -131,5 +130,8 @@
       "observed_at": "2026-09-04T05:09:45.926Z",
       "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
-  ]
+  ],
+  "files_changed": 2,
+  "lines_added": 150,
+  "lines_removed": 20
 }

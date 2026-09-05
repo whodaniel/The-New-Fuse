@@ -9,37 +9,12 @@ d3e52f001fd6ebe325a92cfb2246d04c8394893f **Protocol ACK:** TNF_PROTOCOL_ACK
 
 ## Work Summary
 
-- **Files Changed**: undefined
-- **Lines Added**: undefined
-- **Lines Removed**: undefined
-- **Commits**: 1
+sweep: harness anomaly payload and active sieve manifest updates
+
 ## Changed Paths
 
-- `data/llm-provider-status.json`
-- `packages/tnf-cli/src/cli.ts`
-- `packages/tnf-cli/src/command-surface.snapshot.json`
-- `packages/tnf-cli/src/slashCommands.ts`
-- `packages/tnf-cli/src/commands/reflect.ts`
-- `data/llm-intel/arena-intel-latest.json`
-- `data/llm-intel/arena-intel.json`
-- `data/llm-intel/history/intel_2026-09-05.json`
-- `data/llm-intel/ranking-recommendations.json`
-- `data/llm-intel/ranking-report-latest.md`
-- `data/marketplace/catalog-items.json`
 - `data/harness/ANOMALY_PAYLOAD.md`
 - `data/harness/active-sieve-manifest.json`
-- `data/agent-registry/onboarding-agent.json`
-- `docs/operations/tnf-master-reconciliation-report-latest.json`
-- `docs/operations/tnf-master-reconciliation-report-latest.md`
-- `apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json`
-- `apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json`
-- `docs/protocols/AGENT_WHO_IS_WHO.md`
-- `docs/protocols/LIVING_STATE.md`
-- `docs/protocols/AGENT_STATUS_LEDGER.md`
-- `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
-- `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
-
----
 
 ## Verification
 

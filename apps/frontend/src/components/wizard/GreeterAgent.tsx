@@ -1,28 +1,10 @@
 // @ts-nocheck
 import React, { useEffect, useRef, useState } from 'react';
+import {
+  askOnboardingGreeter,
+  type GreeterStepContext,
+} from '../../services/onboardingGreeter';
 import { useWizard } from './WizardProvider';
-
-// Mock RAG service to avoid dependency issues
-const ragService = {
-  query: async (query: string) => {
-    // Mock response generation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return `Hello! I'm here to help you get started. You asked: "${query}". I can assist you with setting up your workspace, navigating features, or answering questions about the platform.`;
-  },
-  generateResponse: async (query: string, _context?: any) => {
-    // Mock response generation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return {
-      response: `Hello! I'm here to help you get started. You asked: "${query}". I can assist you with setting up your workspace, navigating features, or answering questions about the platform.`,
-      confidence: 0.85,
-      sources: [],
-    };
-  },
-  indexKnowledge: async (documents: any[]) => {
-    console.log('Mock: Indexing knowledge documents', documents);
-    return { indexed: documents.length };
-  },
-};
 
 interface Message {
   id: string;
@@ -35,10 +17,10 @@ interface GreeterAgentProps {
   initialMessage?: string;
   agentName?: string;
   agentAvatar?: string;
+  /** Secret-scrubbed onboarding context for the AI greeter. */
+  stepContext?: GreeterStepContext;
 }
 
-// ⚡ Bolt: Wrapped GreeterMessageItem in React.memo to prevent O(n) re-renders
-// of the entire message list on every keystroke in the input field.
 const GreeterMessageItem = React.memo<{
   message: Message;
   agentName: string;
@@ -71,7 +53,7 @@ GreeterMessageItem.displayName = 'GreeterMessageItem';
 export const GreeterAgent: React.FC<GreeterAgentProps> = ({
   initialMessage = "Hello! I'm your AI assistant for The New Fuse platform. I can help you get started and answer any questions you might have. What would you like to know?",
   agentName = 'Fuse Assistant',
-  _agentAvatar = '/assets/images/assistant-avatar.png',
+  stepContext,
 }) => {
   const { addConversation } = useWizard();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -79,15 +61,11 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with system message and initial greeting
   useEffect(() => {
     const systemMessage: Message = {
       id: 'system-1',
       role: 'system',
-      content: `You are the Greeter Agent for The New Fuse platform. Your name is ${agentName}.
-      You help users get started with the platform by answering their questions and providing guidance.
-      The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems.
-      Be friendly, helpful, and concise in your responses.`,
+      content: `You are the Greeter Agent for The New Fuse platform. Your name is ${agentName}.`,
       timestamp: new Date(),
     };
 
@@ -99,34 +77,30 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
     };
 
     setMessages([systemMessage, initialGreeting]);
-
-    // Add to conversation history in wizard state
-    addConversation({
-      role: 'system',
-      content: systemMessage.content,
-    });
-
-    addConversation({
-      role: 'assistant',
-      content: initialGreeting.content,
-    });
+    addConversation({ role: 'system', content: systemMessage.content });
+    addConversation({ role: 'assistant', content: initialGreeting.content });
   }, [addConversation, agentName, initialMessage]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Function to generate a response using RAG
   const generateResponse = async (userMessage: string): Promise<string> => {
     setIsTyping(true);
-
     try {
-      // Call the local RagService to generate a response
-      const response = await ragService.query(userMessage);
-      return response;
+      const history = messages
+        .filter((m) => m.role === 'user' || m.role === 'assistant')
+        .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+
+      const context: GreeterStepContext = stepContext ?? {
+        stepLabel: 'Meet Your Assistant',
+        userType: 'unknown',
+      };
+
+      const reply = await askOnboardingGreeter(userMessage, context, history);
+      return reply.text;
     } catch (error) {
-      console.error('Error generating response from RagService:', error);
+      console.error('Error generating greeter response:', error);
       return 'I encountered an issue trying to find an answer for you. Please try asking in a different way or check the documentation.';
     } finally {
       setIsTyping(false);
@@ -136,7 +110,6 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
-    // Create user message
     const userMessage: Message = {
       id: `user-${messages.length}`,
       role: 'user',
@@ -144,20 +117,11 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
       timestamp: new Date(),
     };
 
-    // Add user message to state and conversation history
     setMessages((prev) => [...prev, userMessage]);
-    addConversation({
-      role: 'user',
-      content: input,
-    });
-
-    // Clear input
+    addConversation({ role: 'user', content: input });
     setInput('');
 
-    // Generate response
     const responseContent = await generateResponse(input);
-
-    // Create assistant message
     const assistantMessage: Message = {
       id: `assistant-${messages.length + 1}`,
       role: 'assistant',
@@ -165,12 +129,8 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
       timestamp: new Date(),
     };
 
-    // Add assistant message to state and conversation history
     setMessages((prev) => [...prev, assistantMessage]);
-    addConversation({
-      role: 'assistant',
-      content: responseContent,
-    });
+    addConversation({ role: 'assistant', content: responseContent });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -182,7 +142,6 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
 
   return (
     <div className="rounded-md overflow-hidden bg-transparent shadow-md h-[500px] flex flex-col">
-      {/* Chat header */}
       <div className="p-4 bg-blue-600 text-white">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-semibold">
@@ -192,7 +151,6 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
         </div>
       </div>
 
-      {/* Messages container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages
           .filter((m) => m.role !== 'system')
@@ -218,7 +176,6 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
 
       <hr className="border-gray-200" />
 
-      {/* Input area */}
       <div className="p-4">
         <div className="flex space-x-2">
           <input

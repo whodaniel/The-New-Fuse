@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { buildGreeterContext } from '../../../services/onboardingGreeter';
 import { GreeterAgent } from '../GreeterAgent';
 import { useWizard } from '../WizardProvider';
 
 export const GreeterAgentStep: React.FC = () => {
   const { state } = useWizard();
   const userName = state.session?.data?.name || 'there';
+  const userType = (state.session?.userType as 'human' | 'ai_agent' | 'unknown') || 'unknown';
+
+  const stepContext = useMemo(
+    () =>
+      buildGreeterContext({
+        stepLabel: 'Meet Your Assistant',
+        userType,
+        userName: typeof userName === 'string' ? userName : undefined,
+        // Scrub + allowlist happens inside buildGreeterContext — raw keys never reach the AI.
+        sessionData: state.session?.data,
+      }),
+    [state.session?.data, userName, userType]
+  );
 
   return (
     <div>
@@ -20,13 +34,13 @@ export const GreeterAgentStep: React.FC = () => {
         <GreeterAgent
           initialMessage={`Hello ${userName}! I'm your AI assistant for The New Fuse platform. I can help you get started and answer any questions you might have. What would you like to know about The New Fuse?`}
           agentName="Fuse Assistant"
+          stepContext={stepContext}
         />
 
         <div>
           <p className="text-sm text-muted-foreground">
-            This assistant uses Retrieval Augmented Generation (RAG) to provide accurate and helpful
-            information about The New Fuse platform. It has access to the latest documentation and
-            can help you with any questions you might have.
+            Provider API keys and workspace secrets stay on this device and are never included in
+            assistant prompts. Suggestions are advisory — you can write in custom values at any time.
           </p>
         </div>
       </div>
