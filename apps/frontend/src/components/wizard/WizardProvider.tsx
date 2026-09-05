@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { createContext, ReactNode, useCallback, useContext, useReducer } from 'react';
+import { redactOnboardingSecrets } from '../../services/onboardingSecrets';
 
 // Define types for the wizard state
 export interface WizardSession {
@@ -152,7 +153,9 @@ export function WizardProvider({ children }: WizardProviderProps): React.ReactEl
   );
 
   const updateSessionData = useCallback((data: Record<string, any>) => {
-    dispatch({ type: 'UPDATE_SESSION_DATA', payload: data });
+    // Defense in depth: never let provider/integration secrets enter shared wizard state.
+    // Forms keep raw keys in local React state; session only stores non-secret facts / *Configured flags.
+    dispatch({ type: 'UPDATE_SESSION_DATA', payload: redactOnboardingSecrets(data) });
   }, []);
 
   const clearError = useCallback(() => {
