@@ -4,36 +4,17 @@
   "created_at": "2026-09-05T10:59:37.341Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "060898b691bab50c6964ad701f3b54e89ad4c701",
+  "head_sha": "c7bd8eabd26118549bc4f66173f3c2f09b07c4c2",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": ["TNF-SESSION"],
-  "work_summary": [
-    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
-    "CI/hook gates now block critical changes without fresh handoff artifacts."
+  "project_ids": [
+    "TNF-SESSION"
   ],
+  "work_summary": "sweep: terminal macro board data + report (3 files)",
   "changed_paths": [
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
     "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "data/agent-registry/onboarding-agent.json",
-    "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "packages/tnf-cli/package.json",
-    "packages/tnf-cli/src/boot/wizard.test.ts",
-    "packages/tnf-cli/src/boot/wizard.ts",
-    "packages/tnf-cli/src/cli.ts",
-    "packages/tnf-cli/src/command-surface.snapshot.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.md",
-    ".agent/skills/tnf-durable-agent-sessions/",
-    ".agent/skills/tnf-durable-task-runtime/",
-    "docs/protocols/TNF_DURABLE_TASK_EXECUTION_PROTOCOL.md",
-    "docs/protocols/reports/assimilation/"
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -44,7 +25,10 @@
   },
   "continuation": {
     "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
     "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -53,11 +37,16 @@
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Resolve UU merge conflicts on main (terminal board data)",
+    "Commit harness sweep (ANOMALY_PAYLOAD.md, active-sieve-manifest.json)",
+    "Decide on durable task protocol files (commit to task branch or new feature branch)",
+    "Decide on assimilation docs (sweep vs protocol vs private)",
+    "Decide on onboarding-contract.json (protocol contract)"
   ],
   "artifacts": {
-    "commits": ["060898b691bab50c6964ad701f3b54e89ad4c701"]
+    "commits": [
+      "060898b691bab50c6964ad701f3b54e89ad4c701"
+    ]
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
@@ -146,5 +135,7 @@
       "observed_at": "2026-09-05T06:15:21.243Z",
       "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
-  ]
+  ],
+  "basis_head": "c7bd8eabd26118549bc4f66173f3c2f09b07c4c2",
+  "updated_at": "2026-09-05T11:26:28.830Z"
 }

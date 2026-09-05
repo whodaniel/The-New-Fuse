@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T10:40:38.659Z",
+  "generatedAt": "2026-09-05T11:20:38.112Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T10:40:29.505Z",
+    "lastScanAt": "2026-09-05T11:20:29.951Z",
     "totalTerminals": 6,
     "returned": 6,
     "source": "ps+tmux+capture+terminal-history",
@@ -56,7 +56,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "👑 [ORCHESTRATOR] (event): | {\"eventType\":\"SELF_PROMPT\",\"data\":{\"kind\":\"agent-stall\",\"channel\":\"General\",\"prompt\":\"🔔 [SYSTEM] Agent AGENT-11, please respond with a heartbeat or acknowledgment.\",\"reason\":\"agent_stalled\",",
+        "contextPreview": "📨 [Unknown] (message): | 📨 [Unknown] (message):",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -88,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑524k ↓104k R9.2M CH98.9% 78.2%/128k (auto)             (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑751k ↓142k R12M CH97.2% 63.4%/128k (auto)              (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -104,7 +104,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "› Ask Codex to do anything | gpt-5.6-sol high · ~ · Main [default]",
+        "contextPreview": "› zsh: suspended (signal)  codex | %                                               danielgoldberg@Daniels-MacBook-Pro ~ %",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -136,7 +136,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "Auto · 16%                                                    Run Everything | ~",
+        "contextPreview": "Auto · 25.1% · 13 files edited                                Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       }
