@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T12:10:43.326Z",
+  "generatedAt": "2026-09-05T12:30:45.402Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T12:10:30.076Z",
+    "lastScanAt": "2026-09-05T12:30:35.924Z",
     "totalTerminals": 5,
     "returned": 5,
     "source": "ps+tmux+capture+terminal-history",
@@ -56,7 +56,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "👑 [ORCHESTRATOR] (event): | {\"eventType\":\"SELF_PROMPT\",\"data\":{\"kind\":\"agent-stall\",\"channel\":\"General\",\"prompt\":\"🔔 [SYSTEM] Agent AGENT-11, please respond with a heartbeat or acknowledgment.\",\"reason\":\"agent_stalled\",",
+        "contextPreview": "📨 [Unknown] (message): | 📨 [Unknown] (message):",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -88,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑1.0M ↓212k R19M CH99.5% 74.0%/128k (auto)              (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑1.2M ↓236k R21M CH97.1% 37.3%/128k (auto)              (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -120,7 +120,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "Auto · 87.4% · 27 files edited                                Run Everything | ~",
+        "contextPreview": "Auto · 24.3% · 27 files edited                                Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       }

@@ -100859,8 +100859,410 @@
       "createdBy": "tnf-core",
       "createdAt": "2026-09-05T10:00:02Z",
       "updatedAt": "2026-09-05T10:00:02Z"
+    },
+    {
+      "id": "marketplace-experience-curated-journey-141",
+      "slug": "curated-journey-141",
+      "name": "Curated Journey",
+      "description": "Structured learning experience for workflow automation with hands-on labs",
+      "kind": "experience",
+      "category": "operations",
+      "tags": [
+        "education",
+        "experience",
+        "workshop"
+      ],
+      "capabilities": [
+        "testing-harness",
+        "certification"
+      ],
+      "rating": 5.0,
+      "totalRuns": 6833,
+      "successRate": 91.3,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-mcp_server-bridge-hub-783",
+      "slug": "bridge-hub-783",
+      "name": "Bridge Hub",
+      "description": "MCP-compliant server for code review with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "development",
+      "tags": [
+        "mcp",
+        "server",
+        "integration"
+      ],
+      "capabilities": [
+        "ci-cd",
+        "skill-composition",
+        "state-persistence",
+        "notification-hooks"
+      ],
+      "rating": 5.0,
+      "totalRuns": 24050,
+      "successRate": 92.7,
+      "pricePerRun": 0.37,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-workflow-optimized-process-604",
+      "slug": "optimized-process-604",
+      "name": "Optimized Process",
+      "description": "Full workflow for sentiment analysis with step tracking, retry logic, and notification hooks",
+      "kind": "workflow",
+      "category": "automation",
+      "tags": [
+        "automation",
+        "process",
+        "workflow",
+        "pipeline"
+      ],
+      "capabilities": [
+        "output-validation",
+        "agent-handoff",
+        "few-shot-learning"
+      ],
+      "rating": 4.3,
+      "totalRuns": 32697,
+      "successRate": 94.2,
+      "pricePerRun": 0.06,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-agent_template-blueprint-foundation-pack-441",
+      "slug": "blueprint-foundation-pack-441",
+      "name": "Blueprint Foundation Pack",
+      "description": "Ready-to-deploy agent template for compliance checking with configuration and example flows",
+      "kind": "agent_template",
+      "category": "nft",
+      "tags": [
+        "blueprint",
+        "starter"
+      ],
+      "capabilities": [
+        "mcp-integration",
+        "output-validation",
+        "fine-tuning"
+      ],
+      "rating": 4.7,
+      "totalRuns": 42342,
+      "successRate": 90.7,
+      "pricePerRun": 0.03,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-mcp_server-protocol-interface-709",
+      "slug": "protocol-interface-709",
+      "name": "Protocol Interface",
+      "description": "MCP-compliant server for code review with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "nft",
+      "tags": [
+        "protocol",
+        "server",
+        "mcp"
+      ],
+      "capabilities": [
+        "few-shot-learning",
+        "certification"
+      ],
+      "rating": 3.5,
+      "totalRuns": 43748,
+      "successRate": 98.1,
+      "pricePerRun": 0.49,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-agent_template-blueprint-starter-kit-334",
+      "slug": "blueprint-starter-kit-334",
+      "name": "Blueprint Starter Kit",
+      "description": "Ready-to-deploy agent template for content generation with configuration and example flows",
+      "kind": "agent_template",
+      "category": "education",
+      "tags": [
+        "template",
+        "starter",
+        "scaffold",
+        "blueprint"
+      ],
+      "capabilities": [
+        "curriculum",
+        "prompt-engineering",
+        "agent-handoff"
+      ],
+      "rating": 4.9,
+      "totalRuns": 42966,
+      "successRate": 93.6,
+      "pricePerRun": 0.27,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-prompt-expert-framework-217",
+      "slug": "expert-framework-217",
+      "name": "Expert Framework",
+      "description": "Production-tested instruction templates for consistent code review outputs",
+      "kind": "prompt",
+      "category": "analytics",
+      "tags": [
+        "llm",
+        "prompt"
+      ],
+      "capabilities": [
+        "fine-tuning",
+        "output-validation",
+        "ci-cd"
+      ],
+      "rating": 4.1,
+      "totalRuns": 13330,
+      "successRate": 90.8,
+      "pricePerRun": 0.23,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-skill-universal-capability-980",
+      "slug": "universal-capability-980",
+      "name": "Universal Capability",
+      "description": "Reusable skill module for workflow automation with declarative interface and MCP tool bindings",
+      "kind": "skill",
+      "category": "development",
+      "tags": [
+        "capability",
+        "module",
+        "skill",
+        "reusable"
+      ],
+      "capabilities": [
+        "mcp-integration",
+        "few-shot-learning",
+        "certification",
+        "notification-hooks"
+      ],
+      "rating": 4.8,
+      "totalRuns": 46343,
+      "successRate": 90.6,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-model-lightweight-backbone-509",
+      "slug": "lightweight-backbone-509",
+      "name": "Lightweight Backbone",
+      "description": "High-performance workflow automation model optimized for low-latency inference",
+      "kind": "model",
+      "category": "forge",
+      "tags": [
+        "model",
+        "backbone",
+        "neural"
+      ],
+      "capabilities": [
+        "inference",
+        "notification-hooks"
+      ],
+      "rating": 4.2,
+      "totalRuns": 14148,
+      "successRate": 97.4,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-agent_template-scaffold-starter-kit-526",
+      "slug": "scaffold-starter-kit-526",
+      "name": "Scaffold Starter Kit",
+      "description": "Ready-to-deploy agent template for code review with configuration and example flows",
+      "kind": "agent_template",
+      "category": "nexus",
+      "tags": [
+        "template",
+        "scaffold"
+      ],
+      "capabilities": [
+        "notification-hooks",
+        "labs"
+      ],
+      "rating": 4.5,
+      "totalRuns": 44442,
+      "successRate": 99.5,
+      "pricePerRun": 0.38,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-agent_template-scaffold-blueprint-643",
+      "slug": "scaffold-blueprint-643",
+      "name": "Scaffold Blueprint",
+      "description": "Ready-to-deploy agent template for lead scoring with configuration and example flows",
+      "kind": "agent_template",
+      "category": "productivity",
+      "tags": [
+        "scaffold",
+        "template"
+      ],
+      "capabilities": [
+        "curriculum",
+        "notification-hooks"
+      ],
+      "rating": 4.4,
+      "totalRuns": 18439,
+      "successRate": 95.7,
+      "pricePerRun": 0.31,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-core",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-prompt-structured-framework-826",
+      "slug": "structured-framework-826",
+      "name": "Structured Framework",
+      "description": "Production-tested instruction templates for consistent workflow automation outputs",
+      "kind": "prompt",
+      "category": "developer-tools",
+      "tags": [
+        "llm",
+        "prompt",
+        "instruction"
+      ],
+      "capabilities": [
+        "certification",
+        "notification-hooks",
+        "task-routing",
+        "curriculum"
+      ],
+      "rating": 4.6,
+      "totalRuns": 22950,
+      "successRate": 91.4,
+      "pricePerRun": 0.08,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-experience-premium-workshop-454",
+      "slug": "premium-workshop-454",
+      "name": "Premium Workshop",
+      "description": "Structured learning experience for customer support with hands-on labs",
+      "kind": "experience",
+      "category": "sensory",
+      "tags": [
+        "education",
+        "workshop",
+        "experience",
+        "course"
+      ],
+      "capabilities": [
+        "rapid-deployment",
+        "output-validation"
+      ],
+      "rating": 4.7,
+      "totalRuns": 46351,
+      "successRate": 91.1,
+      "pricePerRun": 0.1,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-academy",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-experience-premium-workshop-280",
+      "slug": "premium-workshop-280",
+      "name": "Premium Workshop",
+      "description": "Structured learning experience for knowledge retrieval with hands-on labs",
+      "kind": "experience",
+      "category": "developer-tools",
+      "tags": [
+        "course",
+        "workshop"
+      ],
+      "capabilities": [
+        "labs",
+        "pipeline-orchestration",
+        "quantization",
+        "rapid-deployment"
+      ],
+      "rating": 4.0,
+      "totalRuns": 25542,
+      "successRate": 95.2,
+      "pricePerRun": 0.43,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "tnf-marketplace",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
+    },
+    {
+      "id": "marketplace-mcp_server-mcp-server-870",
+      "slug": "mcp-server-870",
+      "name": "MCP Server",
+      "description": "MCP-compliant server for data extraction with WebSocket transport and Redis pub-sub",
+      "kind": "mcp_server",
+      "category": "automation",
+      "tags": [
+        "protocol",
+        "server",
+        "integration"
+      ],
+      "capabilities": [
+        "few-shot-learning",
+        "configuration",
+        "skill-composition"
+      ],
+      "rating": 4.7,
+      "totalRuns": 20441,
+      "successRate": 98.4,
+      "pricePerRun": 0,
+      "status": "online",
+      "publicationStatus": "published",
+      "createdBy": "community",
+      "createdAt": "2026-09-05T12:30:02Z",
+      "updatedAt": "2026-09-05T12:30:02Z"
     }
   ],
-  "total": 3742,
-  "generated_at": "2026-09-05T10:00:02Z"
+  "total": 3757,
+  "generated_at": "2026-09-05T12:30:02Z"
 }
