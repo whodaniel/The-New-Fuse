@@ -4,7 +4,8 @@
 
 <!-- CURRENT_DIRECTIVE:START -->
 
-**Current Directive:** Lane F1 roster truth: derive liveness from lastSeen vs
+**Current Directive:** Continue priority queue from SESSION_HANDOFF_LATEST.json
+continuation.resume_checklist.
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -1270,6 +1271,14 @@ and generated refactoring_consensus_report.md.
   self-improvement cycle and capture learnings
 
 ## History
+
+- 2026-09-05T12:12:20.080Z handoff `bd0a8ca7-e6bd-4df9-b585-97195383fd0f` head
+  `594808ca67ee` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-09-05T12:11:23.480Z handoff `1a1c42bb-c1c4-4097-b846-689e92a14def` head
+  `594808ca67ee` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-09-05T10:59:37.776Z handoff `3f02b7e3-e13d-4d72-a5cf-ad8c7d93d55a` head
   `060898b691ba` project `TNF-SESSION` — Continue priority queue from

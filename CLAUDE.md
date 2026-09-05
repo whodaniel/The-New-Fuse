@@ -33,10 +33,13 @@ work here twice (2026-08-09, 2026-08-27). Before any
 branch-maintenance/history-rewrite/release-build/large-refactor work — anything
 that moves HEAD or is broad/risky — run
 `node scripts/harness/resolve-workspace-tier.cjs --describe "<task>"` and follow
-its guidance (worktree via `EnterWorktree`, or a separate clone). It is advisory
-only; nothing currently blocks a forced checkout after the fact, so treat
-"uncommitted work is unprotected work" (R3) as literal and commit at every stage
-boundary regardless of tier.
+its guidance. Turn Zero now runs this check automatically (task-aware) and
+reports it in the receipt. When the tier requires a worktree, provision one with
+`node scripts/harness/resolve-workspace-tier.cjs --describe "<task>" --provision`
+(worktrees land in `.tnf/worktrees/`; `tnf worktree list` inspects them) or a
+separate clone. It is advisory only; nothing currently blocks a forced checkout
+after the fact, so treat "uncommitted work is unprotected work" (R3) as literal
+and commit at every stage boundary regardless of tier.
 
 After context compaction/provider substitution/repo movement/rail-hash change,
 rerun onboarding.

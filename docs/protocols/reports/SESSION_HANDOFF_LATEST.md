@@ -1,14 +1,14 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
-`2026-09-05T10:59:37.341Z` Handoff ID: `3f02b7e3-e13d-4d72-a5cf-ad8c7d93d55a`
+`2026-09-05T12:12:19.639Z` Handoff ID: `bd0a8ca7-e6bd-4df9-b585-97195383fd0f`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `060898b691bab50c6964ad701f3b54e89ad4c701`
+- Head SHA: `594808ca67eebf1a1b68ad4147a54e9030bc0802`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -26,27 +26,26 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
 
 ## Changed Paths
 
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
-- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
-- data/agent-registry/onboarding-agent.json
-- data/harness/ANOMALY_PAYLOAD.md
-- data/harness/active-sieve-manifest.json
+- AGENTS.md
+- CLAUDE.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
+- docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md
+- apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json
+- data/harness/ANOMALY_PAYLOAD.md
+- data/harness/active-sieve-manifest.json
 - docs/protocols/reports/twip-terminal-macro-board-latest.md
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/boot/wizard.test.ts
-- packages/tnf-cli/src/boot/wizard.ts
+- packages/shared/src/index.ts
 - packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/command-surface.snapshot.json
-- docs/operations/tnf-master-reconciliation-report-latest.json
-- docs/operations/tnf-master-reconciliation-report-latest.md
-- .agent/skills/tnf-durable-agent-sessions/
-- .agent/skills/tnf-durable-task-runtime/
-- docs/protocols/TNF_DURABLE_TASK_EXECUTION_PROTOCOL.md
-- docs/protocols/reports/assimilation/
+- packages/shared/src/workflow-ai-spec.ts
+- packages/tnf-cli/src/commands/durable-tasks.ts
+- packages/tnf-cli/src/services/DurableAiHandlers.ts
+- packages/tnf-cli/src/services/DurableTaskHttpServer.ts
+- packages/tnf-cli/src/services/DurableTaskService.ts
+- packages/tnf-cli/src/services/WorkflowGraphBridge.ts
 
 ## Verification
 
@@ -74,157 +73,3 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.2` Created At:
   continuation.resume_checklist.
 - Emit a fresh handoff artifact immediately after completing the next critical
   work unit.
-
-
-## Handoff JSON
-
-```json
-{
-  "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "3f02b7e3-e13d-4d72-a5cf-ad8c7d93d55a",
-  "created_at": "2026-09-05T10:59:37.341Z",
-  "repository": "whodaniel/tnf-monorepo",
-  "branch": "main",
-  "head_sha": "c7bd8eabd26118549bc4f66173f3c2f09b07c4c2",
-  "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "internal",
-  "project_ids": [
-    "TNF-SESSION"
-  ],
-  "work_summary": "Committed harness sweep (2 files) + previous terminal board sweep (3 files) + durable task protocol files (7 untracked)",
-  "changed_paths": [
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json"
-  ],
-  "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
-    "supabase_rls_audit": "na",
-    "notes": ""
-  },
-  "continuation": {
-    "owner": "tnf-orchestrator",
-    "targets": [
-      "story-architect",
-      "librarian"
-    ],
-    "priority": "high",
-    "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
-      "Execute listed next actions in order and preserve privacy/security gates"
-    ]
-  },
-  "next_actions": [
-    "Decide on durable task protocol files (commit to task branch or new feature branch)",
-    "Decide on assimilation docs (sweep vs protocol vs private)",
-    "Decide on onboarding-contract.json (protocol contract)",
-    "Push task branch for review",
-    "Resolve UU merge conflicts on main (terminal board data)",
-    "Commit harness sweep (ANOMALY_PAYLOAD.md, active-sieve-manifest.json)",
-    "Decide on durable task protocol files (commit to task branch or new feature branch)",
-    "Decide on assimilation docs (sweep vs protocol vs private)",
-    "Decide on onboarding-contract.json (protocol contract)"
-  ],
-  "artifacts": {
-    "commits": [
-      "060898b691bab50c6964ad701f3b54e89ad4c701"
-    ]
-  },
-  "repository_context": {
-    "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": true,
-    "operation_in_progress": null,
-    "publication_targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ]
-  },
-  "classification": {
-    "work_domain": "unknown",
-    "artifact_destination": "unknown",
-    "data_residency": "unknown",
-    "sensitivity": "unknown"
-  },
-  "capabilities": {
-    "required": [],
-    "staffed_by": []
-  },
-  "publication": {
-    "public_runtime_affected": false,
-    "control_plane_affected": false,
-    "satellites": []
-  },
-  "freshness_receipts": [
-    {
-      "id": "github.dev.main",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:10.075Z",
-      "value": "d3e52f001fd6ebe325a92cfb2246d04c8394893f"
-    },
-    {
-      "id": "github.public.main",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:11.389Z",
-      "value": "1e680a2108b66d921a8d827daf3fad36cfc78c86"
-    },
-    {
-      "id": "github.control-plane.main",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:12.981Z",
-      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
-    },
-    {
-      "id": "github.public.pr-queue",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:14.504Z",
-      "value": "[]"
-    },
-    {
-      "id": "github.public.ruleset",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:16.620Z",
-      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
-    },
-    {
-      "id": "github.public.proprietary-leak",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:19.132Z",
-      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
-    },
-    {
-      "id": "tnf.product-repo-map",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:19.316Z",
-      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
-    },
-    {
-      "id": "tnf.oss-app-boundary",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:19.603Z",
-      "value": "155a3b9273bad34ec15046ebf323d53e0854dc31\n2026-09-01"
-    },
-    {
-      "id": "git.repository.identity",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:21.195Z",
-      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=d3e52f001fd6ebe325a92cfb2246d04c8394893f\nbranch=main\ndirty=12"
-    },
-    {
-      "id": "runtime.services",
-      "state": "STALE",
-      "observed_at": "2026-09-05T06:15:21.243Z",
-      "value": "REDIS_UNREACHABLE\nRELAY_OK"
-    }
-  ],
-  "basis_head": "c7bd8eabd26118549bc4f66173f3c2f09b07c4c2",
-  "updated_at": "2026-09-05T11:32:16.449Z",
-  "head": "2d99d9c77554ca1ea8d4bd8202d12de89962f53d"
-}
-```

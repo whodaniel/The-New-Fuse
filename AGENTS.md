@@ -21,6 +21,38 @@ retains authority without empirical re-verification. All knowledge must be
 continuously validated for freshness against live runtime evidence and canonical
 ground truth.
 
+## Workspace Isolation (Shared-Checkout Discipline)
+
+This canonical checkout is shared live state that multiple agent processes write
+concurrently. `docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md` governs
+it. Violations have silently destroyed another agent's uncommitted work three
+times (2026-08-09, 2026-08-27, 2026-09-01). Rules, in order:
+
+- **Resolve the tier before consequential work.** Turn Zero now does this
+  automatically (task-aware) and reports it in the receipt. To check manually:
+  `node scripts/harness/resolve-workspace-tier.cjs --describe "<task>"`.
+  `analysis` → read-only in the shared tree; `edit` → small, single-file edits;
+  `refactor` (multi-file) → only while you hold a lease;
+  `large-refactor`/`release-build`/`dependency-upgrade` → **worktree required**;
+  `branch-maintenance`/`history-rewrite` → separate clone.
+- **Provision in one command when the tier demands it**:
+  `node scripts/harness/resolve-workspace-tier.cjs --describe "<task>" --provision`.
+  Worktrees land in `.tnf/worktrees/` (inspect: `tnf worktree list`). Rerun Turn
+  Zero inside the new worktree before working.
+- **Never mutate shared live state**: no `git stash`, no branch switching, no
+  `git reset`/`merge`/`rebase`/`checkout -f` in the shared checkout. The
+  reference-transaction hook blocks the detectable ones (stash, reset, merge,
+  rebase); `checkout -f` and `clean -f` are undetectable — Turn Zero is the
+  complementary control.
+- **Commit at every stage boundary** — uncommitted work is unprotected work
+  (R3).
+- **Claim multi-file leases** in `docs/protocols/workspace-leases.json` before
+  working across several files in the shared tree; Turn Zero checks your dirty
+  set against other agents' active leases (enforce with
+  `TNF_WORKSPACE_LEASE_ENFORCE=1`).
+- **Foreign dirty tree = refuse**: if the tree is dirty with another agent's
+  work, park it as a commit on a scratch branch — never stash it away.
+
 ## Where TNF Actually Runs (probe before asserting)
 
 TNF is **already deployed**. Never propose a hosting platform for an existing
