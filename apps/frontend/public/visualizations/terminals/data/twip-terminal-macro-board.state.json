@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T09:00:38.045Z",
+  "generatedAt": "2026-09-05T09:50:37.736Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,21 +12,21 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T09:00:34.530Z",
-    "totalTerminals": 5,
-    "returned": 5,
+    "lastScanAt": "2026-09-05T09:50:30.406Z",
+    "totalTerminals": 6,
+    "returned": 6,
     "source": "ps+tmux+capture+terminal-history",
     "tenant_id": "tnf-local",
     "include_commands": true,
     "include_content": true,
     "content_max_lines": 80,
     "content_max_chars": 8000,
-    "terminal_history_tabs": 5,
-    "content_excerpts_captured": 5
+    "terminal_history_tabs": 6,
+    "content_excerpts_captured": 6
   },
   "summary": {
-    "totalTerminals": 5,
-    "activeTerminals": 5,
+    "totalTerminals": 6,
+    "activeTerminals": 6,
     "idleTerminals": 0,
     "activeRatio": 1,
     "topWorkExecutables": [
@@ -36,7 +36,7 @@
       },
       {
         "name": "cursor-agent",
-        "count": 1
+        "count": 2
       },
       {
         "name": "pi",
@@ -123,13 +123,29 @@
         "contextPreview": "Auto · 38.5% · 7 files edited                                 Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
+      },
+      {
+        "twid": "f5ae7e85-9524-52e2-98b9-09284e8196f2",
+        "tty": "/dev/ttys005",
+        "paneId": "tty:ttys005",
+        "shellPid": 60079,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "cursor-agent"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "Auto · 44.8% · 2 files edited                                 Run Everything | ~",
+        "contextRedactions": 3,
+        "hasContext": true
       }
     ],
     "safetySignals": {
       "approvalsBypassTerminals": 0,
       "remoteMcpTerminals": 0,
-      "contextCapturedTerminals": 5,
-      "contextRedactions": 0
+      "contextCapturedTerminals": 6,
+      "contextRedactions": 3
     }
   },
   "delta": {
