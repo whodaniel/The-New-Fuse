@@ -353,7 +353,10 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-09-05T00:17:43.489Z Fix MEMORY.md drift: canonicalize § delimiter
 - [✅] 2026-09-05T03:52:56.628Z Fix MEMORY.md drift: canonicalize § delimiter
 - [✅] 2026-09-05T04:18:58.142Z Fix MEMORY.md drift: canonicalize § delimiter
-- [✅] 2026-09-05T04:35:24.286Z Fix MEMORY.md drift: canonicalize § delimiter format, split oversized entry
+- [✅] 2026-09-05T04:35:24.286Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+- [✅] 2026-09-05T05:12:09.987Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
 
   format, split oversized entry
 

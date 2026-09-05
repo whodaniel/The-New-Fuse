@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-04T19:45:39.850Z",
+  "timestamp": "2026-09-05T08:48:24.108Z",
   "user": "danielgoldberg",
   "hostname": "Daniels-MacBook-Pro",
   "steps": {
     "environment": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 405,
+      "durationMs": 77,
       "data": {
-        "branch": "chore/worktree-consolidation-20260904",
-        "commit": "ddca6c622",
+        "branch": "main",
+        "commit": "d3e52f001",
         "platform": "darwin",
         "node": "v22.22.3"
       }
@@ -17,7 +17,7 @@
     "schemaIntegrity": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 598,
+      "durationMs": 125,
       "data": {
         "output": "[protocol-schema-gate] OK"
       }
@@ -25,7 +25,7 @@
     "selfEvolution": {
       "ok": false,
       "verdict": "unresolved",
-      "durationMs": 3,
+      "durationMs": 0,
       "data": {
         "status": "skipped"
       }
@@ -41,37 +41,36 @@
     "processHealth": {
       "ok": false,
       "verdict": "findings",
-      "findings": 6,
-      "durationMs": 494,
+      "findings": 5,
+      "durationMs": 135,
       "data": {
-        "findings": 6,
-        "healthy": 14,
+        "findings": 5,
+        "healthy": 15,
         "detail": [
           "error: tnf-growth-blocker-audit",
-          "stale: tnf-llm-arena-intel-collector",
           "never-ran: tnf-llm-verified-fleet-cycle",
           "never-ran: tnf-self-improvement-scorecard",
-          "stale: tnf-agent-review-cycle",
-          "stale: tenant-knowledge-scout-sprint"
+          "error: tnf-swarm-role-call-and-scheduling",
+          "stale: tnf-swarm-director-cycle"
         ]
       }
     },
     "goalReconciliation": {
       "ok": true,
       "verdict": "clean",
-      "durationMs": 2,
+      "durationMs": 3,
       "data": {
         "goalsConfigFile": false
       }
     }
   },
   "passed": false,
-  "totalDurationMs": 1600,
+  "totalDurationMs": 346,
   "summary": {
     "clean": 3,
     "findings": 1,
     "unresolved": 2,
     "errored": 0,
-    "totalFindings": 6
+    "totalFindings": 5
   }
 }

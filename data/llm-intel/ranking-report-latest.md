@@ -1,6 +1,6 @@
 # LLM Ranking Report
 
-Generated: 2026-09-04T12:30:33.562Z Intel Snapshot: intel_1788465645436
+Generated: 2026-09-05T08:30:33.477Z Intel Snapshot: intel_1788595233743
 
 ## Summary
 
@@ -11,14 +11,14 @@ Generated: 2026-09-04T12:30:33.562Z Intel Snapshot: intel_1788465645436
 | Recommendations | 132   |
 | Add New         | 0     |
 | Reorder         | 3     |
-| Remove EOL      | 19    |
-| Demote Unranked | 110   |
+| Remove EOL      | 21    |
+| Demote Unranked | 108   |
 
 ## Composite Rankings
 
 | Rank | Model                                          | Arena Score | Health  | Latency |
 | ---- | ---------------------------------------------- | ----------- | ------- | ------- |
-| 1    | `openai/gpt-oss-20b`                           | -           | live    | 1191ms  |
+| 1    | `openai/gpt-oss-20b`                           | -           | live    | 1218ms  |
 | 2    | `meta/llama-3.2-90b-vision-instruct`           | -           | timeout | -       |
 | 3    | `meta/llama-guard-4-12b`                       | -           | timeout | -       |
 | 4    | `google/gemma-4-31b-it`                        | -           | timeout | -       |
@@ -54,6 +54,8 @@ Generated: 2026-09-04T12:30:33.562Z Intel Snapshot: intel_1788465645436
 | Action     | Model                                            | Current | Proposed | Reason                                                      |
 | ---------- | ------------------------------------------------ | ------- | -------- | ----------------------------------------------------------- |
 | remove-eol | `openai/gpt-oss-120b`                            | 17      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
+| remove-eol | `qwen/qwen3-next-80b-a3b-instruct`               | 19      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
+| remove-eol | `qwen/qwen3-coder-480b-a35b-instruct`            | 25      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `abacusai/dracarys-llama-3.1-70b-instruct`       | 55      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `google/gemma-3n-e4b-it`                         | 89      | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
 | remove-eol | `mistralai/ministral-14b-instruct-2512`          | 129     | -        | Model has reached end-of-life on NVIDIA NGC (HTTP 410)      |
@@ -90,8 +92,6 @@ Generated: 2026-09-04T12:30:33.562Z Intel Snapshot: intel_1788465645436
 | demote     | `nvidia/nemotron-3-embed-1b`                     | 15      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `nvidia/nemotron-3.5-lightning-30b-a3b`          | 16      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `nvidia/riva-translate-4b-instruct-v2`           | 17      | -        | Model not found in arena rankings; consider demoting        |
-| demote     | `qwen/qwen3-next-80b-a3b-instruct`               | 19      | -        | Model not found in arena rankings; consider demoting        |
-| demote     | `qwen/qwen3-coder-480b-a35b-instruct`            | 25      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `nvidia/llama-3.3-nemotron-super-49b-v1.5`       | 29      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `01-ai/yi-large`                                 | 53      | -        | Model not found in arena rankings; consider demoting        |
 | demote     | `adept/fuyu-8b`                                  | 57      | -        | Model not found in arena rankings; consider demoting        |

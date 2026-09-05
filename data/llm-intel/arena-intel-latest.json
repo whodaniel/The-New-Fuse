@@ -1,53 +1,53 @@
 {
-  "id": "intel_1788465645436",
-  "collectedAt": "2026-09-03T20:00:45.422Z",
+  "id": "intel_1788595233743",
+  "collectedAt": "2026-09-05T08:00:33.737Z",
   "arenaData": [
     {
       "source": "lm-arena-leaderboard",
       "sourceName": "LM Arena (Chatbot Arena)",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard",
-      "collectedAt": "2026-09-03T20:00:46.650Z",
+      "collectedAt": "2026-09-05T08:00:36.771Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 547825
+      "rawLength": 555013
     },
     {
       "source": "lm-arena-vision",
       "sourceName": "LM Arena Vision",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=vision",
-      "collectedAt": "2026-09-03T20:00:47.427Z",
+      "collectedAt": "2026-09-05T08:00:37.391Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 547904
+      "rawLength": 555092
     },
     {
       "source": "lm-arena-hard",
       "sourceName": "LM Arena Hard Prompts",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=hard",
-      "collectedAt": "2026-09-03T20:00:48.733Z",
+      "collectedAt": "2026-09-05T08:00:38.185Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 547897
+      "rawLength": 555086
     },
     {
       "source": "lm-arena-code",
       "sourceName": "LM Arena Coding",
       "sourceType": "arena",
       "url": "https://lmarena.ai/?leaderboard&category=coding",
-      "collectedAt": "2026-09-03T20:00:49.433Z",
+      "collectedAt": "2026-09-05T08:00:39.473Z",
       "status": "success",
       "rankings": [],
-      "rawLength": 547903
+      "rawLength": 555095
     },
     {
       "source": "agent-arena",
       "sourceName": "Agent Arena",
       "sourceType": "arena",
       "url": "https://agent-arena.com/leaderboard",
-      "collectedAt": "2026-09-03T20:00:50.161Z",
+      "collectedAt": "2026-09-05T08:00:40.057Z",
       "status": "success",
       "rankings": [],
       "rawLength": 862
@@ -57,7 +57,7 @@
       "sourceName": "Artificial Analysis",
       "sourceType": "benchmark",
       "url": "https://artificialanalysis.ai/leaderboard",
-      "collectedAt": "2026-09-03T20:00:50.401Z",
+      "collectedAt": "2026-09-05T08:00:40.974Z",
       "status": "partial",
       "rankings": [],
       "rawLength": 14746
@@ -67,7 +67,7 @@
       "sourceName": "Open LLM Leaderboard (HuggingFace)",
       "sourceType": "benchmark",
       "url": "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard",
-      "collectedAt": "2026-09-03T20:00:50.699Z",
+      "collectedAt": "2026-09-05T08:00:41.657Z",
       "status": "success",
       "rankings": [
         {
@@ -88,7 +88,7 @@
       "sourceName": "Aider Coding Leaderboard",
       "sourceType": "benchmark",
       "url": "https://aider.chat/docs/leaderboards/",
-      "collectedAt": "2026-09-03T20:00:51.268Z",
+      "collectedAt": "2026-09-05T08:00:42.374Z",
       "status": "success",
       "rankings": [
         {
@@ -109,7 +109,7 @@
       "sourceName": "SWE-bench Leaderboard",
       "sourceType": "benchmark",
       "url": "https://www.swebench.com/",
-      "collectedAt": "2026-09-03T20:00:57.489Z",
+      "collectedAt": "2026-09-05T08:00:48.132Z",
       "status": "success",
       "rankings": [
         {
@@ -123,21 +123,21 @@
           "rank": 2
         }
       ],
-      "rawLength": 2392484
+      "rawLength": 2392492
     }
   ],
   "newsData": [
     {
       "feed": "HuggingFace Blog",
       "url": "https://huggingface.co/blog/feed.xml",
-      "collectedAt": "2026-09-03T20:00:58.194Z",
+      "collectedAt": "2026-09-05T08:00:49.073Z",
       "status": "success",
       "articles": []
     },
     {
       "feed": "OpenAI Blog",
       "url": "https://openai.com/blog/rss.xml",
-      "collectedAt": "2026-09-03T20:00:58.537Z",
+      "collectedAt": "2026-09-05T08:00:49.541Z",
       "status": "error",
       "error": "Invalid URL",
       "articles": []
@@ -145,7 +145,7 @@
     {
       "feed": "Anthropic News",
       "url": "https://www.anthropic.com/rss.xml",
-      "collectedAt": "2026-09-03T20:00:58.928Z",
+      "collectedAt": "2026-09-05T08:00:49.841Z",
       "status": "error",
       "error": "HTTP 404",
       "articles": []
@@ -153,7 +153,7 @@
     {
       "feed": "r/LocalLLaMA",
       "url": "https://www.reddit.com/r/LocalLLaMA/new/.json",
-      "collectedAt": "2026-09-03T20:00:59.210Z",
+      "collectedAt": "2026-09-05T08:00:50.063Z",
       "status": "error",
       "error": "HTTP 403",
       "articles": []
@@ -161,7 +161,7 @@
     {
       "feed": "r/MachineLearning",
       "url": "https://www.reddit.com/r/MachineLearning/new/.json",
-      "collectedAt": "2026-09-03T20:00:59.401Z",
+      "collectedAt": "2026-09-05T08:00:50.226Z",
       "status": "error",
       "error": "HTTP 403",
       "articles": []
@@ -304,7 +304,7 @@
       "model": "openai/gpt-oss-20b",
       "status": "live",
       "httpStatus": 200,
-      "latencyMs": 1191
+      "latencyMs": 1218
     },
     {
       "model": "microsoft/phi-4-multimodal-instruct",
@@ -350,44 +350,44 @@
     },
     {
       "model": "moonshotai/kimi-k2-thinking",
-      "status": "error",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     },
     {
       "model": "moonshotai/kimi-k2-instruct",
-      "status": "error",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     },
     {
       "model": "z-ai/glm5",
-      "status": "error",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     },
     {
       "model": "z-ai/glm4.7",
-      "status": "error",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     },
     {
       "model": "qwen/qwen3-coder-480b-a35b-instruct",
-      "status": "error",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     },
     {
       "model": "qwen/qwen3-next-80b-a3b-instruct",
-      "status": "error",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     },
     {
       "model": "qwen/qwen3-next-80b-a3b-thinking",
-      "status": "error",
-      "httpStatus": 0,
+      "status": "eol",
+      "httpStatus": 410,
       "latencyMs": null
     }
   ],
@@ -401,7 +401,7 @@
     "nvidiaModelsProbed": 37,
     "nvidiaLive": 1,
     "nvidiaSlow": 3,
-    "nvidiaEol": 21
+    "nvidiaEol": 28
   },
-  "completedAt": "2026-09-03T20:01:45.199Z"
+  "completedAt": "2026-09-05T08:01:36.424Z"
 }

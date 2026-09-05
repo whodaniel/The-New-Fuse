@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T03:20:10.430Z",
+  "generatedAt": "2026-09-05T08:40:32.177Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T03:20:08.669Z",
+    "lastScanAt": "2026-09-05T08:40:29.230Z",
     "totalTerminals": 5,
     "returned": 5,
     "source": "ps+tmux+capture+terminal-history",
@@ -48,15 +48,15 @@
         "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
         "tty": "/dev/ttys000",
         "paneId": "tty:ttys000",
-        "shellPid": 42055,
-        "processCount": 3,
+        "shellPid": 31286,
+        "processCount": 5,
         "multiplexer": "none",
         "workExecutables": [
           "node"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "⠏ Thinking...   ✓ exit 0 | ⠹ Thinking...",
+        "contextPreview": "📨 [Unknown] (message): | 📨 [Unknown] (message):",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -88,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑41k ↓1.7k R171k 34.1%/128k (auto)                      (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑208k ↓30k R3.6M CH99.3% 62.1%/128k (auto)              (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -96,23 +96,23 @@
         "twid": "9c58a452-a486-59e1-902a-ae658f7c1ceb",
         "tty": "/dev/ttys003",
         "paneId": "tty:ttys003",
-        "shellPid": 63309,
-        "processCount": 3,
+        "shellPid": 13366,
+        "processCount": 35,
         "multiplexer": "none",
         "workExecutables": [
           "node"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "⠋ Thinking...   ✓ exit 0 | ⠧ Thinking...",
+        "contextPreview": "› Ask Codex to do anything | gpt-5.6-sol high · ~ · Main [default]",
         "contextRedactions": 0,
         "hasContext": true
       },
       {
-        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
-        "tty": "/dev/ttys006",
-        "paneId": "tty:ttys006",
-        "shellPid": 29111,
+        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
+        "tty": "/dev/ttys004",
+        "paneId": "tty:ttys004",
+        "shellPid": 85100,
         "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
@@ -120,7 +120,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "Auto · 64.8% · 21 files edited                                Run Everything | ~",
+        "contextPreview": "Auto · 38.5% · 7 files edited                                 Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       }
@@ -136,23 +136,7 @@
     "hasBaseline": true,
     "terminalDelta": 0,
     "activeDelta": 0,
-    "activeGained": [
-      {
-        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
-        "tty": "/dev/ttys006",
-        "workExecutables": [
-          "cursor-agent"
-        ]
-      }
-    ],
-    "activeLost": [
-      {
-        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
-        "tty": "/dev/ttys004",
-        "workExecutables": [
-          "node"
-        ]
-      }
-    ]
+    "activeGained": [],
+    "activeLost": []
   }
 }

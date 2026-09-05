@@ -1,7 +1,7 @@
 {
   "spec": "tnf/llm-ranking-recommendations/0.1",
-  "generatedAt": "2026-09-04T12:30:33.562Z",
-  "intelSnapshotId": "intel_1788465645436",
+  "generatedAt": "2026-09-05T08:30:33.477Z",
+  "intelSnapshotId": "intel_1788595233743",
   "compositeScores": [
     {
       "nvidiaId": "openai/gpt-oss-20b",
@@ -9,7 +9,7 @@
       "avgArenaScore": 0,
       "bestRank": null,
       "healthStatus": "live",
-      "latencyMs": 1191,
+      "latencyMs": 1218,
       "compositeRank": 1
     },
     {
@@ -278,7 +278,7 @@
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "error",
+      "healthStatus": "eol",
       "latencyMs": null,
       "compositeRank": 31
     },
@@ -287,7 +287,7 @@
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "error",
+      "healthStatus": "eol",
       "latencyMs": null,
       "compositeRank": 32
     },
@@ -296,7 +296,7 @@
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "error",
+      "healthStatus": "eol",
       "latencyMs": null,
       "compositeRank": 33
     },
@@ -305,7 +305,7 @@
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "error",
+      "healthStatus": "eol",
       "latencyMs": null,
       "compositeRank": 34
     },
@@ -314,7 +314,7 @@
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "error",
+      "healthStatus": "eol",
       "latencyMs": null,
       "compositeRank": 35
     },
@@ -323,7 +323,7 @@
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "error",
+      "healthStatus": "eol",
       "latencyMs": null,
       "compositeRank": 36
     },
@@ -332,7 +332,7 @@
       "arenaScores": [],
       "avgArenaScore": 0,
       "bestRank": null,
-      "healthStatus": "error",
+      "healthStatus": "eol",
       "latencyMs": null,
       "compositeRank": 37
     }
@@ -1016,6 +1016,26 @@
       "healthStatus": "eol"
     },
     {
+      "model": "qwen/qwen3-next-80b-a3b-instruct",
+      "action": "remove-eol",
+      "currentPriority": 19,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
+    },
+    {
+      "model": "qwen/qwen3-coder-480b-a35b-instruct",
+      "action": "remove-eol",
+      "currentPriority": 25,
+      "proposedPriority": null,
+      "delta": "eol",
+      "reason": "Model has reached end-of-life on NVIDIA NGC (HTTP 410)",
+      "compositeScore": 0,
+      "healthStatus": "eol"
+    },
+    {
       "model": "abacusai/dracarys-llama-3.1-70b-instruct",
       "action": "remove-eol",
       "currentPriority": 55,
@@ -1374,26 +1394,6 @@
       "reason": "Model not found in arena rankings; consider demoting",
       "compositeScore": 0,
       "healthStatus": "unknown"
-    },
-    {
-      "model": "qwen/qwen3-next-80b-a3b-instruct",
-      "action": "demote",
-      "currentPriority": 19,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "error"
-    },
-    {
-      "model": "qwen/qwen3-coder-480b-a35b-instruct",
-      "action": "demote",
-      "currentPriority": 25,
-      "proposedPriority": null,
-      "delta": "demote-unranked",
-      "reason": "Model not found in arena rankings; consider demoting",
-      "compositeScore": 0,
-      "healthStatus": "error"
     },
     {
       "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
@@ -2333,8 +2333,8 @@
     "recommendationsCount": 132,
     "addAction": 0,
     "reorderAction": 3,
-    "removeEolAction": 19,
-    "demoteAction": 110,
+    "removeEolAction": 21,
+    "demoteAction": 108,
     "newsItems": 0
   },
   "advisory": "This is an advisory report. No config files were modified. Review recommendations and apply manually or via tnf llm-apply-rankings."

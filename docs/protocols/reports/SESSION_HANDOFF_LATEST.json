@@ -1,26 +1,38 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "de14d2f3-3f3d-45f1-b92d-a38cb965b981",
-  "created_at": "2026-09-05T04:35:24.293Z",
+  "handoff_id": "73c44258-c801-4e4b-8f97-836660edfb88",
+  "created_at": "2026-09-05T05:12:09.994Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "e9d8242fbfb7bc2366cf90bb82c344e9841d201a",
+  "head_sha": "d3e52f001fd6ebe325a92cfb2246d04c8394893f",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": [
-    "Modified 7 file(s)"
-  ],
+  "work_summary": ["Modified 4 file(s)"],
   "changed_paths": [
-    "apps/frontend/src/ComprehensiveRouter.tsx",
-    "apps/frontend/src/data/codebase_map.json",
     "data/llm-provider-status.json",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "packages/tnf-cli/src/slashCommands.ts",
+    "packages/tnf-cli/src/commands/reflect.ts",
+    "data/llm-intel/arena-intel-latest.json",
+    "data/llm-intel/arena-intel.json",
+    "data/llm-intel/history/intel_2026-09-05.json",
+    "data/llm-intel/ranking-recommendations.json",
+    "data/llm-intel/ranking-report-latest.md",
+    "data/marketplace/catalog-items.json",
+    "data/harness/ANOMALY_PAYLOAD.md",
+    "data/harness/active-sieve-manifest.json",
+    "data/agent-registry/onboarding-agent.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "docs/protocols/AGENT_WHO_IS_WHO.md",
     "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "apps/frontend/src/layouts/AppShell.css",
-    "apps/frontend/src/layouts/AppShell.tsx"
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -31,9 +43,7 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": [
-      "orchestrator"
-    ],
+    "targets": ["orchestrator"],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -45,12 +55,10 @@
     "Review updated LIVING_STATE.md for new active steps",
     "Re-run tnf agents announce while Cursor session remains dispatchable.",
     "Local Subdirector drain cycle should observe agent_available_for_dispatch on tnf:direct:sub-director:tnf-cli-agent.",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 9 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 5 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": [
-      "e9d8242fbfb7bc2366cf90bb82c344e9841d201a"
-    ],
+    "commits": ["9ea5f51f0e6f08a980c5b06454a7e861e8e6a2ec"],
     "deployment_urls": [],
     "database_migrations": []
   },
