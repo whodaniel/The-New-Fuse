@@ -8,11 +8,16 @@
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": "sweep: terminal macro board data updates (3 files)",
+  "work_summary": "Sweep: harness anomaly/sieve, intel (5 files), marketplace catalog",
   "changed_paths": [
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
+    "data/harness/ANOMALY_PAYLOAD.md",
+    "data/harness/active-sieve-manifest.json",
+    "data/llm-intel/arena-intel-latest.json",
+    "data/llm-intel/arena-intel.json",
+    "data/llm-intel/history/intel_2026-09-05.json",
+    "data/llm-intel/ranking-recommendations.json",
+    "data/llm-intel/ranking-report-latest.md",
+    "data/marketplace/catalog-items.json"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -23,7 +28,9 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": ["orchestrator"],
+    "targets": [
+      "orchestrator"
+    ],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -32,13 +39,13 @@
     ]
   },
   "next_actions": [
-    "Review updated LIVING_STATE.md for new active steps",
-    "Re-run tnf agents announce while Cursor session remains dispatchable.",
-    "Local Subdirector drain cycle should observe agent_available_for_dispatch on tnf:direct:sub-director:tnf-cli-agent.",
-    "Handle onboarding-contract.json and CLI wizard changes"
+    "Move CLI wizard/cli.ts to task branch",
+    "Decide on onboarding-contract.json (protocol contract)"
   ],
   "artifacts": {
-    "commits": ["9ea5f51f0e6f08a980c5b06454a7e861e8e6a2ec"],
+    "commits": [
+      "9ea5f51f0e6f08a980c5b06454a7e861e8e6a2ec"
+    ],
     "deployment_urls": [],
     "database_migrations": []
   },
