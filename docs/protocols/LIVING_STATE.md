@@ -351,6 +351,9 @@ must not be mass-deleted without verification evidence. See
 - [✅] 2026-09-03T21:38:12.328Z New script(s) created: agent-registry-prune.cjs,
 - [✅] 2026-09-04T23:28:24.782Z Fix MEMORY.md drift: canonicalize § delimiter
 - [✅] 2026-09-05T00:17:43.489Z Fix MEMORY.md drift: canonicalize § delimiter
+- [✅] 2026-09-05T03:52:56.628Z Fix MEMORY.md drift: canonicalize § delimiter
+  format, split oversized entry
+
   format, split oversized entry
 
   format, split oversized entry

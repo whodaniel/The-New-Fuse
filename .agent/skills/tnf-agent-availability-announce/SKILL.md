@@ -3,11 +3,11 @@ name: tnf-agent-availability-announce
 category: tnf-platform
 department: tech
 description: >-
-  Announce an interactive agent session as available for local Subdirector
-  dispatch (or withdraw offline). Use when starting a Cursor/Claude/Pi/Codex
-  session that should receive delegated tasks, when the operator says "announce
-  to sub-director", or when /announce /availability-announce /dispatchable is
-  invoked. Do not use tnf register --daemon for this.
+  Announce an interactive TNF agent session as available for local Subdirector
+  dispatch (or withdraw offline). Use for any runtime on the TNF harness
+  (Cursor, Claude, Pi, Codex, Kilo, …) when the operator wants Subdirector
+  dispatch, or when /announce is invoked. Canonical skill under .agent/skills —
+  not a Claude-only surface. Do not use tnf register --daemon for this.
 primary_type: protocol
 risk_tier: low
 ---
@@ -16,6 +16,9 @@ risk_tier: low
 
 Tell the **local Subdirector** (`tnf-cli-agent`) that this interactive session
 is dispatchable — without pretending to be a long-running daemon.
+
+This skill is **TNF-canonical** (`.agent/skills/…`). Peer runtimes may mirror
+it; edit here first.
 
 ## When to use
 
@@ -38,6 +41,8 @@ is dispatchable — without pretending to be a long-running daemon.
 2. `docs/protocols/AGENT_BUS_CONTRACT.md` (v1 frames)
 3. Durable drain: `tnf:direct:sub-director:tnf-cli-agent` (see
    `packages/tnf-cli/src/services/DispatchGuard.ts`)
+4. Canonical command: `.tnf/command/announce.md`
+5. Slash registry: `packages/tnf-cli/src/slashCommands.ts`
 
 ## Procedure (Inspect → Act → Verify)
 
@@ -58,10 +63,13 @@ Optional:
 
 ```bash
 tnf agents announce --json \
-  --name Cursor-Composer \
-  --platform cursor \
+  --name "$TNF_AGENT_NAME" \
+  --platform "$TNF_PLATFORM" \
   --capabilities 'code_edit,frontend,protocol,personal_intelligence,cli,review'
 ```
+
+Defaults auto-detect from `TNF_*` env / host runtime (not hard-coded to Claude
+or Cursor).
 
 ### 3. Verify
 
@@ -92,7 +100,8 @@ tnf agents announce --offline
 | `/availability-announce` | same                  |
 | `/dispatchable`          | same                  |
 
-Claude/Cursor command file: `.claude/commands/announce.md`
+Canonical command file: `.tnf/command/announce.md`  
+Peer adapters only: `.claude/commands/announce.md`, fleet, Cursor marketplace.
 
 ## Related
 

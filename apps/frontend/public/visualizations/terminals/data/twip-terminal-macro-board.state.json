@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T01:10:55.165Z",
+  "generatedAt": "2026-09-05T03:20:10.430Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T01:10:52.830Z",
+    "lastScanAt": "2026-09-05T03:20:08.669Z",
     "totalTerminals": 5,
     "returned": 5,
     "source": "ps+tmux+capture+terminal-history",
@@ -35,15 +35,7 @@
         "count": 3
       },
       {
-        "name": ".kilo",
-        "count": 1
-      },
-      {
-        "name": "caffeinate",
-        "count": 1
-      },
-      {
-        "name": "claude",
+        "name": "cursor-agent",
         "count": 1
       },
       {
@@ -56,16 +48,15 @@
         "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
         "tty": "/dev/ttys000",
         "paneId": "tty:ttys000",
-        "shellPid": 25154,
-        "processCount": 4,
+        "shellPid": 42055,
+        "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
-          "caffeinate",
-          "claude"
+          "node"
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "──────────────────────────────────────────────────────────────────────────────── | ⏵⏵ accept edits on (shift+tab to cycle) · esc to interrupt · ← 1 agent   /rc",
+        "contextPreview": "⠏ Thinking...   ✓ exit 0 | ⠹ Thinking...",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -81,7 +72,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "9:00:36 PM [vite] (client) hmr update /src/ComprehensiveRouter.tsx | 9:01:46 PM [vite] (client) hmr update /src/styles/globals.css",
+        "contextPreview": "10:06:16 PM [vite] (client) hmr update /src/ComprehensiveRouter.tsx | 10:06:44 PM [vite] (client) hmr update /src/styles/globals.css",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -97,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑199k ↓45k R5.5M CH99.6% 81.7%/128k (auto)              (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑41k ↓1.7k R171k 34.1%/128k (auto)                      (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -105,24 +96,7 @@
         "twid": "9c58a452-a486-59e1-902a-ae658f7c1ceb",
         "tty": "/dev/ttys003",
         "paneId": "tty:ttys003",
-        "shellPid": 67776,
-        "processCount": 4,
-        "multiplexer": "none",
-        "workExecutables": [
-          "node",
-          ".kilo"
-        ],
-        "bypassApproval": false,
-        "usesRemoteMcp": false,
-        "contextPreview": "● Tip Permission doom_loop prevents infinite tool call loops | ~  ⊙ 0 MCP /status                                                    7.3.46",
-        "contextRedactions": 0,
-        "hasContext": true
-      },
-      {
-        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
-        "tty": "/dev/ttys004",
-        "paneId": "tty:ttys004",
-        "shellPid": 83023,
+        "shellPid": 63309,
         "processCount": 3,
         "multiplexer": "none",
         "workExecutables": [
@@ -130,7 +104,23 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "⠧ Thinking... [agents-run] bash: cd /Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse && git status --porcelain | head -30 (cwd=/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse, 30000ms) | ⠋ ",
+        "contextPreview": "⠋ Thinking...   ✓ exit 0 | ⠧ Thinking...",
+        "contextRedactions": 0,
+        "hasContext": true
+      },
+      {
+        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
+        "tty": "/dev/ttys006",
+        "paneId": "tty:ttys006",
+        "shellPid": 29111,
+        "processCount": 3,
+        "multiplexer": "none",
+        "workExecutables": [
+          "cursor-agent"
+        ],
+        "bypassApproval": false,
+        "usesRemoteMcp": false,
+        "contextPreview": "Auto · 64.8% · 21 files edited                                Run Everything | ~",
         "contextRedactions": 0,
         "hasContext": true
       }
@@ -144,46 +134,23 @@
   },
   "delta": {
     "hasBaseline": true,
-    "terminalDelta": 3,
-    "activeDelta": 3,
+    "terminalDelta": 0,
+    "activeDelta": 0,
     "activeGained": [
       {
-        "twid": "5b5de55b-1837-58f8-a9ed-a61a3347475a",
-        "tty": "/dev/ttys000",
+        "twid": "20ba85ad-d783-5d16-b7c9-7fe1618d45e4",
+        "tty": "/dev/ttys006",
         "workExecutables": [
-          "caffeinate",
-          "claude"
-        ]
-      },
-      {
-        "twid": "405df1e6-09bc-5398-ba8f-82d61f26ef39",
-        "tty": "/dev/ttys002",
-        "workExecutables": [
-          "pi"
-        ]
-      },
-      {
-        "twid": "9c58a452-a486-59e1-902a-ae658f7c1ceb",
-        "tty": "/dev/ttys003",
-        "workExecutables": [
-          "node",
-          ".kilo"
-        ]
-      },
-      {
-        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
-        "tty": "/dev/ttys004",
-        "workExecutables": [
-          "node"
+          "cursor-agent"
         ]
       }
     ],
     "activeLost": [
       {
-        "twid": "57685c40-7a4c-517a-aced-6ebcccb6d734",
-        "tty": "/dev/ttys007",
+        "twid": "2428dad1-f2c6-5080-ad41-8f234adaee9d",
+        "tty": "/dev/ttys004",
         "workExecutables": [
-          "claude"
+          "node"
         ]
       }
     ]

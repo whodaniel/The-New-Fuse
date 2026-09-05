@@ -42,7 +42,8 @@ tnf agents announce --offline
 ## Flags
 
 - `--json`
-- `--name <name>` (default: env `TNF_AGENT_NAME` or `tnf-<platform>-worker`)
+- `--name <name>` (default: env `TNF_AGENT_NAME` or `tnf-<platform>-worker` /
+  `tnf-session-worker`)
 - `--platform <token>` (default: env `TNF_PLATFORM` or auto-detect; not
   hard-bound to Claude)
 - `--to <subdirectorId>` (default `tnf-cli-agent`)

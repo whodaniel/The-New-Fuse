@@ -1,58 +1,59 @@
 ---
-description:
-  'Announce this interactive session as available for local Subdirector dispatch'
-category: 'agent-management'
+description: >-
+  Announce this interactive TNF session as available for local Subdirector
+  dispatch (or withdraw offline). Canonical TNF command — peer CLI mirrors must
+  point here.
 skill: tnf-agent-availability-announce
 ---
 
-Announce this interactive coding session to the **local Subdirector** so it can
-delegate tasks to you.
+# /announce — TNF availability announce
 
-**Do not use** `tnf register --daemon` for this — it leaves an offline
-tombstone. Use the availability announce path instead.
+Tell the **local Subdirector** (`tnf-cli-agent`) this interactive session is
+dispatchable. This is a **TNF** protocol surface, not a Claude-only command.
 
-## Run
+**Authority**
 
-From the TNF repository root:
+- Law: `docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md`
+- Skill: `.agent/skills/tnf-agent-availability-announce/SKILL.md`
+- CLI: `tnf agents announce`
+- Script: `scripts/agents/announce-availability.cjs`
+- Slash registry: `packages/tnf-cli/src/slashCommands.ts` (`/announce`)
+
+**Do not use** `tnf register --daemon` for interactive availability — it leaves
+an offline tombstone.
+
+## Run (from TNF repo root)
 
 ```bash
 tnf agents announce
+# slash (TNF CLI / any runtime that loads TNF slashCommands):
+# /announce
+# /availability-announce
+# /dispatchable
 ```
 
-Aliases / slash:
-
-```text
-/announce
-/availability-announce
-/dispatchable
-```
-
-Withdraw when the session ends:
+Withdraw:
 
 ```bash
 tnf agents announce --offline
-# or: /announce --offline
+# /announce --offline
 ```
 
-## Useful flags
+## Flags
 
-- `--json` — machine-readable receipt
-- `--name <name>` — display name (default `Cursor-Composer`)
-- `--platform <platform>` — taxonomy token (`cursor`, `claude`, `pi`, …)
-- `--to <agentId>` — Subdirector id (default `tnf-cli-agent`)
-- `--capabilities <list>` — honest capability tokens
+- `--json`
+- `--name <name>` (default: env `TNF_AGENT_NAME` or `tnf-<platform>-worker`)
+- `--platform <token>` (default: env `TNF_PLATFORM` or auto-detect; not
+  hard-bound to Claude)
+- `--to <subdirectorId>` (default `tnf-cli-agent`)
+- `--capabilities <csv>`
 
 ## Verify
 
 ```bash
-tnf list --json | rg -i 'cursor|Composer|dispatchable'
-# durable queue:
+tnf list --json
 redis-cli LLEN tnf:direct:sub-director:tnf-cli-agent
 ```
 
-## Authority
-
-- Law: `docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md`
-- Bus: `docs/protocols/AGENT_BUS_CONTRACT.md`
-- Skill: `.agent/skills/tnf-agent-availability-announce/SKILL.md`
-- Script: `scripts/agents/announce-availability.cjs`
+Peer-runtime mirrors (`.claude/commands`, fleet, Cursor marketplace) are
+adapters only — edit this file when behavior changes.

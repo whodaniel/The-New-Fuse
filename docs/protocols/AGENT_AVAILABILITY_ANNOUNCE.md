@@ -8,9 +8,13 @@ local Subdirector drain (`tnf:direct:sub-director:<id>`)
 **Executable:** `scripts/agents/announce-availability.cjs`  
 **Operator path:** `tnf agents announce` (wraps the script)  
 `node scripts/agents/announce-availability.cjs` remains valid.  
-**Slash:** `/announce` (aliases `/availability-announce`, `/dispatchable`)  
-**Skill:** `.agent/skills/tnf-agent-availability-announce/SKILL.md`  
-**Command file:** `.claude/commands/announce.md`
+**Slash:** `/announce` (aliases `/availability-announce`, `/dispatchable`) —
+registered in `packages/tnf-cli/src/slashCommands.ts`  
+**Skill (canonical):**
+`.agent/skills/tnf-agent-availability-announce/SKILL.md`  
+**Command (canonical):** `.tnf/command/announce.md`  
+Peer mirrors (adapters only): `.agent/fleet/*/commands/announce.md`,
+`.claude/commands/announce.md`, Cursor marketplace `tnf-announce`
 
 ## Purpose
 

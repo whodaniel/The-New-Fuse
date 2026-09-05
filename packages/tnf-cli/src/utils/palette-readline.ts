@@ -75,7 +75,11 @@ export function resolveSlashDropdownInput(input: string, state: SlashDropdownSta
   if (!pending) return input;
   const trimmed = input.trim();
   if (!trimmed.startsWith('/')) return input;
-  if (!navigated && trimmed.slice(1).includes(' ')) return input;
+
+  // If the operator never navigated or completed, they expect exactly what they typed.
+  // This prevents hitting Enter on a partial string like `/ag` from auto-correcting to `/agents register`.
+  if (!navigated) return input;
+
   return paletteEntryToLine(pending);
 }
 
@@ -310,6 +314,8 @@ export function attachPalette(deps: AttachDeps): SlashDropdownState {
       state.navigated = true;
       lastLine = outcome.line;
       setReadlineLine(rl, outcome.line);
+    } else {
+      state.navigated = false;
     }
   };
 

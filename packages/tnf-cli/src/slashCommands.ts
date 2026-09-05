@@ -208,7 +208,7 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
     name: 'announce',
     aliases: ['availability-announce', 'dispatchable'],
     summary:
-      'Announce this interactive session as available for local Subdirector dispatch (or --offline).',
+      'Announce this interactive TNF session as available for local Subdirector dispatch (or --offline).',
     usage: '/announce [--offline] [--json] [--name <name>] [--platform <platform>]',
     source: 'tnf',
     mode: 'cli',

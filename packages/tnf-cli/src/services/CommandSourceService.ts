@@ -12,7 +12,8 @@
  *   are TNF-authored artifacts describing TNF operations — and every one of
  *   them was invisible from inside the `tnf` CLI itself, because
  *   `ProjectConfigService.getCommands()` reads exactly one directory
- *   (`.tnf/command/*.md`, which does not even exist in this repo) and
+ *   (`.tnf/command/*.md` — TNF-canonical command surface; peer dirs like
+ *   `.claude/commands` are adapters) and
  *   `discoverPromptTemplates()` reads exactly one more (`.pi/prompts`).
  *
  *   Net effect: `tnf` was the only agent on the box that could not see the
@@ -165,6 +166,7 @@ export class CommandSourceService {
 
     return [
       // --- project scope ---
+      // TNF-native first, then .agent (TNF skill/agent bank), then peer CLIs.
       {
         runtime: 'tnf',
         kind: 'command',
@@ -173,6 +175,20 @@ export class CommandSourceService {
         layout: 'flat',
       },
       { runtime: 'tnf', kind: 'agent', scope: 'project', dir: p('.tnf', 'agent'), layout: 'flat' },
+      {
+        runtime: 'agent',
+        kind: 'agent',
+        scope: 'project',
+        dir: p('.agent', 'agents'),
+        layout: 'flat',
+      },
+      {
+        runtime: 'agent',
+        kind: 'skill',
+        scope: 'project',
+        dir: p('.agent', 'skills'),
+        layout: 'nested',
+      },
       {
         runtime: 'claude',
         kind: 'command',
@@ -192,20 +208,6 @@ export class CommandSourceService {
         kind: 'skill',
         scope: 'project',
         dir: p('.claude', 'skills'),
-        layout: 'nested',
-      },
-      {
-        runtime: 'agent',
-        kind: 'agent',
-        scope: 'project',
-        dir: p('.agent', 'agents'),
-        layout: 'flat',
-      },
-      {
-        runtime: 'agent',
-        kind: 'skill',
-        scope: 'project',
-        dir: p('.agent', 'skills'),
         layout: 'nested',
       },
       {
@@ -241,6 +243,13 @@ export class CommandSourceService {
       // --- user scope ---
       { runtime: 'tnf', kind: 'command', scope: 'user', dir: u('.tnf', 'command'), layout: 'flat' },
       {
+        runtime: 'agent',
+        kind: 'skill',
+        scope: 'user',
+        dir: u('.agents', 'skills'),
+        layout: 'nested',
+      },
+      {
         runtime: 'claude',
         kind: 'command',
         scope: 'user',
@@ -259,13 +268,6 @@ export class CommandSourceService {
         kind: 'skill',
         scope: 'user',
         dir: u('.claude', 'skills'),
-        layout: 'nested',
-      },
-      {
-        runtime: 'agent',
-        kind: 'skill',
-        scope: 'user',
-        dir: u('.agents', 'skills'),
         layout: 'nested',
       },
       {

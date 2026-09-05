@@ -16,9 +16,15 @@ export function registerAgentsAnnounceCommand(agentsGroup: Command, repoRoot: st
     .description(
       'Announce this interactive session as available (or offline) for local Subdirector dispatch'
     )
-    .option('--name <name>', 'Agent display name', 'Cursor-Composer')
+    .option(
+      '--name <name>',
+      'Agent display name (default: TNF_AGENT_NAME or tnf-<platform>-worker)'
+    )
     .option('--role <role>', 'DACC role (usually worker)', 'worker')
-    .option('--platform <platform>', 'Platform taxonomy token', 'cursor')
+    .option(
+      '--platform <platform>',
+      'Platform taxonomy token (default: TNF_PLATFORM or auto-detect; not Claude-bound)'
+    )
     .option('--to <agentId>', 'Local Subdirector agent id', 'tnf-cli-agent')
     .option(
       '--capabilities <list>',
@@ -33,6 +39,7 @@ export function registerAgentsAnnounceCommand(agentsGroup: Command, repoRoot: st
     .action((options: Record<string, unknown>) => {
       const script = path.join(repoRoot, 'scripts/agents/announce-availability.cjs');
       const args = [script];
+      // Only forward name/platform when set so the script can TNF-auto-detect.
       if (options.name) args.push('--name', String(options.name));
       if (options.role) args.push('--role', String(options.role));
       if (options.platform) args.push('--platform', String(options.platform));

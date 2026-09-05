@@ -9,7 +9,7 @@ multi-agent capabilities through Claude Code's slash command interface.
 
 #### `/announce` - Available for Subdirector Dispatch
 
-Announce this interactive session to the local Subdirector (or withdraw).
+TNF availability announce (peer adapter of `.tnf/command/announce.md`).
 
 ```
 /announce
@@ -17,7 +17,7 @@ Announce this interactive session to the local Subdirector (or withdraw).
 /announce --json --platform cursor
 ```
 
-Skill: `tnf-agent-availability-announce`. Law:
+Canonical skill: `.agent/skills/tnf-agent-availability-announce`. Law:
 `docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md`. Do **not** use
 `tnf register --daemon` for interactive availability.
 

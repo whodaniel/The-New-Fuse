@@ -1,58 +1,21 @@
 ---
-description:
-  'Announce this interactive session as available for local Subdirector dispatch'
-category: 'agent-management'
+description: >-
+  Peer mirror of TNF /announce — canonical is .tnf/command/announce.md
 skill: tnf-agent-availability-announce
 ---
 
-Announce this interactive coding session to the **local Subdirector** so it can
-delegate tasks to you.
+# /announce (Claude adapter)
 
-**Do not use** `tnf register --daemon` for this — it leaves an offline
-tombstone. Use the availability announce path instead.
+This file is a **peer-runtime adapter** for Claude Code.
 
-## Run
+**Canonical TNF surfaces (edit these, not this file):**
 
-From the TNF repository root:
+- Command: `.tnf/command/announce.md`
+- Skill: `.agent/skills/tnf-agent-availability-announce/SKILL.md`
+- Law: `docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md`
+- CLI: `tnf agents announce`
 
 ```bash
 tnf agents announce
+# /announce  |  /announce --offline
 ```
-
-Aliases / slash:
-
-```text
-/announce
-/availability-announce
-/dispatchable
-```
-
-Withdraw when the session ends:
-
-```bash
-tnf agents announce --offline
-# or: /announce --offline
-```
-
-## Useful flags
-
-- `--json` — machine-readable receipt
-- `--name <name>` — display name (default `Cursor-Composer`)
-- `--platform <platform>` — taxonomy token (`cursor`, `claude`, `pi`, …)
-- `--to <agentId>` — Subdirector id (default `tnf-cli-agent`)
-- `--capabilities <list>` — honest capability tokens
-
-## Verify
-
-```bash
-tnf list --json | rg -i 'cursor|Composer|dispatchable'
-# durable queue:
-redis-cli LLEN tnf:direct:sub-director:tnf-cli-agent
-```
-
-## Authority
-
-- Law: `docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md`
-- Bus: `docs/protocols/AGENT_BUS_CONTRACT.md`
-- Skill: `.agent/skills/tnf-agent-availability-announce/SKILL.md`
-- Script: `scripts/agents/announce-availability.cjs`

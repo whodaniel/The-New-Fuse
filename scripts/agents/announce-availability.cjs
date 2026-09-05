@@ -36,6 +36,25 @@ function detectTty() {
   }
 }
 
+/** Prefer TNF env, then host runtime signals — never hard-bound to Claude. */
+function detectPlatform() {
+  if (process.env.TNF_PLATFORM) return String(process.env.TNF_PLATFORM).trim();
+  if (process.env.CURSOR_TRACE_ID || process.env.CURSOR_AGENT || process.env.CURSOR) return 'cursor';
+  if (process.env.CLAUDECODE || process.env.CLAUDE_CODE_ENTRYPOINT) return 'claude';
+  if (process.env.CODEX_HOME || process.env.OPENAI_CODEX) return 'codex';
+  if (process.env.KILO_HOME || process.env.KILO_CLI) return 'kilo';
+  if (process.env.OPENCODE || process.env.OPENCODE_HOME) return 'opencode';
+  if (process.env.GEMINI_CLI || process.env.GEMINI_API_KEY) return 'gemini';
+  if (process.env.PI_CODING_AGENT) return 'pi';
+  return 'tnf';
+}
+
+function defaultName(platform) {
+  if (process.env.TNF_AGENT_NAME) return String(process.env.TNF_AGENT_NAME).trim();
+  if (platform === 'tnf') return 'tnf-session-worker';
+  return `tnf-${platform}-worker`;
+}
+
 function stableAgentId(name, platform, tty) {
   const host = os.hostname().replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 24) || 'host';
   const safeName = String(name).replace(/[^a-zA-Z0-9_-]/g, '-').slice(0, 40);
@@ -69,9 +88,9 @@ function loadExisting(agentId) {
 function main() {
   const offline = hasFlag('--offline');
   const jsonOut = hasFlag('--json');
-  const name = argValue('--name', 'Cursor-Composer');
+  const platform = argValue('--platform', detectPlatform());
+  const name = argValue('--name', defaultName(platform));
   const role = argValue('--role', 'worker');
-  const platform = argValue('--platform', 'cursor');
   const subdirector = argValue('--to', DEFAULT_SUBDIRECTOR);
   const cadence = Number(argValue('--cadence-sec', String(DEFAULT_CADENCE_SEC))) || DEFAULT_CADENCE_SEC;
   const tty = argValue('--tty', detectTty());
