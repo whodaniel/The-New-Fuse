@@ -519,6 +519,55 @@ ${nextActions.map((line) => `- ${line}`).join('\n')}
   syncLivingState(handoffPayload);
   syncLedgerP0(handoffPayload);
 
+  // Auto-lease (R4 automation): the paths this session just touched are hot;
+  // register a TTL lease so sweep actors cannot absorb follow-up edits to
+  // them under their own messages (the lease gate blocks commits over
+  // another agent's active lease). Opt out with TNF_HANDOFF_NO_LEASE=1.
+  try {
+    if (process.env.TNF_HANDOFF_NO_LEASE !== '1') {
+      const { acquireLeases } = require('../harness/check-workspace-lease.cjs');
+      const leasePaths = changedPaths.filter((p) => p !== '(no-diff-detected)').slice(0, 40);
+      if (leasePaths.length) {
+        const ttl = Number(process.env.TNF_HANDOFF_LEASE_TTL_MIN) || 120;
+        acquireLeases(repoRoot, {
+          paths: leasePaths,
+          ttlMinutes: ttl,
+          task: 'session-handoff continuation window',
+        });
+        console.log(`[emit-session-handoff] leased ${leasePaths.length} changed path(s) (ttl ${ttl}m) — TNF_HANDOFF_NO_LEASE=1 to disable`);
+      }
+    }
+  } catch (err) {
+    console.warn(`[emit-session-handoff] lease registration skipped: ${err.message}`);
+  }
+
+  // Second pass: the writes above (receipt files, ledger, LIVING_STATE) are
+  // themselves changes, but changed_paths was gathered before any of them
+  // existed — so the staged handoff gate blocked the first emit with
+  // "changed_paths does not cover critical changed files: …LIVING_STATE.md"
+  // (hit three times on 2026-09-05). Re-gather now that every artifact is on
+  // disk and rewrite the receipts with the complete set.
+  try {
+    const finalPaths = gatherChangedPaths();
+    const merged = [...new Set([
+      ...handoffPayload.changed_paths.filter((p) => p !== '(no-diff-detected)'),
+      ...finalPaths,
+    ])];
+    const nextPaths = merged.length ? merged : ['(no-diff-detected)'];
+    if (JSON.stringify(nextPaths) !== JSON.stringify(handoffPayload.changed_paths)) {
+      handoffPayload.changed_paths = nextPaths;
+      fs.writeFileSync(handoffJsonPath, `${JSON.stringify(handoffPayload, null, 2)}\n`, 'utf8');
+      const updatedMarkdown = markdown.replace(
+        /## Changed Paths\n[\s\S]*?\n\n## Verification/,
+        `## Changed Paths\n${nextPaths.map((line) => `- ${line}`).join('\n')}\n\n## Verification`,
+      );
+      fs.writeFileSync(handoffMdPath, `${updatedMarkdown.trimEnd()}\n`, 'utf8');
+      console.log(`[emit-session-handoff] second-pass changed_paths: ${nextPaths.length} path(s)`);
+    }
+  } catch (err) {
+    console.warn(`[emit-session-handoff] second-pass changed_paths skipped: ${err.message}`);
+  }
+
   try {
     const { syncFromRepo } = require('../lib/sync-handoff-cache.cjs');
     syncFromRepo(repoRoot);

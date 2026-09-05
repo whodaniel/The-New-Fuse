@@ -272,12 +272,15 @@ function printFreshness() {
 function parseArgs(argv) {
   const idx = argv.indexOf('--task');
   const consumerIdx = argv.indexOf('--consumer');
+  const claimIdx = argv.indexOf('--claim');
   return {
     json: argv.includes('--json'),
     requireWriteReady: argv.includes('--require-write-ready'),
     writeReceipt: argv.includes('--write-receipt'),
     task: idx >= 0 ? argv[idx + 1] || '' : '',
     consumer: consumerIdx >= 0 ? argv[consumerIdx + 1] || 'unknown' : (process.env.TNF_HARNESS_CONSUMER || 'turn-zero-v2'),
+    claim: claimIdx >= 0 ? argv[claimIdx + 1] || '' : '',
+    claimTtl: Number(argv[argv.indexOf('--claim-ttl-min') + 1]) || undefined,
   };
 }
 
@@ -300,6 +303,27 @@ function main() {
   const taskHydrationState = taskHydrationStatus(taskHydration);
   const workspaceTier = workspaceTierReceipt(args.task || process.env.TNF_TASK || '');
   const workspaceLease = workspaceLeaseReceipt();
+
+  // R4 automation: a session that knows its scope at start can claim it here
+  // (--claim "glob1,glob2"), registering a TTL lease row so the commit-time
+  // lease gate protects the scope before any byte is written. Fails open.
+  if (args.claim) {
+    try {
+      const { acquireLeases } = require('../harness/check-workspace-lease.cjs');
+      const claimPaths = String(args.claim).split(',').map((s) => s.trim()).filter(Boolean).slice(0, 40);
+      const row = acquireLeases(ROOT, {
+        paths: claimPaths,
+        ttlMinutes: args.claimTtl,
+        task: args.task || process.env.TNF_TASK || null,
+      });
+      workspaceLease.claimed = { agent: row.agent, paths: row.paths, ttlMinutes: row.ttlMinutes };
+      console.log(`- lease claimed: ${row.paths.join(', ')} → ${row.agent} (ttl ${row.ttlMinutes}m)`);
+      console.log('  commit docs/protocols/workspace-leases.json with your next changeset to broadcast (R3).');
+    } catch (err) {
+      workspaceLease.claimError = err.message;
+      console.warn(`- lease claim failed (continuing): ${err.message}`);
+    }
+  }
   const blockers = [];
   const warnings = [];
 

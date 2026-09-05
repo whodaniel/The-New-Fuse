@@ -23,6 +23,13 @@ tnf_require_operator commit "staged=$(git diff --cached --name-only 2>/dev/null 
 pnpm run authority:surface:staged
 pnpm run merge:guard
 
+# Lease enforcement at the action site (R4): a staged path covered by another
+# agent's ACTIVE lease blocks this commit — sweeps cannot absorb your staged
+# work under their own message, and you cannot commit over theirs. Own leases
+# are exempt; expired leases inert; an unreadable registry fails open.
+# TNF_WORKSPACE_LEASE_GATE=advisory opts out for this commit only.
+pnpm run lease:gate:staged
+
 pnpm run privacy:guard:staged
 pnpm run secret:sweep:staged
 pnpm run zero-file:guard:staged

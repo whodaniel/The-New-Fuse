@@ -2,5 +2,58 @@
   "schemaVersion": 1,
   "spec": "docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md",
   "note": "Declares which agents currently hold a lease on which path scopes in the shared checkout. Checked by scripts/harness/check-workspace-lease.cjs (advisory by default; TNF_WORKSPACE_LEASE_ENFORCE=1 makes Turn Zero fail loud on overlap). A lease is active until acquiredAt + ttlMinutes. Claim a lease by adding a row here and committing it — the commit IS the broadcast (R3: chat acknowledgement is not memory). Keep scopes as narrow as the work actually requires.",
-  "leases": []
+  "leases": [
+    {
+      "agent": "danielgoldberg",
+      "task": "land sweep + lease gates",
+      "paths": [
+        "scripts/protocols/sweep-source-gate.cjs",
+        "scripts/harness/check-workspace-lease.cjs",
+        "scripts/protocols/emit-session-handoff.cjs",
+        ".husky/**",
+        "AGENTS.md",
+        "docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md",
+        "package.json"
+      ],
+      "acquiredAt": "2026-09-05T12:57:47.589Z",
+      "ttlMinutes": 240
+    },
+    {
+      "agent": "danielgoldberg",
+      "task": "session-handoff continuation window",
+      "paths": [
+        ".husky/commit-msg",
+        ".husky/pre-commit",
+        "AGENTS.md",
+        "docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md",
+        "docs/protocols/workspace-leases.json",
+        "package.json",
+        "scripts/harness/check-workspace-lease.cjs",
+        "scripts/protocols/emit-session-handoff.cjs",
+        "scripts/protocols/sweep-source-gate.cjs",
+        "scripts/protocols/sweep-source-gate.test.cjs",
+        "scripts/protocols/turn-zero-v2-gate.cjs",
+        "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+        "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+        "data/harness/ANOMALY_PAYLOAD.md",
+        "data/harness/active-sieve-manifest.json",
+        "docs/operations/tnf-master-reconciliation-report-latest.json",
+        "docs/operations/tnf-master-reconciliation-report-latest.md",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+        "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+        "packages/shared/src/workflow-ai-spec.ts",
+        "packages/tnf-cli/src/commands/durable-tasks.ts",
+        "packages/tnf-cli/src/services/DurableAiHandlers.ts",
+        "packages/tnf-cli/src/services/DurableTaskHttpServer.ts",
+        "packages/tnf-cli/src/services/DurableTaskService.test.ts",
+        "packages/tnf-cli/src/services/DurableTaskService.ts",
+        "packages/tnf-cli/src/services/WorkflowGraphBridge.cli-sync.test.ts",
+        "packages/tnf-cli/src/services/WorkflowGraphBridge.test.ts",
+        "packages/tnf-cli/src/services/WorkflowGraphBridge.ts"
+      ],
+      "acquiredAt": "2026-09-05T12:58:22.784Z",
+      "ttlMinutes": 120
+    }
+  ]
 }

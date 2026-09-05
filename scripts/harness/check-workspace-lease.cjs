@@ -52,13 +52,21 @@ function findRepoRoot() {
 }
 
 function parseArgs(argv) {
-  const opts = { json: false, enforce: false, agent: null, leaseFile: null };
+  const opts = {
+    json: false, enforce: false, agent: null, leaseFile: null,
+    stagedOnly: false, gate: false, claim: null, ttlMin: null, task: null,
+  };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--json') opts.json = true;
     else if (a === '--enforce') opts.enforce = true;
     else if (a === '--agent') opts.agent = argv[++i];
     else if (a === '--lease-file') opts.leaseFile = argv[++i];
+    else if (a === '--staged') opts.stagedOnly = true;
+    else if (a === '--gate') opts.gate = true;
+    else if (a === '--claim') opts.claim = argv[++i];
+    else if (a === '--ttl-min') opts.ttlMin = argv[++i];
+    else if (a === '--task') opts.task = argv[++i];
   }
   return opts;
 }
@@ -128,6 +136,47 @@ function currentDirtyPaths(repoRoot, cap) {
   return [...dirty].slice(0, cap);
 }
 
+/** Paths in the index only — the set a commit will actually carry. */
+function currentStagedPaths(repoRoot, cap) {
+  return gitLines(['diff', '--cached', '--name-only'], repoRoot, cap);
+}
+
+/**
+ * Registry writer for docs/protocols/workspace-leases.json. Appends a row
+ * (agent + path scopes + TTL); replaces any prior row held by the same agent
+ * for the same scope so re-claiming is idempotent. Fail-closed to the CALLER:
+ * throws on unwritable registry; callers in hooks must catch and fail open.
+ */
+function acquireLeases(repoRoot, opts, now) {
+  const leaseFile = opts.leaseFile || path.join(repoRoot, 'docs', 'protocols', 'workspace-leases.json');
+  const paths = (opts.paths || []).map((p) => String(p).trim()).filter(Boolean);
+  if (!paths.length) throw new Error('acquireLeases: no paths given');
+  const agent = opts.agent || process.env.TNF_AGENT_ID || process.env.TNF_AGENT_NAME || process.env.USER || 'unknown';
+  let parsed = { schemaVersion: 1, leases: [] };
+  try {
+    parsed = JSON.parse(fs.readFileSync(leaseFile, 'utf8'));
+    if (!Array.isArray(parsed.leases)) parsed.leases = [];
+  } catch (err) {
+    if (fs.existsSync(leaseFile)) throw new Error(`acquireLeases: registry unreadable: ${err.message}`);
+  }
+  const key = (list) => [...list].sort().join('\u0000');
+  parsed.leases = parsed.leases.filter(
+    (l) => !(String(l.agent) === String(agent) && key(l.paths || []) === key(paths)),
+  );
+  const row = {
+    agent,
+    task: opts.task || null,
+    paths,
+    acquiredAt: new Date(now || Date.now()).toISOString(),
+    ttlMinutes: Number.isFinite(Number(opts.ttlMinutes)) ? Number(opts.ttlMinutes) : 120,
+  };
+  parsed.leases.push(row);
+  parsed.schemaVersion = parsed.schemaVersion || 1;
+  fs.mkdirSync(path.dirname(leaseFile), { recursive: true });
+  fs.writeFileSync(leaseFile, `${JSON.stringify(parsed, null, 2)}\n`, 'utf8');
+  return row;
+}
+
 function check(repoRoot, opts, now) {
   const leaseFile = opts.leaseFile || path.join(repoRoot, 'docs', 'protocols', 'workspace-leases.json');
   const agent = opts.agent || process.env.TNF_AGENT_ID || process.env.TNF_AGENT_NAME || process.env.USER || 'unknown';
@@ -140,7 +189,9 @@ function check(repoRoot, opts, now) {
     leaseError = err.message;
   }
 
-  const dirtyPaths = currentDirtyPaths(repoRoot, 500);
+  const dirtyPaths = opts.stagedOnly
+    ? currentStagedPaths(repoRoot, 500)
+    : currentDirtyPaths(repoRoot, 500);
   const active = activeLeases(leases, now || Date.now());
   const violations = [];
   for (const lease of active) {
@@ -171,7 +222,9 @@ function main(argv) {
     console.error('[check-workspace-lease] policy file not found from cwd; failing open.');
     return 0;
   }
-  const enforce = opts.enforce || process.env.TNF_WORKSPACE_LEASE_ENFORCE === '1';
+  const enforce = opts.enforce
+    || opts.gate && process.env.TNF_WORKSPACE_LEASE_GATE !== 'advisory'
+    || (!opts.gate && process.env.TNF_WORKSPACE_LEASE_ENFORCE === '1');
   let result;
   try {
     result = check(repoRoot, opts, Date.now());
@@ -182,21 +235,49 @@ function main(argv) {
   if (opts.json) {
     console.log(JSON.stringify(result, null, 2));
   } else {
-    console.log(`[check-workspace-lease] agent=${result.agent} dirty=${result.dirtyCount} active-leases=${result.activeLeases.length}${result.leaseError ? ` (lease file unreadable: ${result.leaseError})` : ''}`);
+    console.log(`[check-workspace-lease] agent=${result.agent} ${opts.stagedOnly ? 'staged' : 'dirty'}=${result.dirtyCount} active-leases=${result.activeLeases.length}${result.leaseError ? ` (lease file unreadable: ${result.leaseError})` : ''}`);
     for (const v of result.violations) {
       console.log(`  ⚠ overlap with ${v.agent}${v.task ? ` (${v.task})` : ''}: ${v.overlaps.slice(0, 5).join(', ')}${v.overlaps.length > 5 ? ` … +${v.overlaps.length - 5} more` : ''}`);
     }
     console.log(`  ${result.violations.length ? '⚠' : '✓'} ${result.guidance}`);
   }
-  if (result.violations.length && enforce) return 1;
+  if (result.violations.length && enforce) {
+    if (opts.gate) console.error(`[check-workspace-lease] BLOCKED (staged): another agent's active lease covers staged paths (${[...new Set(result.violations.map((v) => v.agent))].join(', ')}). Wait for TTL expiry, take over the lease row, or set TNF_WORKSPACE_LEASE_GATE=advisory for this commit.`);
+    return 1;
+  }
   return 0;
 }
 
-module.exports = { matchPath, activeLeases, check, isExpired };
+function runClaim(argv) {
+  const opts = parseArgs(argv);
+  const repoRoot = findRepoRoot();
+  if (!repoRoot) {
+    console.error('[check-workspace-lease] policy file not found from cwd; claim not recorded.');
+    return 1;
+  }
+  const paths = String(opts.claim || '').split(',').map((s) => s.trim()).filter(Boolean);
+  try {
+    const row = acquireLeases(repoRoot, {
+      agent: opts.agent, paths, ttlMinutes: opts.ttlMin, task: opts.task, leaseFile: opts.leaseFile,
+    });
+    console.log(`[check-workspace-lease] claimed ${row.paths.join(', ')} for ${row.agent} (ttl ${row.ttlMinutes}m)`);
+    console.log('[check-workspace-lease] commit docs/protocols/workspace-leases.json to broadcast the claim (R3).');
+    return 0;
+  } catch (err) {
+    console.error(`[check-workspace-lease] claim failed: ${err.message}`);
+    return 1;
+  }
+}
+
+module.exports = { matchPath, activeLeases, check, isExpired, acquireLeases, currentStagedPaths, parseArgs };
 
 if (require.main === module) {
   try {
-    process.exit(main(process.argv.slice(2)));
+    const argv = process.argv.slice(2);
+    if (argv.includes('--claim')) {
+      process.exit(runClaim(argv));
+    }
+    process.exit(main(argv));
   } catch (err) {
     console.error(`[check-workspace-lease] internal error, failing open: ${err.message}`);
     process.exit(0);

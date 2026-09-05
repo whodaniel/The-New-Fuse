@@ -49,7 +49,14 @@ times (2026-08-09, 2026-08-27, 2026-09-01). Rules, in order:
 - **Claim multi-file leases** in `docs/protocols/workspace-leases.json` before
   working across several files in the shared tree; Turn Zero checks your dirty
   set against other agents' active leases (enforce with
-  `TNF_WORKSPACE_LEASE_ENFORCE=1`).
+  `TNF_WORKSPACE_LEASE_ENFORCE=1`), or claim directly with
+  `node scripts/harness/check-workspace-lease.cjs --claim "glob1,glob2"`.
+  Enforcement now happens at the commit site too: the pre-commit lease gate
+  blocks a commit whose staged paths fall under ANOTHER agent's active lease
+  (`TNF_WORKSPACE_LEASE_GATE=advisory` opts out for one commit), and a `sweep:`
+  commit carrying source paths is blocked by the commit-msg gate. Export
+  `TNF_AGENT_ID=<your id>` so gates attribute leases to your session, not to a
+  shared username.
 - **Foreign dirty tree = refuse**: if the tree is dirty with another agent's
   work, park it as a commit on a scratch branch — never stash it away.
 

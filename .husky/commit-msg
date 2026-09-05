@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+set -e
+
+# Sweep commits are heartbeat/cron agents' routine data/doc carries. The
+# "never stage source" rule lived only in the terminal-heartbeat prompt until
+# 2026-09-05, when a sweep committed packages/shared/src and scripts/ anyway
+# (lessons/2026-09-05-stale-buffer-clobber-and-critical-sections.md). A
+# prompt-only rule with an unbounded writer set is inert; validate at the
+# action site instead. Deliberate exception: TNF_ALLOW_SWEEP_SOURCE=1.
+if [ -n "$1" ]; then
+  pnpm run sweep:gate:commit-msg "$1"
+fi

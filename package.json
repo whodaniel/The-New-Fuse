@@ -451,7 +451,9 @@
     "llm:config": "node scripts/llm/generate-litellm-config.cjs",
     "llm:config:configured": "node scripts/llm/generate-litellm-config.cjs --only-configured",
     "notation:coherence": "node scripts/protocols/notation-coherence-gate.cjs",
-    "notation:coherence:strict": "node scripts/protocols/notation-coherence-gate.cjs --strict"
+    "notation:coherence:strict": "node scripts/protocols/notation-coherence-gate.cjs --strict",
+    "lease:gate:staged": "node scripts/harness/check-workspace-lease.cjs --staged --gate",
+    "sweep:gate:commit-msg": "node scripts/protocols/sweep-source-gate.cjs --message-file"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
