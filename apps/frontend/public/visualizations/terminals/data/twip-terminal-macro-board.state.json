@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T10:00:42.982Z",
+  "generatedAt": "2026-09-05T10:40:38.659Z",
   "args": {
     "tenantId": "tnf-local",
     "limit": 500,
@@ -12,7 +12,7 @@
     "json": true
   },
   "snapshotMeta": {
-    "lastScanAt": "2026-09-05T10:00:36.299Z",
+    "lastScanAt": "2026-09-05T10:40:29.505Z",
     "totalTerminals": 6,
     "returned": 6,
     "source": "ps+tmux+capture+terminal-history",
@@ -56,7 +56,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "📨 [Unknown] (message): | 📨 [Unknown] (message):",
+        "contextPreview": "👑 [ORCHESTRATOR] (event): | {\"eventType\":\"SELF_PROMPT\",\"data\":{\"kind\":\"agent-stall\",\"channel\":\"General\",\"prompt\":\"🔔 [SYSTEM] Agent AGENT-11, please respond with a heartbeat or acknowledgment.\",\"reason\":\"agent_stalled\",",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -88,7 +88,7 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "~ | ↑313k ↓57k R5.6M CH99.0% 87.7%/128k (auto)              (aihubmix) glm-5.3-flash",
+        "contextPreview": "~ | ↑524k ↓104k R9.2M CH98.9% 78.2%/128k (auto)             (aihubmix) glm-5.3-flash",
         "contextRedactions": 0,
         "hasContext": true
       },
@@ -136,8 +136,8 @@
         ],
         "bypassApproval": false,
         "usesRemoteMcp": false,
-        "contextPreview": "Auto · 47.2% · 2 files edited                                 Run Everything | ~",
-        "contextRedactions": 3,
+        "contextPreview": "Auto · 16%                                                    Run Everything | ~",
+        "contextRedactions": 0,
         "hasContext": true
       }
     ],
@@ -145,7 +145,7 @@
       "approvalsBypassTerminals": 0,
       "remoteMcpTerminals": 0,
       "contextCapturedTerminals": 6,
-      "contextRedactions": 3
+      "contextRedactions": 0
     }
   },
   "delta": {

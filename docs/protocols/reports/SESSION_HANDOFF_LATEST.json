@@ -13,7 +13,11 @@
   "work_summary": "Sweep: harness anomaly payload and sieve manifest",
   "changed_paths": [
     "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json"
+    "data/harness/active-sieve-manifest.json",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
+    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "data/agent-registry/onboarding-agent.json",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -132,5 +136,7 @@
       "value": "REDIS_UNREACHABLE\nRELAY_OK"
     }
   ],
-  "files_changed_count": 2
+  "files_changed_count": 2,
+  "head": "55faec03cd75dacecb0fd7672e7e32b89f5cb1e7",
+  "updated_at": "2026-09-05T10:44:41.473Z"
 }

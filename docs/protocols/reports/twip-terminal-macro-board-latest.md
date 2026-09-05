@@ -1,6 +1,6 @@
 # TWIP Terminal Macro Board (Latest)
 
-Generated: 2026-09-05T10:20:36.838Z
+Generated: 2026-09-05T10:40:38.659Z
 Tenant: `tnf-local`
 Source: `ps+tmux+capture+terminal-history`
 Snapshot: `data/protocols/twip-inventory.snapshot.json`
@@ -23,12 +23,12 @@ Context capture: `enabled`
 
 ## Active Sessions (Sanitized)
 
-- `/dev/ttys000` -> node | ctx: {"eventType":"SELF_PROMPT","data":{"kind":"agent-stall","channel":"General","prompt":"🔔 [SYSTEM] Agent AGENT-11, please respond with a heartbeat or acknowledgment.","reason":"agent_stalled","targetAgentId":"AGENT-11","t
+- `/dev/ttys000` -> node | ctx: 👑 [ORCHESTRATOR] (event): | {"eventType":"SELF_PROMPT","data":{"kind":"agent-stall","channel":"General","prompt":"🔔 [SYSTEM] Agent AGENT-11, please respond with a heartbeat or acknowledgment.","reason":"agent_stalled",
 - `/dev/ttys001` -> node | ctx: 10:06:16 PM [vite] (client) hmr update /src/ComprehensiveRouter.tsx | 10:06:44 PM [vite] (client) hmr update /src/styles/globals.css
-- `/dev/ttys002` -> pi | ctx: ~ | ↑476k ↓67k R6.4M CH0.0% 44.0%/128k (auto)               (aihubmix) glm-5.3-flash
+- `/dev/ttys002` -> pi | ctx: ~ | ↑524k ↓104k R9.2M CH98.9% 78.2%/128k (auto)             (aihubmix) glm-5.3-flash
 - `/dev/ttys003` -> node | ctx: › Ask Codex to do anything | gpt-5.6-sol high · ~ · Main [default]
 - `/dev/ttys004` -> cursor-agent | ctx: Auto · 38.5% · 7 files edited                                 Run Everything | ~
-- `/dev/ttys005` -> cursor-agent | ctx: Auto · 67.1% · 11 files edited                                Run Everything | ~
+- `/dev/ttys005` -> cursor-agent | ctx: Auto · 16%                                                    Run Everything | ~
 
 ## Delta vs Previous Run
 
