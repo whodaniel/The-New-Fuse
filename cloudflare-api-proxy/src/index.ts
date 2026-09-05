@@ -1,3 +1,123 @@
+interface Env {
+  GCP_API_URL: string;
+  CORS_ALLOWED_ORIGINS?: string;
+  STRIPE_WEBHOOK_SECRET: string;
+  SUPABASE_URL: string;
+  SUPABASE_SERVICE_ROLE_KEY: string;
+}
+
+interface WorkerExecutionContext {
+  waitUntil(promise: Promise<unknown>): void;
+  passThroughOnException(): void;
+}
+
+const DEFAULT_ALLOWED_ORIGINS = [
+  'https://app.thenewfuse.com',
+  'https://thenewfuse.com',
+  'https://www.thenewfuse.com',
+  'https://production.thenewfuse-main.pages.dev',
+] as const;
+
+const CORS_ALLOW_METHODS = 'GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS';
+const CORS_ALLOW_HEADERS =
+  'Content-Type, Authorization, X-Requested-With, X-CSRF-Token, X-Request-ID, X-Client-IP, x-api-key';
+
+const UPSTREAM_CORS_HEADERS = [
+  'Access-Control-Allow-Origin',
+  'Access-Control-Allow-Credentials',
+  'Access-Control-Allow-Methods',
+  'Access-Control-Allow-Headers',
+  'Access-Control-Max-Age',
+  'Access-Control-Expose-Headers',
+] as const;
+
+function normalizeOrigin(value: string): string | null {
+  const candidate = value.trim();
+  if (!candidate || candidate.includes('*')) return null;
+
+  try {
+    const parsed = new URL(candidate);
+    if (
+      (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') ||
+      parsed.username ||
+      parsed.password ||
+      parsed.origin === 'null'
+    ) {
+      return null;
+    }
+    return parsed.origin;
+  } catch {
+    return null;
+  }
+}
+
+function allowedOrigins(env: Env): Set<string> {
+  const configured = env.CORS_ALLOWED_ORIGINS?.trim();
+  const candidates = configured ? configured.split(',') : DEFAULT_ALLOWED_ORIGINS;
+
+  return new Set(
+    candidates
+      .map((candidate) => normalizeOrigin(candidate))
+      .filter((candidate): candidate is string => candidate !== null)
+  );
+}
+
+function allowedRequestOrigin(request: Request, env: Env): string | null {
+  const requestOrigin = request.headers.get('Origin');
+  if (!requestOrigin) return null;
+
+  const normalized = normalizeOrigin(requestOrigin);
+  return normalized && allowedOrigins(env).has(normalized) ? normalized : null;
+}
+
+function appendVaryOrigin(headers: Headers): void {
+  const vary = headers.get('Vary');
+  if (!vary) {
+    headers.set('Vary', 'Origin');
+    return;
+  }
+
+  const values = vary.split(',').map((value) => value.trim().toLowerCase());
+  if (!values.includes('*') && !values.includes('origin')) {
+    headers.set('Vary', `${vary}, Origin`);
+  }
+}
+
+function stripUpstreamCors(headers: Headers): void {
+  for (const header of UPSTREAM_CORS_HEADERS) {
+    headers.delete(header);
+  }
+}
+
+function applyCorsToResponse(response: Response, request: Request, env: Env): Response {
+  stripUpstreamCors(response.headers);
+  appendVaryOrigin(response.headers);
+
+  const origin = allowedRequestOrigin(request, env);
+  if (origin) {
+    response.headers.set('Access-Control-Allow-Origin', origin);
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
+  }
+
+  return response;
+}
+
+function corsPreflightResponse(request: Request, env: Env): Response {
+  const headers = new Headers();
+  appendVaryOrigin(headers);
+
+  const origin = allowedRequestOrigin(request, env);
+  if (origin) {
+    headers.set('Access-Control-Allow-Origin', origin);
+    headers.set('Access-Control-Allow-Credentials', 'true');
+    headers.set('Access-Control-Allow-Methods', CORS_ALLOW_METHODS);
+    headers.set('Access-Control-Allow-Headers', CORS_ALLOW_HEADERS);
+    headers.set('Access-Control-Max-Age', '86400');
+  }
+
+  return new Response(null, { status: 204, headers });
+}
+
 /**
  * Verifies a Stripe webhook signature and returns the parsed event.
  * Mirrors the manual HMAC-SHA256 verification already used in
@@ -62,7 +182,7 @@ async function verifyStripeSignature(
  * signature, and on checkout.session.completed writes a row into Supabase
  * (service-role key bypasses RLS; the table has no other write path).
  */
-async function handleStripeWebhook(request: Request, env: any): Promise<Response> {
+async function handleStripeWebhook(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 });
   }
@@ -121,21 +241,12 @@ async function handleStripeWebhook(request: Request, env: any): Promise<Response
 }
 
 export default {
-  async fetch(request: Request, env: any, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, _ctx: WorkerExecutionContext): Promise<Response> {
     const url = new URL(request.url);
-    const origin = request.headers.get('Origin');
 
     // Handle CORS preflight for ALL requests (must be first)
     if (request.method === 'OPTIONS') {
-      return new Response(null, {
-        headers: {
-          'Access-Control-Allow-Origin': origin || '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD',
-          'Access-Control-Allow-Headers': '*',
-          'Access-Control-Allow-Credentials': 'true',
-          'Access-Control-Max-Age': '86400',
-        },
-      });
+      return corsPreflightResponse(request, env);
     }
 
     // Stripe webhooks are handled entirely at the edge, before the generic
@@ -177,35 +288,22 @@ export default {
       // Create a new response to allow modifying headers
       const newResponse = new Response(response.body, response);
 
-      // Force CORS injection to support browser-based clients
-      if (origin) {
-        newResponse.headers.set('Access-Control-Allow-Origin', origin);
-      } else {
-        newResponse.headers.set('Access-Control-Allow-Origin', '*');
-      }
-
-      newResponse.headers.set(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD'
-      );
-      newResponse.headers.set('Access-Control-Allow-Headers', '*');
-      newResponse.headers.set('Access-Control-Allow-Credentials', 'true');
-
-      return newResponse;
+      return applyCorsToResponse(newResponse, request, env);
     } catch (error) {
       console.error('Proxy fetch failed:', error);
-      return new Response(
-        JSON.stringify({
-          error: 'Proxy Fetch Failed',
-          message: error instanceof Error ? error.message : String(error),
-        }),
-        {
-          status: 502,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': origin || '*',
-          },
-        }
+      return applyCorsToResponse(
+        new Response(
+          JSON.stringify({
+            error: 'Proxy Fetch Failed',
+            message: error instanceof Error ? error.message : String(error),
+          }),
+          {
+            status: 502,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        ),
+        request,
+        env
       );
     }
   },
