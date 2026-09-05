@@ -3,8 +3,27 @@
 `[CLASS:PRIME] [STATUS:SYNCHRONIZED]`
 
 <!-- CURRENT_DIRECTIVE:START -->
-**Current Directive:** Lane F1 roster truth: derive liveness from lastSeen vs expectedCadenceSec at every read site, schedule agent-registry-prune (now pointed at the live bus), and find why registered agents never connect to :3007. Accept when mesh count and live-registry count agree within one
+
+**Current Directive:** Lane F1 roster truth: derive liveness from lastSeen vs
+
 <!-- CURRENT_DIRECTIVE:END -->
+
+- [✅] **2026-09-04 Turn Zero naming — V2 is current Turn Zero**:
+  - Session surfaces now state **Turn Zero = Turn Zero V2** (status packet,
+    onboard banner, SYSTEM_PROMPT, mandate, AGENTS/session onboarding, harness
+    skills, marketplace rule/command).
+  - Canonical prompt: `scripts/lib/tnf-canonical-onboarding.cjs` →
+    `CANONICAL_RAW_AGENT_PROMPT`.
+
+- [✅] **2026-09-04 Turn Zero V2 scope correction (anti-confusion)**:
+  - Clarified in `TURN_ZERO_MANDATE.md` / `FRONTLOAD_MANIFEST.md` that Turn Zero
+    V2 is foundational TNF protocol — not video-lane owned and not defined by
+    worktree checkout paths such as `lane4-video-extraction`.
+  - Gate receipt now prints foundational scope + `repoRoot`.
+  - Lesson: `docs/protocols/lessons/2026-09-04-turn-zero-v2-not-lane-scoped.md`.
+  - Removed stale merged worktree `.tnf/worktrees/authority-lane-task0`
+    (`fix/turn-zero-classification-source`, PR #301). Kept
+    `lane4-video-extraction` (has uncommitted video WIP).
 
 - [✅] **2026-09-04 Cloudflare Pages Production Deployment & Authority Lane
   Convergence (Antigravity/Sub-Director)**:
@@ -1241,9 +1260,21 @@ and generated refactoring_consensus_report.md.
 
 ## History
 
-- 2026-09-05T02:12:02.293Z handoff `0c344d99-2cb6-4b9d-b326-c4c937d19992` head `a2671b8dd071` project `TNF-SESSION` — Optional: commit tauri-desktop changes (5 modified + 1 new test file) and the llm-client.ts loadEnv fix from earlier this session
+- 2026-09-05T02:45:41.585Z handoff `a554eab9-0bce-4239-9ba4-4f33b8738ecc` head
+  `803d765cfcf0` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
-- 2026-09-05T01:52:15.806Z handoff `158a5a36-3607-4b8c-aefa-8402cb3dc898` head `a2671b8dd071` project `TNF-SESSION` — Lane F1 roster truth: derive liveness from lastSeen vs expectedCadenceSec at every read site, schedule agent-registry-prune (now pointed at the live bus), and find why registered agents never connect to :3007. Accept when mesh count and live-registry count agree within one
+- 2026-09-05T02:12:02.293Z handoff `0c344d99-2cb6-4b9d-b326-c4c937d19992` head
+  `a2671b8dd071` project `TNF-SESSION` — Optional: commit tauri-desktop changes
+  (5 modified + 1 new test file) and the llm-client.ts loadEnv fix from earlier
+  this session
+
+- 2026-09-05T01:52:15.806Z handoff `158a5a36-3607-4b8c-aefa-8402cb3dc898` head
+  `a2671b8dd071` project `TNF-SESSION` — Lane F1 roster truth: derive liveness
+  from lastSeen vs expectedCadenceSec at every read site, schedule
+  agent-registry-prune (now pointed at the live bus), and find why registered
+  agents never connect to :3007. Accept when mesh count and live-registry count
+  agree within one
 
 - 2026-09-05T00:59:48.554Z handoff `d73e7a3e-268a-4448-9fcf-92045fdeab35` head
   `b0ae1dd278d0` project `TNF-SESSION` — Sub-director: run Turn Zero, re-probe

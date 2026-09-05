@@ -9,33 +9,37 @@ This is a **self-referential discovery document** that helps Claude understand:
 - How resources relate hierarchically
 - How to compose context for complex tasks
 
-Read `./docs/protocols/TURN_ZERO_MANDATE.md` first when starting a TNF
-session. Read this file after Turn Zero when you need to choose skills, agents,
-or supporting resources.
+Read `./docs/protocols/TURN_ZERO_MANDATE.md` first when starting a TNF session
+(**Turn Zero = Turn Zero V2**). Read this file after Turn Zero V2 when you need
+to choose skills, agents, or supporting resources.
 
 ## 🚨 Canonical TNF Governance
 
-**WARNING:** The legacy BMAD + Manus planning files (`task_plan.md`, `.agent/handoff_notes.txt`) are compatibility fallbacks only and are deprecated in the core orchestration flow.
+**WARNING:** The legacy BMAD + Manus planning files (`task_plan.md`,
+`.agent/handoff_notes.txt`) are compatibility fallbacks only and are deprecated
+in the core orchestration flow.
 
 The canonical operating loop and state memory for this swarm are located at:
-- **Turn Zero Mandate**: `./docs/protocols/TURN_ZERO_MANDATE.md`
+
+- **Turn Zero V2 Mandate**: `./docs/protocols/TURN_ZERO_MANDATE.md`
+- **Gate**: `./scripts/protocols/turn-zero-v2-gate.cjs` via
+  `pnpm run tnf:onboard`
 - **Swarm Memory**: `./docs/protocols/LIVING_STATE.md`
 - **Persistent Handoff**: `./docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
 
-If you are just booting up, you **MUST** execute the Turn Zero Mandate before
-proposing task plans, creating tracking files, reporting status, or writing
-code.
+If you are just booting up, you **MUST** run Turn Zero V2 before proposing task
+plans, creating tracking files, reporting status, or writing code.
 
 Use this raw-agent prompt when TNF auto-injection is unavailable:
 
 ```text
-Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+Before planning or acting, run Turn Zero V2 (current Turn Zero) from the repository root: pnpm run tnf:onboard -- --task "<current task>". It runs scripts/protocols/turn-zero-v2-gate.cjs, derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation. Law: docs/protocols/TURN_ZERO_MANDATE.md.
 ```
 
 Launch raw agents from the TNF repository root so the relative paths resolve.
 
-Machine-specific assets such as personal paths, local relay endpoints, and
-known occupied development ports belong in the local runtime profile, not in
+Machine-specific assets such as personal paths, local relay endpoints, and known
+occupied development ports belong in the local runtime profile, not in
 distributed source:
 
 - Local profile reference: `./docs/reference/local-runtime-profile.md`
@@ -46,9 +50,8 @@ distributed source:
 
 ## 📚 Available Skills
 
-> **Canonical skill index:
-> [`.agent/SKILL_MANIFEST.md`](../SKILL_MANIFEST.md)** — generated, complete,
-> ~4.9k tokens. Regenerate with
+> **Canonical skill index: [`.agent/SKILL_MANIFEST.md`](../SKILL_MANIFEST.md)**
+> — generated, complete, ~4.9k tokens. Regenerate with
 > `node scripts/skills/build-skill-manifest.cjs`.
 >
 > **Read the manifest first.** The hand-curated list below is a _highlights
@@ -219,9 +222,12 @@ distributed source:
 
 ### 13. **feature-parity-cli-extension** ⭐⭐
 
-- **Location**: `packages/agent/src/skill-bank/compiled/feature-parity-cli-extension.md`
-- **Purpose**: Analyze source CLI and extend target CLI to achieve full feature parity
-- **Use When**: Adding commands to TNF CLI to match hermes, openclaw, or other CLIs
+- **Location**:
+  `packages/agent/src/skill-bank/compiled/feature-parity-cli-extension.md`
+- **Purpose**: Analyze source CLI and extend target CLI to achieve full feature
+  parity
+- **Use When**: Adding commands to TNF CLI to match hermes, openclaw, or other
+  CLIs
 - **Key Features**:
   - Gap analysis between source and target CLIs
   - Command comparison table template
@@ -230,14 +236,17 @@ distributed source:
 
 ### 14. **tnf-cli-agent-workflow** ⭐⭐⭐
 
-- **Location**: `packages/agent/src/skill-bank/compiled/tnf-cli-agent-workflow.md`
+- **Location**:
+  `packages/agent/src/skill-bank/compiled/tnf-cli-agent-workflow.md`
 - **Purpose**: Generic go-to skill for ANY AI agent working with TNF CLI
 - **Use When**: Any TNF-related task - this is the reference skill
 
 ### 15. **tnf-agent-orchestration** ⭐⭐⭐
 
-- **Location**: `packages/agent/src/skill-bank/compiled/tnf-agent-orchestration.md`
-- **Purpose**: Complete system for orchestrating AI agents - alignment, cohesion, growth, health
+- **Location**:
+  `packages/agent/src/skill-bank/compiled/tnf-agent-orchestration.md`
+- **Purpose**: Complete system for orchestrating AI agents - alignment,
+  cohesion, growth, health
 - **Use When**: Understanding how TNF coordinates multiple agents
 - **Key Features**:
   - Master heartbeat loop (15s)
@@ -483,33 +492,33 @@ Done (New skill now available)
 
 ### When to Load What
 
-| Task Type               | Primary Skill        | Referenced Resources                   |
-| ----------------------- | -------------------- | -------------------------------------- |
-| Browser operation       | browser-automation   | browser-workflow.md                    |
-| Send relay message      | relay-communication  | relay-protocol.md, browser-automation  |
-| Check system status     | system-diagnostics   | -                                      |
-| Create new skill        | skill-builder (meta) | All existing skills, pattern library   |
+| Task Type               | Primary Skill        | Referenced Resources                           |
+| ----------------------- | -------------------- | ---------------------------------------------- |
+| Browser operation       | browser-automation   | browser-workflow.md                            |
+| Send relay message      | relay-communication  | relay-protocol.md, browser-automation          |
+| Check system status     | system-diagnostics   | -                                              |
+| Create new skill        | skill-builder (meta) | All existing skills, pattern library           |
 | Complex task (>5 steps) | planning-with-files  | Optional legacy planning files after Turn Zero |
-| Long-running task       | jules-delegation     | Jules CLI, async execution             |
-| High-performance work   | trait-antigravity    | Ralph Wiggum, 3-Strike, High-Aesthetic |
-| CLI Orchestration       | tnf-cli-agent        | CLI ops, trait-alignment               |
-| Troubleshoot            | Multiple skills      | Diagnostic context, logs               |
+| Long-running task       | jules-delegation     | Jules CLI, async execution                     |
+| High-performance work   | trait-antigravity    | Ralph Wiggum, 3-Strike, High-Aesthetic         |
+| CLI Orchestration       | tnf-cli-agent        | CLI ops, trait-alignment                       |
+| Troubleshoot            | Multiple skills      | Diagnostic context, logs                       |
 
 ### Keyword → Skill Mapping
 
-| Keywords                                         | Load This Skill        |
-| ------------------------------------------------ | ---------------------- |
-| "browser", "chrome", "gemini", "webpage"         | browser-automation     |
-| "relay", "message", "channel", "broadcast"       | relay-communication    |
-| "port", "service", "status", "running"           | system-diagnostics     |
-| "news", "trend", "scout", "competitor"           | news-scouting          |
-| "audit", "tech debt", "improver"                 | continuous-improvement |
-| "create skill", "new capability", "add function" | skill-builder (meta)   |
-| "plan", "complex", "multi-step", "phases"        | planning-with-files after Turn Zero |
+| Keywords                                         | Load This Skill                                                       |
+| ------------------------------------------------ | --------------------------------------------------------------------- |
+| "browser", "chrome", "gemini", "webpage"         | browser-automation                                                    |
+| "relay", "message", "channel", "broadcast"       | relay-communication                                                   |
+| "port", "service", "status", "running"           | system-diagnostics                                                    |
+| "news", "trend", "scout", "competitor"           | news-scouting                                                         |
+| "audit", "tech debt", "improver"                 | continuous-improvement                                                |
+| "create skill", "new capability", "add function" | skill-builder (meta)                                                  |
+| "plan", "complex", "multi-step", "phases"        | planning-with-files after Turn Zero                                   |
 | "findings", "progress", "handoff", "session"     | Canonical protocol state first; planning-with-files only if requested |
-| "delegate", "jules", "async", "parallel"         | jules-delegation       |
-| "antigravity", "trait", "high-performance"       | trait-antigravity      |
-| "tnf cli", "cli agent", "orchestrate cli"        | tnf-cli-agent          |
+| "delegate", "jules", "async", "parallel"         | jules-delegation                                                      |
+| "antigravity", "trait", "high-performance"       | trait-antigravity                                                     |
+| "tnf cli", "cli agent", "orchestrate cli"        | tnf-cli-agent                                                         |
 
 ---
 

@@ -66,7 +66,8 @@ function main() {
   const results = [];
 
   if (!jsonMode) {
-    console.log('TNF Onboard V2 — Manifest-Derived Harness');
+    console.log('TNF Onboard — Turn Zero V2 (current Turn Zero)');
+    console.log('Manifest-derived Stage A harness; gate: scripts/protocols/turn-zero-v2-gate.cjs');
     console.log(`[TWIP] Terminal ID: ${currentTwid}`);
   }
 
@@ -136,7 +137,8 @@ function main() {
       results: results.map(({ stdout, stderr, ...row }) => ({ ...row, stdout: stdout.trim(), stderr: stderr.trim() })),
     }, null, 2));
   } else {
-    console.log('\nTNF onboarding complete.');
+    console.log('\nTNF onboarding complete — Turn Zero V2.');
+    console.log('- "Turn Zero" means Turn Zero V2; there is no separate current Turn Zero.');
     console.log('- Stage A was derived from FRONTLOAD_MANIFEST.md and hash-receipted.');
     console.log('- Stage B/C remain task-scoped; required onboarding routes were verified to resolve.');
     console.log('- active peers are collision/capability signals; verify ownership before overlapping edits.');

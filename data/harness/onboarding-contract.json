@@ -5,6 +5,9 @@
   "updatedAt": "2026-08-22T18:25:00.000Z",
   "authority": {
     "turnZero": "docs/protocols/TURN_ZERO_MANDATE.md",
+    "turnZeroProtocolName": "Turn Zero V2",
+    "turnZeroAlias": "Turn Zero means Turn Zero V2; there is no separate current Turn Zero",
+    "turnZeroGate": "scripts/protocols/turn-zero-v2-gate.cjs",
     "frontloadManifest": "docs/core/FRONTLOAD_MANIFEST.md",
     "canonicalDevelopmentRepository": "whodaniel/tnf-monorepo"
   },

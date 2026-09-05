@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 'use strict';
 
+/**
+ * Turn Zero V2 gate — foundational TNF protocol (product/domain-neutral).
+ * Not lane-owned, not video-specific. Resolve from the active repo root;
+ * worktree copies are checkout shadows, not alternate authorities.
+ * Law: docs/protocols/TURN_ZERO_MANDATE.md
+ */
+
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
@@ -281,7 +288,10 @@ function main() {
 
   const payload = {
     protocol: 'TNF_TURN_ZERO_V2',
+    scope: 'foundational-canonical',
     canonicalSource: CANONICAL,
+    repoRoot: ROOT,
+    gatePath: path.join(ROOT, 'scripts/protocols/turn-zero-v2-gate.cjs'),
     lifecycle: ['RESPOND','ORIENT','CLASSIFY','HYDRATE','STAFF','ACT','VERIFY','PROPAGATE','HANDOFF'],
     repository,
     stageA,
@@ -301,6 +311,8 @@ function main() {
   if (args.json) console.log(JSON.stringify(payload, null, 2));
   else {
     console.log('=== Turn Zero V2 / Harness Receipt ===');
+    console.log('- scope: foundational TNF protocol (not lane/domain-owned; worktree copies are not alternate authorities)');
+    console.log(`- repo root: ${ROOT}`);
     console.log(`- repository: ${repository.normalizedOrigin || 'unknown'} @ ${repository.branch}:${repository.head.slice(0,12) || 'unknown'}`);
     console.log(`- repository mode: ${repository.mode}`);
     console.log(`- Stage A manifest hydration: ${stageA.ok ? 'PASS' : 'FAIL'} (${stageA.entries.length} rails)`);

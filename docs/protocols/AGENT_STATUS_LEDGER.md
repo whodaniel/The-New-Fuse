@@ -167,7 +167,8 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-05T02:11:59.989Z** — handoff `0c344d99-2cb6-4b9d-b326-c4c937d19992` (`a2671b8dd071`).
+Updated: **2026-09-05T02:45:40.560Z** — handoff
+`a554eab9-0bce-4239-9ba4-4f33b8738ecc` (`803d765cfcf0`).
 `d73e7a3e-268a-4448-9fcf-92045fdeab35` (`b0ae1dd278d0`).
 `664f7bbb-72ae-4d60-9b66-445efff61d66` (`778b6187ccb7`).
 `f1b43276-289a-45e9-a849-291dfa15d45f` (`fdcfd006f59f`).
@@ -421,9 +422,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| **P0**   | Optional: commit tauri-desktop changes (5 modified + 1 new test file) and the llm-client.ts loadEnv fix from earlier this session |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1904,6 +1906,11 @@ tnf-cli (cli.ts, slashCommands.ts) | ✅ COMPLETE |
 | 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
 (d73e7a3e-268a-4448-9fcf-92045fdeab35) | ✅ HANDOFF_READY |
 
-| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST (158a5a36-3607-4b8c-aefa-8402cb3dc898) | ✅ HANDOFF_READY |
+| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(158a5a36-3607-4b8c-aefa-8402cb3dc898) | ✅ HANDOFF_READY |
 
-| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST (0c344d99-2cb6-4b9d-b326-c4c937d19992) | ✅ HANDOFF_READY |
+| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(0c344d99-2cb6-4b9d-b326-c4c937d19992) | ✅ HANDOFF_READY |
+
+| 2026-09-05 | Orchestrator | Published SESSION_HANDOFF_LATEST
+(a554eab9-0bce-4239-9ba4-4f33b8738ecc) | ✅ HANDOFF_READY |

@@ -25,7 +25,10 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { syncFromRepo } = require('../lib/sync-handoff-cache.cjs');
-const { CANONICAL_RAW_AGENT_PROMPT } = require('../lib/tnf-canonical-onboarding.cjs');
+const {
+  CANONICAL_RAW_AGENT_PROMPT,
+  TURN_ZERO_PROTOCOL_NAME,
+} = require('../lib/tnf-canonical-onboarding.cjs');
 const { resolveTnfRepo, writePointer } = require('../lib/resolve-tnf-repo.cjs');
 
 function parseArgs(argv) {
@@ -85,7 +88,11 @@ function main() {
           generatedAt: data?.generatedAt ?? null,
           stateCount: Array.isArray(data?.STATE) ? data.STATE.length : 0,
           immediateTasks: Array.isArray(data?.IMMEDIATE_TASKS) ? data.IMMEDIATE_TASKS : [],
-          onboarding: { canonical: true, prompt: CANONICAL_RAW_AGENT_PROMPT },
+          onboarding: {
+            canonical: true,
+            protocol: TURN_ZERO_PROTOCOL_NAME,
+            prompt: CANONICAL_RAW_AGENT_PROMPT,
+          },
         },
         null,
         2
@@ -127,7 +134,7 @@ function main() {
     console.log('');
   }
 
-  console.log('ONBOARDING (canonical — issue #176):');
+  console.log(`ONBOARDING (${TURN_ZERO_PROTOCOL_NAME} = current Turn Zero — issue #176):`);
   console.log(`  "${CANONICAL_RAW_AGENT_PROMPT}"`);
   console.log('  Launch raw AI CLIs from the TNF repository root so repo-relative paths resolve.');
   console.log('');

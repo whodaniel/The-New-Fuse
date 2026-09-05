@@ -1,13 +1,16 @@
 ---
-description: TNF Turn Zero — orient from state/handoff artifacts before acting in a TNF-governed repository
+description: TNF Turn Zero V2 — orient via onboard/gate before acting in a TNF-governed repository
 alwaysApply: false
 ---
 
-# TNF Turn Zero
+# TNF Turn Zero V2 (current Turn Zero)
 
-Apply this rule when working inside a repository that contains a
-`docs/protocols/` directory with TNF artifacts (Living State, Ledger, Session
-Handoff). It establishes shared orientation before any change is made.
+**Naming law:** “Turn Zero” means **Turn Zero V2**. There is no separate
+current Turn Zero.
+
+Apply this rule when working inside a repository that contains TNF protocol
+artifacts under `docs/protocols/`. It establishes shared orientation before any
+mutation.
 
 ## When to run
 
@@ -16,39 +19,35 @@ Handoff). It establishes shared orientation before any change is made.
 - During idle self-prompting (no user input) to observe swarm state.
 
 Note: in interactive mode (user input present), respond immediately.
-Turn zero orientation runs in parallel or in background, never blocking
-user requests (see AGENTS.md: User Responsiveness > Protocol Compliance).
+Turn Zero V2 orientation runs in parallel or in background for ordinary chat;
+mutation readiness is gated separately.
 
 ## Operating loop: Inspect → Act → Verify
 
 Always execute in this order. Never skip Verify.
 
-## Turn Zero sequence
+## Turn Zero V2 sequence
 
-1. **Read state files** (if present; adapt to what's actually in the repo):
-   - `.agent/runtime-state.json` (live agent state — observe first)
-   - `docs/protocols/LIVING_STATE.md` (current directive + active steps)
-   - `docs/protocols/AGENT_STATUS_LEDGER.md` (agent roster + next focus)
-   - `AGENTS.md` (authority and core tenets — replaces phantom `TURN_ZERO_MANDATE.md`)
-2. **Read the canonical session handoff** (via `session_search` or files if present):
-   - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json` (preferred, if it exists)
-   - `docs/protocols/reports/SESSION_HANDOFF_LATEST.md` (fallback)
-   - Fallback: `session_search(query="handoff")` for session DB history.
+1. **From the TNF repository root, run:**
+   ```bash
+   pnpm run tnf:onboard -- --task "<current task>"
+   ```
+   This runs `scripts/protocols/turn-zero-v2-gate.cjs`, derives Stage A from
+   `docs/core/FRONTLOAD_MANIFEST.md`, and receipts hydration.
+2. **Treat as law (not optional folklore):**
+   - `docs/protocols/TURN_ZERO_MANDATE.md` (Turn Zero Mandate — V2)
+   - `docs/protocols/LIVING_STATE.md`
+   - `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
 3. **Summarize orientation** in a compact briefing: current directive, branch vs
-   origin, open/gated tasks, any P0 items, and `session-stale` flag (if handoff >24h old).
-4. **Proceed without blocking.** In interactive mode, execute the user's
-   request immediately — the briefing is produced in parallel or delivered
-   after the response, not as a gate. In idle/self-prompt mode, await
-   confirmation only if the operator explicitly asked for orientation.
-
-## Session freshness
-
-If the handoff `created_at` is more than 24 hours older than now, note it as a
-`session-stale` flag in your briefing. Stale sessions do not block work but must
-be acknowledged.
+   origin, open/gated tasks, write-readiness, any P0 items, and `session-stale`
+   if handoff is stale.
+4. **Proceed without blocking ordinary conversation.** Mutation/autonomous work
+   requires write-readiness (`pnpm run tnf:onboard -- --write-ready --task "..."`).
 
 ## Do not
 
-- Do not begin editing files before producing the orientation summary.
+- Do not cite a lane/worktree path as the Turn Zero V2 authority.
+- Do not revive the retired “await my confirmation” paste ritual as a competing
+  entry path.
 - Do not trust upstream agent output without structured verification.
 - Do not fabricate an operator handshake (see the safety-gates rule).

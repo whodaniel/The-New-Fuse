@@ -15,10 +15,11 @@ If baseline frontload files/config stubs are missing, self-heal in one pass:
 tnf onboard --repair
 ```
 
-`tnf onboard` prints the exact prompt to paste into a raw AI CLI session:
+`tnf onboard` / `pnpm run tnf:onboard` runs **Turn Zero V2** (current Turn Zero)
+and prints the exact prompt to paste into a raw AI CLI session:
 
 ```text
-Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+Before planning or acting, run Turn Zero V2 (current Turn Zero) from the repository root: pnpm run tnf:onboard -- --task "<current task>". It runs scripts/protocols/turn-zero-v2-gate.cjs, derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation. Law: docs/protocols/TURN_ZERO_MANDATE.md.
 ```
 
 The prompt uses repository-relative paths. Start raw AI CLIs from the TNF repo
@@ -33,7 +34,8 @@ now runs automatically at install time unless explicitly skipped.
 Future TNF sessions should treat TNF as the primary control plane.
 
 - OpenClaw is an optional interoperability surface, not TNF's parent system.
-- Canonical Turn Zero authority lives in `docs/protocols/TURN_ZERO_MANDATE.md`.
+- Canonical Turn Zero V2 authority lives in
+  `docs/protocols/TURN_ZERO_MANDATE.md` (“Turn Zero” means Turn Zero V2).
 - Any external mirror (for example `~/GEMINI.md`) is non-authoritative.
 
 - Prefer native TNF commands first.
