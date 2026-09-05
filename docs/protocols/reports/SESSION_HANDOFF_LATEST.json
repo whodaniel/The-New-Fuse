@@ -4,20 +4,16 @@
   "created_at": "2026-09-05T10:26:00.128Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "ec7f4eb24ed5919ba91543404169abf59b153b07",
+  "head_sha": "994a8ba0cd7e30f259df8fda9759524b82ed0f85",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [
     "TNF-SESSION"
   ],
-  "work_summary": "Sweep: harness anomaly payload and sieve manifest",
+  "work_summary": "sweep: harness anomaly payload and sieve manifest (2 files)",
   "changed_paths": [
     "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
-    "data/agent-registry/onboarding-agent.json",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md"
+    "data/harness/active-sieve-manifest.json"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -138,5 +134,5 @@
   ],
   "files_changed_count": 2,
   "head": "1f387c659249e104adebb263ef9f5fb7c3c15f3f",
-  "updated_at": "2026-09-05T10:46:45.926Z"
+  "updated_at": "2026-09-05T10:47:39.285Z"
 }

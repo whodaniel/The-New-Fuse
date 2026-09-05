@@ -7365,6 +7365,10 @@ program
   .command('onboard')
   .description('Run TNF frontload onboarding')
   .option('--repair', 'Scaffold missing onboarding files and config stubs')
+  .option(
+    '--interactive',
+    'Run the interactive personalization wizard (writes ~/.tnf/profiles/<handle>.json; non-TTY applies defaults)'
+  )
   .option('--allow-local-db', 'Allow local DATABASE_URL for this run')
   .option('--require-cloud-db', 'Require cloud DATABASE_URL for this run')
   .option('--no-require-cloud-db', 'Allow non-cloud DATABASE_URL for this run')
@@ -7373,12 +7377,18 @@ program
   .action(
     async (options: {
       repair?: boolean;
+      interactive?: boolean;
       allowLocalDb?: boolean;
       requireCloudDb?: boolean;
       databaseUrl?: string;
       runtimeTimeoutMs?: string;
     }) => {
       try {
+        if (options.interactive) {
+          const { runInteractiveOnboardingWizard } = await import('./boot/wizard.js');
+          await runInteractiveOnboardingWizard(repoRoot, process.env.TNF_ONBOARD_HANDLE);
+          return;
+        }
         const args = ['scripts/tnf-onboard.cjs'];
         if (options.repair) args.push('--repair');
         if (options.allowLocalDb) args.push('--allow-local-db');

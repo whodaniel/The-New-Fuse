@@ -4484,6 +4484,10 @@
           "description": "Override DATABASE_URL for this run"
         },
         {
+          "flags": "--interactive",
+          "description": "Run the interactive personalization wizard (writes ~/.tnf/profiles/<handle>.json; non-TTY applies defaults)"
+        },
+        {
           "flags": "--no-require-cloud-db",
           "description": "Allow non-cloud DATABASE_URL for this run"
         },
