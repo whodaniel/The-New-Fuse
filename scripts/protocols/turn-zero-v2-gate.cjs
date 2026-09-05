@@ -135,6 +135,53 @@ function validateClassification(c) {
 function csv(name) { return String(process.env[name] || '').split(',').map((s) => s.trim()).filter(Boolean); }
 function capabilityReceipt() { return { required: csv('TNF_REQUIRED_CAPABILITIES'), staffedBy: csv('TNF_STAFFED_BY') }; }
 
+/**
+ * Workspace isolation receipts (TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL).
+ * Advisory by default: a tier violation is a WARNING. With
+ * TNF_WORKSPACE_TIER_ENFORCE=1 (and --require-write-ready) it becomes a
+ * blocker, so an operator can harden a session without hardening every
+ * cold start (Gate 3: Turn Zero must never be why a cold start fails).
+ */
+function runAdvisoryNode(relPath, args, timeoutMs = 15000) {
+  const result = spawnSync(process.execPath, [path.join(ROOT, relPath), ...args], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    timeout: timeoutMs,
+  });
+  let parsed = null;
+  if (result.stdout && result.status !== null && result.stdout.trim().startsWith('{')) {
+    try { parsed = JSON.parse(result.stdout); } catch { /* keep raw output */ }
+  }
+  return {
+    status: result.status,
+    error: result.error?.message || (result.stderr ? String(result.stderr).slice(0, 300) : ''),
+    parsed,
+  };
+}
+
+function workspaceTierReceipt(task = '') {
+  const enforced = process.env.TNF_WORKSPACE_TIER_ENFORCE === '1';
+  const args = ['--json'];
+  const trimmed = String(task || '').trim();
+  if (trimmed) args.push('--describe', trimmed);
+  else args.push('--task-class', 'edit'); // documented default tier when no task is known
+  if (enforced) args.push('--enforce');
+  const run = runAdvisoryNode('scripts/harness/resolve-workspace-tier.cjs', args);
+  if (run.status === 0 && run.parsed) return { resolved: true, enforced, violatesR1: false, ...run.parsed };
+  if (run.status === 1 && run.parsed) return { resolved: true, enforced, violatesR1: true, ...run.parsed };
+  return { resolved: false, enforced, violatesR1: false, error: run.error || `resolver exited ${run.status}` };
+}
+
+function workspaceLeaseReceipt() {
+  const enforced = process.env.TNF_WORKSPACE_LEASE_ENFORCE === '1';
+  const args = ['--json'];
+  if (enforced) args.push('--enforce');
+  const run = runAdvisoryNode('scripts/harness/check-workspace-lease.cjs', args);
+  if (run.status === 0 && run.parsed) return { resolved: true, enforced, violated: false, ...run.parsed };
+  if (run.status === 1 && run.parsed) return { resolved: true, enforced, violated: true, ...run.parsed };
+  return { resolved: false, enforced, violated: false, error: run.error || `lease checker exited ${run.status}` };
+}
+
 function hydrationReceipt(task = '') {
   const q = String(task || '').toLowerCase();
   const paths = [PRODUCT_MAP, OSS_BOUNDARY, PRODUCT_BOUNDARY, REPO_SEPARATION];
@@ -251,6 +298,8 @@ function main() {
   const stageA = hydrateStage({ root: ROOT, stage: 'A', consumer: args.consumer });
   const taskHydration = hydrationReceipt(args.task || process.env.TNF_TASK || '');
   const taskHydrationState = taskHydrationStatus(taskHydration);
+  const workspaceTier = workspaceTierReceipt(args.task || process.env.TNF_TASK || '');
+  const workspaceLease = workspaceLeaseReceipt();
   const blockers = [];
   const warnings = [];
 
@@ -285,6 +334,20 @@ function main() {
     blockers.push(...classificationValidation.errors);
     if (classificationValidation.unresolved) blockers.push('classification is unresolved');
   }
+  if (workspaceTier.resolved && workspaceTier.violatesR1) {
+    const message = `workspace tier "${workspaceTier.tier}" does not permit "${workspaceTier.taskClass}" work in the shared checkout — provision an isolated workspace (node scripts/harness/resolve-workspace-tier.cjs --describe "<task>" --provision)`;
+    if (workspaceTier.enforced) blockers.push(message);
+    else warnings.push(message);
+  } else if (!workspaceTier.resolved) {
+    warnings.push(`workspace tier could not be resolved (${workspaceTier.error}) — treat the shared checkout as edit-tier only`);
+  }
+  if (workspaceLease.resolved && workspaceLease.violated) {
+    const message = `dirty set overlaps another agent's active workspace lease (${[...new Set(workspaceLease.violations.map((v) => v.agent))].join(', ')}) — coordinate or claim the lease in docs/protocols/workspace-leases.json`;
+    if (workspaceLease.enforced) blockers.push(message);
+    else warnings.push(message);
+  } else if (!workspaceLease.resolved) {
+    warnings.push(`workspace lease check could not run (${workspaceLease.error}) — proceed with extra coordination care`);
+  }
 
   const payload = {
     protocol: 'TNF_TURN_ZERO_V2',
@@ -301,6 +364,11 @@ function main() {
     capabilities,
     taskHydration,
     taskHydrationState,
+    workspaceIsolation: {
+      policy: 'docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md',
+      tier: workspaceTier,
+      lease: workspaceLease,
+    },
     harnessed: stageA.ok,
     writeReady: blockers.length === 0 && classificationValidation.ok,
     blockers,
@@ -329,6 +397,18 @@ function main() {
     console.log(`  source: ${CLASSIFICATION_AXES.map(([key]) => `${key}=${classification.source[key]}`).join(' ')}`);
     console.log('- task-scoped hydration plan:');
     for (const item of taskHydrationState) console.log(`  ${item.present ? 'OK' : 'MISS'} ${item.path}`);
+    console.log('- workspace isolation (TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL):');
+    if (workspaceTier.resolved) {
+      console.log(`  ${workspaceTier.violatesR1 ? 'VIOLATION' : 'OK'} task-class=${workspaceTier.taskClass} tier=${workspaceTier.tier} (${workspaceTier.workspace})${workspaceTier.enforced ? ' [enforced]' : ''}`);
+      if (workspaceTier.diskWarning) console.log(`  ⛔ DISK: ${workspaceTier.diskWarning}`);
+    } else {
+      console.log(`  UNRESOLVED (${workspaceTier.error})`);
+    }
+    if (workspaceLease.resolved) {
+      console.log(`  ${workspaceLease.violated ? 'VIOLATION' : 'OK'} lease-check agent=${workspaceLease.agent} dirty=${workspaceLease.dirtyCount} active-leases=${workspaceLease.activeLeases.length}${workspaceLease.enforced ? ' [enforced]' : ''}`);
+    } else {
+      console.log(`  UNRESOLVED (${workspaceLease.error})`);
+    }
     warnings.forEach((w) => console.log(`▲ ${w}`));
     console.log('\n=== State Freshness ===');
     console.log(printFreshness());
