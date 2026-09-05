@@ -9,10 +9,10 @@ d3e52f001fd6ebe325a92cfb2246d04c8394893f **Protocol ACK:** TNF_PROTOCOL_ACK
 
 ## Work Summary
 
-- Sweep: harness anomaly/sieve, marketplace catalog (3 files)
-
----
-
+- **Files Changed**: undefined
+- **Lines Added**: undefined
+- **Lines Removed**: undefined
+- **Commits**: 1
 ## Changed Paths
 
 - `data/llm-provider-status.json`
@@ -69,15 +69,8 @@ d3e52f001fd6ebe325a92cfb2246d04c8394893f **Protocol ACK:** TNF_PROTOCOL_ACK
 
 ## Next Actions
 
-1. Review updated LIVING_STATE.md for new active steps
-2. Re-run tnf agents announce while Cursor session remains dispatchable.
-3. Local Subdirector drain cycle should observe agent_available_for_dispatch on
-   tnf:direct:sub-director:tnf-cli-agent.
-4. ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 5 file(s)
-   uncommitted — see
-   docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
-
----
+1. Move CLI wizard/cli.ts to task branch
+2. Decide on onboarding-contract.json (protocol contract)
 
 ## Artifacts
 
