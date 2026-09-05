@@ -1,27 +1,26 @@
 {
   "spec": "tnf/session-handoff/0.2",
-  "handoff_id": "acec8568-2ee9-40f7-9631-cc73b330e901",
-  "created_at": "2026-09-05T03:52:56.639Z",
+  "handoff_id": "de14d2f3-3f3d-45f1-b92d-a38cb965b981",
+  "created_at": "2026-09-05T04:35:24.293Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "50c099d70fdd0bdb1cb098a5860a73f899e3d650",
+  "head_sha": "e9d8242fbfb7bc2366cf90bb82c344e9841d201a",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": ["Modified 10 file(s)"],
+  "work_summary": [
+    "Modified 7 file(s)"
+  ],
   "changed_paths": [
-    ".agent/SYSTEM_PROMPT.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board-latest.md",
-    "apps/frontend/public/visualizations/terminals/data/twip-terminal-macro-board.state.json",
+    "apps/frontend/src/ComprehensiveRouter.tsx",
     "apps/frontend/src/data/codebase_map.json",
-    "data/harness/ANOMALY_PAYLOAD.md",
-    "data/harness/active-sieve-manifest.json",
-    "data/harness/onboarding-contract.json",
     "data/llm-provider-status.json",
-    "docs/protocols/AGENT_WHO_IS_WHO.md",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    ".tnf/command/",
-    "docs/protocols/reports/session_handoff_platformhub-unified-intel.json"
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "apps/frontend/src/layouts/AppShell.css",
+    "apps/frontend/src/layouts/AppShell.tsx"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -32,7 +31,9 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": ["orchestrator"],
+    "targets": [
+      "orchestrator"
+    ],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -41,12 +42,15 @@
     ]
   },
   "next_actions": [
+    "Review updated LIVING_STATE.md for new active steps",
     "Re-run tnf agents announce while Cursor session remains dispatchable.",
     "Local Subdirector drain cycle should observe agent_available_for_dispatch on tnf:direct:sub-director:tnf-cli-agent.",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 12 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 9 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["50c099d70fdd0bdb1cb098a5860a73f899e3d650"],
+    "commits": [
+      "e9d8242fbfb7bc2366cf90bb82c344e9841d201a"
+    ],
     "deployment_urls": [],
     "database_migrations": []
   },

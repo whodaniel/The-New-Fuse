@@ -1,24 +1,24 @@
 {
-  "lastChecked": "2026-09-05T04:09:39.918Z",
+  "lastChecked": "2026-09-05T04:39:36.191Z",
   "bestAvailable": {
-    "id": "openrouter",
-    "name": "OpenRouter",
+    "id": "nvidia",
+    "name": "NVIDIA NIM",
     "tier": "free",
     "type": "cloud",
-    "envKey": "OPENROUTER_API_KEY",
-    "testUrl": "https://openrouter.ai/api/v1/chat/completions",
-    "defaultModel": "openrouter/auto",
+    "envKey": "NVIDIA_API_KEY",
+    "testUrl": "https://integrate.api.nvidia.com/v1/chat/completions",
+    "defaultModel": "nvidia/nemotron-3-ultra-550b-a55b",
     "active": true
   },
   "allocations": {
     "orchestrator": {
-      "id": "openrouter",
-      "name": "OpenRouter",
+      "id": "nvidia",
+      "name": "NVIDIA NIM",
       "tier": "free",
       "type": "cloud",
-      "envKey": "OPENROUTER_API_KEY",
-      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
-      "defaultModel": "openrouter/auto",
+      "envKey": "NVIDIA_API_KEY",
+      "testUrl": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "defaultModel": "nvidia/nemotron-3-ultra-550b-a55b",
       "active": true
     },
     "worker": {
@@ -42,17 +42,27 @@
       "active": true
     },
     "subagent": {
-      "id": "openrouter",
-      "name": "OpenRouter",
+      "id": "nvidia",
+      "name": "NVIDIA NIM",
       "tier": "free",
       "type": "cloud",
-      "envKey": "OPENROUTER_API_KEY",
-      "testUrl": "https://openrouter.ai/api/v1/chat/completions",
-      "defaultModel": "openrouter/auto",
+      "envKey": "NVIDIA_API_KEY",
+      "testUrl": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "defaultModel": "nvidia/nemotron-3-ultra-550b-a55b",
       "active": true
     }
   },
   "fallbackChain": [
+    {
+      "id": "nvidia",
+      "name": "NVIDIA NIM",
+      "tier": "free",
+      "type": "cloud",
+      "envKey": "NVIDIA_API_KEY",
+      "testUrl": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "defaultModel": "nvidia/nemotron-3-ultra-550b-a55b",
+      "active": true
+    },
     {
       "id": "openrouter",
       "name": "OpenRouter",
@@ -111,7 +121,7 @@
       "envKey": "NVIDIA_API_KEY",
       "testUrl": "https://integrate.api.nvidia.com/v1/chat/completions",
       "defaultModel": "nvidia/nemotron-3-ultra-550b-a55b",
-      "active": false
+      "active": true
     },
     {
       "id": "deepseek",
