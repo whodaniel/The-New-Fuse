@@ -1,0 +1,84 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "86eb73db-07e3-4dd2-ab97-3ecbf8c8c69a",
+  "created_at": "2026-09-05T03:54:40Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "main",
+  "head_sha": "50c099d70fdd0bdb1cb098a5860a73f899e3d650",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "private_control_plane",
+    "data_residency": "bounded_working",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node"],
+    "staffed_by": ["pi"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "turn-zero-stage-a.latest",
+      "state": "pass",
+      "observed_at": "2026-09-05T03:54:40Z",
+      "value": "task-scoped onboard rerun: harness state PASS; write readiness PASS; SYSTEM_PROMPT rail re-hashed 2c59bd7f0ee2"
+    },
+    {
+      "id": "onboarding-route-integrity",
+      "state": "pass",
+      "observed_at": "2026-09-05T03:54:40Z",
+      "value": "route.7 (AGENT_AVAILABILITY_ANNOUNCE doc+skill+script) present; verify-onboarding-routes 3 pass 0 fail"
+    }
+  ],
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Standardized the agent availability announce protocol into the TNF onboarding process so every agent learns it at session entry.",
+    "onboarding-contract: added taskRoutes[7] loading docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md, .agent/skills/tnf-agent-availability-announce/SKILL.md, and scripts/agents/announce-availability.cjs (existence gate-verified by verify-onboarding-routes.cjs); added crossAgentRules.interactiveSessionsAnnounceAvailabilityBeforeDispatch; bumped updatedAt.",
+    ".agent/SYSTEM_PROMPT.md Fleet/Workstream Coordination: added the announce/re-announce/withdraw-with-offline law pointing at the protocol, skill, and tnf agents announce CLI."
+  ],
+  "changed_paths": [
+    ".agent/SYSTEM_PROMPT.md",
+    "data/harness/onboarding-contract.json",
+    "docs/protocols/reports/SESSION_HANDOFF_ANNOUNCE_ROUTE_STANDARDIZATION_20260905.json",
+    "docs/protocols/reports/SESSION_HANDOFF_ANNOUNCE_ROUTE_STANDARDIZATION_20260905.md"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "All four staged guards ran green in the pre-commit hook chain (self-edit, privacy, secret-sweep, zero-file, locked-doc-ledger); session-handoff gate then requested this scoped receipt."
+  },
+  "continuation": {
+    "owner": "pi-session",
+    "targets": ["tnf-cli-agent"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Verify route.7 appears in ONBOARDING ROUTE INTEGRITY PASS on next tnf:onboard run.",
+      "Confirm runtime agents re-announce via tnf agents announce and appear dispatchable in tnf agents list.",
+      "At session end, withdraw with scripts/agents/announce-availability.cjs --offline."
+    ]
+  },
+  "next_actions": [
+    "Commit and push the announce-route standardization with this scoped receipt.",
+    "Re-announce this Pi session availability while dispatchable (cadence <= 900s).",
+    "Optional: propagate the new route into tnf-universal-slash-commands reference docs."
+  ]
+}

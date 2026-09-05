@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "id": "tnf-onboarding-contract",
   "version": "2.2.0",
-  "updatedAt": "2026-08-22T18:25:00.000Z",
+  "updatedAt": "2026-09-05T03:49:34.000Z",
   "authority": {
     "turnZero": "docs/protocols/TURN_ZERO_MANDATE.md",
     "turnZeroProtocolName": "Turn Zero V2",
@@ -109,6 +109,15 @@
         "docs/protocols/THE_VELOCITY_INTEGRITY_BALANCE.md"
       ],
       "rule": "Process incoming video/audio transcripts across the 7 Actionable Modalities, execute non-destructive pruning by offloading core digests to cloud ledgers and compressing raw media to cold storage, and navigate skills via the Hierarchical Semantic Skill Tree."
+    },
+    {
+      "when": "session entry as a dispatchable worker, Subdirector dispatch planning, availability announcement, or session-end withdrawal from dispatch is involved",
+      "load": [
+        "docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md",
+        ".agent/skills/tnf-agent-availability-announce/SKILL.md",
+        "scripts/agents/announce-availability.cjs"
+      ],
+      "rule": "Interactive sessions are dispatchable only while announced per AGENT_AVAILABILITY_ANNOUNCE (stable agent id, registry upsert, durable Subdirector lane notify, re-announce cadence). Announce availability before accepting delegated tasks, re-announce while dispatchable, and withdraw with status offline / dispatchable false at session end. Never use tnf register --daemon for interactive availability."
     }
   ],
   "crossAgentRules": {
@@ -118,7 +127,8 @@
     "sourceLabelsDoNotCreateAuthority": true,
     "privacyPrecedesHydration": true,
     "centralizeReusableHostResourcesBeforeCreatingProviderCopies": true,
-    "assimilationMustReuseExistingTNFAuthorities": true
+    "assimilationMustReuseExistingTNFAuthorities": true,
+    "interactiveSessionsAnnounceAvailabilityBeforeDispatch": true
   },
   "hostInjection": {
     "installer": "scripts/install-agent-frontload.cjs",

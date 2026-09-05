@@ -91,6 +91,7 @@ Treat other active agent sessions as capability and collision signals.
 - Another agent's claim is not proof; inspect the referenced branch, PR, file, receipt, log, or runtime state.
 - Do not race a package/workstream already actively owned unless an explicit coordinated handoff requires overlap.
 - Delegate only when it improves time, reliability, capability fit, or independent verification.
+- Interactive sessions are dispatchable only while announced: announce availability to the local Subdirector per `docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md` (skill: `.agent/skills/tnf-agent-availability-announce/SKILL.md`, CLI: `tnf agents announce`), re-announce while willing to take work, and withdraw offline at session end.
 
 ## Operating Discipline
 
