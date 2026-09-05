@@ -1,18 +1,15 @@
 {
   "mode": "running",
-  "updatedAt": "2026-08-31T21:10:29.603Z",
-  "intervalMinutes": 60,
+  "updatedAt": "2026-09-05T04:16:37.415Z",
+  "intervalMinutes": 30,
   "maxCycles": 0,
-  "completedCycles": 57,
+  "completedCycles": 58,
   "failedCycles": 225,
   "lastRun": {
-    "cycle": 8,
-    "startedAt": "2026-08-31T20:40:30.680Z",
-    "finishedAt": "2026-08-31T21:10:29.603Z",
-    "durationMs": 1798923,
-    "ok": true,
-    "warnings": [
-      "status: pnpm exited with code 1\n--- child stderr ---\nError: A system error occurred: uv_os_get_passwd returned ENOENT (no such file or directory)"
-    ]
+    "cycle": 1,
+    "startedAt": "2026-09-05T04:15:13.590Z",
+    "finishedAt": "2026-09-05T04:15:24.308Z",
+    "durationMs": 10718,
+    "ok": true
   }
 }
