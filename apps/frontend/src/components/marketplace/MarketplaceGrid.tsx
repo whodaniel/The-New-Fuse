@@ -6,15 +6,15 @@ import react_1 from 'react';
 import FilterBar_1 from './FilterBar';
 import MarketplaceCard_1 from './MarketplaceCard';
 export const MarketplaceGrid = ({ initialItems, categories, tags }) => {
-  const [items, setItems] = (0, react_1.useState)(initialItems);
-  const [filteredItems, setFilteredItems] = (0, react_1.useState)(initialItems);
+  const [items] = (0, react_1.useState)(initialItems);
   const [searchQuery, setSearchQuery] = (0, react_1.useState)('');
   const [selectedCategory, setSelectedCategory] = (0, react_1.useState)('');
   const [selectedTag, setSelectedTag] = (0, react_1.useState)('');
   const [priceRange, setPriceRange] = (0, react_1.useState)([0, Infinity]);
   const [sortBy, setSortBy] = (0, react_1.useState)('popular');
   const { toast } = (0, useToast_1.useToast)();
-  (0, react_1.useEffect)(() => {
+
+  const filteredItems = (0, react_1.useMemo)(() => {
     let result = [...items];
     if (searchQuery) {
       result = result.filter(
@@ -46,7 +46,7 @@ export const MarketplaceGrid = ({ initialItems, categories, tags }) => {
           return 0;
       }
     });
-    setFilteredItems(result);
+    return result;
   }, [items, searchQuery, selectedCategory, selectedTag, priceRange, sortBy]);
   const handlePurchase = async (item) => {
     try {
@@ -55,7 +55,7 @@ export const MarketplaceGrid = ({ initialItems, categories, tags }) => {
         description: `Successfully purchased ${item.name}`,
         variant: 'success',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to complete purchase',
@@ -63,7 +63,7 @@ export const MarketplaceGrid = ({ initialItems, categories, tags }) => {
       });
     }
   };
-  const handlePreview = (item) => {};
+  const handlePreview = (_item) => {};
   return (
     <div className="space-y-6">
       <FilterBar_1.FilterBar

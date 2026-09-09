@@ -1,0 +1,120 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "c8be5f41-a1c4-47ac-b269-a2d82a943fd4",
+  "created_at": "2026-09-09T02:52:51.652Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "fix/codex-tnf-lifecycle-20260909",
+  "head_sha": "48a8e78909e63b88476ef07413389075db1c1135",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Installed and native-verified Codex TNF skill gateway and trusted lifecycle hooks",
+    "Recorded distinct Stop continuation receipts and bounded self-awake",
+    "Corrected scoped handoff coverage to match immutable registry publication"
+  ],
+  "changed_paths": [
+    ".agent/skills/tnf-codex-harness/SKILL.md",
+    "data/harness/agent-resource-fabric.json",
+    "docs/operations/CODEX_TNF_HARNESS.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/handoffs/2026/a1440e6d-8daf-4d76-802a-e1946bc1d1df.json",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T024945-a1440e6d.json",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T024945-a1440e6d.md",
+    "docs/protocols/workspace-leases.json",
+    "scripts/agents/provision-full-auto-network.cjs",
+    "scripts/harness/codex-lifecycle-probe.cjs",
+    "scripts/harness/codex-lifecycle.cjs",
+    "scripts/harness/codex-lifecycle.test.cjs",
+    "scripts/harness/handoff-registry.cjs",
+    "scripts/harness/verify-harness-completeness.cjs",
+    "scripts/protocols/emit-session-handoff.cjs",
+    "scripts/turn-end-v2.cjs",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T025251-c8be5f41.json",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T025251-c8be5f41.md",
+    "docs/protocols/reports/handoffs/2026/c8be5f41-a1c4-47ac-b269-a2d82a943fd4.json"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "10 focused tests pass plus registry regression. Completeness with --codex-live passes all checks. Native thread 01a0840e-ed4a-75a3-8ed9-051e886b6283 verified canonical SessionStart/UserPromptSubmit and initial/continuation Turn End with correlated reviewed critic receipts; one wake consumed. Fixed scoped emitter view to match finalized registry body after commit gate exposed missing coverage. Bare aliases unsupported upstream; native skills verified. Lifecycle-only automatic records do not assert engineering verification."
+  },
+  "continuation": {
+    "owner": "codex-tnf-lifecycle",
+    "targets": ["codex-tnf-lifecycle"],
+    "priority": "high",
+    "resume_checklist": [
+      "Run canonical Turn Zero",
+      "Read CODEX_TNF_HARNESS operations guide",
+      "Verify native discovery and session receipts"
+    ]
+  },
+  "next_actions": [
+    "Publish changes and verify remote main",
+    "Retain this registered checkout as active installed runtime dependency",
+    "Queue one current-thread Turn Zero follow-up as requested"
+  ],
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "recorded": ["native-stop-continuations-retain-turn-id"]
+    },
+    "skills": {
+      "considered": true,
+      "proposed": ["tnf-codex-harness"],
+      "overlap_reviewed": true
+    },
+    "gaps": {
+      "considered": true,
+      "open": [
+        {
+          "summary": "Bare slash aliases unsupported by installed Codex; use verified native skill gateway. Automatic lifecycle records remain host-local."
+        }
+      ]
+    }
+  },
+  "freshness_receipts": [],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": ["48a8e78909e63b88476ef07413389075db1c1135"]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "session_id": "01a083f1-bbb5-7203-903b-c49157fbedb3",
+  "session_harness": "codex",
+  "task_id": "codex-tnf-lifecycle-20260909",
+  "checkout_id": "co_mtthcrri_ed282b67",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": ["a1440e6d-8daf-4d76-802a-e1946bc1d1df"],
+  "record_hash": "fefbb834bf0ba87961eea3ac20f17203bdd53f9b0647e834206403307be26d56"
+}

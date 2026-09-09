@@ -30,6 +30,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { tryAccountScopedPath } from './AccountBindingService.js';
 
 export interface ProviderDef {
   id: string;
@@ -246,13 +247,36 @@ export const DEFAULT_TOLERANCES: ResolverTolerances = {
 };
 
 /**
- * Resolution order: explicit env override (used by tests and by callers that
- * manage their own config root), then the global convention path.
+ * Legacy flat config path, kept as a read fallback for machines without an
+ * authenticated TNF account.
+ */
+export function legacyProviderConfigPath(): string {
+  return path.join(os.homedir(), '.config', 'tnf', 'providers.json');
+}
+
+/**
+ * Effective provider config path, in precedence order:
+ *
+ *   1. TNF_PROVIDER_CONFIG_PATH (explicit override, used by tests and by
+ *      callers that manage their own config root)
+ *   2. account-scoped  ~/.tnf/accounts/<ownerUserId>/config/providers.json
+ *      when the authenticated TNF account has one
+ *   3. legacy flat     ~/.config/tnf/providers.json
+ *
+ * Provider overrides are personal preferences, so the account-scoped file
+ * wins once an account is bound; the legacy flat path remains as a
+ * backward-compatible read fallback. When neither file exists the preferred
+ * location for a new file is returned (account-scoped when bound). This
+ * module never writes the file, so there is no fail-closed write path here.
  */
 export function providerConfigPath(): string {
   const override = process.env.TNF_PROVIDER_CONFIG_PATH;
   if (override && override.trim()) return override.trim();
-  return path.join(os.homedir(), '.config', 'tnf', 'providers.json');
+  const scoped = tryAccountScopedPath('config', 'providers.json');
+  if (scoped && fs.existsSync(scoped)) return scoped;
+  const legacy = legacyProviderConfigPath();
+  if (fs.existsSync(legacy)) return legacy;
+  return scoped ?? legacy;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

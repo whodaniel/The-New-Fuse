@@ -26,6 +26,7 @@ const INITIAL: OperatorSynergySnapshot = {
   apiUrl: 'http://localhost:3001',
   relayConnected: false,
   relayRegistered: false,
+  relayAuthError: null,
   relayHealth: null,
   apiOnline: false,
   extensionConnected: false,
@@ -80,9 +81,16 @@ class OperatorSynergyServiceClass extends EventEmitter<OperatorSynergyEvent> {
     });
     bind(FederationNodeService, 'registered', () => {
       this.log('Federation node registered');
+      this.setSnapshot({ relayAuthError: null });
       FederationNodeService.requestChannelList();
       FederationNodeService.requestAgentList();
       this.syncFromServices();
+    });
+    bind(FederationNodeService, 'registration_error', (payload) => {
+      const p = payload as { error?: string; code?: string } | undefined;
+      this.setSnapshot({
+        relayAuthError: p?.error ? { message: p.error, code: p.code } : null,
+      });
     });
     bind(FederationNodeService, 'disconnected', () => {
       this.log('Federation node disconnected');

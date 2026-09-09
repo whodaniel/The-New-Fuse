@@ -388,3 +388,243 @@
     --accent-primary: #1a0dab;
   }
 }
+
+/* Google Ecosystem & Spark Hub Styles */
+.tnf-google-ecosystem-control {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  gap: 12px;
+}
+
+.ecosystem-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+.ecosystem-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  color: #60a5fa;
+}
+
+.ecosystem-header .subtitle {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0 0 10px 0;
+}
+
+.ecosystem-subnav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.subnav-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.subnav-btn.active {
+  background: #2563eb;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.sync-banner {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #10b981;
+  color: #6ee7b7;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.ecosystem-tab-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tasks-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.list-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.select-input,
+.text-input,
+.textarea-input {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.add-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.task-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.task-card.completed {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.task-content {
+  flex: 1;
+}
+
+.task-title {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.task-notes {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.task-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+.task-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.spark-ingestor-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.ingested-card {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.aistudio-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px;
+}
+
+.prompt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prompt-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.prompt-item.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+}
+
+.editor-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-dispatch {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.execution-output {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.execution-output pre {
+  margin: 0;
+  font-size: 11px;
+  color: #a7f3d0;
+  white-space: pre-wrap;
+}

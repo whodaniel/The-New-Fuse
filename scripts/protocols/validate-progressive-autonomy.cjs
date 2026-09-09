@@ -5,7 +5,7 @@
  * level 0: observe / help only (always)
  * level 1: requires substrate hard failures == 0 (CLI dists + lock + not quarantined)
  * level 2: level 1 + Redis soft OK + no escalation halt
- * level 3: level 2 + install seal present + TNF_GATE_POLICY_TOKEN set
+ * level 3: level 2 + install seal present + gate token resolved AND verified
  *
  * Usage:
  *   node scripts/protocols/validate-progressive-autonomy.cjs [--level N] [--json] [--set-level N]

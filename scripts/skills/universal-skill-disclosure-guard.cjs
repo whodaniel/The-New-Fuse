@@ -37,6 +37,7 @@ function parseArgs(argv) {
     check: false,
     json: false,
     cleanup: false,
+    aggressive: false,
     activeLimit: DEFAULT_ACTIVE_LIMIT,
   };
 
@@ -46,6 +47,7 @@ function parseArgs(argv) {
     else if (arg === '--check') out.check = true;
     else if (arg === '--json') out.json = true;
     else if (arg === '--cleanup') out.cleanup = true;
+    else if (arg === '--aggressive') out.aggressive = true;
     else if (arg === '--active-limit' && argv[i + 1]) {
       out.activeLimit = Number(argv[++i]);
     } else if (arg === '-h' || arg === '--help') {
@@ -56,7 +58,8 @@ Vaults overflow skills to skills_inactive to protect the LLM context window.
 
 Options:
   --check                 Audit active skill count across all runtimes
-  --apply                 Move overflow / non-core skills to runtime-specific inactive vaults
+  --apply                 Move imported skill packs to runtime-specific inactive vaults
+  --aggressive            With --apply, also move every non-core top-level skill directory
   --cleanup               Restore active directory back to clean baseline state
   --json                  Output report in JSON format
   --active-limit <n>      Target max active skill count (default: ${DEFAULT_ACTIVE_LIMIT})`);
@@ -93,6 +96,7 @@ function walkSkillFiles(root) {
 }
 
 function auditRuntime(name, activeRoot, inactiveRoot, options) {
+  const activeLimit = name === 'Claude' ? Math.max(options.activeLimit, 64) : options.activeLimit;
   const activeFiles = walkSkillFiles(activeRoot);
   const inactiveFiles = walkSkillFiles(inactiveRoot);
 
@@ -100,7 +104,8 @@ function auditRuntime(name, activeRoot, inactiveRoot, options) {
   for (const skillFile of activeFiles) {
     const rel = path.relative(activeRoot, skillFile);
     const topDir = rel.split(path.sep)[0];
-    if (!CORE_ACTIVE.has(topDir) && topDir !== 'SKILL.md') {
+    const importedPack = topDir === 'imported-claude-agents';
+    if (importedPack || (options.aggressive && !CORE_ACTIVE.has(topDir) && topDir !== 'SKILL.md')) {
       overflowCandidates.push({ topDir, skillFile, rel });
     }
   }
@@ -119,6 +124,29 @@ function auditRuntime(name, activeRoot, inactiveRoot, options) {
         if (!fs.existsSync(dstDir)) {
           fs.renameSync(srcDir, dstDir);
           actionsTaken.push(`Moved ${item.topDir} -> ${inactiveRoot}`);
+        } else {
+          const conflictRoot = path.join(
+            inactiveRoot,
+            `${item.topDir}-conflicts`,
+            new Date().toISOString().replace(/[:.]/g, '-')
+          );
+          let merged = 0;
+          let preserved = 0;
+          for (const child of fs.readdirSync(srcDir)) {
+            if (child === '.DS_Store') continue;
+            const sourceChild = path.join(srcDir, child);
+            const targetChild = path.join(dstDir, child);
+            if (!fs.existsSync(targetChild)) {
+              fs.renameSync(sourceChild, targetChild);
+              merged += 1;
+            } else {
+              fs.mkdirSync(conflictRoot, { recursive: true });
+              fs.renameSync(sourceChild, path.join(conflictRoot, child));
+              preserved += 1;
+            }
+          }
+          fs.rmSync(srcDir, { recursive: true, force: true });
+          actionsTaken.push(`Merged ${item.topDir} -> ${inactiveRoot} (${merged} moved, ${preserved} conflicts preserved)`);
         }
         movedDirs.add(item.topDir);
       }
@@ -132,7 +160,9 @@ function auditRuntime(name, activeRoot, inactiveRoot, options) {
     activeCount: activeFiles.length,
     inactiveCount: inactiveFiles.length,
     overflowCount: overflowCandidates.length,
-    withinBudget: activeFiles.length <= options.activeLimit,
+    importedPackActive: overflowCandidates.some((item) => item.topDir === 'imported-claude-agents'),
+    activeLimit,
+    withinBudget: activeFiles.length <= activeLimit && !overflowCandidates.some((item) => item.topDir === 'imported-claude-agents'),
     actionsTaken,
   };
 }
@@ -171,7 +201,7 @@ function main() {
   for (const res of results) {
     const statusIcon = res.withinBudget ? '✅' : '⚠️';
     console.log(`\n${statusIcon} Runtime: ${res.runtime}`);
-    console.log(`   Active Skills:   ${res.activeCount} (Limit: ${options.activeLimit})`);
+    console.log(`   Active Skills:   ${res.activeCount} (Limit: ${res.activeLimit})`);
     console.log(`   Inactive Vault:  ${res.inactiveCount}`);
     if (res.actionsTaken.length > 0) {
       console.log(`   Vaulted:         ${res.actionsTaken.length} overflow modules`);

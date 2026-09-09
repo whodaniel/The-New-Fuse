@@ -18,12 +18,12 @@ phased canary:
 
 1. Relay canary:
    - command:
-     `APPLY_API=0 APPLY_RELAY=1 bash scripts/cloud_runtime/set-federation-gate-mode.sh enforce`
+     `APPLY_API=0 APPLY_RELAY=1 bash scripts/cloud-run/set-federation-gate-mode.sh enforce`
    - deployment: `15627f69-c8ef-422c-a826-1db456bd5677`
    - result: `SUCCESS`
 2. API promotion:
    - command:
-     `APPLY_API=1 APPLY_RELAY=0 bash scripts/cloud_runtime/set-federation-gate-mode.sh enforce`
+     `APPLY_API=1 APPLY_RELAY=0 bash scripts/cloud-run/set-federation-gate-mode.sh enforce`
    - deployment: `82c7a9a5-0a64-43d1-8566-248339055790`
    - result: `SUCCESS`
 

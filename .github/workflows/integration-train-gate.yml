@@ -1,10 +1,12 @@
 name: Integration Train Gate
 
 on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: [main]
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main]
   workflow_dispatch:
 
 jobs:

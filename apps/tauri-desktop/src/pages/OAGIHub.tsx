@@ -2,7 +2,11 @@ import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import { useComputerUseEmbed } from '../contexts/ComputerUseEmbedContext';
+import { isTauriRuntime } from '../lib/isTauri';
 import { openExternal } from '../lib/openExternal';
+
+const NOT_TAURI_MESSAGE =
+  'Computer-use controls need the native Tauri desktop shell — this is a browser preview, which has no OS-level automation bridge.';
 
 /**
  * OAGI Hub - Optimized Agentic General Intelligence Hub
@@ -16,8 +20,13 @@ const OAGIHub: React.FC = () => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
   const [armed, setArmed] = useState(false);
+  const [tauriAvailable] = useState(isTauriRuntime);
 
   useEffect(() => {
+    if (!tauriAvailable) {
+      addLog(NOT_TAURI_MESSAGE);
+      return;
+    }
     const loadInitData = async () => {
       try {
         const isArmed = await invoke<boolean>('get_computer_use_armed');
@@ -61,6 +70,10 @@ const OAGIHub: React.FC = () => {
   };
 
   const toggleArmed = async () => {
+    if (!tauriAvailable) {
+      addLog(NOT_TAURI_MESSAGE);
+      return;
+    }
     try {
       const next = !armed;
       const result = await invoke<boolean>('set_computer_use_armed', { armed: next });
@@ -76,6 +89,10 @@ const OAGIHub: React.FC = () => {
   };
 
   const handleCapture = async () => {
+    if (!tauriAvailable) {
+      addLog(NOT_TAURI_MESSAGE);
+      return;
+    }
     setIsCapturing(true);
     addLog('Capturing screen...');
     try {
@@ -97,6 +114,10 @@ const OAGIHub: React.FC = () => {
     action: 'click' | 'scroll' | 'type' | 'hotkey' | 'wait',
     params: Record<string, unknown>
   ) => {
+    if (!tauriAvailable) {
+      addLog(NOT_TAURI_MESSAGE);
+      return;
+    }
     addLog(`Executing ${action}...`);
     try {
       switch (action) {
@@ -137,6 +158,10 @@ const OAGIHub: React.FC = () => {
   };
 
   const runSelfCheck = async () => {
+    if (!tauriAvailable) {
+      addLog(NOT_TAURI_MESSAGE);
+      return;
+    }
     addLog('Self-Check: probing screen + mouse...');
     await handleCapture();
     try {
@@ -161,10 +186,13 @@ const OAGIHub: React.FC = () => {
         type="button"
         className={armed ? 'danger-button' : 'primary-button'}
         onClick={() => void toggleArmed()}
+        disabled={!tauriAvailable}
         title={
-          armed
-            ? 'Disarm OS automation (click/type/hotkey)'
-            : 'Arm OS automation after you intend to drive the desktop'
+          !tauriAvailable
+            ? NOT_TAURI_MESSAGE
+            : armed
+              ? 'Disarm OS automation (click/type/hotkey)'
+              : 'Arm OS automation after you intend to drive the desktop'
         }
       >
         {armed ? 'Disarm computer-use' : 'Arm computer-use'}
@@ -191,6 +219,7 @@ const OAGIHub: React.FC = () => {
   const body = (
     <div className="oagi-container">
       {embedded ? <div className="oagi-embed-actions">{actions}</div> : null}
+      {!tauriAvailable ? <div className="oagi-not-tauri-banner">⚠️ {NOT_TAURI_MESSAGE}</div> : null}
       <div className="oagi-grid">
         {/* Visual Preview */}
         <div className="preview-pane">
@@ -199,7 +228,8 @@ const OAGIHub: React.FC = () => {
             <button
               className={`capture-btn ${isCapturing ? 'loading' : ''}`}
               onClick={handleCapture}
-              disabled={isCapturing}
+              disabled={isCapturing || !tauriAvailable}
+              title={!tauriAvailable ? NOT_TAURI_MESSAGE : undefined}
             >
               {isCapturing ? '🔄' : '📸'} Capture Now
             </button>
@@ -210,8 +240,12 @@ const OAGIHub: React.FC = () => {
             ) : (
               <div className="no-screenshot">
                 <div className="empty-icon">📺</div>
-                <p>No capture data available.</p>
-                <button className="primary-button" onClick={handleCapture}>
+                <p>{tauriAvailable ? 'No capture data available.' : NOT_TAURI_MESSAGE}</p>
+                <button
+                  className="primary-button"
+                  onClick={handleCapture}
+                  disabled={!tauriAvailable}
+                >
                   Initialize Visual Context
                 </button>
               </div>
@@ -316,6 +350,16 @@ const OAGIHub: React.FC = () => {
             radial-gradient(circle at 90% 90%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
           color: white;
           overflow: hidden;
+        }
+
+        .oagi-not-tauri-banner {
+          padding: 12px 16px;
+          border-radius: 12px;
+          background: rgba(234, 179, 8, 0.1);
+          border: 1px solid rgba(234, 179, 8, 0.3);
+          color: #fde68a;
+          font-size: 13px;
+          font-weight: 500;
         }
 
         .oagi-header {

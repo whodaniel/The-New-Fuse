@@ -34,9 +34,9 @@ import {
   sql,
   tasks,
 } from '@the-new-fuse/database';
+import { promises as fs } from 'fs';
 import { randomUUID } from 'node:crypto';
 import { promises as dns } from 'node:dns';
-import { promises as fs } from 'fs';
 import * as os from 'node:os';
 import * as path from 'path';
 import { CurrentUser } from '../decorators/current-user.decorator';
@@ -1159,7 +1159,7 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
           0,
           120
         );
-      const existing = await this.unifiedLedger.getRecord(ledgerId, userId);
+      const existing = await this.unifiedLedger.getRecord(ledgerId, userId, { workspaceId });
 
       const payload = {
         title: String(taskItem.title || 'HostMaria Task'),
@@ -1167,6 +1167,7 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
         status: this.mapTaskStatusToLedgerStatus(String(taskItem.status || 'PENDING')),
         priority: this.mapTaskPriorityToLedgerPriority(String(taskItem.priority || 'MEDIUM')),
         owner: userId,
+        workspaceId,
         tags: ['hostmaria', 'legacy', `workspace:${workspaceId}`],
         metadata: {
           ...(metadata || {}),
@@ -1177,7 +1178,7 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
       };
 
       if (existing) {
-        await this.unifiedLedger.updateRecord(ledgerId, payload, userId);
+        await this.unifiedLedger.updateRecord(ledgerId, payload, userId, { workspaceId });
         updated += 1;
       } else {
         await this.unifiedLedger.createRecord({
@@ -1305,8 +1306,7 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
     projectName: string;
     timelineTrackKey: string | null;
   } {
-    const explicitProject =
-      typeof payload.project === 'string' ? payload.project.trim() : '';
+    const explicitProject = typeof payload.project === 'string' ? payload.project.trim() : '';
     const trackCandidate =
       typeof payload.timelineTrack === 'string'
         ? payload.timelineTrack
@@ -2426,13 +2426,18 @@ export class WorkspaceController implements OnModuleInit, OnModuleDestroy {
       const assetOffset = assetTotalPages > 0 ? (effectiveAssetPage - 1) * assetPageSize : 0;
       const assets = filteredAssets.slice(assetOffset, assetOffset + assetPageSize);
 
-      const sortedRecentEvents = recentEvents.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+      const sortedRecentEvents = recentEvents.sort((a, b) =>
+        b.timestamp.localeCompare(a.timestamp)
+      );
       const eventTotal = sortedRecentEvents.length;
       const eventTotalPages = eventTotal > 0 ? Math.ceil(eventTotal / eventPageSize) : 0;
       const effectiveEventPage =
         eventTotalPages > 0 ? Math.min(eventPage, eventTotalPages) : eventPage;
       const eventOffset = eventTotalPages > 0 ? (effectiveEventPage - 1) * eventPageSize : 0;
-      const paginatedRecentEvents = sortedRecentEvents.slice(eventOffset, eventOffset + eventPageSize);
+      const paginatedRecentEvents = sortedRecentEvents.slice(
+        eventOffset,
+        eventOffset + eventPageSize
+      );
 
       return {
         workspaceId: id,

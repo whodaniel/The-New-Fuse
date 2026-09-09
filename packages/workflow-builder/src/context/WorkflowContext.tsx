@@ -57,6 +57,8 @@ interface WorkflowContextType {
     executeWorkflow: () => void;
     saveWorkflow: () => Promise<string>;
     loadWorkflow: (id: string) => Promise<void>;
+    /** Replace the entire graph (AI apply / local-ai bootstrap). */
+    replaceGraph: (nodes: WorkflowNode[], edges: WorkflowEdge[]) => void;
   };
 }
 
@@ -265,6 +267,16 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
     }
   }, [nodes, edges, workflowApi]);
 
+  const replaceGraph = useCallback(
+    (nextNodes: WorkflowNode[], nextEdges: WorkflowEdge[]) => {
+      setNodes(nextNodes);
+      setEdges(nextEdges);
+      setSelectedNode(null);
+      setSelectedEdge(null);
+    },
+    [setNodes, setEdges]
+  );
+
   const loadWorkflow = useCallback(
     async (id: string) => {
       try {
@@ -273,10 +285,20 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
           typeof response.error === 'string' ? response.error : response.error?.message;
 
         if (response.success && response.data) {
-          const workflow = response.data;
+          const workflow = response.data as any;
+          const rawNodes = Array.isArray(workflow.nodes)
+            ? workflow.nodes
+            : Array.isArray(workflow.definition?.nodes)
+              ? workflow.definition.nodes
+              : [];
+          const rawEdges = Array.isArray(workflow.edges)
+            ? workflow.edges
+            : Array.isArray(workflow.definition?.edges)
+              ? workflow.definition.edges
+              : [];
 
           // Map the workflow data to our node/edge format
-          const loadedNodes: WorkflowNode[] = workflow.nodes.map((node: any) => ({
+          const loadedNodes: WorkflowNode[] = rawNodes.map((node: any) => ({
             id: node.id,
             type: node.type,
             position: node.position || { x: 100, y: 100 },
@@ -287,15 +309,14 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
             },
           }));
 
-          const loadedEdges: WorkflowEdge[] = workflow.edges.map((edge: any) => ({
+          const loadedEdges: WorkflowEdge[] = rawEdges.map((edge: any) => ({
             id: edge.id,
             source: edge.source,
             target: edge.target,
             data: edge.data || { label: '' },
           }));
 
-          setNodes(loadedNodes);
-          setEdges(loadedEdges);
+          replaceGraph(loadedNodes, loadedEdges);
         } else {
           throw new Error(responseError || 'Failed to load workflow');
         }
@@ -304,7 +325,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
         throw error;
       }
     },
-    [setNodes, setEdges, workflowApi]
+    [replaceGraph, workflowApi]
   );
 
   // Create context value
@@ -332,6 +353,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
       executeWorkflow,
       saveWorkflow,
       loadWorkflow,
+      replaceGraph,
     },
   };
 

@@ -10,13 +10,19 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "customConditions": ["build"],
-    "strict": true
+    "strict": true,
+    "paths": {
+      "@the-new-fuse/control-plane-contracts": ["../control-plane-contracts/src/index.ts"]
+    }
   },
   "include": ["src/**/*", "generated*"],
   "exclude": ["dist", "node_modules", "**/*.spec.ts"],
   "references": [
     {
       "path": "../types"
+    },
+    {
+      "path": "../control-plane-contracts"
     }
   ]
 }

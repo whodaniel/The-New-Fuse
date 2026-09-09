@@ -27,6 +27,7 @@
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { tryAccountScopedPath } from './AccountBindingService.js';
 
 export interface ChannelCredential {
   /** Logical name of the credential, e.g. "botToken". */
@@ -91,10 +92,36 @@ export const DEFAULT_CHANNELS: ChannelDef[] = [
   },
 ];
 
+/**
+ * Legacy flat config path, kept as a read fallback for machines without an
+ * authenticated TNF account.
+ */
+export function legacyChannelConfigPath(): string {
+  return path.join(os.homedir(), '.config', 'tnf', 'channels.json');
+}
+
+/**
+ * Effective channel config path, in precedence order (mirrors
+ * provider-config.ts):
+ *
+ *   1. TNF_CHANNEL_CONFIG_PATH (explicit override)
+ *   2. account-scoped  ~/.tnf/accounts/<ownerUserId>/config/channels.json
+ *      when the authenticated TNF account has one
+ *   3. legacy flat     ~/.config/tnf/channels.json
+ *
+ * Channel preferences are personal, so the account-scoped file wins once an
+ * account is bound; the legacy flat path remains as a backward-compatible
+ * read fallback. This module never writes the file, so there is no
+ * fail-closed write path here.
+ */
 export function channelConfigPath(): string {
   const override = process.env.TNF_CHANNEL_CONFIG_PATH;
   if (override && override.trim()) return override.trim();
-  return path.join(os.homedir(), '.config', 'tnf', 'channels.json');
+  const scoped = tryAccountScopedPath('config', 'channels.json');
+  if (scoped && fs.existsSync(scoped)) return scoped;
+  const legacy = legacyChannelConfigPath();
+  if (fs.existsSync(legacy)) return legacy;
+  return scoped ?? legacy;
 }
 
 function isRecord(v: unknown): v is Record<string, unknown> {

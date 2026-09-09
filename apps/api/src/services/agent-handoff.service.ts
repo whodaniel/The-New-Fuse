@@ -3,8 +3,8 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-  Optional,
   OnModuleDestroy,
+  Optional,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -396,6 +396,8 @@ export class AgentHandoffService implements OnModuleDestroy {
       await this.unifiedLedgerService.createTimelineEvent({
         eventType: 'historical_event',
         actor: 'agent_handoff_service',
+        tenantId,
+        workspaceId: typeof payload.workspaceId === 'string' ? payload.workspaceId : undefined,
         userId: tenantId ? `tenant:${tenantId}` : 'tenant:unknown',
         payload: {
           category,

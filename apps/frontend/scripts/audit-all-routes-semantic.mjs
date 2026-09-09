@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { chromium } from 'playwright';
+import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(process.cwd());
 const INPUT_AUDIT = join(ROOT, 'docs/audits/navigation-route-audit.json');
@@ -105,28 +106,56 @@ const visitRoute = async (page, route) => {
   };
 };
 
+// Isolate each route so long audits do not accumulate browser state. A closed
+// browser is an audit transport interruption, not evidence that every later
+// route is broken. Retry that route once in a fresh browser and retain evidence.
+export const auditRoutes = async (routes, visit = visitRoute, launchOptions = resolveChromiumLaunchOptions()) => {
+  let browser;
+  const rows = [];
+  const browserInterruptions = [];
+  try {
+    for (const route of routes) {
+      for (let attempt = 1; attempt <= 2; attempt += 1) {
+        if (!browser?.isConnected()) browser = await chromium.launch(launchOptions);
+        const context = await browser.newContext();
+        let row;
+        let interrupted = false;
+        try {
+          const page = await context.newPage();
+          row = await visit(page, route);
+          interrupted = Boolean(row.error) && (
+            !browser.isConnected() || page.isClosed() ||
+            /Target page, context or browser has been closed|Page crashed/i.test(row.error)
+          );
+        } finally {
+          await context.close().catch(() => {});
+        }
+        if (interrupted) {
+          browserInterruptions.push({ route, attempt, error: row.error, retried: attempt === 1 });
+          console.warn(`[semantic-audit] browser interrupted on ${route}; ${attempt === 1 ? 'retrying once' : 'retry exhausted'}`);
+          await browser.close().catch(() => {});
+          browser = undefined;
+          if (attempt === 1) continue;
+        }
+        rows.push({ ...row, attempts: attempt });
+        break;
+      }
+      if (rows.length % 10 === 0 || rows.length === routes.length) {
+        console.log(`[semantic-audit] ${rows.length}/${routes.length} routes processed`);
+      }
+    }
+    return { rows, browserInterruptions };
+  } finally {
+    await browser?.close().catch(() => {});
+  }
+};
+
 const main = async () => {
   const startedAt = new Date().toISOString();
   const audit = readJson(INPUT_AUDIT);
   const effectiveRoutes = [...new Set(audit?.paths?.effectiveRouterPaths || [])].filter(isTestableRoute).sort();
 
-  const browser = await chromium.launch(resolveChromiumLaunchOptions());
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
-  const rows = [];
-  try {
-    for (let i = 0; i < effectiveRoutes.length; i += 1) {
-      const route = effectiveRoutes[i];
-      rows.push(await visitRoute(page, route));
-      if ((i + 1) % 10 === 0 || i === effectiveRoutes.length - 1) {
-        console.log(`[semantic-audit] ${i + 1}/${effectiveRoutes.length} routes processed`);
-      }
-    }
-  } finally {
-    await context.close();
-    await browser.close();
-  }
+  const { rows, browserInterruptions } = await auditRoutes(effectiveRoutes);
 
   const root = rows.find((r) => r.route === '/');
   const rootFingerprint = root?.fingerprint || null;
@@ -157,6 +186,7 @@ const main = async () => {
     generatedAt: new Date().toISOString(),
     baseUrl: BASE_URL,
     totalRoutes: rows.length,
+    browserRecoveryAttempts: browserInterruptions.filter((event) => event.retried).length,
     hardBroken: hardBroken.length,
     networkBroken: networkBroken.length,
     sameAsRoot: sameAsRoot.length,
@@ -167,6 +197,7 @@ const main = async () => {
   const payload = {
     summary,
     rows,
+    browserInterruptions,
     hardBroken,
     networkBroken,
     sameAsRoot,
@@ -223,7 +254,9 @@ const main = async () => {
   }
 };
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

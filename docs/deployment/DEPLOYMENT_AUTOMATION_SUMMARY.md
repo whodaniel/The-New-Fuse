@@ -1,5 +1,15 @@
 # Deployment Automation System - Summary
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 This document provides an overview of the automated deployment system created
 for The New Fuse.
 
@@ -367,8 +377,7 @@ cloud_runtime deployments
 
 ## Troubleshooting
 
-See [docs/deployment/TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
-for:
+See [docs/deployment/TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for:
 
 - Build failures
 - CloudRuntime deployment issues
@@ -379,9 +388,7 @@ for:
 
 ## Emergency Procedures
 
-See
-[docs/deployment/EMERGENCY_PROCEDURES.md](./EMERGENCY_PROCEDURES.md)
-for:
+See [docs/deployment/EMERGENCY_PROCEDURES.md](./EMERGENCY_PROCEDURES.md) for:
 
 - Critical service failures
 - Database emergencies

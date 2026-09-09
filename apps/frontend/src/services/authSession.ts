@@ -5,8 +5,9 @@
  * - Session validation against /api/auth/session and /api/auth/me
  */
 
-import { API_ENDPOINTS } from '@/config/api';
+import { API_BASE, API_ENDPOINTS } from '@/config/api';
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
+import { AuthTransientError, authRequest, withAuthDeadline } from './authRequest';
 
 const ACCESS_KEYS = ['auth_token', 'authToken', 'accessToken', 'token', 'AUTH_TOKEN'] as const;
 const REFRESH_KEYS = ['refresh_token', 'refreshToken', 'REFRESH_TOKEN'] as const;
@@ -113,7 +114,8 @@ export function getAccessToken(): string | null {
 
 export function getRefreshToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return readFirst(REFRESH_KEYS, [localStorage, sessionStorage]);
+  const token = readFirst(REFRESH_KEYS, [localStorage, sessionStorage]);
+  return token === getAccessToken() ? null : token;
 }
 
 export function persistTokens(bundle: TokenBundle): void {
@@ -145,9 +147,7 @@ export function subscribeAuthSession(listener: Listener): () => void {
 }
 
 function resolveApiUrl(path: string): string {
-  const base = String(import.meta.env.VITE_API_URL || '')
-    .trim()
-    .replace(/\/+$/, '');
+  const base = String(API_BASE).trim().replace(/\/+$/, '');
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   if (!base) return normalizedPath;
   if (normalizedPath.startsWith('/api/') && base.endsWith('/api')) {
@@ -156,62 +156,67 @@ function resolveApiUrl(path: string): string {
   return `${base}${normalizedPath}`;
 }
 
-async function postRefresh(refreshToken: string | null): Promise<TokenBundle | null> {
+async function postRefresh(
+  refreshToken: string | null,
+  signal: AbortSignal
+): Promise<TokenBundle | null> {
   const url = resolveApiUrl(API_ENDPOINTS.AUTH.REFRESH.replace(/^.*\/api/, '/api'));
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(refreshToken ? { refreshToken, refresh_token: refreshToken } : {}),
-    });
-    if (!res.ok) return null;
-    const raw = await res.json();
-    const payload = raw?.data ?? raw;
-    const accessToken = payload?.accessToken || payload?.access_token || payload?.token || null;
-    if (!accessToken) return null;
-    return {
-      accessToken: String(accessToken),
-      refreshToken: payload?.refreshToken || payload?.refresh_token || refreshToken || null,
-    };
-  } catch {
-    return null;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    signal,
+    body: JSON.stringify(refreshToken ? { refreshToken, refresh_token: refreshToken } : {}),
+  });
+  // A missing cookie or rejected refresh credential may use the Supabase exchange.
+  if (res.status === 400 || res.status === 401) return null;
+  if (!res.ok)
+    throw new AuthTransientError(`Session refresh unavailable (${res.status})`, res.status);
+  const raw = await res.json();
+  const payload = raw?.data ?? raw;
+  const accessToken = payload?.accessToken || payload?.access_token || payload?.token;
+  if (typeof accessToken !== 'string' || !accessToken.trim()) {
+    throw new AuthTransientError('Session refresh returned an invalid response');
   }
+  return {
+    accessToken,
+    refreshToken: payload?.refreshToken || payload?.refresh_token || refreshToken || null,
+  };
 }
 
-async function refreshViaSupabase(): Promise<string | null> {
+async function refreshViaSupabase(signal: AbortSignal): Promise<string | null> {
   if (!hasSupabaseConfig || !supabase) return null;
-  try {
-    const { data, error } = await supabase.auth.refreshSession();
-    if (error || !data.session?.access_token) return null;
-    // Exchange for app JWT when possible
-    const exchangeUrl = resolveApiUrl(
-      API_ENDPOINTS.AUTH.SUPABASE_EXCHANGE.replace(/^.*\/api/, '/api')
-    );
-    const res = await fetch(exchangeUrl, {
+  const { data, error } = await supabase.auth.refreshSession();
+  signal.throwIfAborted();
+  if (error) {
+    if (error.status === 400 || error.status === 401) return null;
+    throw new AuthTransientError('Session provider is temporarily unavailable');
+  }
+  if (!data.session?.access_token) return null;
+  const res = await fetch(
+    resolveApiUrl(API_ENDPOINTS.AUTH.SUPABASE_EXCHANGE.replace(/^.*\/api/, '/api')),
+    {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
+      signal,
       body: JSON.stringify({ accessToken: data.session.access_token }),
-    });
-    if (res.ok) {
-      const raw = await res.json();
-      const payload = raw?.data ?? raw;
-      const appToken = payload?.accessToken || payload?.access_token || payload?.token;
-      if (appToken) {
-        persistTokens({
-          accessToken: String(appToken),
-          refreshToken: payload?.refreshToken || payload?.refresh_token || getRefreshToken(),
-        });
-        return String(appToken);
-      }
     }
-    // Fall back to using Supabase access token directly
-    persistTokens({ accessToken: data.session.access_token });
-    return data.session.access_token;
-  } catch {
-    return null;
-  }
+  );
+  if (res.status === 401) return null;
+  if (!res.ok)
+    throw new AuthTransientError(`Session exchange unavailable (${res.status})`, res.status);
+  const raw = await res.json();
+  const payload = raw?.data ?? raw;
+  const token = payload?.accessToken || payload?.access_token || payload?.token;
+  if (typeof token !== 'string' || !token.trim())
+    throw new AuthTransientError('Invalid session exchange response');
+  signal.throwIfAborted();
+  persistTokens({
+    accessToken: token,
+    refreshToken: payload?.refreshToken || payload?.refresh_token || null,
+  });
+  return token;
 }
 
 /**
@@ -220,17 +225,24 @@ async function refreshViaSupabase(): Promise<string | null> {
 export async function silentRefreshAccessToken(): Promise<string | null> {
   if (refreshInFlight) return refreshInFlight;
 
-  refreshInFlight = (async () => {
+  refreshInFlight = withAuthDeadline(async (signal) => {
     const refreshToken = getRefreshToken();
-    const bundle = await postRefresh(refreshToken);
+    const bundle = await postRefresh(refreshToken, signal);
+    signal.throwIfAborted();
     if (bundle?.accessToken) {
       persistTokens(bundle);
       return bundle.accessToken;
     }
-    return refreshViaSupabase();
-  })().finally(() => {
-    refreshInFlight = null;
-  });
+    return refreshViaSupabase(signal);
+  })
+    .catch((error) => {
+      throw error instanceof AuthTransientError
+        ? error
+        : new AuthTransientError('Unable to refresh session. Please retry.');
+    })
+    .finally(() => {
+      refreshInFlight = null;
+    });
 
   return refreshInFlight;
 }
@@ -240,30 +252,33 @@ export async function getAuthTokenCandidates(): Promise<string[]> {
   const access = getAccessToken();
   if (access) tokens.push(access);
 
-  if (hasSupabaseConfig && supabase) {
-    try {
-      const { data, error } = await supabase.auth.getSession();
-      if (!error && data?.session?.access_token) {
-        tokens.push(data.session.access_token);
-      }
-    } catch {
-      /* ignore */
-    }
-  }
   return Array.from(new Set(tokens));
 }
 
 /**
  * Validate session against API. Updates connection snapshot for UI chips.
  */
-export async function validateAuthSession(): Promise<AuthSessionSnapshot> {
+export async function validateAuthSession(allowRefresh = true): Promise<AuthSessionSnapshot> {
   setSnapshot({ state: 'checking', lastError: null });
 
-  const token = getAccessToken();
-  if (!token) {
-    // Try silent refresh before declaring unauthenticated
-    const refreshed = await silentRefreshAccessToken();
-    if (!refreshed) {
+  try {
+    const token = getAccessToken();
+    if (!token) {
+      // Try silent refresh before declaring unauthenticated
+      const refreshed = await silentRefreshAccessToken();
+      if (!refreshed) {
+        setSnapshot({
+          state: 'unauthenticated',
+          user: null,
+          checkedAt: Date.now(),
+          lastError: null,
+        });
+        return snapshot;
+      }
+    }
+
+    const access = getAccessToken();
+    if (!access) {
       setSnapshot({
         state: 'unauthenticated',
         user: null,
@@ -272,28 +287,15 @@ export async function validateAuthSession(): Promise<AuthSessionSnapshot> {
       });
       return snapshot;
     }
-  }
 
-  const access = getAccessToken();
-  if (!access) {
-    setSnapshot({
-      state: 'unauthenticated',
-      user: null,
-      checkedAt: Date.now(),
-      lastError: null,
-    });
-    return snapshot;
-  }
-
-  try {
     const sessionUrl = resolveApiUrl('/api/auth/session');
-    const res = await fetch(sessionUrl, {
+    const res = await authRequest(sessionUrl, {
       headers: { Authorization: `Bearer ${access}` },
       credentials: 'include',
     });
 
-    if (res.status === 401 || res.status === 403) {
-      const next = await silentRefreshAccessToken();
+    if (res.status === 401) {
+      const next = allowRefresh ? await silentRefreshAccessToken() : null;
       if (!next) {
         setSnapshot({
           state: 'expired',
@@ -303,7 +305,7 @@ export async function validateAuthSession(): Promise<AuthSessionSnapshot> {
         });
         return snapshot;
       }
-      return validateAuthSession();
+      return validateAuthSession(false);
     }
 
     if (!res.ok) {

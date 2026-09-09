@@ -190,7 +190,8 @@ const Suggestions: React.FC = () => {
                             </div>
                             <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-800/50">
                               <button
-                                className="flex items-center text-[11px] font-bold text-emerald-500/80 hover:text-emerald-400 transition-colors"
+                                aria-label={`Upvote ${s.title}`}
+                                className="min-h-11 min-w-11 flex items-center text-[11px] font-bold text-emerald-500/80 hover:text-emerald-400 transition-colors"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   onVote(s.id, 'up');
@@ -199,7 +200,8 @@ const Suggestions: React.FC = () => {
                                 <ThumbsUp className="h-3.5 w-3.5 mr-1.5" /> {s.votes.up}
                               </button>
                               <button
-                                className="flex items-center text-[11px] font-bold text-red-500/80 hover:text-red-400 transition-colors"
+                                aria-label={`Downvote ${s.title}`}
+                                className="min-h-11 min-w-11 flex items-center text-[11px] font-bold text-red-500/80 hover:text-red-400 transition-colors"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   onVote(s.id, 'down');

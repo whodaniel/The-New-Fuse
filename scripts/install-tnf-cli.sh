@@ -98,12 +98,17 @@ else
   mkdir -p "${INSTALL_ROOT}"
   if [[ -d "${REPO_DIR}/.git" ]]; then
     echo "Updating existing TNF clone at ${REPO_DIR}..."
+    if [[ -n "$(git -C "${REPO_DIR}" status --porcelain)" ]]; then
+      echo "Error: install checkout has local changes; preserve them before updating." >&2
+      exit 1
+    fi
     git -C "${REPO_DIR}" fetch --depth=1 origin "${REF}"
-    git -C "${REPO_DIR}" checkout -q "${REF}"
-    git -C "${REPO_DIR}" pull --ff-only origin "${REF}"
+    git -C "${REPO_DIR}" checkout --detach -q FETCH_HEAD
   else
     echo "Cloning TNF repository into ${REPO_DIR}..."
-    git clone --depth=1 --branch "${REF}" "${REPO_URL}" "${REPO_DIR}"
+    git clone --no-checkout --depth=1 "${REPO_URL}" "${REPO_DIR}"
+    git -C "${REPO_DIR}" fetch --depth=1 origin "${REF}"
+    git -C "${REPO_DIR}" checkout --detach -q FETCH_HEAD
   fi
 fi
 
@@ -120,12 +125,12 @@ cat > "${BIN_DIR}/tnf" <<EOF
 #!/usr/bin/env bash
 # tnf launcher — see docs/protocols/DURABLE_LOCAL_RUNTIME_MANDATE.md.
 # A candidate is only accepted if it has an executable ./tnf, IS a live git
-# work tree, AND has the canonical remote identity (whodaniel/tnf-monorepo)
-# — an orphaned/broken worktree, or a downstream publication-target clone,
-# can still have ./tnf physically on disk.
+# work tree, AND has an official TNF runtime/development origin. Public runtime
+# consumers execute their installed clone; this does not grant publication or
+# development authority to that clone. Orphaned and unrelated checkouts fail.
 set -euo pipefail
 
-_tnf_canonical_origin_ok() {
+_tnf_runtime_origin_ok() {
   local url slug
   url="\$(git -C "\$1" remote get-url origin 2>/dev/null)" || return 1
   [[ -n "\$url" ]] || return 1
@@ -135,13 +140,13 @@ _tnf_canonical_origin_ok() {
   slug="\${slug#http://*/}"
   slug="\${slug%/}"
   slug="\$(printf '%s' "\$slug" | tr '[:upper:]' '[:lower:]')"
-  [[ "\$slug" == "whodaniel/tnf-monorepo" ]]
+  [[ "\$slug" == "whodaniel/tnf-monorepo" || "\$slug" == "whodaniel/the-new-fuse" ]]
 }
 
 _tnf_candidate_ok() {
   [[ -x "\$1/tnf" ]] || return 1
   git -C "\$1" rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
-  _tnf_canonical_origin_ok "\$1"
+  _tnf_runtime_origin_ok "\$1"
 }
 
 declare -a CANDIDATES=()
@@ -182,7 +187,10 @@ if [[ ":$PATH:" != *":${BIN_DIR}:"* ]]; then
 fi
 
 echo "Verification:"
-"${BIN_DIR}/tnf" --version || true
+if ! "${BIN_DIR}/tnf" --version; then
+  echo "Error: installed TNF CLI failed its version probe; installation is not usable." >&2
+  exit 1
+fi
 
 if [[ "${AUTO_ONBOARD}" == "true" ]]; then
   echo

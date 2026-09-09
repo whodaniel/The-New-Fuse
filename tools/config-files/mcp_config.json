@@ -22,10 +22,6 @@
     "devops-bridge": {
       "command": "pnpm",
       "args": ["exec", "tsx", "apps/mcp-servers/devops-bridge/src/index.ts"]
-    },
-    "jules": {
-      "command": "pnpm",
-      "args": ["exec", "tsx", "packages/jules-skill/src/mcp-server.ts"]
     }
   },
   "servers": {

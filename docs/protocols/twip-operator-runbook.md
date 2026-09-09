@@ -90,7 +90,9 @@ Operational sequence:
 Content-aware inventory options:
 
 1. `include_content=true` enables sanitized terminal excerpt capture.
-   - Primary source: tmux pane capture when pane mapping exists.
+   - Primary source: tmux pane capture when pane mapping exists. Requires a TNF
+     launch wrap or optional operator wrap on the dedicated socket
+     (`docs/tnf-tmux-setup-guide.md`); otherwise this path never lights up.
    - macOS fallback: Terminal.app tab history mapped by tty.
 2. `content_max_lines` bounds line capture (`10..400`, default `80`).
 3. `content_max_chars` bounds excerpt size (`512..24000`, default `8000`).

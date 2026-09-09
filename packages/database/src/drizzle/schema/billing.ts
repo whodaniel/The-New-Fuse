@@ -37,6 +37,8 @@ export const usageTypeEnum = pgEnum('UsageType', [
   'LLM_TOKEN_OUTPUT',
   'CODE_EXECUTION_MINUTES',
   'VECTOR_STORAGE_MB',
+  'DURABLE_RUN_INVOCATION',
+  'DURABLE_COMPUTE_UNITS',
 ]);
 
 // =============================================================================

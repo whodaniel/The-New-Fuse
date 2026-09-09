@@ -271,9 +271,9 @@ build_services() {
   log STEP "Building packages and services..."
 
   # Use CloudRuntime-optimized build if available
-  if [[ -f "$PROJECT_ROOT/scripts/build-cloud_runtime.cjs" ]]; then
+  if [[ -f "$PROJECT_ROOT/scripts/build-cloud-run.cjs" ]]; then
     log INFO "Using CloudRuntime-optimized build"
-    BUILD_VERBOSE=true node "$PROJECT_ROOT/scripts/build-cloud_runtime.cjs" || {
+    BUILD_VERBOSE=true node "$PROJECT_ROOT/scripts/build-cloud-run.cjs" || {
       log ERROR "Build failed"
       return 1
     }

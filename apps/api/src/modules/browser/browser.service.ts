@@ -50,21 +50,40 @@ export type BrowserSession = {
 export class BrowserService {
   private readonly logger = new Logger(BrowserService.name);
   private readonly repoRoot: string;
-  private session: BrowserSession = {
-    controlling: false,
-    available: false,
-    engine: 'agent-browser',
-    url: null,
-    title: null,
-    lastTask: null,
-    lastError: null,
-    screenshotDataUrl: null,
-    snapshot: null,
-    updatedAt: null,
-  };
+  // Multi-tenant hardening: browser session state is keyed by the authenticated
+  // userId, never shared across callers.
+  private readonly sessions = new Map<string, BrowserSession>();
 
   constructor() {
     this.repoRoot = path.resolve(process.cwd(), '../..');
+  }
+
+  private resolveUserId(userId?: string | null): string {
+    const id = String(userId || '').trim();
+    if (!id) {
+      throw new Error('Browser sessions require an authenticated userId');
+    }
+    return id;
+  }
+
+  private sessionFor(userId: string): BrowserSession {
+    let session = this.sessions.get(userId);
+    if (!session) {
+      session = {
+        controlling: false,
+        available: false,
+        engine: 'agent-browser',
+        url: null,
+        title: null,
+        lastTask: null,
+        lastError: null,
+        screenshotDataUrl: null,
+        snapshot: null,
+        updatedAt: null,
+      };
+      this.sessions.set(userId, session);
+    }
+    return session;
   }
 
   private resolveBin(): string {
@@ -106,88 +125,92 @@ export class BrowserService {
     return args;
   }
 
-  async available(): Promise<boolean> {
+  async available(userId?: string | null): Promise<boolean> {
+    const session = this.sessionFor(this.resolveUserId(userId));
     try {
       const { stdout } = await execFileAsync(this.resolveBin(), ['--version'], {
         timeout: 8000,
       });
       const ok = Boolean(stdout?.trim());
-      this.session.available = ok;
+      session.available = ok;
       return ok;
     } catch {
-      this.session.available = false;
+      session.available = false;
       return false;
     }
   }
 
-  getSession(includeScreenshot = false): BrowserSession {
+  getSession(userId?: string | null, includeScreenshot = false): BrowserSession {
+    const session = this.sessionFor(this.resolveUserId(userId));
     return {
-      ...this.session,
-      screenshotDataUrl: includeScreenshot ? this.session.screenshotDataUrl : null,
+      ...session,
+      screenshotDataUrl: includeScreenshot ? session.screenshotDataUrl : null,
     };
   }
 
-  async interact(dto: BrowserInteractDto) {
+  async interact(userId: string | null | undefined, dto: BrowserInteractDto) {
+    const session = this.sessionFor(this.resolveUserId(userId));
     if (dto.operation === 'screenshot') {
-      return this.captureScreenshot();
+      return this.captureScreenshot(userId);
     }
     const bin = this.resolveBin();
     const args = this.buildArgs(dto);
     const result = await this.spawn(bin, args);
-    this.session.controlling = dto.operation !== 'close';
-    this.session.updatedAt = new Date().toISOString();
+    session.controlling = dto.operation !== 'close';
+    session.updatedAt = new Date().toISOString();
     if (dto.operation === 'open' && dto.target) {
-      this.session.url = dto.target;
+      session.url = dto.target;
     }
     if (dto.operation === 'snapshot') {
-      this.session.snapshot = result.parsed;
+      session.snapshot = result.parsed;
     }
     if (dto.operation === 'close') {
-      this.session.controlling = false;
+      session.controlling = false;
     }
     if (result.code !== 0) {
-      this.session.lastError = result.stderr || result.stdout || `exit ${result.code}`;
+      session.lastError = result.stderr || result.stdout || `exit ${result.code}`;
     } else {
-      this.session.lastError = null;
+      session.lastError = null;
     }
     return result;
   }
 
-  async ensureStarted(headed = true) {
-    const result = await this.interact({ operation: 'open', target: 'about:blank', headed });
-    this.session.controlling = result.code === 0;
+  async ensureStarted(userId: string | null | undefined, headed = true) {
+    const result = await this.interact(userId, { operation: 'open', target: 'about:blank', headed });
+    this.sessionFor(this.resolveUserId(userId)).controlling = result.code === 0;
     return result;
   }
 
   /**
    * Chat-native browser task: boot if needed, open URL when detected, snapshot page.
    */
-  async runNaturalLanguageTask(message: string) {
-    this.session.lastTask = message;
+  async runNaturalLanguageTask(userId: string | null | undefined, message: string) {
+    const session = this.sessionFor(this.resolveUserId(userId));
+    session.lastTask = message;
     const url = this.extractUrl(message);
 
     const steps: Array<{ step: string; ok: boolean; detail?: unknown }> = [];
 
-    const boot = await this.ensureStarted(true);
+    const boot = await this.ensureStarted(userId, true);
     steps.push({ step: 'start', ok: boot.code === 0, detail: boot.parsed });
 
     if (url) {
-      const nav = await this.interact({ operation: 'open', target: url, headed: true });
+      const nav = await this.interact(userId, { operation: 'open', target: url, headed: true });
       const navDetail =
         nav.parsed !== null && typeof nav.parsed === 'object'
           ? nav.parsed
           : { result: nav.parsed };
       steps.push({ step: 'navigate', ok: nav.code === 0, detail: { url, ...navDetail } });
-      this.session.url = url;
+      session.url = url;
     }
 
-    const snap = await this.interact({ operation: 'snapshot' });
+    const snap = await this.interact(userId, { operation: 'snapshot' });
     steps.push({ step: 'snapshot', ok: snap.code === 0, detail: snap.parsed });
-    this.session.snapshot = snap.parsed;
+    session.snapshot = snap.parsed;
 
     let screenshotDataUrl: string | null = null;
     try {
-      const shot = await this.captureScreenshot();
+      const shot = await this.captureScreenshot(userId);
       screenshotDataUrl = shot.dataUrl;
       steps.push({ step: 'screenshot', ok: shot.code === 0 });
     } catch (err) {
@@ -196,16 +219,16 @@ export class BrowserService {
     }
 
     const title = this.pickTitle(snap.parsed);
-    if (title) this.session.title = title;
+    if (title) session.title = title;
 
     return {
       ok: steps.every((s) => s.ok),
-      url: url ?? this.session.url,
-      title: this.session.title,
+      url: url ?? session.url,
+      title: session.title,
       steps,
       snapshot: snap.parsed,
       screenshotDataUrl,
-      session: this.getSession(true),
+      session: this.getSession(userId, true),
       hint: 'Controlled Chromium is headed on the operator machine. Take over from this page or the desktop Computer Use console.',
     };
   }
@@ -228,7 +251,9 @@ export class BrowserService {
     return typeof title === 'string' ? title : null;
   }
 
-  private async captureScreenshot(): Promise<{
+  private async captureScreenshot(
+    userId: string | null | undefined
+  ): Promise<{
     code: number;
     stdout: string;
     stderr: string;
@@ -250,9 +275,10 @@ export class BrowserService {
         `Could not read screenshot file: ${err instanceof Error ? err.message : err}`
       );
     }
-    this.session.screenshotDataUrl = dataUrl;
-    this.session.controlling = true;
-    this.session.updatedAt = new Date().toISOString();
+    const session = this.sessionFor(this.resolveUserId(userId));
+    session.screenshotDataUrl = dataUrl;
+    session.controlling = true;
+    session.updatedAt = new Date().toISOString();
     return { ...result, dataUrl };
   }
 

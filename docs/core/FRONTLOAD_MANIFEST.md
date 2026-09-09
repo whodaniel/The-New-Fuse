@@ -1,8 +1,21 @@
 # FRONTLOAD_MANIFEST.md — TNF Progressive Context Injection
 
+`[CLASS:PRIME] [STATUS:ACTIVE] [DOC_TYPE:PROTOCOL_STANDARD] [VISIBILITY:COLLECTIVE] [OWNER:TNF]`
+
 Turn Zero V2 uses **progressive disclosure**: load only the authority and
 current receipts needed to take the next safe action. File presence is not host
 injection, and frontload is not permission to mutate.
+
+**Naming law:** In TNF, “Turn Zero” means **Turn Zero V2**. There is no separate
+current Turn Zero. Session entry is `pnpm run tnf:onboard` →
+`scripts/protocols/turn-zero-v2-gate.cjs`.
+
+Turn Zero V2 / Stage A is **universal TNF orientation**. Later conditional
+routes in this file (CLI, storage, video intelligence, etc.) are task-scoped
+hydration only — they do not make Turn Zero domain-specific or lane-owned.
+Authority for the gate remains `scripts/protocols/turn-zero-v2-gate.cjs`
+resolved from the active repo root (prefer canonical `main`); worktree copies
+are not separate protocol sources.
 
 Machine onboarding contract: `data/harness/onboarding-contract.json`.
 
@@ -181,9 +194,10 @@ before inventing provider-specific paths or a competing storage model.
 
 ### Video intelligence & semantic skill tree route
 
-When video intelligence processing, actionable intelligence extraction,
-multi-persona combinatorics, non-destructive pruning, or hierarchical semantic
-skill tree traversal is involved, load:
+Task-conditional hydration only (not Turn Zero ownership). When video
+intelligence processing, actionable intelligence extraction, multi-persona
+combinatorics, non-destructive pruning, or hierarchical semantic skill tree
+traversal is involved, load:
 
 - `docs/protocols/SOVEREIGN_DISTILLATION_AND_DUAL_TRACK_PROTOCOL.md`
 - `docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md`
@@ -260,7 +274,7 @@ pnpm run tnf:onboard -- --legacy-full
 Before mutation, use explicit classification and write readiness, for example:
 
 ```bash
-TNF_WORK_DOMAIN=corporate \
+TNF_WORK_DOMAIN=core \
 TNF_ARTIFACT_DESTINATION=oss_runtime \
 TNF_DATA_RESIDENCY=product_state \
 TNF_DATA_SENSITIVITY=public \

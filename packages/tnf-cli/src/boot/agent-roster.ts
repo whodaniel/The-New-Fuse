@@ -102,10 +102,11 @@ export function formatAge(lastSeen: string | null, nowMs = Date.now()): string {
 }
 
 function readKnownCatalogCount(repoRoot: string): number | null {
+  // Canonical registry first — .tnf caches can go stale/hollow.
   const candidates = [
+    path.join(repoRoot, 'data', 'agent-registry', 'agents.json'),
     path.join(repoRoot, '.tnf', 'agent-registry-snapshot.json'),
     path.join(process.env.HOME || '', '.tnf', 'agent-registry-snapshot.json'),
-    path.join(repoRoot, 'data', 'agent-registry', 'agents.json'),
   ];
   for (const candidate of candidates) {
     if (!candidate || !fs.existsSync(candidate)) continue;
@@ -118,6 +119,80 @@ function readKnownCatalogCount(repoRoot: string): number | null {
     }
   }
   return null;
+}
+
+/** A classified agent definition from the agent-registry snapshot. */
+export type AgentDefinition = {
+  id: string;
+  name: string;
+  description: string;
+  department: string;
+  category: string;
+  capabilities: string[];
+  tags: string[];
+  sourceFile?: string;
+};
+
+/** Collapse an agent name/id to a comparable key (case/punctuation-insensitive). */
+export function normalizeAgentName(name: string): string {
+  return String(name || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+
+/**
+ * Load classified agent definitions from the registry snapshot.
+ * Resolution order: the repo's canonical data/agent-registry/agents.json
+ * (source of truth, rebuilt by scripts/agent-registry/build-agent-registry.mjs),
+ * then the .tnf cached snapshots (repo, then home) as fallbacks. Canonical-first
+ * avoids stale hollow caches shadowing rich records.
+ * Returns [] (never throws) when no snapshot is available.
+ */
+export function loadAgentDefinitions(repoRoot: string): AgentDefinition[] {
+  const candidates = [
+    path.join(repoRoot, 'data', 'agent-registry', 'agents.json'),
+    path.join(repoRoot, '.tnf', 'agent-registry-snapshot.json'),
+    path.join(process.env.HOME || '', '.tnf', 'agent-registry-snapshot.json'),
+  ];
+  for (const candidate of candidates) {
+    if (!candidate || !fs.existsSync(candidate)) continue;
+    try {
+      const parsed = JSON.parse(fs.readFileSync(candidate, 'utf8'));
+      const list = Array.isArray(parsed)
+        ? parsed
+        : Array.isArray(parsed?.agents)
+          ? parsed.agents
+          : null;
+      if (!list) continue;
+      return list
+        .filter((d: unknown) => d && typeof d === 'object')
+        .map((d: Record<string, unknown>) => ({
+          id: String(d.id || ''),
+          name: String(d.name || d.id || ''),
+          description: String(d.description || ''),
+          department: String(d.department || ''),
+          category: String(d.category || ''),
+          capabilities: Array.isArray(d.capabilities) ? d.capabilities.map(String) : [],
+          tags: Array.isArray(d.tags) ? d.tags.map(String) : [],
+          sourceFile: typeof d.sourceFile === 'string' ? d.sourceFile : undefined,
+        }));
+    } catch {
+      // try next candidate
+    }
+  }
+  return [];
+}
+
+/** Index definitions by normalized name and id for live-bus joins. */
+export function buildDefinitionIndex(definitions: AgentDefinition[]): Map<string, AgentDefinition> {
+  const index = new Map<string, AgentDefinition>();
+  for (const def of definitions) {
+    for (const key of [normalizeAgentName(def.name), normalizeAgentName(def.id)]) {
+      if (key && !index.has(key)) index.set(key, def);
+    }
+  }
+  return index;
 }
 
 export function parseRedisHgetallPairs(raw: string): RawRegistryAgent[] {
@@ -226,7 +301,7 @@ function fetchRedisRegistryRaw(): { ok: true; raw: string } | { ok: false; error
 }
 
 /** Canonical TNF protocol network agents (wrappers / core processes). */
-export const PROTOCOL_NETWORK_AGENTS: Array<{
+export const PROTOCOL_NETWORK_AGENTS: ReadonlyArray<{
   name: string;
   role: string;
   platform: string;
@@ -234,17 +309,16 @@ export const PROTOCOL_NETWORK_AGENTS: Array<{
 }> = [
   {
     name: 'antigravity',
-    // Platform wrappers are workers by default. The baton holder is master-clock
-    // (ORCHESTRATOR-{ts}), not any particular fulfillment platform. Orchestration
-    // capabilities may still be assigned via capabilities / workerAction.
-    role: 'worker',
+    // Platform wrappers are dynamic runners. Roles are assigned dynamically via
+    // registration/capabilities rather than hardcoded to specific models or platforms.
+    role: 'dynamic',
     platform: 'antigravity',
     processPattern: 'antigravity-redis-wrapper',
   },
-  { name: 'claude', role: 'broker', platform: 'claude', processPattern: 'claude-redis-wrapper' },
-  { name: 'gemini', role: 'worker', platform: 'gemini', processPattern: 'gemini-redis-wrapper' },
-  { name: 'jules', role: 'worker', platform: 'jules', processPattern: 'jules-redis-wrapper' },
-  { name: 'pi', role: 'worker', platform: 'pi', processPattern: 'pi-redis-wrapper' },
+  { name: 'claude', role: 'dynamic', platform: 'claude', processPattern: 'claude-redis-wrapper' },
+  { name: 'gemini', role: 'dynamic', platform: 'gemini', processPattern: 'gemini-redis-wrapper' },
+  { name: 'jules', role: 'dynamic', platform: 'jules', processPattern: 'jules-redis-wrapper' },
+  { name: 'pi', role: 'dynamic', platform: 'pi', processPattern: 'pi-redis-wrapper' },
   {
     name: 'model-watchdog',
     role: 'broker',
@@ -288,10 +362,13 @@ export function discoverNetworkAgents(nowMs = Date.now()): RawRegistryAgent[] {
   const iso = new Date(nowMs).toISOString();
   return PROTOCOL_NETWORK_AGENTS.map((agent) => {
     const running = isProcessRunning(agent.processPattern);
+    const envRole =
+      process.env[`AGENT_ROLE_${agent.name.toUpperCase()}`] ||
+      (agent.name === 'antigravity' ? process.env.AGENT_ROLE : undefined);
     return {
       id: `network:${agent.platform}`,
       name: agent.name,
-      role: agent.role,
+      role: envRole || agent.role,
       platform: agent.platform,
       status: running ? 'active' : 'offline',
       lastSeen: running ? iso : null,

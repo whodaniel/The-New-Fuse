@@ -1,0 +1,144 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "80772b79-104e-4c9a-a643-48a80ca3d9a1",
+  "created_at": "2026-09-07T21:09:41.194Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "integration/ledger-tenancy-20260907",
+  "head_sha": "a6495967d16a176b11708b562b7977950f4a1a7a",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "project_ids": [],
+  "work_summary": [
+    "Partition ledger by authenticated tenant and workspace; unify CLI goals and Kanban projections; validate explicit legacy import",
+    "Backend tenant enforcement is private_control_plane; CLI HTTP client and projections are oss_runtime. Retired legacy package API registration; no silent legacy adoption."
+  ],
+  "changed_paths": [
+    "apps/api/src/controllers/workspace.controller.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.controller.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.module.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.service.spec.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.service.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.types.ts",
+    "apps/api/src/services/agent-handoff.service.ts",
+    "packages/api/src/modules/unified-ledger/unified-ledger.module.ts",
+    "packages/tnf-cli/src/services/GoalsService.ts",
+    "packages/tnf-cli/src/services/KanbanService.ts",
+    "apps/api/src/modules/unified-ledger/ledger-scope.interceptor.ts",
+    "apps/api/src/modules/unified-ledger/tenant-ledger-store.ts",
+    "apps/api/test/ledger-tenancy.node.ts",
+    "packages/tnf-cli/src/services/UnifiedLedgerClient.ts",
+    "docs/operations/LEDGER_TENANCY.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LEDGER_TENANCY_20260907.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LEDGER_TENANCY_20260907.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "PASS: 32 Jest ledger/controller tests; 3 real filesystem and JWT/Nest HTTP integration cases; CLI and packages/api TypeScript checks; git diff --check. apps/api typecheck reports 3 existing unrelated errors in relay-health.controller.ts and fuseApp.ts; no errors in changed sources. No production deployment or data migration performed. API storage requires a durable shared POSIX filesystem across replicas."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Read this scoped receipt and docs/operations/LEDGER_TENANCY.md",
+      "Verify PR/remote main before repeating implementation or migration"
+    ]
+  },
+  "next_actions": [
+    "Commit, push, and merge under explicit user authorization; verify remote main and retire only this worktree.",
+    "Deploy API and CLI together with durable ledger storage, then explicitly import selected owner data using documented endpoints."
+  ],
+  "artifacts": {
+    "commits": ["a6495967d16a176b11708b562b7977950f4a1a7a"],
+    "deployment_urls": [],
+    "database_migrations": []
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "private_control_plane",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": [
+      "tenant isolation",
+      "authenticated HTTP integration",
+      "transactional persistence"
+    ],
+    "staffed_by": ["codex-ledger-tenancy", "Node/Jest/TypeScript verification"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": true,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "rationale": "Storage and migration invariants are recorded in LEDGER_TENANCY.md and regression tests"
+    },
+    "skills": {
+      "considered": true,
+      "rationale": "Extended existing ledger services without adding a skill"
+    },
+    "gaps": {
+      "considered": true,
+      "open": [
+        {
+          "summary": "Deployment and explicit legacy data migration remain operator rollout work"
+        }
+      ]
+    },
+    "self_audit": {
+      "checks": [
+        {
+          "id": "work-summary-not-stale",
+          "ok": true,
+          "detail": "1 item(s), distinct from the previous handoff"
+        },
+        {
+          "id": "classification-complete",
+          "ok": true,
+          "detail": "all four fields set"
+        },
+        {
+          "id": "reflection-answered",
+          "ok": true,
+          "detail": "lessons.considered=true skills.considered=true"
+        },
+        {
+          "id": "gaps-considered",
+          "ok": true,
+          "detail": "1 open gap(s) recorded"
+        },
+        {
+          "id": "next-actions-not-all-inherited",
+          "ok": true,
+          "detail": "3 action(s), 2 inherited from the previous handoff"
+        },
+        {
+          "id": "changed-paths-recorded",
+          "ok": true,
+          "detail": "15 recorded, 17 dirty in the working tree"
+        }
+      ],
+      "findings": 0
+    }
+  }
+}

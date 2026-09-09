@@ -3,6 +3,17 @@ import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import {
+  accountScopedRoot,
+  resolveAccountBinding,
+  tryAccountScopedPath,
+} from './AccountBindingService.js';
+
+/** Ownership stamp applied to OAuth credential records written to account-scoped storage. */
+interface OwnerStamp {
+  ownerUserId: string;
+  ownerAccountId: string;
+}
 
 export interface MCPServerConfig {
   name: string;
@@ -53,18 +64,54 @@ export interface OAuthCredential {
   refreshToken?: string;
   expiresAt?: number;
   scopes?: string[];
+  /** Owning TNF account — stamped on save for account-scoped storage. */
+  ownerUserId?: string;
+  ownerAccountId?: string;
 }
 
 export class MCPManagerService {
+  /** Primary storage dir: caller-provided verbatim, or account-scoped. */
   private configDir: string;
+  /** Legacy flat dir (~/.config/tnf/mcp), used only as a read fallback. */
+  private readonly legacyConfigDir: string | null;
   private servers: Map<string, MCPServerConfig> = new Map();
   private processes: Map<string, { pid: number; process: ReturnType<typeof spawn> }> = new Map();
   private credentials: Map<string, OAuthCredential> = new Map();
 
   constructor(configDir?: string) {
-    this.configDir = configDir || path.join(os.homedir(), '.config', 'tnf', 'mcp');
+    const legacyDir = path.join(os.homedir(), '.config', 'tnf', 'mcp');
+    if (configDir && configDir.trim()) {
+      // Caller-managed root (tests, explicit overrides) is used verbatim and
+      // stays outside account scoping — the caller owns the path decision.
+      this.configDir = configDir;
+      this.legacyConfigDir = null;
+    } else {
+      // OAuth credentials are personal data owned by the authenticated TNF
+      // account: scope storage under ~/.tnf/accounts/<ownerUserId>/mcp.
+      // Unbound machines keep reading the legacy flat dir; writes fail closed.
+      this.configDir = tryAccountScopedPath('mcp') ?? legacyDir;
+      this.legacyConfigDir = legacyDir;
+    }
     this.loadConfig();
     this.loadCredentials();
+  }
+
+  /**
+   * Storage target for writes. Fail closed on the default root: without an
+   * authenticated account there is no owner, so refuse to write instead of
+   * leaking OAuth tokens into a machine-wide flat path.
+   */
+  private writeTarget(): { dir: string; owner: OwnerStamp | null } {
+    if (this.legacyConfigDir === null) return { dir: this.configDir, owner: null };
+    try {
+      const binding = resolveAccountBinding();
+      return {
+        dir: path.join(accountScopedRoot(), 'mcp'),
+        owner: { ownerUserId: binding.ownerUserId, ownerAccountId: binding.tnfAccountId },
+      };
+    } catch (err) {
+      throw new Error(`Cannot save MCP config/credentials: ${(err as Error).message}`);
+    }
   }
 
   static getRepoConfigPath(repoRoot: string): string {
@@ -115,51 +162,63 @@ export class MCPManagerService {
       transport: serverConfig.transport,
       url: serverConfig.url,
       headers: serverConfig.headers,
-      bearerTokenEnv: serverConfig.bearerTokenEnv || serverConfig.tokenEnv || serverConfig.accessTokenEnv,
+      bearerTokenEnv:
+        serverConfig.bearerTokenEnv || serverConfig.tokenEnv || serverConfig.accessTokenEnv,
       enabled: serverConfig.enabled !== false && serverConfig.disabled !== true,
       oauth: serverConfig.oauth,
     };
   }
 
   private loadConfig(): void {
-    const configPath = path.join(this.configDir, 'mcp.json');
-    if (fs.existsSync(configPath)) {
+    const candidates = [path.join(this.configDir, 'mcp.json')];
+    if (this.legacyConfigDir && this.legacyConfigDir !== this.configDir) {
+      candidates.push(path.join(this.legacyConfigDir, 'mcp.json'));
+    }
+    for (const configPath of candidates) {
+      if (!fs.existsSync(configPath)) continue;
       try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         const serversObj = config.servers || config.mcpServers || {};
         for (const [name, serverConfig] of Object.entries(serversObj) as [string, any][]) {
           this.servers.set(name, MCPManagerService.normalizeServerConfig(name, serverConfig));
         }
+        break; // the first existing file wins: account-scoped over legacy
       } catch {
-        // Config doesn't exist or is invalid
+        // Malformed file — try the next candidate before giving up
       }
     }
   }
 
   private loadCredentials(): void {
-    const credPath = path.join(this.configDir, 'credentials.json');
-    if (fs.existsSync(credPath)) {
+    const candidates = [path.join(this.configDir, 'credentials.json')];
+    if (this.legacyConfigDir && this.legacyConfigDir !== this.configDir) {
+      candidates.push(path.join(this.legacyConfigDir, 'credentials.json'));
+    }
+    for (const credPath of candidates) {
+      if (!fs.existsSync(credPath)) continue;
       try {
         const creds = JSON.parse(fs.readFileSync(credPath, 'utf8'));
         for (const [name, cred] of Object.entries(creds) as [string, OAuthCredential][]) {
           this.credentials.set(name, cred);
         }
+        break; // the first existing file wins: account-scoped over legacy
       } catch {
-        // Credentials don't exist or are invalid
+        // Malformed file — try the next candidate before giving up
       }
     }
   }
 
   private saveCredentials(): void {
-    if (!fs.existsSync(this.configDir)) {
-      fs.mkdirSync(this.configDir, { recursive: true });
+    const { dir, owner } = this.writeTarget();
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
     }
-    const credPath = path.join(this.configDir, 'credentials.json');
+    const credPath = path.join(dir, 'credentials.json');
     const credsObj: Record<string, OAuthCredential> = {};
     for (const [name, cred] of this.credentials) {
-      credsObj[name] = cred;
+      credsObj[name] = owner ? { ...cred, ...owner } : cred;
     }
-    fs.writeFileSync(credPath, JSON.stringify(credsObj, null, 2));
+    fs.writeFileSync(credPath, JSON.stringify(credsObj, null, 2), { mode: 0o600 });
   }
 
   addServer(name: string, config: Omit<MCPServerConfig, 'name'>): void {
@@ -169,10 +228,11 @@ export class MCPManagerService {
   }
 
   private saveConfig(): void {
-    if (!fs.existsSync(this.configDir)) {
-      fs.mkdirSync(this.configDir, { recursive: true });
+    const { dir } = this.writeTarget();
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
     }
-    const configPath = path.join(this.configDir, 'mcp.json');
+    const configPath = path.join(dir, 'mcp.json');
     const serversObj: Record<string, any> = {};
     for (const [name, config] of this.servers) {
       const entry: Record<string, any> = {
@@ -193,7 +253,7 @@ export class MCPManagerService {
       serversObj[name] = entry;
     }
     const data = JSON.stringify({ servers: serversObj }, null, 2);
-    fs.writeFileSync(configPath, data);
+    fs.writeFileSync(configPath, data, { mode: 0o600 });
   }
 
   syncFromRepo(repoRoot: string): { imported: number; configPath: string } {

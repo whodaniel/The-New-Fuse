@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UnifiedLedgerController } from './unified-ledger.controller.js';
-import { UnifiedLedgerService } from './unified-ledger.service.js';
 
-@Module({
-  controllers: [UnifiedLedgerController],
-  providers: [UnifiedLedgerService],
-  exports: [UnifiedLedgerService],
-})
+/**
+ * Compatibility marker only. The old unauthenticated flat-file ledger is retired.
+ * Authenticated ledger authority lives in apps/api; public clients use its API.
+ * Do not register the legacy controller/service or open a second ledger store.
+ */
+@Module({})
 export class UnifiedLedgerModule {}

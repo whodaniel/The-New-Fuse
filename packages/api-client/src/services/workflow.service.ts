@@ -1,5 +1,5 @@
-import { ApiClient } from '../client/ApiClient.js';
 import { BaseService } from './BaseService.js';
+import type { IApiClient } from './IApiClient.js';
 
 /**
  * Workflow step interface
@@ -35,7 +35,7 @@ export enum WorkflowExecutionStatus {
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
 }
 
 /**
@@ -96,7 +96,7 @@ export class WorkflowService extends BaseService {
    * Create a new workflow service
    * @param api API client instance
    */
-  constructor(api: ApiClient) {
+  constructor(api: IApiClient) {
     super(api, '/workflows');
   }
 
@@ -174,7 +174,10 @@ export class WorkflowService extends BaseService {
    * @param options Query options (page, limit, status, etc.)
    * @returns Promise with executions list
    */
-  async getExecutionsByWorkflowId(workflowId: string, options: Record<string, any> = {}): Promise<WorkflowExecution[]> {
+  async getExecutionsByWorkflowId(
+    workflowId: string,
+    options: Record<string, any> = {}
+  ): Promise<WorkflowExecution[]> {
     this.validateRequired({ workflowId }, ['workflowId']);
     const queryString = this.buildQueryString(options);
     return this.get<WorkflowExecution[]>(`/${workflowId}/executions${queryString}`);
@@ -241,6 +244,6 @@ export class WorkflowService extends BaseService {
  * );
  * ```
  */
-export function createWorkflowService(api: ApiClient): WorkflowService {
+export function createWorkflowService(api: IApiClient): WorkflowService {
   return new WorkflowService(api);
 }

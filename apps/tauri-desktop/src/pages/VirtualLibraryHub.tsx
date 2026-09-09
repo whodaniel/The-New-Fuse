@@ -21,7 +21,7 @@ type LifecycleResult = {
 };
 
 const LIBRARY_DEV_CMD =
-  'cd apps/extensions/virtual-library-blueprints && npx vite --host 127.0.0.1 --port 5173';
+  'cd apps/virtual-library-blueprints && npx vite --host 127.0.0.1 --port 5173';
 const LIBRARY_AUDIO_CMD = 'node scripts/library/ensure-library-audio-stack.cjs';
 
 const VirtualLibraryHub: React.FC = () => {

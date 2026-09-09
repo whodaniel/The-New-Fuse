@@ -32,11 +32,40 @@ export const LLM_PROVIDER_CATALOG: LlmProviderOption[] = [
     exampleModels: ['claude-3-5-sonnet', 'claude-3-haiku'],
   },
   {
+    id: 'chrome-ai',
+    name: 'Chrome Built-in AI (On-Device)',
+    category: 'Local',
+    description:
+      'On-device Gemini Nano execution directly in Google Chrome via Prompt API ($0 cost, 0ms latency).',
+    exampleModels: ['gemini-nano-prompt-api', 'gemini-nano-summarizer', 'gemini-nano-writer'],
+  },
+  {
+    id: 'google-gemma',
+    name: 'Google Gemma (Apache 2.0 / Edge)',
+    category: 'Local',
+    description:
+      'Open multimodal Gemma 4 & 3 models optimized for edge laptops, audio, and WebGPU.',
+    exampleModels: [
+      'gemma-4-e2b',
+      'gemma-4-e4b',
+      'gemma-4-12b-unified',
+      'gemma-4-26b-moe',
+      'paligemma-2-10b',
+    ],
+  },
+  {
+    id: 'edge-slm',
+    name: 'Edge & WebGPU SLMs',
+    category: 'Local',
+    description: 'Ultra-compact models for instant local routing, coding, and AST validation.',
+    exampleModels: ['qwen-2.5-coder-1.5b', 'smollm2-1.7b', 'llama-3.2-3b', 'phi-4-mini'],
+  },
+  {
     id: 'gemini',
     name: 'Google Gemini',
     category: 'Core',
     description: 'Gemini models for multimodal reasoning and high-context workflows.',
-    exampleModels: ['gemini-1.5-pro', 'gemini-1.5-flash'],
+    exampleModels: ['gemini-2.0-flash', 'gemini-2.0-pro-exp-02-05', 'gemini-1.5-pro'],
   },
   {
     id: 'openrouter',
@@ -199,9 +228,10 @@ export const getProvidersByCategory = (includeAdvanced = false) => {
 };
 
 export const getProviderOptions = (includeAdvanced = false) => {
-  return (includeAdvanced
-    ? LLM_PROVIDER_CATALOG
-    : LLM_PROVIDER_CATALOG.filter((provider) => !provider.isAdvanced)
+  return (
+    includeAdvanced
+      ? LLM_PROVIDER_CATALOG
+      : LLM_PROVIDER_CATALOG.filter((provider) => !provider.isAdvanced)
   ).map((provider) => ({
     value: provider.id,
     label: provider.name,

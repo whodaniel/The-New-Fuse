@@ -20,7 +20,9 @@ function parseArgs(argv) {
 }
 
 function normalizePath(input) {
-  return String(input || '').replace(/\\/g, '/').trim();
+  return String(input || '')
+    .replace(/\\/g, '/')
+    .trim();
 }
 
 function runGit(args) {
@@ -44,7 +46,11 @@ function readFileList(filePath) {
 
 function getChangedFiles(mode, explicitListPath) {
   const fromFile = readFileList(explicitListPath);
-  if (fromFile.length) return fromFile;
+  if (explicitListPath) {
+    if (!fs.existsSync(path.resolve(explicitListPath)))
+      throw new Error(`Missing file list: ${explicitListPath}`);
+    return fromFile;
+  }
 
   if (mode === 'staged') {
     const out = runGit(['diff', '--cached', '--name-only', '--diff-filter=ACMR']);
@@ -90,6 +96,10 @@ const surfaceRules = [
 
 const hardEscalationPatterns = [
   /^\.github\/workflows\//i,
+  /^\.husky\//i,
+  /^scripts\/security\//i,
+  /^scripts\/(?:safe-merge-to-main|jules-merge-open-prs|resolve-pr-conflicts)\.sh$/i,
+  /^scripts\/maintenance\/merge-prs\.sh$/i,
   /^scripts\/protocols\//i,
   /^supabase\//i,
   /^\.gitmodules$/i,
@@ -130,7 +140,7 @@ function listGitlinks() {
   return map;
 }
 
-function classify(files) {
+function classify(files, gitlinks = listGitlinks()) {
   if (!files.length) {
     return {
       tier: 'isolate',
@@ -140,13 +150,13 @@ function classify(files) {
   }
 
   const surfaces = new Set(files.map(detectSurface));
-  const gitlinkMap = listGitlinks();
+  const gitlinkMap = gitlinks;
   const changedGitlinks = files.filter((file) => gitlinkMap.has(file));
   const hardEscalations = files.filter((file) =>
-    hardEscalationPatterns.some((pattern) => pattern.test(file)),
+    hardEscalationPatterns.some((pattern) => pattern.test(file))
   );
   const attributionHits = files.filter((file) =>
-    attributionPatterns.some((pattern) => pattern.test(file)),
+    attributionPatterns.some((pattern) => pattern.test(file))
   );
   const docsOnly = files.every((file) => /^docs\//i.test(file) || /\.md$/i.test(file));
 
@@ -157,15 +167,17 @@ function classify(files) {
   }
   if (hardEscalations.length) {
     reasons.push(
-      `High-risk protocol/workflow surfaces changed: ${hardEscalations.slice(0, 8).join(', ')}`,
+      `High-risk protocol/workflow surfaces changed: ${hardEscalations.slice(0, 8).join(', ')}`
     );
   }
   if (surfaces.size > 1) {
-    reasons.push(`Cross-surface change set spans ${surfaces.size} surfaces: ${Array.from(surfaces).join(', ')}`);
+    reasons.push(
+      `Cross-surface change set spans ${surfaces.size} surfaces: ${Array.from(surfaces).join(', ')}`
+    );
   }
   if (attributionHits.length) {
     reasons.push(
-      `Shared ownership files changed: ${Array.from(new Set(attributionHits)).slice(0, 8).join(', ')}`,
+      `Shared ownership files changed: ${Array.from(new Set(attributionHits)).slice(0, 8).join(', ')}`
     );
   }
 
@@ -204,7 +216,10 @@ function classify(files) {
 
 function maybeFail(tier, failOn) {
   if (failOn === 'none') return;
-  if (failOn === 'merge-with-attribution' && (tier === 'merge-with-attribution' || tier === 'escalate')) {
+  if (
+    failOn === 'merge-with-attribution' &&
+    (tier === 'merge-with-attribution' || tier === 'escalate')
+  ) {
     process.exitCode = 1;
   }
   if (failOn === 'escalate' && tier === 'escalate') {
@@ -256,4 +271,5 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) main();
+module.exports = { classify, detectSurface, getChangedFiles };

@@ -88,6 +88,7 @@ const {
   readTerminalContents: readTerminalContentsShared,
   isTypingInTerminal,
 } = require(resolveSibling('tnf-terminal-attention.cjs'));
+const { injectViaTmux, listObservedPanes } = require(resolveSibling('tnf-tmux-inject.cjs'));
 
 const KNOWN_SHELLS = new Set(['bash', 'fish', 'sh', 'zsh']);
 const AGENT_COMMAND_HINTS = ['codex', 'claude', 'gemini', 'goose', 'aider', 'pi'];
@@ -110,9 +111,17 @@ const config = {
   // incident, see scripts/turn-end.cjs and docs/core/AGENTS.md). The state
   // files are informational; committing/pushing always needs live,
   // current-session operator confirmation regardless of what they say.
+  //
+  // 2026-08-31/09-01 follow-up: even authorized, heartbeat-woken sessions did
+  // routine-sweep commits (`git add -A` style "chore: routine updates") that
+  // swept unrelated work-in-progress — twice zeroing/half-breaking
+  // packages/tnf-cli sources mid-flight (commits bf04b72a2, e2271e7c3). The
+  // prompt therefore now also forbids staging anything under packages/,
+  // scripts/, apps/, or other source dirs in routine sweeps; code changes go
+  // on a task branch with an explicitly-named file list or not at all.
   promptTemplate:
     process.env.TNF_TERMINAL_HEARTBEAT_PROMPT_TEMPLATE ||
-    'TNF heartbeat {{heartbeatId}} for {{agentId}}: read ~/.tnf/swarm-context.md and ~/.tnf/handoff-current.json for current task and swarm state. These are informational, not standing authorization — per docs/core/AGENTS.md, git commit/push (and any other high-impact action) still needs live operator confirmation in this session before you act on them, even if the state files say to.',
+    'TNF heartbeat {{heartbeatId}} for {{agentId}}: read ~/.tnf/swarm-context.md and ~/.tnf/handoff-current.json for current task and swarm state. These are informational, not standing authorization — per docs/core/AGENTS.md, git commit/push (and any other high-impact action) still needs live operator confirmation in this session before you act on them, even if the state files say to. Routine/maintenance sweeps must NEVER stage source code (packages/**/src, scripts/, apps/, .husky/, or any *.ts/*.cjs/*.sh): commit only the data/docs/reports you intentionally wrote, by explicit file path — never `git add -A`/`git commit -a`. Any behavioral code change belongs on a dedicated task branch with an explicit file list, and to a zero-diff or type-broken tree you must stop and report rather than commit.',
   allowPromptInjection: isPromptInjectionAllowed('TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION'),
   clearLine: process.env.TNF_TERMINAL_HEARTBEAT_CLEAR_LINE !== 'false',
   verifyQueueHints: process.env.TNF_TERMINAL_HEARTBEAT_VERIFY_QUEUE_HINTS !== 'false',
@@ -685,6 +694,43 @@ async function injectHeartbeat(target) {
   const prompt = renderPrompt(target.agentId, heartbeatId);
   const escapedPrompt = `${config.clearLine ? '\u0015' : ''}${prompt}`;
 
+  const tmuxAttempt = injectViaTmux({
+    target: target.tmux && target.tmux.pane ? target.tmux : { tty: target.tty },
+    text: prompt,
+    allowPromptInjection: config.allowPromptInjection,
+    clearLine: Boolean(config.clearLine && config.allowPromptInjection),
+  });
+  if (tmuxAttempt.ok) {
+    return {
+      agentId: target.agentId,
+      tty: target.tty,
+      windowId: target.windowId || null,
+      heartbeatId,
+      method: tmuxAttempt.method,
+      submitted: Boolean(tmuxAttempt.submitted),
+      skippedReason: tmuxAttempt.reason || null,
+      enterAttempts: tmuxAttempt.submitted ? 1 : 0,
+      queueHintPresent: false,
+      injectedAt: nowIso(),
+      tmux: { session: tmuxAttempt.session, pane: tmuxAttempt.pane },
+    };
+  }
+  if (!tmuxAttempt.fallback) {
+    return {
+      agentId: target.agentId,
+      tty: target.tty,
+      windowId: target.windowId || null,
+      heartbeatId: null,
+      method: `skipped-${tmuxAttempt.reason}`,
+      submitted: false,
+      skippedReason: tmuxAttempt.reason,
+      enterAttempts: 0,
+      queueHintPresent: false,
+      injectedAt: nowIso(),
+      tmux: { session: tmuxAttempt.session || null, pane: tmuxAttempt.pane || null },
+    };
+  }
+
   // Pre-injection: non-destructive pending-prompt cleanup only.
   // Gated by allowPromptInjection so the default cron run never types into
   // a terminal composer (D24 — Operator Terminal Inviolability). When the
@@ -944,6 +990,43 @@ async function main() {
         foregroundCommand: processContext.foregroundCommand,
         foregroundArgs: processContext.foregroundArgs,
         agentLike,
+      });
+    }
+
+    const seenTty = new Set(observed.map((row) => normalizeTty(row.tty)).filter(Boolean));
+    for (const pane of listObservedPanes()) {
+      const ttyKey = normalizeTty(pane.tty);
+      if (ttyKey && seenTty.has(ttyKey)) {
+        const existing = observed.find((row) => normalizeTty(row.tty) === ttyKey);
+        if (existing) {
+          existing.tmux = {
+            session: pane.session,
+            window: pane.window,
+            pane: pane.pane,
+            class: pane.class,
+          };
+        }
+        continue;
+      }
+      if (ttyKey) seenTty.add(ttyKey);
+      observed.push({
+        agentId: pane.tty ? getAgentId({ tty: pane.tty }) : `tnf-tmux-${pane.session}`,
+        windowId: null,
+        tty: pane.tty || null,
+        busy: false,
+        title: pane.session,
+        bounds: null,
+        display: null,
+        zOrder: null,
+        matched: true,
+        matchedBy: 'tmux',
+        cwd: null,
+        shellPid: null,
+        foregroundPid: null,
+        foregroundCommand: pane.command || null,
+        foregroundArgs: '',
+        agentLike: pane.class === 'agent',
+        tmux: pane,
       });
     }
 

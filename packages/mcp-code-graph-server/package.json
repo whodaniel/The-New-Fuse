@@ -1,0 +1,47 @@
+{
+  "name": "@the-new-fuse/mcp-code-graph-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server exposing the TNF deterministic AST code graph — query, path, explain, stats, with EXTRACTED/INFERRED/AMBIGUOUS provenance on every edge",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "tnf-code-graph-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "node --test dist/*.test.js"
+  },
+  "keywords": [
+    "mcp",
+    "code-graph",
+    "ast",
+    "tree-sitter",
+    "agent",
+    "ai"
+  ],
+  "author": "The New Fuse",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "@the-new-fuse/code-graph": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "tsx": "^4.19.2",
+    "typescript": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./*": "./dist/*"
+  }
+}

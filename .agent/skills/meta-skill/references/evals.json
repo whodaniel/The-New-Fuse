@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "trim-case",
+      "arguments": {
+        "text": "  Hello WORLD  "
+      },
+      "expected_exit": 0,
+      "expected_stdout": "hello world\n"
+    },
+    {
+      "id": "empty-case",
+      "arguments": {
+        "text": ""
+      },
+      "expected_exit": 0,
+      "expected_stdout": "\n"
+    }
+  ],
+  "triggers": [
+    {
+      "text": "normalize text",
+      "activate": true
+    },
+    {
+      "text": "do not normalize text",
+      "activate": false
+    }
+  ]
+}

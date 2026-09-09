@@ -1,8 +1,19 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as os from 'os';
-import { createHash, randomBytes } from 'crypto';
 import { spawnSync } from 'child_process';
+import { randomBytes } from 'crypto';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import {
+  accountScopedRoot,
+  resolveAccountBinding,
+  tryAccountScopedPath,
+} from './AccountBindingService.js';
+
+/** Ownership stamp applied to credential records written to account-scoped storage. */
+interface OwnerStamp {
+  ownerUserId: string;
+  ownerAccountId: string;
+}
 
 export interface AuthProvider {
   name: string;
@@ -21,64 +32,113 @@ export interface AuthCredential {
   refreshToken?: string;
   expiresAt?: number;
   scopes?: string[];
+  /** Owning TNF account — stamped on save for account-scoped storage. */
+  ownerUserId?: string;
+  ownerAccountId?: string;
 }
 
 export class AuthService {
-  private configDir: string;
+  /** Primary storage dir: caller-provided verbatim, or account-scoped. */
+  private readonly configDir: string;
+  /** Legacy flat dir (~/.config/tnf/auth), used only as a read fallback. */
+  private readonly legacyConfigDir: string | null;
   private credentials: Map<string, AuthCredential> = new Map();
   private config: Record<string, string> = {};
 
   constructor(configDir?: string) {
-    this.configDir = configDir || path.join(os.homedir(), '.config', 'tnf', 'auth');
+    const legacyDir = path.join(os.homedir(), '.config', 'tnf', 'auth');
+    if (configDir && configDir.trim()) {
+      // Caller-managed root (tests, explicit overrides) is used verbatim and
+      // stays outside account scoping — the caller owns the path decision.
+      this.configDir = configDir;
+      this.legacyConfigDir = null;
+    } else {
+      // Credentials are personal data owned by the authenticated TNF account:
+      // scope storage under ~/.tnf/accounts/<ownerUserId>/auth. Unbound
+      // machines keep reading the legacy flat dir; writes fail closed.
+      this.configDir = tryAccountScopedPath('auth') ?? legacyDir;
+      this.legacyConfigDir = legacyDir;
+    }
     this.loadCredentials();
     this.loadConfig();
   }
 
+  /**
+   * Storage target for writes. Fail closed on the default root: without an
+   * authenticated account there is no owner, so refuse to write instead of
+   * leaking credentials into a machine-wide flat path.
+   */
+  private writeTarget(): { dir: string; owner: OwnerStamp | null } {
+    if (this.legacyConfigDir === null) return { dir: this.configDir, owner: null };
+    try {
+      const binding = resolveAccountBinding();
+      return {
+        dir: path.join(accountScopedRoot(), 'auth'),
+        owner: { ownerUserId: binding.ownerUserId, ownerAccountId: binding.tnfAccountId },
+      };
+    } catch (err) {
+      throw new Error(`Cannot save auth credentials: ${(err as Error).message}`);
+    }
+  }
+
   private loadCredentials(): void {
-    const credPath = path.join(this.configDir, 'credentials.json');
-    if (fs.existsSync(credPath)) {
+    const candidates = [path.join(this.configDir, 'credentials.json')];
+    if (this.legacyConfigDir && this.legacyConfigDir !== this.configDir) {
+      candidates.push(path.join(this.legacyConfigDir, 'credentials.json'));
+    }
+    for (const credPath of candidates) {
+      if (!fs.existsSync(credPath)) continue;
       try {
         const creds = JSON.parse(fs.readFileSync(credPath, 'utf8'));
         for (const [name, cred] of Object.entries(creds) as [string, AuthCredential][]) {
           this.credentials.set(name, cred);
         }
+        break; // the first existing file wins: account-scoped over legacy
       } catch {
-        // Credentials don't exist or are invalid
+        // Malformed file — try the next candidate before giving up
       }
     }
   }
 
   private saveCredentials(): void {
-    if (!fs.existsSync(this.configDir)) {
-      fs.mkdirSync(this.configDir, { recursive: true });
+    const { dir, owner } = this.writeTarget();
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
     }
-    const credPath = path.join(this.configDir, 'credentials.json');
+    const credPath = path.join(dir, 'credentials.json');
     const credsObj: Record<string, AuthCredential> = {};
     for (const [name, cred] of this.credentials) {
-      credsObj[name] = cred;
+      credsObj[name] = owner ? { ...cred, ...owner } : cred;
     }
-    fs.writeFileSync(credPath, JSON.stringify(credsObj, null, 2));
+    fs.writeFileSync(credPath, JSON.stringify(credsObj, null, 2), { mode: 0o600 });
   }
 
   private loadConfig(): void {
-    const configPath = path.join(this.configDir, 'config.json');
-    if (!fs.existsSync(configPath)) return;
-    try {
-      const data = JSON.parse(fs.readFileSync(configPath, 'utf8')) as Record<string, unknown>;
-      this.config = Object.fromEntries(
-        Object.entries(data).map(([key, value]) => [key, String(value)])
-      );
-    } catch {
-      this.config = {};
+    const candidates = [path.join(this.configDir, 'config.json')];
+    if (this.legacyConfigDir && this.legacyConfigDir !== this.configDir) {
+      candidates.push(path.join(this.legacyConfigDir, 'config.json'));
+    }
+    for (const configPath of candidates) {
+      if (!fs.existsSync(configPath)) continue;
+      try {
+        const data = JSON.parse(fs.readFileSync(configPath, 'utf8')) as Record<string, unknown>;
+        this.config = Object.fromEntries(
+          Object.entries(data).map(([key, value]) => [key, String(value)])
+        );
+        break; // the first existing file wins: account-scoped over legacy
+      } catch {
+        this.config = {};
+      }
     }
   }
 
   private saveConfig(): void {
-    if (!fs.existsSync(this.configDir)) {
-      fs.mkdirSync(this.configDir, { recursive: true });
+    const { dir } = this.writeTarget();
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
     }
-    const configPath = path.join(this.configDir, 'config.json');
-    fs.writeFileSync(configPath, JSON.stringify(this.config, null, 2));
+    const configPath = path.join(dir, 'config.json');
+    fs.writeFileSync(configPath, JSON.stringify(this.config, null, 2), { mode: 0o600 });
   }
 
   listProviders(): AuthProvider[] {
@@ -108,7 +168,7 @@ export class AuthService {
     }
 
     for (const [name, cred] of this.credentials) {
-      if (!configuredProviders.some(p => p.name === name)) {
+      if (!configuredProviders.some((p) => p.name === name)) {
         const authenticated = !cred.expiresAt || cred.expiresAt > Date.now();
         providers.push({
           name,
@@ -123,7 +183,10 @@ export class AuthService {
     return providers;
   }
 
-  async login(provider: string, url?: string): Promise<{ success: boolean; message: string; url?: string }> {
+  async login(
+    provider: string,
+    url?: string
+  ): Promise<{ success: boolean; message: string; url?: string }> {
     const existingEnvKey = this.getEnvKeyForProvider(provider);
     if (existingEnvKey && process.env[existingEnvKey]) {
       const cred: AuthCredential = {
@@ -186,13 +249,19 @@ export class AuthService {
       }
 
       const loginUrl = 'https://github.com/login/device';
-      return { success: false, message: 'GitHub CLI not authenticated. Run: gh auth login', url: loginUrl };
+      return {
+        success: false,
+        message: 'GitHub CLI not authenticated. Run: gh auth login',
+        url: loginUrl,
+      };
     } catch (e) {
       return { success: false, message: `GitHub login failed: ${(e as Error).message}` };
     }
   }
 
-  private async loginGoogle(provider: string): Promise<{ success: boolean; message: string; url?: string }> {
+  private async loginGoogle(
+    provider: string
+  ): Promise<{ success: boolean; message: string; url?: string }> {
     const envKey = provider === 'gemini' ? 'GEMINI_API_KEY' : 'GOOGLE_API_KEY';
     if (process.env[envKey]) {
       const cred: AuthCredential = {
@@ -212,7 +281,10 @@ export class AuthService {
     };
   }
 
-  private async loginOAuth(provider: string, url: string): Promise<{ success: boolean; message: string }> {
+  private async loginOAuth(
+    provider: string,
+    url: string
+  ): Promise<{ success: boolean; message: string }> {
     const state = randomBytes(16).toString('hex');
     const authUrl = new URL(url);
     authUrl.searchParams.set('state', state);
@@ -221,7 +293,12 @@ export class AuthService {
     console.log(`  Waiting for authorization...\n`);
 
     try {
-      const opener = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
+      const opener =
+        process.platform === 'darwin'
+          ? 'open'
+          : process.platform === 'win32'
+            ? 'start'
+            : 'xdg-open';
       spawnSync(opener, [authUrl.toString()]);
     } catch {
       // Browser open failed, user can manually navigate
@@ -233,7 +310,11 @@ export class AuthService {
     };
   }
 
-  setToken(provider: string, token: string, options?: { refreshToken?: string; expiresIn?: number }): void {
+  setToken(
+    provider: string,
+    token: string,
+    options?: { refreshToken?: string; expiresIn?: number }
+  ): void {
     const cred: AuthCredential = {
       provider,
       type: 'oauth',

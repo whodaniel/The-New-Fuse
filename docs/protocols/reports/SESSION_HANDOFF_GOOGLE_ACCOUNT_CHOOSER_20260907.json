@@ -1,0 +1,118 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "9ec86fc7-805a-43ba-bef1-83d8cc78463e",
+  "created_at": "2026-09-07T13:24:55.409Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "tnf/worktree/agent-release-build-202609071321",
+  "head_sha": "0fee9e611202e1280f62734f9cf17b3a55efa413",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "project_ids": [],
+  "work_summary": [
+    "Request Google account chooser on every Supabase Google sign-in using prompt=select_account.",
+    "Verified installed Supabase SDK URL generation preserves prompt and callback; live app.DGbQFjDm.js confirms missing prompt. Dependency install completed offline. Production deployment pending."
+  ],
+  "changed_paths": [
+    "apps/frontend/src/hooks/useAuth.tsx",
+    "docs/protocols/reports/SESSION_HANDOFF_GOOGLE_ACCOUNT_CHOOSER_20260907.json",
+    "docs/protocols/reports/SESSION_HANDOFF_GOOGLE_ACCOUNT_CHOOSER_20260907.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order \u2014 but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
+    ]
+  },
+  "next_actions": [
+    "Complete build and commit gates, publish scoped PR, merge and deploy via controlled frontend deployment, verify live Google chooser parameter."
+  ],
+  "artifacts": {
+    "commits": ["0fee9e611202e1280f62734f9cf17b3a55efa413"],
+    "deployment_urls": [],
+    "database_migrations": []
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "reflection": {
+    "lessons": {
+      "considered": false
+    },
+    "skills": {
+      "considered": false
+    },
+    "gaps": {
+      "considered": false
+    },
+    "self_audit": {
+      "checks": [
+        {
+          "id": "work-summary-not-stale",
+          "ok": true,
+          "detail": "1 item(s), distinct from the previous handoff"
+        },
+        {
+          "id": "classification-complete",
+          "ok": true,
+          "detail": "all four fields set"
+        },
+        {
+          "id": "reflection-answered",
+          "ok": false,
+          "detail": "lessons.considered=false skills.considered=false"
+        },
+        {
+          "id": "gaps-considered",
+          "ok": false,
+          "detail": "no gap analysis recorded for this session"
+        },
+        {
+          "id": "next-actions-not-all-inherited",
+          "ok": true,
+          "detail": "3 action(s), 2 inherited from the previous handoff"
+        },
+        {
+          "id": "changed-paths-recorded",
+          "ok": true,
+          "detail": "1 recorded, 3 dirty in the working tree"
+        }
+      ],
+      "findings": 2
+    }
+  }
+}

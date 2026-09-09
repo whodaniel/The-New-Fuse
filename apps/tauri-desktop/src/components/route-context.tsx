@@ -9,15 +9,30 @@ import React, {
   useState,
 } from 'react';
 import {
+  formatHashRoute,
   isKnownRoute,
   persistRoute,
   resolveBootRoute,
   resolveLegacyRedirect,
+  splitHashPathAndQuery,
 } from '../config/routes';
 
 interface RouteHistoryEntry {
   route: string;
   params: Record<string, string>;
+}
+
+/**
+ * True when `hash` looks like a Supabase implicit-flow OAuth redirect
+ * (`#access_token=...&refresh_token=...&...` or an `#error=...` callback),
+ * as opposed to one of this app's own `#/route` hashes. Supabase's
+ * `detectSessionInUrl` parses this asynchronously on boot; if the router
+ * rewrites the hash first, the tokens are gone before Supabase can read them
+ * and sign-in silently fails.
+ */
+function isSupabaseAuthCallbackHash(hash: string): boolean {
+  if (!hash || hash.startsWith('#/')) return false;
+  return /(^#|[?&])(access_token|refresh_token|error_description|provider_token)=/.test(hash);
 }
 
 interface RouteContextType {
@@ -65,14 +80,23 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!window.history?.replaceState) return;
+    // Supabase's OAuth redirect lands tokens in this same hash fragment
+    // (#access_token=...&refresh_token=...&...) when detectSessionInUrl is on.
+    // If we normalize the hash to a route here first, we wipe those tokens out
+    // from under Supabase's own (async) parser and the sign-in silently never
+    // completes. Leave the hash alone until Supabase has had a chance to
+    // consume it — it performs its own replaceState cleanup once done.
+    if (isSupabaseAuthCallbackHash(window.location.hash)) return;
     const rawHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : '';
-    if (rawHash === bootRoute) return;
+    const { path: hashPath, search: hashSearch } = splitHashPathAndQuery(rawHash);
+    if (hashPath === bootRoute) return;
     // Boot can rewrite the requested path (legacy redirect) or restore a persisted
     // route when no hash was given. Sync the address bar in both cases so a deep
     // link never disagrees with the rendered view. replaceState does not emit
     // hashchange, so this cannot loop with the listener below.
-    if (!rawHash && !isKnownRoute(bootRoute)) return;
-    window.history.replaceState(null, '', `#${bootRoute}`);
+    if (!hashPath && !isKnownRoute(bootRoute)) return;
+    // Keep ?id=&source=… when normalizing so AI workflow deep links survive.
+    window.history.replaceState(null, '', formatHashRoute(bootRoute, hashSearch));
   }, [bootRoute]);
 
   useEffect(() => {
@@ -80,9 +104,10 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
 
     const onHashChange = () => {
       const rawHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : '';
-      const hashRoute = rawHash ? resolveLegacyRedirect(rawHash) : '';
-      if (hashRoute && rawHash !== hashRoute && window.history?.replaceState) {
-        window.history.replaceState(null, '', `#${hashRoute}`);
+      const { path: rawPath, search } = splitHashPathAndQuery(rawHash);
+      const hashRoute = rawPath ? resolveLegacyRedirect(rawPath) : '';
+      if (hashRoute && rawPath !== hashRoute && window.history?.replaceState) {
+        window.history.replaceState(null, '', formatHashRoute(hashRoute, search));
       }
       // Drive navigation for any non-empty hash, including unknown ones, so the
       // address bar and the rendered view never disagree. Unknown routes render
@@ -118,7 +143,7 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
     // Always sync the hash so the URL and rendered view stay consistent, even
     // when navigating to an unknown route (which renders the 404 shell).
     if (typeof window !== 'undefined' && window.history?.replaceState) {
-      window.history.replaceState(null, '', `#${target}`);
+      window.history.replaceState(null, '', formatHashRoute(target));
     }
     setHistoryStack((prev) => {
       const last = prev[prev.length - 1];
@@ -141,7 +166,7 @@ export const RouteProvider: React.FC<RouteProviderProps> = ({
         persistRoute(previous.route);
       }
       if (typeof window !== 'undefined' && window.history?.replaceState) {
-        window.history.replaceState(null, '', `#${previous.route}`);
+        window.history.replaceState(null, '', formatHashRoute(previous.route));
       }
       return next;
     });

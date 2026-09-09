@@ -414,6 +414,61 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
       additionalProperties: false,
     },
   },
+  {
+    name: 'graph_query',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Traverse the deterministic AST code graph from the symbols that best match a question, instead of grepping. Returns a subgraph of real imports/calls/extends edges, each labelled EXTRACTED (read from source), INFERRED (resolved by the tool) or AMBIGUOUS (several candidates). Requires `tnf graph build` to have run.',
+    parameters: {
+      type: 'object',
+      properties: {
+        question: { type: 'string', description: 'What you want to understand about the code.' },
+        budget: {
+          type: 'number',
+          description: 'Approximate token cap on the returned subgraph. Default 2000.',
+        },
+        minConfidence: {
+          type: 'string',
+          enum: ['EXTRACTED', 'INFERRED', 'AMBIGUOUS'],
+          description: 'Ignore edges weaker than this. EXTRACTED is source-only.',
+        },
+      },
+      required: ['question'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'graph_path',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Find the shortest route between two symbols in the code graph and report the weakest confidence on it. Use to answer "how does X reach Y". Requires `tnf graph build` to have run.',
+    parameters: {
+      type: 'object',
+      properties: {
+        from: { type: 'string', description: 'Symbol, class or file to start from.' },
+        to: { type: 'string', description: 'Symbol, class or file to reach.' },
+      },
+      required: ['from', 'to'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'graph_explain',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'List everything the code graph knows about one symbol: where it is defined, what references it, and what it references. Requires `tnf graph build` to have run.',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Symbol, class, method or file path.' },
+      },
+      required: ['name'],
+      additionalProperties: false,
+    },
+  },
 ]) as readonly BuiltinTool[];
 
 /**

@@ -12,7 +12,12 @@ import readline from 'readline';
 import { fileURLToPath } from 'url';
 import type { AgentMessage, RedisAgentClient } from './RedisAgentClient.js';
 import { buildTnfAgentOrientation } from './agent-orientation.js';
-import { printProtocolAgentRosterSafe } from './boot/agent-roster.js';
+import {
+  buildDefinitionIndex,
+  loadAgentDefinitions,
+  normalizeAgentName,
+  printProtocolAgentRosterSafe,
+} from './boot/agent-roster.js';
 import {
   createBootPipeline,
   printBootPlan,
@@ -23,6 +28,7 @@ import {
 } from './boot/pipeline.js';
 import { assertNoDuplicateCommands } from './commands/_registry.js';
 import { registerAgentStateQuotaEcosystemCommands } from './commands/agent-state-quota-ecosystem.js';
+import { registerAgentsAnnounceCommand } from './commands/agents-announce.js';
 import { registerAgentsClassifyCommand } from './commands/agents-classify.js';
 import { registerAgentsMatchCommand } from './commands/agents-match.js';
 import { executeBuiltinTool, registerAgentsRunCommand } from './commands/agents-run.js';
@@ -31,8 +37,11 @@ import { registerAssimilateCommand } from './commands/assimilate.js';
 import { registerBrowserCommand } from './commands/browser.js';
 import { registerCatalogCommand } from './commands/catalog.js';
 import { registerChannelCommands } from './commands/channels/index.js';
+import { registerCodeGraphCommands } from './commands/code-graph.js';
 import { registerConfigCommand } from './commands/config.js';
+import { registerCriticCommands } from './commands/critic.js';
 import { registerDepartmentCommands } from './commands/department.js';
+import { registerDurableTasksCommand } from './commands/durable-tasks.js';
 import { registerFederationTapCommand } from './commands/federation-tap.js';
 import { registerFleetCommands } from './commands/fleet/index.js';
 import { registerGoogleAiCommand } from './commands/google-ai.js';
@@ -42,6 +51,7 @@ import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.j
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
+import { registerPersonalKnowledgeCommands } from './commands/personal-knowledge.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerRememberCommands } from './commands/remember.js';
 import { registerScoutCommands } from './commands/scout.js';
@@ -50,8 +60,13 @@ import { registerSparkCommand } from './commands/spark.js';
 import { registerStaffingCommands } from './commands/staffing/index.js';
 import { registerSubdirectorCommand } from './commands/subdirector.js';
 import { registerTelegramCommands } from './commands/telegram/index.js';
+import { registerVideoIngestCommand } from './commands/video-ingest.js';
+import { registerVideoCommands } from './commands/video.js';
 import { registerWhatsappCommands } from './commands/whatsapp/index.js';
-import { Orchestrator } from './orchestration.js';
+import { resolveCriticConfig } from './services/critic-config.js';
+// NOTE: ./orchestration.js is intentionally NOT statically imported — it pulls
+// @the-new-fuse/infrastructure + ioredis chains (~2.1s module eval). It is
+// dynamically imported by the `orchestrate` command below instead.
 import { ProtocolInterceptor } from './orchestration/ProtocolInterceptor.js';
 import {
   describeAgentFocus,
@@ -61,15 +76,21 @@ import {
 } from './services/AgentFocusService.js';
 import { CommandSourceService } from './services/CommandSourceService.js';
 import { CronService } from './services/CronService.js';
-import { decideDispatch, resolveRecipient } from './services/DispatchGuard.js';
+import {
+  decideDispatch,
+  isDurableQueueRecipient,
+  resolveRecipient,
+} from './services/DispatchGuard.js';
 import { GoalsService } from './services/GoalsService.js';
 import { KanbanService } from './services/KanbanService.js';
 import { MemoryCompactorEngine } from './services/MemoryCompactorEngine.js';
 import { MemoryProviderService } from './services/MemoryProviderService.js';
 import { ParityService } from './services/ParityService.js';
-import { PluginsService } from './services/PluginsService.js';
+// Lazy-loaded services: PluginsService (~125ms), StoryService (supabase,
+// ~230ms), MCPToolRuntimeService (MCP SDK + zod, ~770ms) are imported
+// dynamically inside their command actions below.
 import { ServiceHealthService } from './services/ServiceHealthService.js';
-import { StoryService } from './services/StoryService.js';
+// (StoryService lazily imported by the `story` command actions below)
 import {
   KNOWN_TOOLS,
   PERMISSION_MODES,
@@ -81,9 +102,9 @@ import { WebhookService } from './services/WebhookService.js';
 import { WorktreeError, WorktreeService } from './services/WorktreeService.js';
 import {
   findSlashCommand,
-  formatPromptSlashCommand,
+  formatPromptSlashCommandChain,
   getAllSlashCommands,
-  parseSlashCommand,
+  parseSlashCommands,
   renderSlashCommandDetail,
   renderSlashCommandList,
   type SlashCommandDefinition,
@@ -102,11 +123,16 @@ import {
   type PaletteEntry,
   type PaletteTheme,
 } from './utils/command-palette.js';
+import { ensureProfileSessionOrPrompt } from './utils/ensure-profile-session.js';
 import {
+  classifyStrictStatusGate,
   countTrailingFailures,
   FULL_AUTO_FAIL_STREAK,
+  QualityGateError,
+  resolveFullAutoCompletion,
   resolvePostStepTimeoutMs,
   tallyFullAutoRuns,
+  type FullAutoQualityGateVerdict,
 } from './utils/full-auto-cycle.js';
 import { resolveBuiltinToolsAsOpenAI } from './utils/llm-tools.js';
 import { loadHomeCredentials } from './utils/load-home-credentials.js';
@@ -126,10 +152,12 @@ import {
 } from './utils/palette-readline.js';
 import { getPaletteRecents } from './utils/palette-recents.js';
 import { resolvePrompt, sanitizeUtf8Prompt } from './utils/prompt-input.js';
-import { CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
+import { CommandExitError, CommandTimeoutError, spawnWithTimeout } from './utils/run-command.js';
 import { safeReadJson, writeFileAtomic } from './utils/safe-fs.js';
 import { persistSuperAdminTokenRotation } from './utils/super-admin-env.js';
 import { createTuiInputCollector } from './utils/tui-input-collector.js';
+import { renderTuiMarkdown } from './utils/tui-markdown-renderer.js';
+import { expandPromptMentions } from './utils/tui-mention-expander.js';
 import { renderStatusLine, type StatusSnapshot, type StatusTheme } from './utils/tui-statusline.js';
 import { formatWorkPlaneOrientationMarkdown } from './utils/work-plane.js';
 
@@ -287,6 +315,11 @@ async function runCommand(
      * wrong. Without this a failure surfaces only as "<cmd> exited with code N".
      */
     captureStderr?: boolean;
+    /** Tee the child's stdout and deliver its tail via the provided sink, so
+     *  callers can read structured child output (e.g. a child gate's --json
+     *  verdict). The sink is filled on success; on failure the thrown
+     *  CommandExitError carries stdoutTail instead. */
+    stdoutTailSink?: { stdoutTail?: string };
     intent?: string;
   } = {}
 ): Promise<void> {
@@ -306,13 +339,18 @@ async function runCommand(
   } catch {}
 
   const receiptProps = {
+    escalationScope:
+      process.env.TNF_ACTION_ESCALATION_SCOPE === 'full-auto'
+        ? ('full-auto' as const)
+        : ('global' as const),
     actor: DEFAULT_AGENT_IDENTITY.name,
     localRealm: repoRoot,
     authorityGrant: authConfig?.capabilities,
   };
 
   try {
-    await spawnWithTimeout(cmd, args, { ...options, cwd });
+    const spawnResult = await spawnWithTimeout(cmd, args, { ...options, cwd });
+    if (options.stdoutTailSink) options.stdoutTailSink.stdoutTail = spawnResult.stdoutTail;
     recordCommandOutcome(repoRoot, {
       intent: options.intent || `${cmd} ${args.slice(0, 3).join(' ')}`.trim(),
       cmd,
@@ -322,6 +360,7 @@ async function runCommand(
       durationMs: Date.now() - started,
       ...receiptProps,
     });
+    return;
   } catch (err: any) {
     recordCommandOutcome(repoRoot, {
       intent: options.intent || `${cmd} ${args.slice(0, 3).join(' ')}`.trim(),
@@ -346,38 +385,71 @@ async function runTnfCliEntrypoint(args: string[]): Promise<void> {
   await runCommand(process.execPath, [_filename, ...args], { cwd: repoRoot, env });
 }
 
-async function runTurnZeroOnboardSurface(options: { repair?: boolean } = {}): Promise<void> {
-  // 1000ms was too short for the Supabase pooler (5 sequential queries); 8000ms verified working.
-  const runtimeTimeoutMs = process.env.TNF_ONBOARD_RUNTIME_TIMEOUT_MS || '10000';
-  const args = ['scripts/tnf-onboard.cjs', '--runtime-timeout-ms', runtimeTimeoutMs];
-  if (options.repair) args.push('--repair');
-  await runCommand('node', args);
+let hasRanCanonicalOnboardInProcess = false;
+
+async function ensureCanonicalOnboard(
+  options: {
+    task?: string;
+    force?: boolean;
+  } = {}
+): Promise<boolean> {
+  if (
+    !options.force &&
+    (hasRanCanonicalOnboardInProcess || process.env.TNF_ONBOARD_COMPLETED === '1')
+  ) {
+    return true;
+  }
+  if (!options.force && isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD)) {
+    console.warn(
+      chalk.yellow(
+        '[TNF Harness] Skipping canonical onboarding because TNF_SKIP_TURN_ZERO_ONBOARD is set.'
+      )
+    );
+    return true;
+  }
+
+  const pnpmArgs = ['run', 'tnf:onboard'];
+  const taskArg = options.task || process.env.TNF_TASK;
+  if (taskArg) {
+    pnpmArgs.push('--', '--task', taskArg);
+  }
+
+  console.log(
+    chalk.bold.cyan(
+      '\n[TNF Harness] Canonical onboarding before LLM interaction (pnpm run tnf:onboard)\n'
+    )
+  );
+  try {
+    await runCommand('pnpm', pnpmArgs);
+    hasRanCanonicalOnboardInProcess = true;
+    process.env.TNF_ONBOARD_COMPLETED = '1';
+    return true;
+  } catch (err: any) {
+    console.warn(
+      chalk.yellow(
+        `[TNF Harness] Canonical onboarding warning (${err?.message ?? err}); proceeding to LLM session.`
+      )
+    );
+    hasRanCanonicalOnboardInProcess = true;
+    process.env.TNF_ONBOARD_COMPLETED = '1';
+    return false;
+  }
 }
 
-async function ensureTurnZeroForAgentEntrypoint(): Promise<void> {
-  if (isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD)) {
-    console.warn(
-      chalk.yellow(
-        '[TNF Harness] Skipping Turn Zero onboarding because TNF_SKIP_TURN_ZERO_ONBOARD is set.'
-      )
-    );
-    return;
+async function runTurnZeroOnboardSurface(
+  options: { repair?: boolean; task?: string } = {}
+): Promise<void> {
+  const pnpmArgs = ['run', 'tnf:onboard'];
+  if (options.task) {
+    pnpmArgs.push('--', '--task', options.task);
   }
+  await runCommand('pnpm', pnpmArgs);
+  hasRanCanonicalOnboardInProcess = true;
+  process.env.TNF_ONBOARD_COMPLETED = '1';
+}
 
-  console.log(chalk.bold.cyan('\n[TNF Harness] Turn Zero onboarding before interactive agent\n'));
-  try {
-    await runTurnZeroOnboardSurface();
-  } catch (err: any) {
-    // Onboarding is preparatory context, not a gate for the agent itself —
-    // a non-zero onboard exit (e.g. DB pooler teardown noise, observed live
-    // 2026-07-22) must not kill the interactive session. Boot triage inside
-    // onboard has already classified/reported whatever went wrong.
-    console.warn(
-      chalk.yellow(
-        `[TNF Harness] Turn Zero onboarding exited with an error (${err?.message ?? err}); continuing to the agent — see ~/.tnf/boot-triage-latest.json`
-      )
-    );
-  }
+async function ensureTurnZeroForAgentEntrypoint(task?: string): Promise<void> {
+  await ensureCanonicalOnboard({ task });
   // Fresh TNF software / onboarded operators get Voice+KWS by default.
   if (process.env.VOICE_KWS_ALWAYS_ON !== '0') {
     await ensureVoiceKwsAlwaysOn();
@@ -1286,6 +1358,20 @@ type FullAutoRunEvent = {
   /** Set when the cycle was killed for exceeding --cycle-timeout-minutes,
    *  as opposed to failing on its own. */
   timedOut?: boolean;
+  /** Three-state verdict of the cycle's own quality gate
+   *  (`tnf self-improvement status --strict`):
+   *  passed     — gate ran and answered yes (only then may ok be true unqualified)
+   *  failed     — gate ran and answered no (ok is false)
+   *  unverified — gate crashed/timed out before a verdict (ok is false;
+   *               distinguishable from a gate denial)
+   *  skipped    — operator opt-out via --skip-strict-status (ok may be true,
+   *               but the record visibly is NOT a gated pass)
+   *  Absent on pre-upgrade events and on cycles whose primary run itself
+   *  failed (the gate is only reached after a successful primary run). */
+  qualityGate?: FullAutoQualityGateVerdict;
+  /** Why the gate reached its verdict: gate findings, the crash reason, or
+   *  the opt-out note. A finding must name the fix, not a symptom class. */
+  qualityGateReason?: string;
 };
 type FullAutoState = {
   mode: 'running' | 'idle' | 'quarantined';
@@ -1633,9 +1719,63 @@ function buildSelfImprovementRunCliArgs(options: SelfImprovementRunCliOptions): 
 }
 
 function buildSelfImprovementStatusCliArgs(options: { skipStrictStatus?: boolean }): string[] {
-  const args = ['self-improvement', 'status'];
+  // --json is required: the parent parses the gate's verdict out of stdout.
+  // Without it a non-zero exit is ambiguous between "gate said no" and "gate
+  // crashed" (both exit 1 — the status command catches its own errors), and
+  // the three-state classification below cannot work.
+  const args = ['self-improvement', 'status', '--json'];
   if (!options.skipStrictStatus) args.push('--strict');
   return args;
+}
+
+type StrictStatusGateOutcome = {
+  verdict: FullAutoQualityGateVerdict;
+  reason?: string;
+};
+
+/**
+ * Run the cycle's own quality gate (`tnf self-improvement status --strict`)
+ * and classify the outcome into three states plus the explicit opt-out.
+ *
+ * This gate is load-bearing. Broadcast is genuinely best-effort and stays a
+ * warning, but the gate decides whether the cycle may be recorded ok:
+ *   passed     → the cycle may be recorded ok
+ *   failed     → QualityGateError; the cycle is recorded ok:false with the
+ *                gate's findings
+ *   unverified → the gate crashed/timed out without a verdict; the cycle is
+ *                recorded ok:false with qualityGate:"unverified" so an
+ *                operator can tell "denied" from "could not ask"
+ *   skipped    → --skip-strict-status opt-out; visible in the event, never
+ *                indistinguishable from a clean pass
+ */
+async function runStrictStatusGate(
+  options: { skipStrictStatus?: boolean },
+  budgetMs: number
+): Promise<StrictStatusGateOutcome> {
+  if (options.skipStrictStatus) {
+    return {
+      verdict: 'skipped',
+      reason: '--skip-strict-status: operator opt-out; quality gate was not evaluated',
+    };
+  }
+  try {
+    const { stdoutTail } = await runSelfCli(buildSelfImprovementStatusCliArgs(options), budgetMs, {
+      captureStdout: true,
+    });
+    return classifyStrictStatusGate({ exitCode: 0, stdout: stdoutTail });
+  } catch (err: unknown) {
+    if (err instanceof CommandTimeoutError) {
+      return classifyStrictStatusGate({ exitCode: null, timedOut: true, stdout: '' });
+    }
+    if (err instanceof CommandExitError) {
+      return classifyStrictStatusGate({ exitCode: err.exitCode, stdout: err.stdoutTail });
+    }
+    return classifyStrictStatusGate({
+      exitCode: null,
+      stdout: '',
+      spawnError: err instanceof Error ? err.message : String(err),
+    });
+  }
 }
 
 function ensureParentDir(filePath: string): void {
@@ -3871,7 +4011,7 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
     {
       title: 'Agent Paths',
       entries: [
-        { path: 'tnf agents list', description: 'List registered agents' },
+        { path: 'tnf agents list', description: 'List live bus agents + defined roster' },
         { path: 'tnf agents register [name] [role] [platform]', description: 'Register an agent' },
         { path: 'tnf agents send <message>', description: 'Send a one-off message' },
         {
@@ -3959,6 +4099,10 @@ function buildCommandMenuSections(options: { full?: boolean } = {}): MenuSection
         {
           path: 'tnf hooks explain --run <run_id>',
           description: 'Explain HookChain status, gates, and step decisions',
+        },
+        {
+          path: 'tnf reflect',
+          description: 'Run handoff-diff + lessons reflect report (self-improvement loop)',
         },
         {
           path: 'tnf self-improvement run',
@@ -4150,19 +4294,27 @@ async function printCommandMenu(
  * Match runTnfCliEntrypoint so detached/full-auto parents don't get
  * ERR_MODULE_NOT_FOUND.
  */
-async function runSelfCli(args: string[], timeoutMs?: number): Promise<void> {
+async function runSelfCli(
+  args: string[],
+  timeoutMs?: number,
+  opts?: { captureStdout?: boolean }
+): Promise<{ stdoutTail: string }> {
   // Nested CLI re-entries must not re-dump Turn Zero / ProtocolInterceptor
   // banners onto stdout (breaks JSON consumers and floods full-auto logs).
+  const stdoutTailSink: { stdoutTail?: string } = {};
   const common = {
     env: { TNF_SILENT_PREFLIGHT: '1' },
     timeoutMs,
     captureStderr: true,
-  } as const;
+    captureStdout: opts?.captureStdout === true,
+    stdoutTailSink,
+  };
   if (cliEntryPath.endsWith('.ts')) {
     await runCommand('pnpm', ['exec', 'tsx', cliEntryPath, ...args], common);
-    return;
+  } else {
+    await runCommand(process.execPath, [...process.execArgv, cliEntryPath, ...args], common);
   }
-  await runCommand(process.execPath, [...process.execArgv, cliEntryPath, ...args], common);
+  return { stdoutTail: stdoutTailSink.stdoutTail ?? '' };
 }
 
 function findFullAutoStartProcesses(): Array<{ pid: number; cmd: string }> {
@@ -4694,6 +4846,15 @@ type InteractiveSlashContext = {
    * status line reads it from here rather than re-resolving from disk.
    */
   operatorWindowMs?: number;
+  /**
+   * Session persistence hooks for the in-session `/sessions` jump. Present in
+   * the TUI loop (which owns `currentSessionId`); absent in non-TUI contexts,
+   * where `/sessions` degrades to a list-only view.
+   */
+  sessionJump?: {
+    getSessionId: () => string | undefined;
+    setSessionId: (id: string | undefined) => void;
+  };
 };
 
 type SlashCommandOutcome = { handled: false } | { handled: true; exit?: boolean; prompt?: string };
@@ -4845,6 +5006,99 @@ function setInteractiveModel(client: InteractiveSlashContext['client'], modelNam
     client.model = modelName;
   }
   console.log(chalk.green(`  Model set for this session: ${modelName}`));
+}
+
+async function handleInteractiveModelSlash(
+  context: InteractiveSlashContext,
+  modelArg: string
+): Promise<void> {
+  const { ModelsService } = await import('./services/ModelsService.js');
+  const { interactiveSelect } = await import('./utils/interactive-select.js');
+  const modelsService = new ModelsService();
+
+  const isExplicitSelect = !modelArg || ['select', 'choose', '--select', '-s'].includes(modelArg);
+
+  if (!isExplicitSelect) {
+    const rawQuery = modelArg.replace(/^(-s\s+|--select\s+|select\s+|choose\s+)/, '').trim();
+    const allModels = await modelsService.listModels(undefined, { refresh: false });
+    const exact = allModels.find((m) => m.id.toLowerCase() === rawQuery.toLowerCase());
+    if (exact) {
+      setInteractiveModel(context.client, exact.id);
+      if (exact.provider) {
+        console.log(chalk.dim(`  Provider: ${exact.provider}`));
+      }
+      return;
+    }
+  }
+
+  const searchQuery = modelArg
+    .replace(/^(-s\s+|--select\s+|select\s+|choose\s+)/, '')
+    .trim()
+    .toLowerCase();
+
+  console.log(chalk.dim('  Loading available models...'));
+  const rawModels = await modelsService.listModels(undefined, { refresh: false });
+  let models = rawModels;
+
+  if (searchQuery) {
+    models = rawModels.filter(
+      (m) =>
+        m.id.toLowerCase().includes(searchQuery) ||
+        (m.name && m.name.toLowerCase().includes(searchQuery)) ||
+        (m.provider && m.provider.toLowerCase().includes(searchQuery))
+    );
+  }
+
+  if (models.length === 0) {
+    console.log(chalk.yellow(`  No models found matching "${searchQuery}".`));
+    console.log(chalk.dim(`  Current model: ${context.client?.model || 'unknown'}`));
+    return;
+  }
+
+  if (searchQuery && models.length === 1) {
+    setInteractiveModel(context.client, models[0].id);
+    if (models[0].provider) {
+      console.log(chalk.dim(`  Provider: ${models[0].provider}`));
+    }
+    return;
+  }
+
+  if (!process.stdin.isTTY) {
+    console.log(chalk.dim(`  Current model: ${context.client?.model || 'unknown'}`));
+    console.log(chalk.dim(`  Available models (${models.length}):`));
+    models.slice(0, 15).forEach((m) => console.log(`   - ${m.id} (${m.provider})`));
+    return;
+  }
+
+  const selected = await interactiveSelect(
+    models.map((model) => ({
+      value: model,
+      label: model.name && model.name !== model.id ? `${model.name} (${model.id})` : model.id,
+      description: [
+        model.provider ? chalk.cyan(`[${model.provider}]`) : null,
+        model.contextWindow ? `${Math.round(model.contextWindow / 1000)}k ctx` : null,
+        model.inputCost ? `$${(model.inputCost / 1000000).toFixed(2)}/1M in` : null,
+      ]
+        .filter(Boolean)
+        .join(' · '),
+    })),
+    {
+      title: `Switch active model${searchQuery ? ` (filter: "${searchQuery}")` : ''}`,
+      hint: 'Type to filter · ↑↓ to navigate · Enter to select · Esc to cancel',
+    }
+  );
+
+  if (!selected) {
+    console.log(
+      chalk.dim(`  Model selection cancelled (remains: ${context.client?.model || 'unknown'}).`)
+    );
+    return;
+  }
+
+  setInteractiveModel(context.client, selected.value.id);
+  if (selected.value.provider) {
+    console.log(chalk.dim(`  Provider: ${selected.value.provider}`));
+  }
 }
 
 function estimateTokens(text: string): number {
@@ -5090,331 +5344,523 @@ function handleAgentFocusSlash(args: string[]): void {
 }
 
 async function handleOneShotSlashInput(input: string): Promise<boolean> {
-  const parsed = parseSlashCommand(input);
-  if (!parsed) return false;
+  const parsedCommands = parseSlashCommands(input);
+  if (parsedCommands.length === 0) return false;
 
-  // Same rule as the interactive path: `tnf "/agents register alice worker"`
-  // must reach the real command, not the curated single-token entry.
-  if (parsed.args.length > 0) {
-    const resolved = resolveCliPath([parsed.name, ...parsed.args]);
-    if (resolved && resolved.argv.length > 1) {
-      await runTnfCliEntrypoint([...resolved.argv, ...resolved.rest]);
-      return true;
+  // Resolve the whole chain before any step is allowed to mutate state.
+  const unresolved = parsedCommands.filter((parsed) => {
+    const cliPath = parsed.args.length > 0 ? resolveCliPath([parsed.name, ...parsed.args]) : null;
+    return !(cliPath && cliPath.argv.length > 1) && !findSlashCommand(parsed.name, invocationCwd);
+  });
+  if (unresolved.length > 0) {
+    for (const parsed of unresolved) {
+      console.error(chalk.red(`Unknown slash command: /${parsed.rawName}`));
     }
-  }
-
-  const command = findSlashCommand(parsed.name, invocationCwd);
-  if (!command) {
-    console.error(chalk.red(`Unknown slash command: /${parsed.rawName}`));
-    // Same near-miss list the interactive path shows. A typo should cost one
-    // glance, not a trip through `tnf --help`.
-    const suggestions = rankPalette(getPaletteIndex(invocationCwd), `/${parsed.rawName}`, 5);
-    if (suggestions.length > 0) {
-      console.error(chalk.dim('Did you mean:'));
-      for (const { entry } of suggestions) {
-        console.error(
-          `  ${chalk.cyan(paletteEntryToLine(entry).padEnd(34))} ${chalk.dim(entry.badge.padStart(14))}  ${chalk.dim(entry.description)}`
-        );
-      }
-    }
-    console.error(
-      chalk.dim('Run `tnf /help`, `tnf slash list`, or `tnf commands <text>` to search everything.')
-    );
+    console.error(chalk.dim('No chain steps were executed. Run `tnf commands <text>` to search.'));
     process.exitCode = 1;
     return true;
   }
 
-  if (command.name === 'help') {
-    const target = parsed.args[0];
-    if (!target) {
-      printSlashCommandList();
-      return true;
+  const promptSteps: Array<{ command: SlashCommandDefinition; args: string[] }> = [];
+
+  for (const parsed of parsedCommands) {
+    if (parsed.args.length > 0) {
+      const resolved = resolveCliPath([parsed.name, ...parsed.args]);
+      if (resolved && resolved.argv.length > 1) {
+        await runTnfCliEntrypoint([...resolved.argv, ...resolved.rest]);
+        continue;
+      }
     }
-    const detail = findSlashCommand(target, invocationCwd);
-    if (!detail) {
-      console.error(chalk.red(`Unknown slash command: /${target}`));
+
+    const command = findSlashCommand(parsed.name, invocationCwd);
+    if (!command) {
+      console.error(chalk.red(`Unknown slash command: /${parsed.rawName}`));
+      const suggestions = rankPalette(getPaletteIndex(invocationCwd), `/${parsed.rawName}`, 5);
+      if (suggestions.length > 0) {
+        console.error(chalk.dim('Did you mean:'));
+        for (const { entry } of suggestions) {
+          console.error(
+            `  ${chalk.cyan(paletteEntryToLine(entry).padEnd(34))} ${chalk.dim(entry.badge.padStart(14))}  ${chalk.dim(entry.description)}`
+          );
+        }
+      }
+      console.error(
+        chalk.dim(
+          'Run `tnf /help`, `tnf slash list`, or `tnf commands <text>` to search everything.'
+        )
+      );
       process.exitCode = 1;
-      return true;
+      continue;
     }
-    printSlashCommandDetail(detail);
-    return true;
-  }
 
-  if (command.name === 'commands') {
-    printSlashCommandList();
-    return true;
-  }
-
-  if (command.name === 'exit' || command.aliases?.includes('quit')) {
-    return true;
-  }
-
-  if (command.name === 'clear' || command.name === 'compact') {
-    console.log(chalk.dim(`/${command.name} only affects an active TNF chat/TUI transcript.`));
-    return true;
-  }
-
-  if (command.name === 'cost') {
-    console.log(chalk.bold('\nCost\n'));
-    console.log(chalk.dim('  No active chat transcript in one-shot CLI mode.'));
-    console.log(
-      chalk.dim('  Run /cost inside `tnf tui` or `tnf ai chat` for session estimates.\n')
-    );
-    return true;
-  }
-
-  if (command.name === 'model') {
-    const modelName = parsed.args.join(' ').trim();
-    if (!modelName) {
-      await showCurrentModel();
-      return true;
+    if (command.name === 'help') {
+      const target = parsed.args[0];
+      if (!target) {
+        printSlashCommandList();
+        continue;
+      }
+      const detail = findSlashCommand(target, invocationCwd);
+      if (!detail) {
+        console.error(chalk.red(`Unknown slash command: /${target}`));
+        process.exitCode = 1;
+        continue;
+      }
+      printSlashCommandDetail(detail);
+      continue;
     }
-    await runTnfCliEntrypoint(['config', 'set', 'model', modelName]);
-    console.log(chalk.green(`Persisted TNF model preference: ${modelName}`));
-    return true;
-  }
 
-  if (command.name === 'focus' || command.aliases?.includes('whoami-focus')) {
-    handleAgentFocusSlash(parsed.args);
-    return true;
-  }
+    if (command.name === 'commands') {
+      printSlashCommandList();
+      continue;
+    }
 
-  if (command.mode === 'cli') {
-    await runSlashCliCommand(command, parsed.args);
-    return true;
-  }
+    if (command.name === 'exit' || command.aliases?.includes('quit')) {
+      continue;
+    }
 
-  if (command.mode === 'prompt') {
-    console.log(formatPromptSlashCommand(command, parsed.args));
-    return true;
-  }
+    if (command.name === 'clear' || command.name === 'compact') {
+      console.log(chalk.dim(`/${command.name} only affects an active TNF chat/TUI transcript.`));
+      continue;
+    }
 
-  printSlashCommandDetail(command);
+    if (command.name === 'cost') {
+      console.log(chalk.bold('\nCost\n'));
+      console.log(chalk.dim('  No active chat transcript in one-shot CLI mode.'));
+      console.log(
+        chalk.dim('  Run /cost inside `tnf tui` or `tnf ai chat` for session estimates.\n')
+      );
+      continue;
+    }
+
+    if (command.name === 'model') {
+      const modelName = parsed.args.join(' ').trim();
+      if (!modelName) {
+        await showCurrentModel();
+        continue;
+      }
+      await runTnfCliEntrypoint(['config', 'set', 'model', modelName]);
+      console.log(chalk.green(`Persisted TNF model preference: ${modelName}`));
+      continue;
+    }
+
+    if (command.name === 'focus' || command.aliases?.includes('whoami-focus')) {
+      handleAgentFocusSlash(parsed.args);
+      continue;
+    }
+
+    if (command.mode === 'cli') {
+      await runSlashCliCommand(command, parsed.args);
+      continue;
+    }
+
+    if (command.mode === 'prompt') {
+      promptSteps.push({ command, args: parsed.args });
+      continue;
+    }
+
+    printSlashCommandDetail(command);
+  }
+  if (promptSteps.length > 0) {
+    console.log(formatPromptSlashCommandChain(promptSteps));
+  }
   return true;
+}
+
+/**
+ * `/sessions` — list stored sessions in-session and jump into one.
+ *
+ * With a TTY, opens the same filterable selector `/model` uses. Picking a
+ * session saves the current transcript, replaces the live transcript with the
+ * chosen session's messages (system prompt preserved), and repoints per-turn
+ * persistence at the chosen session id, so subsequent turns continue that
+ * conversation exactly like `tnf --resume <id>` would have at launch.
+ *
+ * `/sessions list` prints the plain list; `/sessions <n>` jumps directly to
+ * the n-th most recent session without a selector (works without a TTY).
+ * Without `context.sessionJump` (non-TUI contexts) the command is view-only:
+ * switching transcripts there would corrupt persistence, so we say so.
+ */
+async function runSessionsSlash(context: InteractiveSlashContext, args: string[]): Promise<void> {
+  const sessions = sessionManager.list();
+  if (sessions.length === 0) {
+    console.log(
+      chalk.yellow('  No saved sessions yet — this conversation will be saved automatically.')
+    );
+    return;
+  }
+
+  const currentId = context.sessionJump?.getSessionId();
+  const canJump = Boolean(context.sessionJump);
+
+  const printList = (): void => {
+    console.log(chalk.bold('\n  Saved sessions (most recent first):\n'));
+    sessions.slice(0, 20).forEach((session, index) => {
+      const when = new Date(session.updatedAt).toLocaleString();
+      const mark = session.id === currentId ? chalk.cyan(' ●') : '';
+      console.log(
+        `  ${chalk.cyan(String(index + 1).padStart(2))}. ${chalk.bold((session.name || session.id).padEnd(28))} ` +
+          `${chalk.dim(`${String(session.messageCount).padStart(4)} msgs`)}  ` +
+          `${chalk.dim(session.model?.padEnd(24) ?? '')} ${chalk.dim(when)}${mark}`
+      );
+    });
+    if (sessions.length > 20) {
+      console.log(chalk.dim(`  … ${sessions.length - 20} older sessions not shown`));
+    }
+  };
+
+  const jumpTo = (session: Session): void => {
+    if (!context.sessionJump) return;
+    if (session.id === context.sessionJump.getSessionId()) {
+      console.log(chalk.dim('  Already on this session.'));
+      return;
+    }
+    let target: SessionExport | undefined;
+    try {
+      target = sessionManager.export(session.id);
+    } catch (err: any) {
+      console.log(chalk.yellow(`  Could not load session: ${err?.message ?? err}`));
+      return;
+    }
+    if (!target) {
+      console.log(chalk.yellow('  Could not load session: transcript missing on disk.'));
+      return;
+    }
+    try {
+      // Flush the transcript we are leaving so no turn is lost.
+      const leavingId = context.sessionJump.getSessionId();
+      if (leavingId) sessionManager.saveMessages(leavingId, context.messages);
+    } catch {
+      // Non-fatal: persistence failure must not block the switch.
+    }
+    const count = applySessionJump(context.messages, context.systemMessageCount, target);
+    context.sessionJump.setSessionId(session.id);
+    console.log(
+      chalk.green(`  ↔ Switched to session ${session.name || session.id}`) +
+        chalk.dim(` (${count} messages loaded)`)
+    );
+    console.log(
+      chalk.dim('  Previous transcript saved · next turns persist into the new session.')
+    );
+  };
+
+  const firstArg = (args[0] ?? '').trim().toLowerCase();
+
+  if (firstArg === 'list' || !canJump) {
+    printList();
+    if (!canJump) {
+      console.log(
+        chalk.dim(
+          '  Jumping is available in `tnf tui` — or use `tnf --resume <id>` / `tnf --continue` at launch.'
+        )
+      );
+    }
+    return;
+  }
+
+  if (/^\d+$/.test(firstArg)) {
+    const index = Number.parseInt(firstArg, 10);
+    if (index < 1 || index > sessions.length) {
+      console.log(
+        chalk.yellow(`  Not a listed number — /sessions shows the list (1–${sessions.length}).`)
+      );
+      return;
+    }
+    jumpTo(sessions[index - 1]);
+    return;
+  }
+
+  const { interactiveSelect } = await import('./utils/interactive-select.js');
+  const items = buildSessionJumpItems(sessions, currentId).map((item) => ({
+    value: item.value,
+    label: item.label,
+    description: item.description,
+    disabled: item.disabled,
+  }));
+  let picked: Session | null = null;
+  try {
+    const selection = await interactiveSelect(items, {
+      title: 'Jump to session',
+      hint: '↑/↓ move · Enter jump · type to filter · Esc cancel',
+      pageSize: Math.min(14, items.length),
+    });
+    picked = selection ? selection.value : null;
+  } catch {
+    // No TTY for the selector — show the plain list instead.
+    printList();
+    console.log(chalk.dim('  Interactive selection needs a TTY; use /sessions <number> to jump.'));
+    return;
+  }
+  if (!picked) {
+    console.log(chalk.dim('  Session jump cancelled.'));
+    return;
+  }
+  jumpTo(picked);
 }
 
 async function handleInteractiveSlashCommand(
   input: string,
   context: InteractiveSlashContext
 ): Promise<SlashCommandOutcome> {
-  const parsed = parseSlashCommand(input);
-  if (!parsed) return { handled: false };
+  const parsedCommands = parseSlashCommands(input);
+  if (parsedCommands.length === 0) return { handled: false };
 
-  // Multi-token input that names a real CLI path dispatches straight to it.
-  //
-  // This is what makes the flat palette honest: choosing `agents register`
-  // has to RUN `tnf agents register`, not fall through to the curated
-  // `/agents` entry (hard-coded to `agents list`) and silently do something
-  // else. Single-token input is left to the curated table on purpose, so
-  // `/agents` keeps its useful default and `/skills` keeps its bank status.
-  if (parsed.args.length > 0) {
-    const resolved = resolveCliPath([parsed.name, ...parsed.args]);
-    if (resolved && resolved.argv.length > 1) {
-      await runTnfCliEntrypoint([...resolved.argv, ...resolved.rest]);
-      return { handled: true };
+  const unresolved = parsedCommands.filter((parsed) => {
+    const cliPath = parsed.args.length > 0 ? resolveCliPath([parsed.name, ...parsed.args]) : null;
+    return !(cliPath && cliPath.argv.length > 1) && !findSlashCommand(parsed.name, invocationCwd);
+  });
+  if (unresolved.length > 0) {
+    for (const parsed of unresolved) {
+      console.log(chalk.red(`  Unknown slash command: /${parsed.rawName}`));
     }
+    console.log(chalk.dim('  No chain steps were executed. Press / and type to search.'));
+    return { handled: true };
   }
 
-  const command = findSlashCommand(parsed.name, invocationCwd);
-  if (!command) {
-    const suggestions = rankPalette(getPaletteIndex(invocationCwd), `/${parsed.rawName}`, 5);
-    console.log(chalk.red(`  Unknown slash command: /${parsed.rawName}`));
-    if (suggestions.length > 0) {
-      console.log(chalk.dim('  Did you mean:'));
-      for (const { entry } of suggestions) {
-        console.log(
-          `    ${chalk.cyan(paletteEntryToLine(entry).padEnd(34))} ${chalk.dim(entry.badge.padStart(14))}  ${chalk.dim(entry.description)}`
-        );
+  const promptSteps: Array<{ command: SlashCommandDefinition; args: string[] }> = [];
+  let handled = false;
+  let exit = false;
+
+  for (const parsed of parsedCommands) {
+    if (parsed.args.length > 0) {
+      const resolved = resolveCliPath([parsed.name, ...parsed.args]);
+      if (resolved && resolved.argv.length > 1) {
+        await runTnfCliEntrypoint([...resolved.argv, ...resolved.rest]);
+        handled = true;
+        continue;
       }
     }
-    console.log(chalk.dim('  Press / and type to search every command, or run /help.'));
-    return { handled: true };
-  }
 
-  if (command.name === 'help') {
-    const target = parsed.args[0];
-    if (!target) {
+    const command = findSlashCommand(parsed.name, invocationCwd);
+    if (!command) {
+      const suggestions = rankPalette(getPaletteIndex(invocationCwd), `/${parsed.rawName}`, 5);
+      console.log(chalk.red(`  Unknown slash command: /${parsed.rawName}`));
+      if (suggestions.length > 0) {
+        console.log(chalk.dim('  Did you mean:'));
+        for (const { entry } of suggestions) {
+          console.log(
+            `    ${chalk.cyan(paletteEntryToLine(entry).padEnd(34))} ${chalk.dim(entry.badge.padStart(14))}  ${chalk.dim(entry.description)}`
+          );
+        }
+      }
+      console.log(chalk.dim('  Press / and type to search every command, or run /help.'));
+      handled = true;
+      continue;
+    }
+
+    if (command.name === 'help') {
+      const target = parsed.args[0];
+      if (!target) {
+        printSlashCommandList();
+        handled = true;
+        continue;
+      }
+      const detail = findSlashCommand(target, invocationCwd);
+      if (!detail) {
+        console.log(chalk.red(`  Unknown slash command: /${target}`));
+        handled = true;
+        continue;
+      }
+      printSlashCommandDetail(detail);
+      handled = true;
+      continue;
+    }
+
+    if (command.name === 'commands') {
       printSlashCommandList();
-      return { handled: true };
+      handled = true;
+      continue;
     }
-    const detail = findSlashCommand(target, invocationCwd);
-    if (!detail) {
-      console.log(chalk.red(`  Unknown slash command: /${target}`));
-      return { handled: true };
+
+    if (command.name === 'exit' || command.aliases?.includes('quit')) {
+      handled = true;
+      exit = true;
+      continue;
     }
-    printSlashCommandDetail(detail);
-    return { handled: true };
-  }
 
-  if (command.name === 'commands') {
-    printSlashCommandList();
-    return { handled: true };
-  }
-
-  if (command.name === 'exit' || command.aliases?.includes('quit')) {
-    return { handled: true, exit: true };
-  }
-
-  if (command.name === 'clear' || command.name === 'compact') {
-    context.messages.length = context.systemMessageCount;
-    console.log(
-      chalk.dim(`  ${command.name === 'compact' ? 'Transcript compacted' : 'History cleared'}`)
-    );
-    return { handled: true };
-  }
-
-  if (command.name === 'cost') {
-    printSessionCost(context);
-    return { handled: true };
-  }
-
-  if (command.name === 'status') {
-    printTuiStatus(context);
-    return { handled: true };
-  }
-
-  if (command.name === 'model') {
-    const modelName = parsed.args.join(' ').trim();
-    if (!modelName) {
-      console.log(chalk.dim(`  Provider: ${context.client?.providerName || 'unknown'}`));
-      console.log(chalk.dim(`  Model: ${context.client?.model || 'unknown'}`));
-      if (context.client?.baseUrl) console.log(chalk.dim(`  Base URL: ${context.client.baseUrl}`));
-      return { handled: true };
+    if (command.name === 'clear' || command.name === 'compact') {
+      context.messages.length = context.systemMessageCount;
+      console.log(
+        chalk.dim(`  ${command.name === 'compact' ? 'Transcript compacted' : 'History cleared'}`)
+      );
+      handled = true;
+      continue;
     }
-    setInteractiveModel(context.client, modelName);
-    return { handled: true };
-  }
 
-  if (command.name === 'focus' || command.aliases?.includes('whoami-focus')) {
-    handleAgentFocusSlash(parsed.args);
-    return { handled: true };
-  }
+    if (command.name === 'cost') {
+      printSessionCost(context);
+      handled = true;
+      continue;
+    }
 
-  if (command.name === 'exec') {
-    const script = parsed.args.join(' ').trim();
-    if (!script) {
-      console.log(chalk.red('  Usage: /exec <command>'));
-      return { handled: true };
+    if (command.name === 'status') {
+      printTuiStatus(context);
+      handled = true;
+      continue;
     }
-    const result = await executeInteractiveBash(script);
-    if (result.ok) {
-      console.log(chalk.green('  ✓ command succeeded'));
-    } else {
-      console.log(chalk.red(`  ✗ command failed (exit ${result.code})`));
-    }
-    return { handled: true };
-  }
 
-  if (command.name === 'autonomous' || command.aliases?.includes('auto')) {
-    const toggle = resolveAutonomousModeToggle(parsed.args);
-    if (toggle === null && parsed.args.length > 0) {
-      console.log(chalk.red('  Usage: /autonomous [on|off]'));
-      return { handled: true };
+    if (command.name === 'model') {
+      const modelArg = parsed.args.join(' ').trim();
+      await handleInteractiveModelSlash(context, modelArg);
+      handled = true;
+      continue;
     }
-    const wantsOn = toggle === null ? !context.autonomousMode : toggle;
-    // A session launched under a read-only permission mode cannot talk itself
-    // back into shell access; the operator must relaunch with wider
-    // permissions. Otherwise --permission-mode would be advisory, which is
-    // exactly the failure this replaced.
-    if (wantsOn && context.permissions && !context.permissions.mutationsAllowed) {
+
+    if (command.name === 'sessions') {
+      await runSessionsSlash(context, parsed.args);
+      handled = true;
+      continue;
+    }
+
+    if (command.name === 'sessions') {
+      await runSessionsSlash(context, parsed.args);
+      handled = true;
+      continue;
+    }
+
+    if (command.name === 'focus' || command.aliases?.includes('whoami-focus')) {
+      handleAgentFocusSlash(parsed.args);
+      handled = true;
+      continue;
+    }
+
+    if (command.name === 'exec') {
+      const script = parsed.args.join(' ').trim();
+      if (!script) {
+        console.log(chalk.red('  Usage: /exec <command>'));
+        handled = true;
+        continue;
+      }
+      const result = await executeInteractiveBash(script);
+      if (result.ok) {
+        console.log(chalk.green('  ✓ command succeeded'));
+      } else {
+        console.log(chalk.red(`  ✗ command failed (exit ${result.code})`));
+      }
+      handled = true;
+      continue;
+    }
+
+    if (command.name === 'autonomous' || command.aliases?.includes('auto')) {
+      const toggle = resolveAutonomousModeToggle(parsed.args);
+      if (toggle === null && parsed.args.length > 0) {
+        console.log(chalk.red('  Usage: /autonomous [on|off]'));
+        handled = true;
+        continue;
+      }
+      const wantsOn = toggle === null ? !context.autonomousMode : toggle;
+      if (wantsOn && context.permissions && !context.permissions.mutationsAllowed) {
+        console.log(
+          chalk.yellow(
+            `  Refused: this session runs under --permission-mode ${context.permissions.mode} (${context.permissions.summary}).`
+          )
+        );
+        console.log(
+          chalk.dim('  Relaunch with a permission mode that allows shell to enable autonomy.')
+        );
+        handled = true;
+        continue;
+      }
+      context.autonomousMode = wantsOn;
+      console.log(
+        `  Autonomous shell execution: ${context.autonomousMode ? chalk.green('ON') : chalk.yellow('OFF')}`
+      );
+      if (context.autonomousState) {
+        const { turnsThisSession, maxTurnsPerSession, capCeiling } = context.autonomousState;
+        console.log(
+          chalk.dim(
+            `  Turn budget: ${turnsThisSession}/${maxTurnsPerSession} (soft warn @ ${Math.ceil(maxTurnsPerSession * autonomousTurnCapConfig.softRatio)}; ceiling ${capCeiling}; LONG_RUN may emit TNF_EXTEND_TURN_CAP=<n>)`
+          )
+        );
+      }
+      if (context.autonomousMode) {
+        enableAutonomousRuntimeDefaults();
+        if (context.autonomousState) {
+          context.autonomousState.operatorHold = false;
+          context.autonomousState.continuePending = true;
+        }
+      } else if (context.autonomousState) {
+        context.autonomousState.continuePending = false;
+      }
+      handled = true;
+      continue;
+    }
+
+    if (command.name === 'window' || command.aliases?.includes('operator-window')) {
+      const arg = parsed.args.join(' ').trim();
+      if (!arg) {
+        const current = resolveOperatorWindowMs();
+        console.log(
+          chalk.cyan(
+            `  Operator window: ${Math.round(current / 1000)}s (${current}ms). Default ${Math.round(DEFAULT_OPERATOR_WINDOW_MS / 1000)}s.`
+          )
+        );
+        console.log(
+          chalk.dim('  Usage: /window <seconds|30s|8000ms>  ·  persists to ~/.tnf/tui-mode.json')
+        );
+        handled = true;
+        continue;
+      }
+      const parsedMs = parseOperatorWindowArg(arg);
+      if (parsedMs === null) {
+        console.log(chalk.red('  Usage: /window <seconds|30s|8000ms>'));
+        handled = true;
+        continue;
+      }
+      const saved = persistOperatorWindowMs(parsedMs);
+      process.env.TNF_OPERATOR_WINDOW_MS = String(saved);
+      console.log(
+        chalk.green(
+          `  Operator window set to ${Math.round(saved / 1000)}s (${saved}ms) — persisted for next launch`
+        )
+      );
+      handled = true;
+      continue;
+    }
+
+    if (command.name === 'hold' || command.aliases?.includes('pause-auto')) {
+      if (context.autonomousState) {
+        context.autonomousState.operatorHold = true;
+        context.autonomousState.continuePending = false;
+      }
       console.log(
         chalk.yellow(
-          `  Refused: this session runs under --permission-mode ${context.permissions.mode} (${context.permissions.summary}).`
+          '  ⏸ Autonomous continue HOLD — type freely. /continue or /autonomous on to resume.'
         )
       );
-      console.log(
-        chalk.dim('  Relaunch with a permission mode that allows shell to enable autonomy.')
-      );
-      return { handled: true };
+      handled = true;
+      continue;
     }
-    context.autonomousMode = wantsOn;
-    console.log(
-      `  Autonomous shell execution: ${context.autonomousMode ? chalk.green('ON') : chalk.yellow('OFF')}`
-    );
-    if (context.autonomousState) {
-      const { turnsThisSession, maxTurnsPerSession, capCeiling } = context.autonomousState;
-      console.log(
-        chalk.dim(
-          `  Turn budget: ${turnsThisSession}/${maxTurnsPerSession} (soft warn @ ${Math.ceil(maxTurnsPerSession * autonomousTurnCapConfig.softRatio)}; ceiling ${capCeiling}; LONG_RUN may emit TNF_EXTEND_TURN_CAP=<n>)`
-        )
-      );
-    }
-    if (context.autonomousMode) {
-      enableAutonomousRuntimeDefaults();
+
+    if (command.name === 'continue' || command.aliases?.includes('resume-auto')) {
       if (context.autonomousState) {
         context.autonomousState.operatorHold = false;
         context.autonomousState.continuePending = true;
       }
-    } else if (context.autonomousState) {
-      context.autonomousState.continuePending = false;
+      context.autonomousMode = true;
+      enableAutonomousRuntimeDefaults();
+      console.log(chalk.green('  ⟳ Autonomous continue resumed'));
+      handled = true;
+      continue;
     }
-    return { handled: true };
-  }
 
-  if (command.name === 'window' || command.aliases?.includes('operator-window')) {
-    const arg = parsed.args.join(' ').trim();
-    if (!arg) {
-      const current = resolveOperatorWindowMs();
-      console.log(
-        chalk.cyan(
-          `  Operator window: ${Math.round(current / 1000)}s (${current}ms). Default ${Math.round(DEFAULT_OPERATOR_WINDOW_MS / 1000)}s.`
-        )
-      );
-      console.log(
-        chalk.dim('  Usage: /window <seconds|30s|8000ms>  ·  persists to ~/.tnf/tui-mode.json')
-      );
-      return { handled: true };
+    if (command.mode === 'cli') {
+      await runSlashCliCommand(command, parsed.args);
+      handled = true;
+      continue;
     }
-    const parsedMs = parseOperatorWindowArg(arg);
-    if (parsedMs === null) {
-      console.log(chalk.red('  Usage: /window <seconds|30s|8000ms>'));
-      return { handled: true };
+
+    if (command.mode === 'prompt') {
+      promptSteps.push({ command, args: parsed.args });
+      handled = true;
+      continue;
     }
-    const saved = persistOperatorWindowMs(parsedMs);
-    process.env.TNF_OPERATOR_WINDOW_MS = String(saved);
-    console.log(
-      chalk.green(
-        `  Operator window set to ${Math.round(saved / 1000)}s (${saved}ms) — persisted for next launch`
-      )
-    );
-    return { handled: true };
+
+    printSlashCommandDetail(command);
+    handled = true;
   }
 
-  if (command.name === 'hold' || command.aliases?.includes('pause-auto')) {
-    if (context.autonomousState) {
-      context.autonomousState.operatorHold = true;
-      context.autonomousState.continuePending = false;
-    }
-    console.log(
-      chalk.yellow(
-        '  ⏸ Autonomous continue HOLD — type freely. /continue or /autonomous on to resume.'
-      )
-    );
-    return { handled: true };
-  }
-
-  if (command.name === 'continue' || command.aliases?.includes('resume-auto')) {
-    if (context.autonomousState) {
-      context.autonomousState.operatorHold = false;
-      context.autonomousState.continuePending = true;
-    }
-    context.autonomousMode = true;
-    enableAutonomousRuntimeDefaults();
-    console.log(chalk.green('  ⟳ Autonomous continue resumed'));
-    return { handled: true };
-  }
-
-  if (command.mode === 'cli') {
-    await runSlashCliCommand(command, parsed.args);
-    return { handled: true };
-  }
-
-  if (command.mode === 'prompt') {
-    return { handled: true, prompt: formatPromptSlashCommand(command, parsed.args) };
-  }
-
-  printSlashCommandDetail(command);
-  return { handled: true };
+  const chainPrompt = formatPromptSlashCommandChain(promptSteps);
+  return { handled, exit, prompt: chainPrompt || undefined };
 }
 
 program
@@ -5472,8 +5918,8 @@ program
           strictGates: options.strictGates,
           skipEnvValidation: options.skipEnvValidation,
           forceOnboard: options.forceOnboard,
-          // Default: skip redundant onboard — ProtocolInterceptor already ran Turn Zero.
-          skipOnboard: !options.forceOnboard,
+          // First interaction point: run canonical onboarding during boot unless explicitly skipped
+          skipOnboard: isTruthyEnv(process.env.TNF_SKIP_TURN_ZERO_ONBOARD) && !options.forceOnboard,
           withClaude: options.withClaude,
           requireCore: options.requireCore,
           autonomous: options.autonomous,
@@ -5497,6 +5943,17 @@ program
             autonomous: options.autonomous,
           });
           return;
+        }
+
+        // After `tnf logout`, boot must re-authenticate (cloud, incl. free accounts).
+        const sessionGate = await ensureProfileSessionOrPrompt({
+          profile: name,
+          cloud: true,
+          required: true,
+        });
+        if (!sessionGate.ok) {
+          console.error(chalk.red('Boot aborted: sign in required. Run: tnf login'));
+          process.exit(1);
         }
 
         await requireSuperAdmin(options, 'boot');
@@ -5725,6 +6182,16 @@ program
       }
     ) => {
       try {
+        // After `tnf logout`, interactive TUI must re-authenticate before the session starts.
+        const sessionGate = await ensureProfileSessionOrPrompt({
+          cloud: true,
+          required: true,
+        });
+        if (!sessionGate.ok) {
+          console.error(chalk.red('TUI aborted: sign in required. Run: tnf login'));
+          process.exit(1);
+        }
+
         const modeRaw = String(options.mode || 'agent').toLowerCase();
         const mode = (['agent', 'plan', 'ask'].includes(modeRaw) ? modeRaw : 'agent') as
           | 'agent'
@@ -5749,9 +6216,11 @@ program
           process.exit(2);
         }
 
-        const {
-          LocalSubdirectorAuthorityService,
-        } = require('./services/LocalSubdirectorAuthorityService.js');
+        // ESM package: `require` is not defined at runtime. Same latent bug as
+        // the one in commands/agents-run.ts — here it is not inside a catch, so
+        // it would abort the command outright rather than degrade quietly.
+        const { LocalSubdirectorAuthorityService } =
+          await import('./services/LocalSubdirectorAuthorityService.js');
         const authService = new LocalSubdirectorAuthorityService(repoRoot);
         const authConfig = authService.getConfig();
 
@@ -5759,7 +6228,7 @@ program
         let autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
 
-        if (DEFAULT_AGENT_IDENTITY.role === 'local-subdirector' && authConfig.autonomyEnabled) {
+        if (isLocalSubdirectorIdentity(DEFAULT_AGENT_IDENTITY) && authConfig.autonomyEnabled) {
           autonomous = true;
         }
 
@@ -5805,12 +6274,13 @@ program
 
         console.log(chalk.dim(`  ⚿ Permissions — ${permissions.summary}`));
 
-        // Main() already ran ProtocolInterceptor (Turn Zero + disclosure) before
-        // this handler. Re-running scripts/tnf-onboard.cjs here duplicated the
-        // entire bootstrap wall on every `tnf tui` — opt-in only.
-        if (options.onboard || options.repair) {
-          await runTurnZeroOnboardSurface({ repair: Boolean(options.repair) });
-        }
+        // First interaction point connecting with backend LLM: ensure canonical onboarding has run
+        await ensureCanonicalOnboard({
+          task:
+            options.task ||
+            (promptParts && promptParts.length > 0 ? promptParts.join(' ') : undefined),
+          force: Boolean(options.onboard || options.repair),
+        });
         if (!options.skipVoiceKws && process.env.VOICE_KWS_ALWAYS_ON !== '0') {
           await ensureVoiceKwsAlwaysOn();
         }
@@ -6871,6 +7341,28 @@ function loadDefaultAgentIdentity(): {
 
 const DEFAULT_AGENT_IDENTITY = loadDefaultAgentIdentity();
 
+/**
+ * Does this identity describe the machine's local subdirector?
+ *
+ * A literal `role === 'local-subdirector'` comparison silently never matched.
+ * `establish-core-federated-fleet` writes `~/.tnf/agent.yaml` with
+ * `role: director`, `dacc_role: director`, `director_tier: sub` and
+ * `embodiment: sub-director` — four spellings of the same fact, none of which
+ * is the string the code tested for. The autonomy elevation that depended on
+ * it was therefore dead on every machine provisioned that way.
+ *
+ * Accept the vocabulary the writer actually emits rather than editing the
+ * operator's identity file to satisfy the reader. `role` itself is left
+ * untouched because `tnf register` validates it against the role taxonomy.
+ */
+function isLocalSubdirectorIdentity(identity: { role?: string; directorTier?: string }): boolean {
+  const role = (identity.role || '').toLowerCase();
+  if (role === 'local-subdirector' || role === 'sub-director' || role === 'subdirector') {
+    return true;
+  }
+  return role === 'director' && (identity.directorTier || '').toLowerCase() === 'sub';
+}
+
 program
   .command('register')
   .description('Register and listen as an agent')
@@ -7007,6 +7499,10 @@ program
   .command('onboard')
   .description('Run TNF frontload onboarding')
   .option('--repair', 'Scaffold missing onboarding files and config stubs')
+  .option(
+    '--interactive',
+    'Run the interactive personalization wizard (writes ~/.tnf/profiles/<handle>.json; non-TTY applies defaults)'
+  )
   .option('--allow-local-db', 'Allow local DATABASE_URL for this run')
   .option('--require-cloud-db', 'Require cloud DATABASE_URL for this run')
   .option('--no-require-cloud-db', 'Allow non-cloud DATABASE_URL for this run')
@@ -7015,12 +7511,18 @@ program
   .action(
     async (options: {
       repair?: boolean;
+      interactive?: boolean;
       allowLocalDb?: boolean;
       requireCloudDb?: boolean;
       databaseUrl?: string;
       runtimeTimeoutMs?: string;
     }) => {
       try {
+        if (options.interactive) {
+          const { runInteractiveOnboardingWizard } = await import('./boot/wizard.js');
+          await runInteractiveOnboardingWizard(repoRoot, process.env.TNF_ONBOARD_HANDLE);
+          return;
+        }
         const args = ['scripts/tnf-onboard.cjs'];
         if (options.repair) args.push('--repair');
         if (options.allowLocalDb) args.push('--allow-local-db');
@@ -7789,7 +8291,7 @@ authority
   .option('--rotate', 'Replace existing private keys (invalidates prior signatures)')
   .action(async (agentIds: string[], options: { rotate?: boolean }) => {
     try {
-      const identity = require(path.join(repoRoot, 'scripts/lib/tnf-identity.cjs')) as {
+      const identity = (await import(path.join(repoRoot, 'scripts/lib/tnf-identity.cjs'))) as {
         ensureAgentKeypair: (
           id: string,
           opts?: { rotate?: boolean }
@@ -7811,6 +8313,164 @@ authority
       console.log(
         chalk.gray(
           '\nKeys ready. Keep TNF_MESSAGE_AUTH_MODE=warn until every publisher signs and peers import pubs; then consider enforce.'
+        )
+      );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+/**
+ * Load the identity module, refusing when this process is an agent.
+ *
+ * `saveRoleRegistry()` already refuses to write when `TNF_AGENT_ID` is set —
+ * "Role grants are operator-owned; run this from an operator shell." These
+ * commands check the same condition up front so the refusal is a clear message
+ * rather than a throw halfway through, and so the audit record
+ * (`granted_by: 'operator'`) is only ever written when a human really did it.
+ */
+async function requireOperatorIdentity(root: string) {
+  if (process.env.TNF_AGENT_ID) {
+    throw new Error(
+      `refusing to modify authority: TNF_AGENT_ID=${process.env.TNF_AGENT_ID} is set. ` +
+        'Role grants and the bus secret are operator-owned — run this from your own shell.'
+    );
+  }
+  return (await import(path.join(root, 'scripts/lib/tnf-identity.cjs'))) as any;
+}
+
+function askOperator(question: string, fallback = ''): Promise<string> {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(String(answer || '').trim() || fallback);
+    });
+  });
+}
+
+authority
+  .command('grant')
+  .description('Grant an authority role to an agent id (operator only)')
+  .argument('<agentId>', 'did:tnf identifier, or a legacy bare agent id')
+  .argument('<role>', 'worker | sub-director | super-director | super-admin')
+  .option('--note <text>', 'Reason, recorded in the registry entry')
+  .option('--revoke', 'Remove the grant instead of setting it')
+  .action(async (agentId: string, role: string, options: { note?: string; revoke?: boolean }) => {
+    try {
+      const identity = await requireOperatorIdentity(repoRoot);
+      if (options.revoke) {
+        identity.setAgentRole(agentId, null);
+        console.log(chalk.green(`revoked  ${agentId}`));
+        return;
+      }
+      if (!identity.isValidRole(role)) {
+        throw new Error(`invalid role "${role}"; allowed: ${identity.VALID_ROLES.join(', ')}`);
+      }
+      if (!identity.parseAgentDid(agentId)) {
+        console.log(
+          chalk.yellow(
+            `▲ "${agentId}" is a legacy bare id, so residency and tenant cannot be derived from it.\n` +
+              '  See docs/protocols/TNF_AUTHORITY_IDENTIFIER_STANDARD.md for the did:tnf form.'
+          )
+        );
+      }
+      identity.setAgentRole(agentId, role, { note: options.note });
+      const resolved = identity.resolveRole(agentId);
+      console.log(
+        chalk.green(`granted  ${agentId}  ->  ${resolved.role}  (source: ${resolved.source})`)
+      );
+    } catch (err: any) {
+      console.error(chalk.red(`Error: ${err.message}`));
+      process.exit(1);
+    }
+  });
+
+authority
+  .command('init')
+  .description(
+    'Interactive operator setup: identify yourself, provision the bus secret, seat the directors'
+  )
+  .option('--rotate-secret', 'Replace an existing bus secret (invalidates in-flight signatures)')
+  .action(async (options: { rotateSecret?: boolean }) => {
+    try {
+      const identity = await requireOperatorIdentity(repoRoot);
+      const auth = (await import(path.join(repoRoot, 'scripts/lib/tnf-message-auth.cjs'))) as any;
+      const fsMod = await import('fs');
+
+      console.log(chalk.bold('\nTNF authority setup'));
+      console.log(
+        chalk.gray('Everything below is written to ~/.tnf/authority/ (0700), owned by you.\n')
+      );
+
+      // 1. The operator. This is the only tier above every agent.
+      const rawName = await askOperator('Your name (for your super-admin identity): ');
+      if (!rawName) throw new Error('a name is required to mint your operator identity');
+      const operatorDid = identity.buildAgentDid({
+        scope: 'cloud',
+        category: 'user',
+        provider: 'tnf',
+        name: rawName,
+      });
+      identity.setAgentRole(operatorDid, 'super-admin', {
+        note: 'operator, via tnf authority init',
+      });
+      console.log(chalk.green(`  super-admin     ${operatorDid}`));
+
+      // 2. The bus secret. Until this exists every publisher falls back to the
+      //    legacy placeholder and the bus is unauthenticated.
+      const secretPath = auth.A2A_SECRET_FILE;
+      const exists = fsMod.existsSync(secretPath);
+      if (exists && !options.rotateSecret) {
+        console.log(
+          chalk.cyan(
+            `  bus secret      already present at ${secretPath} (--rotate-secret to replace)`
+          )
+        );
+      } else {
+        const crypto = await import('crypto');
+        identity.ensureAuthorityLayout();
+        fsMod.writeFileSync(secretPath, `${crypto.randomBytes(32).toString('hex')}\n`, {
+          mode: 0o600,
+        });
+        fsMod.chmodSync(secretPath, 0o600);
+        console.log(
+          chalk.green(`  bus secret      ${exists ? 'rotated' : 'written'} at ${secretPath}`)
+        );
+      }
+
+      // 3. The cloud orchestration agent — the singular Super Director.
+      const superDirectorDid = identity.buildAgentDid({
+        scope: 'cloud',
+        category: 'system',
+        provider: 'tnfcore',
+        name: 'super_director',
+      });
+      identity.setAgentRole(superDirectorDid, 'super-director', {
+        note: 'cloud orchestration layer, via tnf authority init',
+      });
+      console.log(chalk.green(`  super-director  ${superDirectorDid}`));
+
+      // 4. This machine's harness. Local residency means it would run
+      //    autonomously without a grant; the grant makes it traceable anyway.
+      const host = os.hostname().split('.')[0] || 'localhost';
+      const localDid = identity.buildAgentDid({
+        scope: 'local',
+        category: 'agent',
+        provider: 'tnfcli',
+        name: host,
+      });
+      identity.setAgentRole(localDid, 'sub-director', {
+        note: 'local harness, via tnf authority init',
+      });
+      console.log(chalk.green(`  sub-director    ${localDid}`));
+
+      console.log(chalk.gray('\nVerify:  node scripts/protocols/role-coherence-gate.cjs --strict'));
+      console.log(
+        chalk.gray(
+          'The bus stays in warn mode until publishers sign successfully. Watch\n' +
+            '~/.tnf/authority/audit.jsonl go quiet, then set TNF_MESSAGE_AUTH_MODE=enforce.\n'
         )
       );
     } catch (err: any) {
@@ -8527,7 +9187,7 @@ harness
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
       }
-      const { setFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const { setFleetMode, FLEET_MODE_FILE } = await import(fleetModeScript);
       const mode = options.injectionOnly ? 'injection-paused' : 'paused';
       const reason =
         options.reason || `paused via tnf harness pause at ${new Date().toISOString()}`;
@@ -8554,7 +9214,7 @@ harness
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
       }
-      const { clearFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const { clearFleetMode, FLEET_MODE_FILE } = await import(fleetModeScript);
       const result = clearFleetMode();
       if (!result.ok) {
         throw new Error(`Resume failed: ${result.error}`);
@@ -8580,7 +9240,7 @@ harness
       if (!fs.existsSync(fleetModeScript)) {
         throw new Error(`Fleet-mode module not found at ${fleetModeScript}`);
       }
-      const { readFleetMode, FLEET_MODE_FILE } = require(fleetModeScript);
+      const { readFleetMode, FLEET_MODE_FILE } = await import(fleetModeScript);
       const state = readFleetMode();
 
       // Lightweight fleet health snapshot — last heartbeat + cron control-plane state age
@@ -9285,7 +9945,7 @@ mcp
   .option('--timeout-ms <n>', 'Per-server MCP request timeout in milliseconds', '15000')
   .action(async (server: string | undefined, options: { json?: boolean; timeoutMs?: string }) => {
     try {
-      const runtime = new MCPToolRuntimeService(repoRoot);
+      const runtime = new (await loadMCPToolRuntimeService())(repoRoot);
       const results = await runtime.listTools(server, Number(options.timeoutMs || 15000));
       if (options.json) {
         console.log(JSON.stringify(results, null, 2));
@@ -9331,7 +9991,7 @@ mcp
         if (!parsedArgs || typeof parsedArgs !== 'object' || Array.isArray(parsedArgs)) {
           throw new Error('argumentsJson must be a JSON object');
         }
-        const runtime = new MCPToolRuntimeService(repoRoot);
+        const runtime = new (await loadMCPToolRuntimeService())(repoRoot);
         const result = await runtime.callTool(
           server,
           tool,
@@ -9872,17 +10532,78 @@ ai.command('start')
 
 ai.command('models')
   .description('List available models for the current provider')
-  .action(async () => {
+  .argument('[search]', 'Filter models by name or keyword')
+  .option('-s, --search <query>', 'Filter models by name or keyword')
+  .action(async (searchArg?: string, options?: { search?: string }) => {
     try {
+      const query = (options?.search || searchArg || '').trim();
       const { LLMClient } = await import('./utils/llm-client.js');
       const client = await LLMClient.create();
-      console.log(chalk.blue('\nFetching available models...'));
+      console.log(
+        chalk.blue(
+          `\nFetching available models for ${client.providerName || 'current provider'}...`
+        )
+      );
       const models = await client.fetchAvailableModels();
-      if (models.length === 0) {
-        console.log(chalk.yellow('No models found or provider does not support listing.'));
+      let matched = models;
+      if (query) {
+        const q = query.toLowerCase();
+        matched = models.filter((m: string) => m.toLowerCase().includes(q));
+      }
+
+      if (matched.length > 0) {
+        const header = query
+          ? `\nAvailable models matching "${query}" (${matched.length}/${models.length}):`
+          : `\nAvailable models (${models.length}):`;
+        console.log(chalk.green(header));
+        matched.forEach((m: string) => console.log(` - ${m}`));
+      } else if (models.length > 0) {
+        console.log(
+          chalk.yellow(
+            `No models matching "${query}" for provider ${client.providerName || 'current'}.`
+          )
+        );
+        console.log(chalk.dim(`Searching across all configured providers for "${query}"...`));
+        const { ModelsService } = await import('./services/ModelsService.js');
+        const modelsService = new ModelsService();
+        const allModels = await modelsService.listModels(undefined, { refresh: false });
+        const q = query.toLowerCase();
+        const crossMatches = allModels.filter(
+          (m) => m.id.toLowerCase().includes(q) || (m.name && m.name.toLowerCase().includes(q))
+        );
+        if (crossMatches.length > 0) {
+          console.log(chalk.cyan(`\nFound in other providers (${crossMatches.length}):`));
+          crossMatches
+            .slice(0, 30)
+            .forEach((m) => console.log(` - ${chalk.green(m.id)} ${chalk.dim(`(${m.provider})`)}`));
+          if (crossMatches.length > 30) {
+            console.log(
+              chalk.dim(
+                ` ... and ${crossMatches.length - 30} more (run 'tnf models -s ${query}' to view all)`
+              )
+            );
+          }
+        }
       } else {
-        console.log(chalk.green(`\nAvailable models:`));
-        models.forEach((m: string) => console.log(` - ${m}`));
+        console.log(chalk.yellow('No models found or provider does not support listing.'));
+        if (query) {
+          console.log(chalk.dim(`Searching across all configured providers for "${query}"...`));
+          const { ModelsService } = await import('./services/ModelsService.js');
+          const modelsService = new ModelsService();
+          const allModels = await modelsService.listModels(undefined, { refresh: false });
+          const q = query.toLowerCase();
+          const crossMatches = allModels.filter(
+            (m) => m.id.toLowerCase().includes(q) || (m.name && m.name.toLowerCase().includes(q))
+          );
+          if (crossMatches.length > 0) {
+            console.log(chalk.cyan(`\nFound across providers (${crossMatches.length}):`));
+            crossMatches
+              .slice(0, 30)
+              .forEach((m) =>
+                console.log(` - ${chalk.green(m.id)} ${chalk.dim(`(${m.provider})`)}`)
+              );
+          }
+        }
       }
       console.log('');
     } catch (err: any) {
@@ -9898,6 +10619,7 @@ ai.command('chat')
   .option('--system <prompt>', 'System prompt')
   .action(async (opts) => {
     try {
+      await ensureCanonicalOnboard();
       const readline = await import('readline');
       const { LLMClient } = await import('./utils/llm-client.js');
       const client = await LLMClient.create('orchestrator');
@@ -11502,6 +12224,7 @@ selfImprovement
           await runCommand('pnpm', ['run', 'audit:live-links'], {
             cwd: frontendCwd,
             env: {
+              LIVE_AUDIT_SEEDS: baseUrl,
               LIVE_AUDIT_MAX_DEPTH: String(maxDepth),
               LIVE_AUDIT_MAX_PAGES: String(maxPages),
               LIVE_AUDIT_MAX_EXTERNAL: String(maxExternal),
@@ -11828,74 +12551,108 @@ fullAuto
     ) => {
       try {
         await requireSuperAdmin(options, 'full-auto once');
+        process.env.TNF_ACTION_ESCALATION_SCOPE = 'full-auto';
+        const previous = readFullAutoState();
+        const recovering = previous?.mode === 'quarantined';
+        if (
+          recovering &&
+          Object.entries(options).some(
+            ([key, value]) => Boolean(value) && (key.startsWith('skip') || key === 'softFailAudits')
+          )
+        )
+          throw new Error('Quarantine recovery requires a complete cycle with all checks enabled');
         const { runFullAutoPreflight } = await import('./utils/preflight.js');
         await runFullAutoPreflight({
           repoRoot,
           skipPreflight: options.skipPreflight,
           requireDoctor: true,
+          recoveryAttempt: recovering,
         });
-
+        const historical = readAllJsonLines(FULL_AUTO_RUN_LOG_PATH);
+        const priorRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH) as FullAutoRunEvent | null;
+        const cycle =
+          Math.max(Number(priorRun?.cycle) || 0, Number(previous?.lastRun?.cycle) || 0) + 1;
         const startedAt = new Date();
-        // --skip-strict-status implies soft audit failure so findings still land
-        // while the unattended cycle completes.
-        const cycleArgs = buildSelfImprovementRunCliArgs({
-          ...options,
-          softFailAudits: Boolean(options.softFailAudits || options.skipStrictStatus),
-        });
-        await runSelfCli(cycleArgs);
-
-        // Mirror the loop: primary success is the cycle; broadcast/status are
-        // best-effort so a hung orchestrate cannot fail an already-good run.
+        const deadline = startedAt.getTime() + DEFAULT_FULL_AUTO_CYCLE_TIMEOUT_MINUTES * 60_000;
+        const remainingMs = () => Math.max(1, deadline - Date.now());
         const postWarnings: string[] = [];
-        const runPostStep = async (label: string, args: string[]) => {
-          try {
-            await runSelfCli(args, resolvePostStepTimeoutMs(Number.POSITIVE_INFINITY));
-          } catch (postErr: unknown) {
-            const message = postErr instanceof Error ? postErr.message : String(postErr);
-            postWarnings.push(`${label}: ${message}`);
-            console.error(
-              chalk.yellow(`[full-auto] once post-step "${label}" soft-failed: ${message}`)
-            );
+        let gate: StrictStatusGateOutcome | undefined;
+        let cycleError: unknown;
+        writeFullAutoState({
+          ...previous,
+          mode: recovering ? 'quarantined' : 'running',
+          updatedAt: startedAt.toISOString(),
+          intervalMinutes: 0,
+          maxCycles: 1,
+          completedCycles: Math.max(
+            tallyFullAutoRuns(historical).completedCycles,
+            previous?.completedCycles || 0
+          ),
+          failedCycles: Math.max(
+            tallyFullAutoRuns(historical).failedCycles,
+            previous?.failedCycles || 0
+          ),
+          lastRun: priorRun || previous?.lastRun,
+        });
+        try {
+          const cycleArgs = buildSelfImprovementRunCliArgs({
+            ...options,
+            softFailAudits: Boolean(options.softFailAudits || options.skipStrictStatus),
+          });
+          await runSelfCli(cycleArgs, remainingMs());
+          if (options.broadcast) {
+            try {
+              await runSelfCli(
+                ['orchestrate', 'self-improvement'],
+                resolvePostStepTimeoutMs(remainingMs())
+              );
+            } catch (error: any) {
+              postWarnings.push(`broadcast: ${error.message}`);
+            }
           }
-        };
-        if (options.broadcast) {
-          await runPostStep('broadcast', ['orchestrate', 'self-improvement']);
+          gate = await runStrictStatusGate(options, resolvePostStepTimeoutMs(remainingMs()));
+          if (gate.verdict === 'failed' || gate.verdict === 'unverified') {
+            throw new QualityGateError(gate.verdict, gate.reason || 'no detail available');
+          }
+        } catch (error) {
+          cycleError = error;
         }
-        await runPostStep('status', buildSelfImprovementStatusCliArgs(options));
         const finishedAt = new Date();
         const event: FullAutoRunEvent = {
-          cycle: 1,
+          cycle,
           startedAt: startedAt.toISOString(),
           finishedAt: finishedAt.toISOString(),
           durationMs: finishedAt.getTime() - startedAt.getTime(),
-          ok: true,
-          ...(postWarnings.length > 0 ? { warnings: postWarnings } : {}),
+          ok: !cycleError,
+          ...(gate ? { qualityGate: gate.verdict, qualityGateReason: gate.reason } : {}),
+          ...(cycleError
+            ? { error: cycleError instanceof Error ? cycleError.message : String(cycleError) }
+            : {}),
+          ...(cycleError instanceof CommandTimeoutError ? { timedOut: true } : {}),
+          ...(postWarnings.length ? { warnings: postWarnings } : {}),
         };
-
         appendJsonLine(FULL_AUTO_RUN_LOG_PATH, event);
         writeFullAutoState({
-          mode: 'idle',
-          updatedAt: finishedAt.toISOString(),
+          ...resolveFullAutoCompletion(previous || {}, historical, event),
+          updatedAt: event.finishedAt,
           intervalMinutes: 0,
           maxCycles: 1,
-          completedCycles: 1,
-          failedCycles: 0,
           lastRun: event,
         });
-
-        if (options.json) {
-          console.log(JSON.stringify(event, null, 2));
-          return;
+        if (options.json) console.log(JSON.stringify(event, null, 2));
+        else {
+          console.log(
+            `Full-auto cycle ${cycle}: ${event.ok ? 'completed' : 'failed'} (${event.durationMs}ms)`
+          );
+          console.log(`Quality gate: ${gate?.verdict || 'not reached'}`);
+          if (event.error) console.error(event.error);
+          if (recovering && event.ok)
+            console.log('Strict recovery cycle passed; quarantine cleared.');
         }
-
-        console.log(chalk.bold('\nTNF Full-Auto Cycle Complete\n'));
-        console.log(`Duration: ${chalk.cyan(`${event.durationMs}ms`)}`);
-        console.log(`Run log: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_RUN_LOG_PATH))}`);
-        console.log(`State: ${chalk.dim(path.relative(repoRoot, FULL_AUTO_STATE_PATH))}`);
-        console.log('');
+        if (!event.ok) process.exitCode = 1;
       } catch (err: any) {
         console.error(chalk.red(`Error: ${err.message}`));
-        process.exit(1);
+        process.exitCode = 1;
       }
     }
   );
@@ -11949,6 +12706,7 @@ fullAuto
     ) => {
       try {
         await requireSuperAdmin(options, 'full-auto start');
+        process.env.TNF_ACTION_ESCALATION_SCOPE = 'full-auto';
         const { runFullAutoPreflight } = await import('./utils/preflight.js');
         await runFullAutoPreflight({
           repoRoot,
@@ -11980,8 +12738,9 @@ fullAuto
         // completedCycles=0 after successful historical cycles.
         const historicalEvents = readAllJsonLines(FULL_AUTO_RUN_LOG_PATH);
         const historical = tallyFullAutoRuns(historicalEvents);
-        let completedCycles = historical.completedCycles;
-        let failedCycles = historical.failedCycles;
+        const previous = readFullAutoState();
+        let completedCycles = Math.max(historical.completedCycles, previous?.completedCycles || 0);
+        let failedCycles = Math.max(historical.failedCycles, previous?.failedCycles || 0);
         // Seed the streak too, so restarting the daemon cannot be used (or
         // accidentally act) as a way to walk away from an in-progress failure run.
         let consecutiveFailures = countTrailingFailures(historicalEvents);
@@ -11989,7 +12748,7 @@ fullAuto
         // Cycle numbers must stay monotonic across daemon restarts, otherwise the
         // run log reads `…7, 8, 1` and the cycle number is not a usable key.
         const priorRun = readLastJsonLine(FULL_AUTO_RUN_LOG_PATH) as FullAutoRunEvent | null;
-        let cycle = Number.isFinite(priorRun?.cycle) ? Number(priorRun!.cycle) : 0;
+        let cycle = Math.max(Number(priorRun?.cycle) || 0, Number(previous?.lastRun?.cycle) || 0);
 
         writeFullAutoState({
           mode: 'running',
@@ -12035,9 +12794,11 @@ fullAuto
           try {
             await runSelfCli(cycleArgs, remainingMs());
 
-            // Broadcast/status are best-effort after a successful primary run.
-            // A hung `orchestrate self-improvement` previously burned the
-            // remaining cycle budget and marked an otherwise-good cycle failed.
+            // Broadcast is best-effort after a successful primary run: a hung
+            // `orchestrate self-improvement` previously burned the remaining
+            // cycle budget and marked an otherwise-good cycle failed. The
+            // strict-status gate is handled separately below — it is the
+            // cycle's own quality gate, not a best-effort post-step.
             const postWarnings: string[] = [];
             const runPostStep = async (label: string, args: string[]) => {
               const budget = resolvePostStepTimeoutMs(remainingMs());
@@ -12057,7 +12818,19 @@ fullAuto
             if (options.broadcast) {
               await runPostStep('broadcast', ['orchestrate', 'self-improvement']);
             }
-            await runPostStep('status', buildSelfImprovementStatusCliArgs(options));
+            // The strict-status gate is load-bearing, unlike broadcast: a cycle
+            // whose gate failed — or whose gate could not be evaluated — must
+            // not be recorded ok. Demoting a failed gate into a warning on an
+            // ok:true event made the loop record success its own quality gate
+            // never granted (2026-08-31 state file: warnings carried
+            // "status: pnpm exited with code 1" on an ok cycle).
+            const gate = await runStrictStatusGate(
+              options,
+              resolvePostStepTimeoutMs(remainingMs())
+            );
+            if (gate.verdict === 'failed' || gate.verdict === 'unverified') {
+              throw new QualityGateError(gate.verdict, gate.reason ?? 'no detail available');
+            }
 
             const finishedAt = new Date();
             event = {
@@ -12066,12 +12839,15 @@ fullAuto
               finishedAt: finishedAt.toISOString(),
               durationMs: finishedAt.getTime() - startedAt.getTime(),
               ok: true,
+              qualityGate: gate.verdict,
+              ...(gate.reason ? { qualityGateReason: gate.reason } : {}),
               ...(postWarnings.length > 0 ? { warnings: postWarnings } : {}),
             };
             completedCycles += 1;
             console.log(
               chalk.green(
                 `[full-auto] cycle ${cycle} completed in ${Math.round(event.durationMs / 1000)}s` +
+                  ` (quality gate: ${gate.verdict})` +
                   (postWarnings.length > 0
                     ? ` (with ${postWarnings.length} post-step warning(s))`
                     : '')
@@ -12080,6 +12856,7 @@ fullAuto
           } catch (err: any) {
             const finishedAt = new Date();
             const timedOut = err instanceof CommandTimeoutError;
+            const gateErr = err instanceof QualityGateError ? err : null;
             event = {
               cycle,
               startedAt: startedAt.toISOString(),
@@ -12088,6 +12865,9 @@ fullAuto
               ok: false,
               error: err instanceof Error ? err.message : String(err),
               ...(timedOut ? { timedOut: true } : {}),
+              ...(gateErr
+                ? { qualityGate: gateErr.verdict, qualityGateReason: gateErr.reason }
+                : {}),
             };
             failedCycles += 1;
             cycleError = err;
@@ -12147,6 +12927,7 @@ fullAuto
                 '[full-auto] Loop halted. Remediate, then clear with: tnf protocol substrate --clear-quarantine'
               )
             );
+            process.exitCode = 1;
             break;
           }
 
@@ -12364,7 +13145,8 @@ fullAutoDaemon
       }
       if (lastRun) {
         console.log(
-          `Last cycle: cycle=${lastRun.cycle} ok=${lastRun.ok} durationMs=${lastRun.durationMs}`
+          `Last cycle: cycle=${lastRun.cycle} ok=${lastRun.ok} durationMs=${lastRun.durationMs}` +
+            (lastRun.qualityGate ? ` qualityGate=${lastRun.qualityGate}` : '')
         );
       }
       console.log(`Log: ${chalk.dim(payload.daemonLogPath)}`);
@@ -12527,7 +13309,10 @@ fullAuto
 
       if (lastRun) {
         console.log('\nLast cycle:');
-        console.log(`- cycle=${lastRun.cycle} ok=${lastRun.ok} durationMs=${lastRun.durationMs}`);
+        console.log(
+          `- cycle=${lastRun.cycle} ok=${lastRun.ok} durationMs=${lastRun.durationMs}` +
+            (lastRun.qualityGate ? ` qualityGate=${lastRun.qualityGate}` : '')
+        );
         if (lastRun.error) {
           console.log(`- error=${lastRun.error}`);
         }
@@ -14976,7 +15761,7 @@ agents
     ) => {
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { RedisAgentClient } = require(path.join(repoRoot, 'scripts/tnf-agent-cli.cjs'));
+        const { RedisAgentClient } = await import(path.join(repoRoot, 'scripts/tnf-agent-cli.cjs'));
         const client = new RedisAgentClient();
         await client.initialize();
         try {
@@ -15260,17 +16045,58 @@ agentsBank
 
 program
   .command('list')
-  .description('List all registered agents')
-  .action(async () => {
+  .description('List live bus agents plus the defined agent roster')
+  .option('--all', 'Show full detail for every defined agent')
+  .option('--json', 'Emit roster as JSON')
+  .action(async (options: { all?: boolean; json?: boolean } = {}) => {
     const client = new (await loadRedisAgentClient())();
     try {
       await client.initialize();
       const agents = await client.listAgents();
+      const definitions = loadAgentDefinitions(process.cwd());
+      const defIndex = buildDefinitionIndex(definitions);
+      const liveKeys = new Set<string>();
+      for (const agent of agents) {
+        liveKeys.add(normalizeAgentName(agent.name));
+        liveKeys.add(normalizeAgentName(agent.id));
+      }
+      const definedOnly = definitions.filter(
+        (def) =>
+          !liveKeys.has(normalizeAgentName(def.name)) && !liveKeys.has(normalizeAgentName(def.id))
+      );
 
-      console.log(chalk.bold('\n📋 Registered Agents:\n'));
+      if (options.json) {
+        console.log(
+          JSON.stringify(
+            {
+              generatedAt: new Date().toISOString(),
+              liveCount: agents.length,
+              definitionCount: definitions.length,
+              live: agents.map((agent: any) => ({
+                ...agent,
+                definition: defIndex.get(normalizeAgentName(agent.name)) || null,
+              })),
+              definedOnly: options.all
+                ? definedOnly
+                : definedOnly.map((def) => ({
+                    id: def.id,
+                    name: def.name,
+                    department: def.department,
+                    category: def.category,
+                    capabilityCount: def.capabilities.length,
+                  })),
+            },
+            null,
+            2
+          )
+        );
+        return;
+      }
+
+      console.log(chalk.bold('\n📋 Agent Roster — live bus + defined agents:\n'));
 
       if (agents.length === 0) {
-        console.log('   No agents registered');
+        console.log('   No agents currently registered on the bus');
       } else {
         agents.forEach((agent) => {
           const statusIcon = agent.isOnline ? chalk.green('🟢') : chalk.red('🔴');
@@ -15285,9 +16111,63 @@ program
           console.log(`${statusIcon} ${icon} ${chalk.bold(agent.name)} (${agent.platform})`);
           console.log(`      Role: ${agent.role}`);
           console.log(`      ID: ${chalk.dim(agent.id)}`);
+          const def = defIndex.get(normalizeAgentName(agent.name));
+          if (def) {
+            console.log(
+              `      Definition: ${chalk.dim(
+                `${def.id} · ${def.department || '?'}/${def.category || '?'} · ${def.capabilities.length} capabilities`
+              )}`
+            );
+            if (def.description && def.description !== 'null') {
+              const trimmedDef =
+                def.description.length > 110
+                  ? `${def.description.slice(0, 107)}…`
+                  : def.description;
+              console.log(`      ${chalk.dim(trimmedDef)}`);
+            }
+          }
           console.log(`      Last seen: ${chalk.dim(agent.lastSeen)}`);
           console.log('');
         });
+      }
+
+      console.log(
+        chalk.bold(
+          `📖 Defined agents not currently live (${definedOnly.length} of ${definitions.length} definitions):\n`
+        )
+      );
+      if (definedOnly.length === 0) {
+        console.log('   Every defined agent has a live bus registration');
+      } else if (options.all) {
+        for (const def of definedOnly) {
+          console.log(`   ${chalk.bold(def.name)} ${chalk.dim(`(${def.id})`)}`);
+          console.log(
+            `      ${chalk.dim(
+              `${def.department || '?'}/${def.category || '?'} · ${def.capabilities.length} capabilities${
+                def.tags.length ? ` · tags: ${def.tags.join(', ')}` : ''
+              }`
+            )}`
+          );
+          if (def.description && def.description !== 'null') {
+            const trimmedDef =
+              def.description.length > 140 ? `${def.description.slice(0, 137)}…` : def.description;
+            console.log(`      ${chalk.dim(trimmedDef)}`);
+          }
+        }
+      } else {
+        const byDept = new Map<string, string[]>();
+        for (const def of definedOnly) {
+          const dept = def.department || 'unsorted';
+          const names = byDept.get(dept) || [];
+          names.push(`${def.name} (${def.capabilities.length}caps)`);
+          byDept.set(dept, names);
+        }
+        for (const dept of [...byDept.keys()].sort()) {
+          console.log(`   ${chalk.bold(dept)}: ${byDept.get(dept)!.join(', ')}`);
+        }
+        console.log(
+          chalk.dim('\n   Full detail: tnf list --all · machine-readable: tnf list --json')
+        );
       }
     } catch (err: any) {
       if (isRedisUnavailable(err)) {
@@ -15870,8 +16750,7 @@ program
       if (
         options.to &&
         decision.resolution.agentId &&
-        (decision.resolution.role === 'worker' ||
-          /worker/i.test(decision.resolution.agentId || options.to))
+        isDurableQueueRecipient(decision.resolution.agentId || options.to, decision.resolution.role)
       ) {
         try {
           workerQueue = await client.enqueueWorkerTask(decision.resolution.agentId!, message, {
@@ -16096,6 +16975,7 @@ program
         await client.register(process.env.AGENT_NAME || 'orchestrator-cli', 'orchestrator', 'tnf');
 
         const repoRoot = path.resolve(_dirname, '../../..');
+        const { Orchestrator } = await import('./orchestration.js');
         const orchestrator = new Orchestrator(client, repoRoot);
 
         // --status: Show system status
@@ -16160,6 +17040,22 @@ program
       } finally {
         await client.cleanup();
       }
+      // Exit explicitly, the way `convo` already does after its own cleanup.
+      //
+      // Every error path here exits; only the success path fell through and
+      // relied on the event loop draining. It does not — `cleanup()` leaves at
+      // least one handle open (the orchestrator's own bus subscriptions outlive
+      // the client), so the process finished all of its work and then sat idle
+      // until something killed it.
+      //
+      // That is not theoretical. `full-auto --broadcast` runs this as a
+      // post-step under a 600s ceiling, and cycles 2-5 on 2026-08-31 each
+      // logged "broadcast: pnpm timed out after 600s and was killed" AFTER the
+      // workflow had already printed "Workflow completed". Roughly ten minutes
+      // of every ~37 minute cycle was this process doing nothing: cycle 1,
+      // which ran without --broadcast, took 24.1 min against 34-40 min for the
+      // cycles that used it.
+      process.exit(0);
     }
   );
 
@@ -16653,7 +17549,7 @@ import {
 import { DatabaseService } from './services/DatabaseService.js';
 import { DebugService, redactSensitiveConfig } from './services/DebugService.js';
 import { MCPManagerService } from './services/MCPManagerService.js';
-import { MCPToolRuntimeService } from './services/MCPToolRuntimeService.js';
+// (MCPToolRuntimeService lazily imported by the mcp command actions below)
 import { ModelsService } from './services/ModelsService.js';
 import { PermissionService } from './services/PermissionService.js';
 import {
@@ -16663,10 +17559,15 @@ import {
 } from './services/ProjectConfigService.js';
 import { RemoteService } from './services/RemoteService.js';
 import { ServeService } from './services/ServeService.js';
-import { SessionManagerService } from './services/SessionManagerService.js';
+import {
+  SessionManagerService,
+  type Session,
+  type SessionExport,
+} from './services/SessionManagerService.js';
 import { StatsService } from './services/StatsService.js';
 import { UpgradeService } from './services/UpgradeService.js';
 import { interactiveSelect } from './utils/interactive-select.js';
+import { applySessionJump, buildSessionJumpItems } from './utils/session-jump.js';
 
 interface AcpExternalAgentPlan {
   agent: string;
@@ -17701,6 +18602,7 @@ configCmd
         target = target[parts[i]];
       }
       target[parts[parts.length - 1]] = parsedValue;
+      if (parts[0] === 'critic') resolveCriticConfig(config.critic);
       if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
       fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
       console.log(chalk.green(`✅ Set ${key} = ${JSON.stringify(parsedValue)}`));
@@ -18233,6 +19135,8 @@ program
   .command('models')
   .description('List or interactively select dynamically discovered models')
   .argument('[provider]', 'Provider ID to filter models by')
+  .argument('[search]', 'Search or filter models by ID, name, or keyword')
+  .option('-s, --search <query>', 'Search or filter models by ID, name, or keyword')
   .option('--verbose', 'Show detailed model information')
   .option('--refresh', 'Refresh the models cache')
   .option('--select', 'Choose provider/model with arrow keys and set it as the default')
@@ -18240,11 +19144,21 @@ program
   .action(
     async (
       provider?: string,
-      options?: { verbose?: boolean; refresh?: boolean; select?: boolean; json?: boolean }
+      search?: string,
+      options?: {
+        verbose?: boolean;
+        refresh?: boolean;
+        select?: boolean;
+        json?: boolean;
+        search?: string;
+      }
     ) => {
       try {
         const modelsService = new ModelsService();
         let selectedProvider = provider;
+        const searchQuery = String(options?.search || search || '')
+          .trim()
+          .toLowerCase();
 
         if (options?.select) {
           if (options.json) throw new Error('--select and --json cannot be used together');
@@ -18302,18 +19216,31 @@ program
           return;
         }
 
-        const models = await modelsService.listModels(selectedProvider, {
+        const rawModels = await modelsService.listModels(selectedProvider, {
           refresh: options?.refresh,
         });
+        const models = searchQuery
+          ? rawModels.filter(
+              (m) =>
+                m.id.toLowerCase().includes(searchQuery) ||
+                (m.name && m.name.toLowerCase().includes(searchQuery)) ||
+                (m.provider && m.provider.toLowerCase().includes(searchQuery))
+            )
+          : rawModels;
 
         if (options?.json) {
           console.log(JSON.stringify(models, null, 2));
           return;
         }
 
-        console.log(chalk.bold('\nAvailable Models\n'));
+        const countLabel = searchQuery
+          ? ` (matching "${searchQuery}": ${models.length}/${rawModels.length})`
+          : ` (${models.length})`;
+        console.log(chalk.bold(`\nAvailable Models${countLabel}\n`));
         if (models.length === 0) {
-          console.log(chalk.dim('No models found'));
+          console.log(
+            chalk.dim(`No models found${searchQuery ? ` matching "${searchQuery}"` : ''}`)
+          );
         } else {
           for (const m of models) {
             if (options?.verbose) {
@@ -18326,7 +19253,7 @@ program
                 console.log(`  Output: $${(m.outputCost / 1000000).toFixed(4)}/1M tokens`);
               console.log('');
             } else {
-              console.log(`  ${chalk.cyan(m.id)}`);
+              console.log(`  ${chalk.cyan(m.id)} ${chalk.dim(`(${m.provider})`)}`);
             }
           }
         }
@@ -18555,7 +19482,7 @@ story
   .description('Verify Story Architect auth and database access')
   .action(async () => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       console.log(chalk.bold.magenta('\n  Story Architect Preflight Diagnostics'));
       console.log('  ' + '-'.repeat(60));
 
@@ -18596,7 +19523,7 @@ story
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
   .action(async (title: string, options: { description?: string; owner?: string }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       const session = await storyService.createSession({
         title,
         description: options.description,
@@ -18620,7 +19547,7 @@ story
   .option('--all', 'Include already answered questions', false)
   .action(async (options: { session?: string; owner?: string; all?: boolean }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       let sessionId = options.session;
       if (!sessionId) {
         const active = await storyService.getActiveSession(options.owner);
@@ -18694,7 +19621,7 @@ story
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
   .action(async (options: { owner?: string }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       const sessions = await storyService.listSessions(options.owner);
       if (sessions.length === 0) {
         console.log(chalk.yellow('No story sessions found.'));
@@ -18720,7 +19647,7 @@ story
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
   .action(async (options: { owner?: string }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       const session = await storyService.getActiveSession(options.owner);
       if (!session) {
         console.log(chalk.yellow('No active story session.'));
@@ -18744,7 +19671,7 @@ story
   .option('-o, --owner <principal>', 'Owner principal id (defaults to env or daniel)')
   .action(async (options: { owner?: string }) => {
     try {
-      const storyService = new StoryService();
+      const storyService = new (await loadStoryService())();
       const events = await storyService.listTimelineEvents(options.owner);
       if (events.length === 0) {
         console.log(chalk.yellow('No story timeline events found.'));
@@ -18784,7 +19711,7 @@ story
       options: { question: string; session?: string; ring: string; shelf: string; owner?: string }
     ) => {
       try {
-        const storyService = new StoryService();
+        const storyService = new (await loadStoryService())();
         let sessionId = options.session;
         if (!sessionId) {
           const active = await storyService.getActiveSession(options.owner);
@@ -19910,7 +20837,7 @@ pluginsCommand
   .command('list')
   .description('List all installed plugins/skills')
   .action(async () => {
-    const service = new PluginsService();
+    const service = new (await loadPluginsService())();
     const plugins = await service.list();
     console.log(chalk.bold('\nInstalled Plugins & Skills:\n'));
     for (const plugin of plugins) {
@@ -19928,7 +20855,7 @@ pluginsCommand
   .option('--json', 'Print machine-readable output')
   .action(
     async (source: string, options: { version?: string; activate?: boolean; json?: boolean }) => {
-      const service = new PluginsService();
+      const service = new (await loadPluginsService())();
       let plugin = await service.install(source, options.version);
       if (options.activate) plugin = await service.enable(plugin.name);
       console.log(
@@ -19944,7 +20871,7 @@ pluginsCommand
   .description('Update one or all installed loadable extensions from their recorded source')
   .option('--json', 'Print machine-readable output')
   .action(async (name: string | undefined, options: { json?: boolean }) => {
-    const updated = await new PluginsService().update(name);
+    const updated = await new (await loadPluginsService())().update(name);
     console.log(
       options.json
         ? JSON.stringify(updated, null, 2)
@@ -19958,7 +20885,7 @@ for (const action of ['enable', 'disable', 'remove', 'status'] as const) {
     .description(`${action[0].toUpperCase()}${action.slice(1)} an installed extension`)
     .option('--json', 'Print machine-readable output')
     .action(async (name: string, options: { json?: boolean }) => {
-      const service = new PluginsService();
+      const service = new (await loadPluginsService())();
       if (action === 'remove') {
         await service.remove(name);
         console.log(
@@ -19997,7 +20924,9 @@ cronCommand
   });
 
 registerAssimilateCommand(program, repoRoot);
+registerCodeGraphCommands(program, repoRoot);
 registerBrowserCommand(program, repoRoot);
+registerDurableTasksCommand(program);
 registerTelegramCommands(program, repoRoot);
 registerSlackCommands(program, repoRoot);
 registerWhatsappCommands(program, repoRoot);
@@ -20009,12 +20938,15 @@ registerAgentsSpecsCommand(program, repoRoot);
 // frontmatter with live registry state. Registered on the existing `agents`
 // group so the surface stays `tnf agents match`, not a new top-level family.
 registerAgentsMatchCommand(agents, repoRoot);
+// Interactive session → local Subdirector availability (bus contract v1).
+registerAgentsAnnounceCommand(agents, repoRoot);
 registerStatusCommand(program, repoRoot);
 // `doctor` and `config` are already owned by cli.ts above. These modules nest
 // under the incumbent (`doctor health`, `config resolved`) via registerOrNest
 // rather than colliding with it — see commands/_registry.ts.
 registerDoctorCommand(program, repoRoot);
 registerConfigCommand(program, repoRoot);
+registerCriticCommands(program, repoRoot);
 registerParityCommand(program, repoRoot);
 registerLogsCommand(program, repoRoot);
 registerFederationTapCommand(program, repoRoot);
@@ -20022,8 +20954,10 @@ registerRefreshContextCommand(program, repoRoot);
 registerAgentStateQuotaEcosystemCommands(program, repoRoot);
 registerStaffingCommands(program);
 registerDepartmentCommands(program, repoRoot);
+registerVideoIngestCommand(program, repoRoot);
 registerRememberCommands(program, repoRoot);
 registerScoutCommands(program, repoRoot);
+registerPersonalKnowledgeCommands(program, repoRoot);
 registerFleetCommands(program);
 // Free NVIDIA / LLM catalog inspector + active-model switcher. Reads from
 // data/providers/catalog.json + data/providers/nvidia-models.json (single
@@ -20031,6 +20965,7 @@ registerFleetCommands(program);
 registerCatalogCommand(program);
 registerSubdirectorCommand(program, { repoRoot, runCommand });
 registerHaltCommand(program, repoRoot);
+registerVideoCommands(program, repoRoot);
 
 // Hermes parity: `hermes sync` → TNF CLI↔Hermes surface audit.
 // Nested `protocol sync` / `mcp sync` remain unchanged; this is the top-level verb.
@@ -20616,12 +21551,26 @@ async function executeInteractiveBash(script: string): Promise<{ ok: boolean; co
   });
 }
 
-async function runInteractiveBashBlocks(blocks: string[], messages: ChatMessage[]): Promise<void> {
+async function runInteractiveBashBlocks(
+  blocks: string[],
+  messages: ChatMessage[],
+  signal?: AbortSignal
+): Promise<void> {
   if (!blocks.length) return;
   console.log(chalk.yellow(`\n  ⚡ Executing ${blocks.length} shell block(s) in ${repoRoot}`));
   for (let index = 0; index < blocks.length; index += 1) {
+    if (signal?.aborted) {
+      console.log(
+        chalk.yellow(`  ⏹ Interrupted — skipping remaining ${blocks.length - index} shell block(s)`)
+      );
+      break;
+    }
     console.log(chalk.dim(`  --- block ${index + 1}/${blocks.length} ---`));
     const result = await executeInteractiveBash(blocks[index]);
+    if (signal?.aborted) {
+      console.log(chalk.yellow('  ⏹ Interrupted — skipping remaining shell block(s)'));
+      break;
+    }
     const line = result.ok
       ? chalk.green(`  ✓ block ${index + 1} succeeded`)
       : chalk.red(`  ✗ block ${index + 1} failed (exit ${result.code})`);
@@ -20666,9 +21615,17 @@ const RUN_BASH_OUTPUT_TAIL_CHARS = 8000;
 
 async function executeCapturedBash(
   command: string,
-  timeoutMs: number
-): Promise<{ ok: boolean; code: number; output: string; timedOut: boolean }> {
+  timeoutMs: number,
+  signal?: AbortSignal
+): Promise<{
+  ok: boolean;
+  code: number;
+  output: string;
+  timedOut: boolean;
+  interrupted?: boolean;
+}> {
   return new Promise((resolve) => {
+    let settled = false;
     const child = spawn('bash', ['-lc', command], {
       cwd: repoRoot,
       env: process.env,
@@ -20689,13 +21646,34 @@ async function executeCapturedBash(
       timedOut = true;
       child.kill('SIGKILL');
     }, timeoutMs);
+    // Operator interrupt: kill the running command now; the close handler
+    // resolves with an interrupted result (the tool loop stops afterwards).
+    const onAbort = () => {
+      if (settled) return;
+      child.kill('SIGKILL');
+    };
+    if (signal) {
+      if (signal.aborted) onAbort();
+      else signal.addEventListener('abort', onAbort, { once: true });
+    }
     child.on('error', (err) => {
+      settled = true;
+      signal?.removeEventListener('abort', onAbort);
       clearTimeout(timer);
       resolve({ ok: false, code: 1, output: `spawn error: ${err.message}`, timedOut });
     });
     child.on('close', (code) => {
+      settled = true;
+      signal?.removeEventListener('abort', onAbort);
       clearTimeout(timer);
-      resolve({ ok: code === 0 && !timedOut, code: code ?? 1, output, timedOut });
+      const interrupted = signal?.aborted === true;
+      resolve({
+        ok: !interrupted && code === 0 && !timedOut,
+        code: interrupted ? 130 : (code ?? 1),
+        output,
+        timedOut,
+        interrupted,
+      });
     });
   });
 }
@@ -20709,7 +21687,8 @@ type NativeToolTurnResult = {
 async function runAutonomousNativeToolTurn(
   client: any,
   messages: ChatMessage[],
-  permissions?: PermissionResolution
+  permissions?: PermissionResolution,
+  signal?: AbortSignal
 ): Promise<NativeToolTurnResult> {
   const executed: NativeToolTurnResult['executed'] = [];
   const enabledTools = permissions ? [...permissions.allowed] : [...KNOWN_TOOLS];
@@ -20720,6 +21699,9 @@ async function runAutonomousNativeToolTurn(
   const result = await client.chatCompleteWithTools(
     messages,
     async (name: string, args: Record<string, unknown>) => {
+      if (signal?.aborted) {
+        return { ok: false, error: 'interrupted by operator' };
+      }
       if (name === 'run_bash') {
         const command = String(args.command ?? '').trim();
         if (!command) return { ok: false, error: 'run_bash requires a non-empty command' };
@@ -20728,7 +21710,7 @@ async function runAutonomousNativeToolTurn(
         }
         const timeoutSec = Math.min(600, Math.max(1, Number(args.timeout_seconds) || 120));
         console.log(chalk.yellow(`\n  ⚡ run_bash: ${command.slice(0, 200)}`));
-        const res = await executeCapturedBash(command, timeoutSec * 1000);
+        const res = await executeCapturedBash(command, timeoutSec * 1000, signal);
         executed.push({
           tool: 'run_bash',
           summary: `(exit ${res.code}${res.timedOut ? ', timed out' : ''}) ${command.slice(0, 200)}`,
@@ -20761,6 +21743,7 @@ async function runAutonomousNativeToolTurn(
       maxIterations: AUTONOMOUS_MAX_SHELL_BLOCKS + 2,
       maxTokens: 4096,
       tools,
+      signal,
     }
   );
   let content = String(result?.content ?? '');
@@ -20865,7 +21848,7 @@ function startProcessingIndicator(label = 'Processing'): void {
   write(SPINNER_FRAMES[0]);
 }
 
-function stopProcessingIndicator(success = true): void {
+function stopProcessingIndicator(success = true, note?: string): void {
   if (!spinnerActive) return;
   spinnerActive = false;
   if (spinnerHandle) {
@@ -20873,6 +21856,10 @@ function stopProcessingIndicator(success = true): void {
     spinnerHandle = null;
   }
   process.stderr.write('\r' + '\x1b[K');
+  if (note) {
+    process.stdout.write(`${note}\n`);
+    return;
+  }
   const icon = success ? chalk.green('✓ Done') : chalk.red('✗ Failed');
   process.stdout.write(`${icon}\n`);
 }
@@ -20976,6 +21963,9 @@ async function runTuiOneshot(options: {
     process.exit(2);
   }
 
+  // First interaction point connecting with backend LLM: ensure canonical onboarding has run
+  await ensureCanonicalOnboard({ task: resolved.text });
+
   const { runAgentsRun } = await import('./commands/agents-run.js');
   const format = String(options.outputFormat || 'text').toLowerCase();
   const result = await runAgentsRun({
@@ -20999,6 +21989,9 @@ async function runTuiOneshot(options: {
 }
 
 async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
+  // First interaction point before making connection with backend LLM:
+  await ensureCanonicalOnboard({ task: options?.task });
+
   syncHomeHandoffCache();
   const voiceTty = lockVoiceGroundInputToThisSession('tnf-cli');
   const rl = readline.createInterface({
@@ -21014,6 +22007,13 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     stallFallbackPrompt:
       process.env.TNF_STALL_DEFENSE_PROMPT ||
       'Continue autonomous execution. Follow your overarching directive.',
+    onBusyQueued: (lines) => {
+      // Immediate acknowledgment that input typed during a busy turn was
+      // captured — it runs as the next prompt when the turn ends.
+      process.stdout.write(
+        chalk.dim(`\n  ⌨ queued ${lines} line(s) — runs after the current turn\n`)
+      );
+    },
   });
   let rlClosed = false;
   rl.on('close', () => {
@@ -21022,6 +22022,47 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       inputCollector.dispose();
     } catch {
       /* best-effort */
+    }
+  });
+
+  // Operator interrupt: Esc or Ctrl-C aborts the in-flight turn immediately —
+  // no waiting for the model to stop thinking. The HTTP request is aborted at
+  // the fetch layer, running bash children are killed, and the loop hands the
+  // floor back to the operator (auto-continue pauses; /continue resumes).
+  // Ctrl-C at an idle prompt keeps its historical behavior (exit).
+  let activeTurnAbort: AbortController | null = null;
+  // Operator-visible interrupt tracing, opt-in: TNF_DEBUG_INTERRUPTS=1.
+  const dbg = (msg: string) => {
+    if (process.env.TNF_DEBUG_INTERRUPTS !== '1') return;
+    try {
+      fs.appendFileSync('/tmp/tnf-interrupt-debug.log', `${new Date().toISOString()} ${msg}\n`);
+    } catch {
+      /* debug only */
+    }
+  };
+  const interruptActiveTurn = (): boolean => {
+    const controller = activeTurnAbort;
+    dbg(`interruptActiveTurn called, controller=${controller ? 'present' : 'null'}`);
+    if (!controller) return false;
+    activeTurnAbort = null;
+    try {
+      controller.abort();
+    } catch {
+      /* best-effort */
+    }
+    return true;
+  };
+  process.stdin.on('keypress', (_ch: string, key: any) => {
+    if (process.env.TNF_DEBUG_INTERRUPTS === '1')
+      dbg(`keypress name=${key?.name} ctrl=${key?.ctrl}`);
+    if (!activeTurnAbort) return;
+    if (key?.name === 'escape') interruptActiveTurn();
+  });
+  rl.on('SIGINT', () => {
+    dbg('rl SIGINT fired');
+    if (!interruptActiveTurn()) {
+      // No turn in flight: preserve the historical Ctrl-C = exit behavior.
+      process.kill(process.pid, 'SIGINT');
     }
   });
 
@@ -21115,6 +22156,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       ' Type /help for commands, /exit to quit, /clear to clear history, /autonomous off to pause shell auto-exec\n' +
         ' Press / to search every command — ↑↓ or ^p/^n to move, ⇞⇟/^u^d to page, ⇱⇲ for the ends, ⇥ to complete\n' +
         ' /hold pauses auto-continue · /window <sec> sets operator takeover window · /continue resumes\n' +
+        ' While busy: type + Enter to queue the next prompt · Esc or Ctrl-C interrupts the agent immediately\n' +
         ' Prefer this `tnf tui` session for interactive TNF (paste-safe). `tnf hermes` is external passthrough.\n'
     )
   );
@@ -21192,6 +22234,12 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
     mode: options?.mode || 'agent',
     tuiMode,
     operatorWindowMs: resolveOperatorWindowMs(),
+    sessionJump: {
+      getSessionId: () => currentSessionId,
+      setSessionId: (id) => {
+        currentSessionId = id;
+      },
+    },
   };
   // Mutable session window — /window and natural-language directives update this live.
   let operatorWindowMs = resolveOperatorWindowMs();
@@ -21486,10 +22534,26 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       autonomousState.continuePending = true;
     }
 
+    if (!fromAutonomousContinue) {
+      const { expandedPrompt, attachments } = expandPromptMentions(outbound, repoRoot);
+      if (attachments.length > 0) {
+        for (const att of attachments) {
+          console.log(
+            chalk.dim(`  📎 Attached context for ${chalk.cyan(att.name)} (${att.lines} lines)`)
+          );
+        }
+        outbound = expandedPrompt;
+      }
+    }
+
     outbound = sanitizeUtf8Prompt(outbound);
     messages.push({ role: 'user', content: outbound });
 
+    let turnAbort: AbortController | null = null;
     try {
+      turnAbort = new AbortController();
+      activeTurnAbort = turnAbort;
+      dbg('turn start: activeTurnAbort set');
       inputCollector.setMode('busy');
       startProcessingIndicator('Thinking');
       const useStreaming = process.env.TNF_USE_STREAMING === '1';
@@ -21509,13 +22573,18 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
       if (useNativeTools) {
         let nativeSucceeded = false;
         try {
-          const native = await runAutonomousNativeToolTurn(client, messages, options?.permissions);
+          const native = await runAutonomousNativeToolTurn(
+            client,
+            messages,
+            options?.permissions,
+            turnAbort.signal
+          );
           stopProcessingIndicator(true);
           nativeSucceeded = true;
           nativeToolCallsMade = Math.max(native.toolCallsMade, native.executed.length);
           turnResponseText = native.content;
           if (native.content) {
-            console.log(chalk.cyan('\n  ' + native.content.replace(/\n/g, '\n  ')));
+            console.log('\n' + renderTuiMarkdown(native.content, { indent: '  ' }));
           } else if (native.executed.length > 0) {
             console.log(
               chalk.dim(
@@ -21535,6 +22604,15 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
             });
           }
         } catch (nativeErr: any) {
+          // Operator interrupt is NOT a provider failure — never fall back to
+          // plain chat on abort; hand the floor straight back to the operator.
+          if (
+            nativeErr?.name === 'AbortError' ||
+            nativeErr?.userAbort === true ||
+            nativeErr?.code === 'ABORT_ERR'
+          ) {
+            throw nativeErr;
+          }
           // Provider chain can't do tools right now — degrade to plain chat
           // for this turn; fence extraction below still gives execution a shot.
           console.log(
@@ -21544,9 +22622,12 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
           );
         }
         if (!nativeSucceeded) {
-          const response = await client.chatComplete(messages, { temperature: 0.7 });
+          const response = await client.chatComplete(messages, {
+            temperature: 0.7,
+            signal: turnAbort.signal,
+          });
           stopProcessingIndicator(true);
-          console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
+          console.log('\n' + renderTuiMarkdown(response, { indent: '  ' }));
           messages.push({ role: 'assistant', content: response });
           turnResponseText = response;
         }
@@ -21554,7 +22635,10 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
         // Streaming mode: show response as it arrives
         process.stdout.write(chalk.cyan('\n  '));
         let fullResponse = '';
-        for await (const chunk of client.chatStream(messages, { temperature: 0.7 })) {
+        for await (const chunk of client.chatStream(messages, {
+          temperature: 0.7,
+          signal: turnAbort.signal,
+        })) {
           process.stdout.write(chalk.cyan(chunk));
           fullResponse += chunk;
         }
@@ -21564,9 +22648,12 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
         turnResponseText = fullResponse;
       } else {
         // Non-streaming mode: wait for complete response
-        const response = await client.chatComplete(messages, { temperature: 0.7 });
+        const response = await client.chatComplete(messages, {
+          temperature: 0.7,
+          signal: turnAbort.signal,
+        });
         stopProcessingIndicator(true);
-        console.log(chalk.cyan('\n  ' + response.replace(/\n/g, '\n  ')));
+        console.log('\n' + renderTuiMarkdown(response, { indent: '  ' }));
         messages.push({ role: 'assistant', content: response });
         turnResponseText = response;
       }
@@ -21613,7 +22700,7 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
           const blocks = capInteractiveBashBlocks(extractInteractiveBashBlocks(response));
           if (blocks.length > 0) {
             autonomousState.consecutiveNoBashTurns = 0;
-            await runInteractiveBashBlocks(blocks, messages);
+            await runInteractiveBashBlocks(blocks, messages, turnAbort.signal);
           } else {
             autonomousState.consecutiveNoBashTurns += 1;
             const stallMsg = [
@@ -21713,12 +22800,27 @@ async function startInteractiveAgent(options?: TuiAgentOptions): Promise<void> {
         }
       }
     } catch (err: any) {
-      stopProcessingIndicator(false);
-      console.error(chalk.red('\n  Error: ' + err.message));
-      if (slashContext.autonomousMode && !autonomousState.operatorHold) {
-        autonomousState.continuePending = true;
+      const interrupted =
+        turnAbort?.signal.aborted || err?.name === 'AbortError' || err?.code === 'ABORT_ERR';
+      if (interrupted) {
+        stopProcessingIndicator(false, chalk.yellow('⏹ Interrupted'));
+        console.log(
+          chalk.yellow(
+            '\n  ⏹ Interrupted — you have the floor. (auto-continue paused; /continue to resume)'
+          )
+        );
+        autonomousState.continuePending = false;
+        autonomousState.operatorHold = true;
+      } else {
+        stopProcessingIndicator(false);
+        console.error(chalk.red('\n  Error: ' + err.message));
+        if (slashContext.autonomousMode && !autonomousState.operatorHold) {
+          autonomousState.continuePending = true;
+        }
       }
     } finally {
+      turnAbort = null;
+      activeTurnAbort = null;
       inputCollector.setMode('idle');
       const queuedPaste = inputCollector.takeBusyQueue();
       if (queuedPaste) {
@@ -21987,6 +23089,43 @@ async function loadRedisAgentClient(): Promise<
     ({ RedisAgentClient: redisAgentClientCtor } = await import('./RedisAgentClient.js'));
   }
   return redisAgentClientCtor;
+}
+
+// Lazy accessors for heavy services, same pattern as loadRedisAgentClient
+// above: keep their module eval cost off the startup path. Measured isolated
+// import costs: MCPToolRuntimeService ~770ms (MCP SDK + zod), StoryService
+// ~230ms (supabase), PluginsService ~125ms.
+let mcpToolRuntimeCtor:
+  | typeof import('./services/MCPToolRuntimeService.js').MCPToolRuntimeService
+  | null = null;
+async function loadMCPToolRuntimeService(): Promise<
+  typeof import('./services/MCPToolRuntimeService.js').MCPToolRuntimeService
+> {
+  if (!mcpToolRuntimeCtor) {
+    ({ MCPToolRuntimeService: mcpToolRuntimeCtor } =
+      await import('./services/MCPToolRuntimeService.js'));
+  }
+  return mcpToolRuntimeCtor;
+}
+
+let storyServiceCtor: typeof import('./services/StoryService.js').StoryService | null = null;
+async function loadStoryService(): Promise<
+  typeof import('./services/StoryService.js').StoryService
+> {
+  if (!storyServiceCtor) {
+    ({ StoryService: storyServiceCtor } = await import('./services/StoryService.js'));
+  }
+  return storyServiceCtor;
+}
+
+let pluginsServiceCtor: typeof import('./services/PluginsService.js').PluginsService | null = null;
+async function loadPluginsService(): Promise<
+  typeof import('./services/PluginsService.js').PluginsService
+> {
+  if (!pluginsServiceCtor) {
+    ({ PluginsService: pluginsServiceCtor } = await import('./services/PluginsService.js'));
+  }
+  return pluginsServiceCtor;
 }
 
 /** Interactive session entrypoints that should not dump protocol walls first. */

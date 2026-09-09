@@ -8,13 +8,21 @@ You are an AI capability provider operating inside The New Fuse (TNF) ecosystem.
 
 ## Non-Negotiable Session Entry
 
+**Turn Zero = Turn Zero V2.** There is no separate current Turn Zero. Session
+entry runs the V2 gate via onboard.
+
 From the canonical TNF repository root, run:
 
 ```bash
 pnpm run tnf:onboard -- --task "<current task if known>"
 ```
 
-`pnpm run tnf:onboard` is the standard entrypoint. It derives Stage A from `docs/core/FRONTLOAD_MANIFEST.md`, reads/hashes the current rails, records a hydration receipt, reports repository/handoff/freshness state, emits task-scoped hydration routes, verifies host injection coverage, and performs provider discovery.
+`pnpm run tnf:onboard` is the standard Turn Zero V2 entrypoint. It runs
+`scripts/protocols/turn-zero-v2-gate.cjs`, derives Stage A from
+`docs/core/FRONTLOAD_MANIFEST.md`, reads/hashes the current rails, records a
+hydration receipt, reports repository/handoff/freshness state, emits
+task-scoped hydration routes, verifies host injection coverage, and performs
+provider discovery. Law: `docs/protocols/TURN_ZERO_MANDATE.md`.
 
 Do **not** maintain or trust an independently hard-coded Stage A list in a host prompt, skill, installer, or memory file. `FRONTLOAD_MANIFEST.md` is the rail inventory authority; `TURN_ZERO_MANDATE.md` governs when and why the rails are required.
 
@@ -22,7 +30,7 @@ Before write-capable work, resolve classification and rerun with `--write-ready`
 
 ## Lifecycle
 
-Use the current Turn Zero lifecycle:
+Use the current Turn Zero V2 lifecycle:
 
 `RESPOND → ORIENT → CLASSIFY → HYDRATE → STAFF → ACT → VERIFY → PROPAGATE → HANDOFF`
 
@@ -83,6 +91,7 @@ Treat other active agent sessions as capability and collision signals.
 - Another agent's claim is not proof; inspect the referenced branch, PR, file, receipt, log, or runtime state.
 - Do not race a package/workstream already actively owned unless an explicit coordinated handoff requires overlap.
 - Delegate only when it improves time, reliability, capability fit, or independent verification.
+- Interactive sessions are dispatchable only while announced: announce availability to the local Subdirector per `docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md` (skill: `.agent/skills/tnf-agent-availability-announce/SKILL.md`, CLI: `tnf agents announce`), re-announce while willing to take work, and withdraw offline at session end.
 
 ## Operating Discipline
 
@@ -191,5 +200,5 @@ Use Turn End/handoff protocols when durable continuation state is required.
 If a host cannot auto-inject this file, use:
 
 ```text
-From the canonical TNF repository root, run `pnpm run tnf:onboard -- --task "<current task>"`. Treat `docs/core/FRONTLOAD_MANIFEST.md` as the only Stage A rail inventory and `docs/protocols/TURN_ZERO_MANDATE.md` as the canonical lifecycle/write-readiness authority. Follow the manifest-derived hydration receipt and task-scoped routes it emits. Before mutation, verify current repository state, active workstream ownership, classification, and the exact implementation already present. Do not infer authority from old docs, labels, or chat memory; do not duplicate an active implementation. Empirically verify all consequential results and leave a continuation receipt.
+From the canonical TNF repository root, run `pnpm run tnf:onboard -- --task "<current task>"` (Turn Zero V2 = current Turn Zero). Treat `docs/core/FRONTLOAD_MANIFEST.md` as the only Stage A rail inventory and `docs/protocols/TURN_ZERO_MANDATE.md` as the canonical lifecycle/write-readiness authority. Follow the manifest-derived hydration receipt and task-scoped routes it emits. Before mutation, verify current repository state, active workstream ownership, classification, and the exact implementation already present. Do not infer authority from old docs, labels, or chat memory; do not duplicate an active implementation. Empirically verify all consequential results and leave a continuation receipt.
 ```

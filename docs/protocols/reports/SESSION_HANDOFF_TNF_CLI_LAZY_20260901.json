@@ -1,0 +1,77 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "9d3c7f41-2e58-4b6a-a1c3-5e7f9b2d4a68",
+  "created_at": "2026-09-01T11:20:00Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
+  "head_sha": "dce732ccc",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node", "pnpm"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-DOCTOR-PERF"],
+  "work_summary": [
+    "Lazy command registration: converted the heaviest eager module imports in tnf-cli to dynamic imports behind cached loader functions, following the existing loadRedisAgentClient pattern.",
+    "cli.ts: removed static Orchestrator import (defeated RedisAgentClient laziness; orchestration.js isolated import cost measured at ~2.1s); added loadMCPToolRuntimeService (~770ms MCP SDK+zod), loadStoryService (~230ms supabase), loadPluginsService (~125ms); rewrote 13 call sites to `new (await loader())(...)`.",
+    "commands/telegram/index.ts and commands/whatsapp/index.ts: static Telegraf/WhatsappService imports replaced with cached dynamic loaders (~240ms + ~180ms deferred).",
+    "bundle-cli.cjs: enabled esbuild splitting (chunks/[name]-[hash]) so dynamic imports become lazily-loaded chunk files instead of being inlined into the eager entry; entry shrank 6123KB -> 857KB.",
+    "Restored repo consistency after autonomous fleet commits broke the build mid-session: cli.ts zeroed and auto-committed in bf04b72a2 (restored separately); fleet's rewritten LocalSubdirectorAuthorityService dropped APIs (getConfig/isFirstRun/updateConfig/signLocalSubdirectorIdentity/configLocation) that cli.ts, commands/subdirector.ts, the service test, and commands/agents-run.ts all use; restored both service and agents-run.ts from 5e2caf328 (last consistent set). Fleet's uncommitted agents-run WIP preserved at /tmp/fleet-agents-run-wip-20260901.patch."
+  ],
+  "changed_paths": [
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_LAZY_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_CLI_LAZY_20260901.md",
+    "packages/tnf-cli/scripts/bundle-cli.cjs",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/commands/agents-run.ts",
+    "packages/tnf-cli/src/commands/telegram/index.ts",
+    "packages/tnf-cli/src/commands/whatsapp/index.ts",
+    "packages/tnf-cli/src/services/LocalSubdirectorAuthorityService.ts"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "tnf --version: 4.1s pre-lazy -> 1.07-1.17s (CPU 0.35s). tnf doctor: PASS, 6.7s. models openrouter --json: 420 live rows via lazy path. type-check clean. Full tnf-cli test suite: 510 passed, 0 failed. command-surface gate green (512 paths unchanged)."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "high",
+    "resume_checklist": [
+      "Investigate/prevent fleet processes zeroing or half-migrating critical source files mid-session (bf04b72a2 zeroed cli.ts; the service/agents-run migration shipped inconsistent API pairs).",
+      "com.tnf.subdirector-autopilot is not-loaded in launchd; investigate before re-enabling (prime suspect for the truncation window).",
+      "Decide whether the fleet's delegated-grant service rewrite should be re-landed coherently (service + cli.ts + agents-run + subdirector + tests together) — the discarded WIP is preserved at /tmp/fleet-agents-run-wip-20260901.patch."
+    ]
+  },
+  "next_actions": [
+    "Commit the lazy-loading refactor through the normal TNF gates.",
+    "Keep watching fleet auto-commits; the shared-checkout hazard recurred twice in this session.",
+    "Do not push without a separate explicit publication instruction."
+  ]
+}

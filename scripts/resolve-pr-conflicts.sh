@@ -61,7 +61,7 @@ git merge main --no-edit || {
     echo "  git add <files>"
     echo "  git commit"
     echo "  git push origin $BRANCH_NAME"
-    echo "  gh pr merge $PR_NUMBER --squash"
+    echo "  bash scripts/safe-merge-to-main.sh $PR_NUMBER --squash"
     exit 1
   fi
   
@@ -85,7 +85,7 @@ git push origin $BRANCH_NAME
 
 # Merge the PR
 echo "10. Merging PR #$PR_NUMBER..."
-gh pr merge $PR_NUMBER --squash --delete-branch
+bash "$(git rev-parse --show-toplevel)/scripts/safe-merge-to-main.sh" "$PR_NUMBER" --squash
 
 echo "=== PR #$PR_NUMBER processed successfully! ==="
 

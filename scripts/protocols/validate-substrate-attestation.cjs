@@ -14,7 +14,9 @@
  * Env:
  *   TNF_REQUIRE_SUBSTRATE=1  force require mode
  *   TNF_SKIP_SUBSTRATE=1     skip entirely (exit 0)
- *   TNF_GATE_POLICY_TOKEN    presence checked as soft/hard depending on mode
+ *   TNF_GATE_POLICY_TOKEN    resolved from env or ~/.tnf credential files and
+ *                            verified against the gate endpoint
+ *   TNF_GATE_TOKEN_SKIP_VERIFY=1  accept a resolved token without verifying
  *
  * Seal (optional):
  *   docs/operations/tnf-substrate-seal.json — when present, lockfile sha256
@@ -25,10 +27,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const net = require('node:net');
+const os = require('node:os');
 const { spawnSync } = require('node:child_process');
+const YAML = require('js-yaml');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const SEAL_REL = 'docs/operations/tnf-substrate-seal.json';
+const { resolveGateToken, verifyGateToken } = require('../lib/tnf-gate-token.cjs');
+
 const FULL_AUTO_STATE_REL = 'docs/operations/tnf-full-auto-state.json';
 const FULL_AUTO_RUN_LOG_REL = 'docs/operations/tnf-full-auto-runs.jsonl';
 /** Must match FULL_AUTO_FAIL_STREAK in packages/tnf-cli/src/utils/full-auto-cycle.ts. */
@@ -96,8 +102,12 @@ function parseArgs(argv) {
   let clearQuarantine = false;
   let clearEscalation = false;
   let strictRuntime = false;
+  let recoveryCheck = false;
+  let sealOnly = false;
   for (const arg of argv) {
-    if (arg === '--json') json = true;
+    if (arg === '--recovery-check') recoveryCheck = true;
+    else if (arg === '--seal-only') sealOnly = true;
+    else if (arg === '--json') json = true;
     else if (arg === '--write-seal') writeSeal = true;
     else if (arg === '--apply-quarantine') applyQuarantine = true;
     else if (arg === '--clear-quarantine') clearQuarantine = true;
@@ -121,6 +131,8 @@ function parseArgs(argv) {
     clearQuarantine,
     clearEscalation,
     strictRuntime,
+    recoveryCheck,
+    sealOnly,
   };
 }
 
@@ -146,6 +158,29 @@ function checkLockfile() {
     ok: false,
     detail: 'no lockfile found (pnpm-lock.yaml / package-lock.json / yarn.lock)',
   };
+}
+
+// pnpm's installed lock can differ in YAML formatting; compare parsed content.
+function stable(value) {
+  if (Array.isArray(value)) return value.map(stable);
+  if (value && typeof value === 'object') return Object.fromEntries(
+    Object.keys(value).sort().map((key) => [key, stable(value[key])])
+  );
+  return value;
+}
+
+function checkInstalledLockfile() {
+  try {
+    const wanted = YAML.load(fs.readFileSync(abs('pnpm-lock.yaml'), 'utf8'));
+    const installed = YAML.load(fs.readFileSync(abs('node_modules/.pnpm/lock.yaml'), 'utf8'));
+    const ok = JSON.stringify(stable(wanted)) === JSON.stringify(stable(installed));
+    return { id: 'installed-lockfile', severity: 'hard', ok,
+      detail: ok ? 'installed dependencies match pnpm-lock.yaml' :
+        'installed dependencies differ from pnpm-lock.yaml; run pnpm install --frozen-lockfile' };
+  } catch (error) {
+    return { id: 'installed-lockfile', severity: 'hard', ok: false,
+      detail: `cannot verify installed dependencies: ${error.message}` };
+  }
 }
 
 function checkSeal(lockCheck) {
@@ -196,22 +231,150 @@ function checkSeal(lockCheck) {
   }
 }
 
-function checkCliArtifacts() {
-  const missing = [];
-  const present = [];
-  for (const art of CLI_CRITICAL_ARTIFACTS) {
-    if (fs.existsSync(abs(art.rel))) present.push(art.package);
-    else missing.push(`${art.package} (${art.rel})`);
+/**
+ * Operator preference for the autonomous loop, declared in the optional-settings
+ * config (~/.tnf/config.yaml, `full_auto.enabled`).
+ *
+ * A preference nothing reads is decoration. This check gives it teeth in the
+ * one direction that matters: if the operator declared the loop should be on
+ * and it is not actually running, that is drift worth surfacing. It stays soft
+ * — the operator may legitimately have stopped it for a moment, and this must
+ * not brick the CLI the way a false liveness claim does.
+ */
+function checkFullAutoPreference(livenessCheck) {
+  const configPath =
+    process.env.TNF_CONFIG_YAML || path.join(os.homedir(), '.tnf', 'config.yaml');
+  if (!fs.existsSync(configPath)) {
+    return {
+      id: 'full-auto-preference',
+      severity: 'soft',
+      ok: true,
+      detail: 'no optional-settings config; no declared full-auto preference',
+    };
   }
+  let declared;
+  try {
+    const yaml = require('js-yaml');
+    const parsed = yaml.load(fs.readFileSync(configPath, 'utf8')) || {};
+    declared = parsed.full_auto;
+  } catch (err) {
+    return {
+      id: 'full-auto-preference',
+      severity: 'soft',
+      ok: false,
+      detail: `optional-settings config unreadable (${err.message}) — full-auto preference unknown`,
+    };
+  }
+  if (!declared || declared.enabled !== true) {
+    return {
+      id: 'full-auto-preference',
+      severity: 'soft',
+      ok: true,
+      detail: `full-auto not declared enabled (${configPath})`,
+    };
+  }
+
+  const statePath = abs(FULL_AUTO_STATE_REL);
+  let mode = 'absent';
+  try {
+    mode = JSON.parse(fs.readFileSync(statePath, 'utf8')).mode || 'absent';
+  } catch {
+    /* absent or unreadable; reported below */
+  }
+  // `mode === 'running'` is a claim, not evidence — trusting it here would
+  // repeat the exact bug this file was fixed for. The loop counts as satisfying
+  // the preference only when the liveness check also passes.
+  const live = mode === 'running' && livenessCheck?.ok === true;
+  if (live) {
+    return {
+      id: 'full-auto-preference',
+      severity: 'soft',
+      ok: true,
+      detail: 'full-auto declared enabled and the loop is verifiably running',
+    };
+  }
+  const because =
+    mode === 'running'
+      ? `state claims running but liveness failed: ${livenessCheck?.detail || 'unknown'}`
+      : `state is ${mode}`;
+  return {
+    id: 'full-auto-preference',
+    severity: 'soft',
+    ok: false,
+    detail: `full-auto declared enabled in ${configPath} but ${because} — start it (tnf full-auto daemon start) or set full_auto.enabled: false`,
+  };
+}
+
+function readSealSafe() {
+  const sealPath = abs(SEAL_REL);
+  if (!fs.existsSync(sealPath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(sealPath, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The seal records a sha256 for every CLI-critical artifact, but this check
+ * used to only call existsSync — so a rebuilt or tampered dist passed as long
+ * as the file existed, which is the one thing the seal was meant to catch.
+ * (`@the-new-fuse/shared` drifted e8fb7245… → b5c55e66… entirely unnoticed.)
+ * Compare the digests we already store.
+ *
+ * A digest we cannot compare is reported as unverified rather than counted as
+ * a pass: no seal yet, or an artifact the seal never recorded, both mean the
+ * answer is unknown and the remedy is --write-seal.
+ */
+function checkCliArtifacts(seal) {
+  const missing = [];
+  const mismatched = [];
+  const unverified = [];
+  const verified = [];
+  const sealed = seal?.cliCriticalArtifacts || null;
+
+  for (const art of CLI_CRITICAL_ARTIFACTS) {
+    const p = abs(art.rel);
+    if (!fs.existsSync(p)) {
+      missing.push(`${art.package} (${art.rel})`);
+      continue;
+    }
+    const recorded = sealed?.[art.package]?.sha256;
+    if (!recorded) {
+      unverified.push(art.package);
+      continue;
+    }
+    const actual = sha256File(p);
+    if (actual === recorded) verified.push(art.package);
+    else {
+      mismatched.push(
+        `${art.package} (have ${actual.slice(0, 16)}… want ${String(recorded).slice(0, 16)}…)`
+      );
+    }
+  }
+
+  const parts = [];
+  if (missing.length) parts.push(`missing: ${missing.join('; ')}`);
+  if (mismatched.length) parts.push(`digest drift: ${mismatched.join('; ')}`);
+  if (unverified.length) {
+    parts.push(`unsealed (run --write-seal after a known-good build): ${unverified.join(', ')}`);
+  }
+  if (!parts.length) {
+    parts.push(`${verified.length}/${CLI_CRITICAL_ARTIFACTS.length} CLI-critical artifacts match seal`);
+  }
+
+  const broken = missing.length > 0 || mismatched.length > 0;
   return {
     id: 'cli-critical-dist',
-    severity: 'hard',
-    ok: missing.length === 0,
-    detail:
-      missing.length === 0
-        ? `${present.length}/${CLI_CRITICAL_ARTIFACTS.length} CLI-critical artifacts present`
-        : `missing: ${missing.join('; ')}`,
+    // Missing or drifted artifacts are hard failures. "Unsealed" is the
+    // expected state before a first seal, so it stays soft — but it is still
+    // not ok, because we have not verified anything.
+    severity: broken ? 'hard' : 'soft',
+    ok: !broken && unverified.length === 0,
+    detail: parts.join(' | '),
     missing,
+    mismatched,
+    unverified,
   };
 }
 
@@ -251,17 +414,65 @@ async function checkRelay() {
   };
 }
 
-function checkGateToken() {
-  const present = Boolean(
-    process.env.TNF_GATE_POLICY_TOKEN && String(process.env.TNF_GATE_POLICY_TOKEN).trim()
-  );
+/**
+ * The token lives in env *or* ~/.tnf/credentials.env — checking only env
+ * reported a correctly provisioned box as "unset". Presence is also not
+ * health: a revoked token is present and still 401s. Ask the endpoint, and
+ * only claim OK when it actually authenticates.
+ *
+ * Set TNF_GATE_TOKEN_SKIP_VERIFY=1 to fall back to presence-only (offline/CI);
+ * the detail says so rather than implying the token was verified.
+ */
+async function checkGateToken() {
+  const { token, source } = resolveGateToken();
+  if (!token) {
+    return {
+      id: 'gate-policy-token',
+      severity: 'soft',
+      ok: false,
+      state: 'absent',
+      detail:
+        'TNF_GATE_POLICY_TOKEN unresolved in env or credential files (master-clock / federation gate will 401) — authorize: node scripts/protocols/authorize-gate-token.cjs',
+    };
+  }
+
+  if (isTruthy(process.env.TNF_GATE_TOKEN_SKIP_VERIFY)) {
+    return {
+      id: 'gate-policy-token',
+      severity: 'soft',
+      ok: true,
+      state: 'unverified',
+      detail: `token resolved from ${source}; not verified (TNF_GATE_TOKEN_SKIP_VERIFY=1)`,
+    };
+  }
+
+  const { state, detail } = await verifyGateToken(token);
+  if (state === 'valid') {
+    return {
+      id: 'gate-policy-token',
+      severity: 'soft',
+      ok: true,
+      state,
+      detail: `token from ${source} verified (${detail})`,
+    };
+  }
+  if (state === 'rejected') {
+    return {
+      id: 'gate-policy-token',
+      severity: 'soft',
+      ok: false,
+      state,
+      detail: `token from ${source} REJECTED (${detail}) — re-authorize: node scripts/protocols/authorize-gate-token.cjs`,
+    };
+  }
+  // Unreachable is not proof of health, so it does not pass; it is also not
+  // proof of a bad token, so it stays soft and says which it is.
   return {
     id: 'gate-policy-token',
     severity: 'soft',
-    ok: present,
-    detail: present
-      ? 'TNF_GATE_POLICY_TOKEN set'
-      : 'TNF_GATE_POLICY_TOKEN unset (master-clock / federation gate will 401)',
+    ok: false,
+    state,
+    detail: `token from ${source} present but UNVERIFIED (${detail})`,
   };
 }
 
@@ -324,7 +535,6 @@ function clearFullAutoQuarantine() {
   const next = {
     ...state,
     mode: 'idle',
-    failedCycles: 0,
     updatedAt: new Date().toISOString(),
     clearedQuarantineAt: new Date().toISOString(),
     quarantineReason: undefined,
@@ -335,7 +545,7 @@ function clearFullAutoQuarantine() {
     id: 'full-auto-quarantine',
     severity: 'soft',
     ok: true,
-    detail: 'cleared quarantine → mode=idle failedCycles=0',
+    detail: 'cleared quarantine → mode=idle; historical failure count preserved',
   };
 }
 
@@ -386,7 +596,7 @@ function countTrailingFailures() {
   return streak;
 }
 
-function checkFullAutoQuarantine(applyQuarantine) {
+function checkFullAutoQuarantine(applyQuarantine, recoveryCheck = false) {
   const statePath = abs(FULL_AUTO_STATE_REL);
   if (!fs.existsSync(statePath)) {
     return {
@@ -407,12 +617,16 @@ function checkFullAutoQuarantine(applyQuarantine) {
       detail: `full-auto state unreadable: ${err.message}`,
     };
   }
+  if (state.mode === 'quarantined' && recoveryCheck) {
+    return { id: 'full-auto-quarantine', severity: 'soft', ok: true,
+      detail: 'single-cycle recovery check admitted; quarantine remains until a strict cycle passes' };
+  }
   if (state.mode === 'quarantined') {
     return {
       id: 'full-auto-quarantine',
       severity: 'hard',
       ok: false,
-      detail: `full-auto quarantined (failedCycles=${state.failedCycles ?? '?'}; clear after remediation with --clear-quarantine)`,
+      detail: `full-auto quarantined (failedCycles=${state.failedCycles ?? '?'}; verify recovery with tnf full-auto once)`,
     };
   }
   const failed = Number(state.failedCycles || 0);
@@ -443,11 +657,32 @@ function checkFullAutoQuarantine(applyQuarantine) {
     if (age > window) {
       const hrs = (age / 3600000).toFixed(1);
       const winHrs = (window / 3600000).toFixed(1);
+      const reason = `stale: last update ${hrs}h ago (>${winHrs}h window) — loop presumed dead`;
+      // A state file asserting mode=running for a loop that stopped days ago is
+      // a false health claim, and seven other consumers read this file and
+      // believe it. Correct the record when we are allowed to write, so nothing
+      // downstream can keep reading "running".
+      if (applyQuarantine) {
+        const next = {
+          ...state,
+          mode: 'quarantined',
+          quarantinedAt: new Date().toISOString(),
+          quarantineReason: reason,
+          updatedAt: new Date().toISOString(),
+        };
+        fs.writeFileSync(statePath, `${JSON.stringify(next, null, 2)}\n`);
+        return {
+          id: 'full-auto-quarantine',
+          severity: 'hard',
+          ok: false,
+          detail: `full-auto STALE (${reason}); mode→quarantined so consumers stop reading "running"`,
+        };
+      }
       return {
         id: 'full-auto-quarantine',
-        severity: 'soft',
+        severity: 'hard',
         ok: false,
-        detail: `full-auto STALE: mode=running but last update ${hrs}h ago (>${winHrs}h window) — loop presumed dead, not healthy`,
+        detail: `full-auto STALE: mode=running but ${reason} — state still claims running; re-run with --apply-quarantine to correct it, or --clear-quarantine to stand the loop down`,
       };
     }
   }
@@ -489,6 +724,19 @@ function writeSeal(lockCheck) {
   if (!lockCheck.ok || !lockCheck.digest) {
     throw new Error('cannot write seal without lockfile digest');
   }
+  const installed = checkInstalledLockfile();
+  if (!installed.ok) throw new Error(`refusing to seal: ${installed.detail}`);
+  // Matching lock copies are insufficient if a new workspace manifest was never
+  // added to either copy. Let pnpm validate its own manifest/lock contract.
+  const frozen = spawnSync('pnpm', ['install', '--frozen-lockfile', '--lockfile-only',
+    '--offline', '--ignore-scripts', '--reporter', 'silent'], {
+    cwd: REPO_ROOT, encoding: 'utf8', timeout: 60_000, env: { ...process.env, CI: 'true' },
+  });
+  if (frozen.status !== 0) throw new Error(`refusing to seal: frozen manifest/lock verification failed: ${
+    frozen.error?.message || String(frozen.stderr || frozen.stdout).slice(-1600)
+  }`);
+  const missing = CLI_CRITICAL_ARTIFACTS.filter(art => !fs.existsSync(abs(art.rel)));
+  if (missing.length) throw new Error(`refusing to seal missing artifacts: ${missing.map(art => art.rel).join(', ')}`);
   const artifacts = {};
   for (const art of CLI_CRITICAL_ARTIFACTS) {
     const p = abs(art.rel);
@@ -506,7 +754,9 @@ function writeSeal(lockCheck) {
   };
   const out = abs(SEAL_REL);
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, `${JSON.stringify(seal, null, 2)}\n`);
+  const temp = `${out}.${process.pid}.tmp`;
+  fs.writeFileSync(temp, `${JSON.stringify(seal, null, 2)}\n`);
+  fs.renameSync(temp, out);
   return out;
 }
 
@@ -532,8 +782,13 @@ async function main() {
     const sealPath = writeSeal(lockCheck);
     console.log(`[substrate] wrote seal → ${path.relative(REPO_ROOT, sealPath)}`);
   }
+  if (opts.sealOnly) {
+    if (!opts.writeSeal) throw new Error('--seal-only requires --write-seal');
+    return;
+  }
+  checks.push(checkInstalledLockfile());
   checks.push(checkSeal(lockCheck));
-  checks.push(checkCliArtifacts());
+  checks.push(checkCliArtifacts(readSealSafe()));
 
   const redis = await checkRedis();
   const relay = await checkRelay();
@@ -543,11 +798,14 @@ async function main() {
   }
   checks.push(redis);
   checks.push(relay);
-  checks.push(checkGateToken());
+  checks.push(await checkGateToken());
   checks.push(checkLaunchAgents());
   if (!opts.clearQuarantine) {
-    checks.push(checkFullAutoQuarantine(opts.applyQuarantine));
+    checks.push(checkFullAutoQuarantine(opts.applyQuarantine, opts.recoveryCheck));
   }
+  // Pass the liveness verdict in: the preference is satisfied only by a loop
+  // that is actually alive, never by the state file's own claim.
+  checks.push(checkFullAutoPreference(checks.find((c) => c.id === 'full-auto-quarantine')));
 
   const hardFails = checks.filter((c) => c.severity === 'hard' && !c.ok);
   const softFails = checks.filter((c) => c.severity === 'soft' && !c.ok);

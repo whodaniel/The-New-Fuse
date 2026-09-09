@@ -92,7 +92,7 @@ function main() {
 
   const satelliteGithub = new Set();
   for (const entry of [
-    ...(oss.separateOpenSourceSatellites || []),
+    ...(oss.standaloneSatelliteRepos || []),
     ...(oss.nonOssOrPersonalApps || []),
   ]) {
     if (entry.github) satelliteGithub.add(normalizeGithub(entry.github));

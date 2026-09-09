@@ -3,8 +3,8 @@ name: tnf-cursor-harness-protocol
 category: tnf-platform
 department: tech
 description:
-  Onboard and operate Cursor CLI agents under TNF harness protocol (Turn Zero,
-  inspect-act-verify, MCP routing). Use when launching Cursor CLI from TNF,
+  Onboard and operate Cursor CLI agents under TNF harness protocol (Turn Zero
+  V2, inspect-act-verify, MCP routing). Use when launching Cursor CLI from TNF,
   running tnf cursor, or assimilating Cursor into the TNF control plane.
 ---
 
@@ -12,6 +12,8 @@ description:
 
 Use this skill when Cursor CLI is routed through TNF (`tnf cursor`,
 `tnf assimilate run cursor`, or `pnpm run tnf:start:cursor`).
+
+**Naming law:** “Turn Zero” means **Turn Zero V2**.
 
 ## Boot Sequence (Inspect → Act → Verify)
 
@@ -31,7 +33,7 @@ node scripts/cursor/tnf-cursor-harness-onboard.cjs --repair
 
 ## Authority
 
-1. `docs/protocols/TURN_ZERO_MANDATE.md`
+1. `docs/protocols/TURN_ZERO_MANDATE.md` (Turn Zero V2)
 2. `docs/protocols/LIVING_STATE.md`
 3. `docs/protocols/AGENT_STATUS_LEDGER.md`
 4. `docs/protocols/reports/SESSION_HANDOFF_LATEST.json`
@@ -41,7 +43,7 @@ node scripts/cursor/tnf-cursor-harness-onboard.cjs --repair
 - TNF remains the protocol-neutral control plane.
 - Prefer `tnf cursor ...` over raw `cursor ...` so MCP config and harness
   receipts stay attached.
-- Run Turn Zero before code changes unless the operator already requested
+- Run Turn Zero V2 before code changes unless the operator already requested
   implementation.
 - Verify every action; never trust upstream agent output without structured
   confirmation.
@@ -51,7 +53,7 @@ node scripts/cursor/tnf-cursor-harness-onboard.cjs --repair
 Paste into a Cursor CLI session launched from repo root:
 
 ```text
-Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+Before planning or acting, run Turn Zero V2 (current Turn Zero) from the repository root: pnpm run tnf:onboard -- --task "<current task>". It runs scripts/protocols/turn-zero-v2-gate.cjs, derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation. Law: docs/protocols/TURN_ZERO_MANDATE.md.
 ```
 
 ## Quick Commands

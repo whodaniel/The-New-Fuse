@@ -15,7 +15,7 @@ const CONFIG = path.join(ROOT, 'data/harness/harness-config.json');
 const HOME = process.env.HOME || process.env.USERPROFILE || os.homedir();
 
 function parseArgs(argv) {
-  return { json: argv.includes('--json'), provision: argv.includes('--provision') };
+  return { json: argv.includes('--json'), provision: argv.includes('--provision'), codexLive: argv.includes('--codex-live') };
 }
 
 function expandHome(p) {
@@ -43,6 +43,17 @@ function runNode(relScript, args = []) {
 function main() {
   const opts = parseArgs(process.argv.slice(2));
   const checks = [];
+
+  // Explicit live-host check: CI and machines without Codex do not invent host readiness.
+  if (opts.codexLive) {
+    const result = runNode('scripts/harness/codex-lifecycle-probe.cjs', [HOME]);
+    let receipt;
+    try { receipt = JSON.parse(result.stdout); } catch { /* reported below */ }
+    checks.push({ name: 'codex.native_discovery_and_trust',
+      ok: result.code === 0 && receipt?.ok === true,
+      detail: receipt ? `skills=${receipt.commandDiscovery} hooks=${receipt.hookDiscovery} trusted=${receipt.hookTrust}; execution requires turn receipts`
+        : result.stderr.trim() || 'Codex native discovery failed' });
+  }
 
   if (!exists('data/harness/harness-config.json')) {
     console.error('missing data/harness/harness-config.json');
@@ -94,6 +105,11 @@ function main() {
     'scripts/harness/materialize-sandbox-profile.cjs',
     'scripts/harness/provision-injection-surfaces.cjs',
     'scripts/harness/host-prompt-profiles.cjs',
+    'scripts/harness/mcp-runtime-provision.cjs',
+    'scripts/harness/mcp-runtime-live-probe.cjs',
+    'scripts/skills/universal-skill-disclosure-guard.cjs',
+    'data/harness/managed-mcp-runtime.json',
+    'schemas/managed-mcp-runtime.schema.json',
     'data/harness/host-prompt-profiles.json',
     'scripts/forge_sandbox.sb',
   ];
@@ -203,6 +219,31 @@ function main() {
   ]) {
     checks.push({ name: `file.${rel}`, ok: exists(rel), detail: exists(rel) ? 'present' : 'missing' });
   }
+
+  // Worktree hygiene. A worktree can stop tracking reality without anyone
+  // touching it — a stale index.lock froze one for six days on 2026-09-01, and
+  // the frozen index held a staged deletion of the whole repo. Nothing surfaced
+  // either until it was looked for directly. HAZARD and UNKNOWN both fail:
+  // a scan that could not look has not found nothing.
+  const hygiene = runNode('scripts/harness/checkout-ledger.cjs', ['hygiene', '--json']);
+  let hygieneOk = hygiene.code === 0;
+  let hygieneDetail = 'worktree hygiene clean';
+  try {
+    const parsed = JSON.parse(hygiene.stdout);
+    const bad = (parsed.counts?.HAZARD || 0) + (parsed.counts?.UNKNOWN || 0);
+    hygieneOk = bad === 0;
+    hygieneDetail = hygieneOk
+      ? `${parsed.scanned} worktree(s) clean` +
+        (parsed.counts?.WARN ? ` (${parsed.counts.WARN} warn)` : '')
+      : (parsed.findings || [])
+          .filter((f) => f.severity !== 'WARN')
+          .map((f) => `${f.name}: ${f.kind}`)
+          .join('; ') || 'hygiene hazards present';
+  } catch {
+    hygieneOk = false;
+    hygieneDetail = 'hygiene scan unreadable — treat as unknown, not clean';
+  }
+  checks.push({ name: 'worktree.hygiene', ok: hygieneOk, detail: hygieneDetail });
 
   const failed = checks.filter((c) => !c.ok);
   const ok = failed.length === 0;

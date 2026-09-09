@@ -1,105 +1,77 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
   Background,
-  Connection,
   Controls,
-  Edge,
   MiniMap,
   Node,
-  addEdge,
-  useEdgesState,
-  useNodesState,
 } from 'reactflow';
+import { useWorkflow } from '../context/WorkflowContext.js';
 import { validateWorkflowWithErrors } from '../validation/workflow-schema-validator.js';
 import { nodeTypes } from '../nodes/nodeTypes.js';
 
 interface WorkflowCanvasProps {
   onNodeSelect?: (node: Node | null) => void;
-  initialNodes?: Node[];
-  initialEdges?: Edge[];
-  onGraphChange?: (graph: { nodes: Node[]; edges: Edge[] }) => void;
+  onGraphChange?: (graph: { nodes: Node[]; edges: unknown[] }) => void;
 }
 
-const EMPTY_NODES: Node[] = [];
-const EMPTY_EDGES: Edge[] = [];
-
 /**
- * WorkflowCanvas component
+ * WorkflowCanvas — binds to WorkflowProvider graph state (same on SaaS + Tauri).
  *
- * Note: Must be wrapped in ReactFlowProvider in a parent component
- * to allow siblings (like NodeProperties) to access the flow state.
- *
- * Stylesheet is the host's responsibility: import 'reactflow/dist/style.css'
- * once in the app shell. A shared package must not pull CSS into whatever
- * bundler — or non-bundler — a surface happens to use, and both current hosts
- * already import it themselves.
+ * Must be wrapped in ReactFlowProvider + WorkflowProvider.
+ * Stylesheet is the host's responsibility: import 'reactflow/dist/style.css'.
  */
 export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   onNodeSelect,
-  initialNodes,
-  initialEdges,
   onGraphChange,
 }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes ?? EMPTY_NODES);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges ?? EMPTY_EDGES);
+  const {
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect: contextConnect,
+    actions,
+  } = useWorkflow();
 
   useEffect(() => {
-    if (!initialNodes) return;
-    setNodes(initialNodes);
-  }, [initialNodes, setNodes]);
-
-  useEffect(() => {
-    if (!initialEdges) return;
-    setEdges(initialEdges);
-  }, [initialEdges, setEdges]);
-
-  useEffect(() => {
-    onGraphChange?.({ nodes, edges });
+    onGraphChange?.({ nodes: nodes as Node[], edges });
   }, [nodes, edges, onGraphChange]);
 
   const onConnect = useCallback(
-    (connection: Connection) => {
-      setEdges((eds) => addEdge(connection, eds));
+    (connection: Parameters<typeof contextConnect>[0]) => {
+      contextConnect(connection);
     },
-    [setEdges]
+    [contextConnect]
   );
 
   const onNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
-      if (onNodeSelect) {
-        onNodeSelect(node);
-      }
+      onNodeSelect?.(node);
+      actions.selectNode(node as never);
     },
-    [onNodeSelect]
+    [onNodeSelect, actions]
   );
 
   const onPaneClick = useCallback(() => {
     onNodeSelect?.(null);
-  }, [onNodeSelect]);
+    actions.clearSelection();
+  }, [onNodeSelect, actions]);
 
   const validationErrors = useMemo(() => {
-    // Create a workflow object structure that matches schema expectations
-    const workflowForValidation = {
+    const { errors } = validateWorkflowWithErrors({
       id: 'temp',
       name: 'temp',
-      nodes: nodes,
-      edges: edges,
-    };
-
-    const { errors } = validateWorkflowWithErrors(workflowForValidation);
+      nodes,
+      edges,
+    });
     return errors;
   }, [nodes, edges]);
 
-  // Only clone nodes when the error payload actually changes.
   const nodesWithErrors = useMemo(() => {
     return nodes.map((node) => {
       const nextError = validationErrors[node.id];
       const currentError = (node.data as Record<string, unknown> | undefined)?.error;
-
-      if (currentError === nextError) {
-        return node;
-      }
-
+      if (currentError === nextError) return node;
       return {
         ...node,
         data: {
@@ -112,48 +84,41 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
 
   const erroredNodeCount = useMemo(
     () =>
-      nodesWithErrors.filter((node) => {
-        const payload = node.data as Record<string, unknown> | undefined;
-        return Boolean(payload?.error);
-      }).length,
+      nodesWithErrors.filter((node) =>
+        Boolean((node.data as Record<string, unknown> | undefined)?.error)
+      ).length,
     [nodesWithErrors]
   );
 
-  // Handle dropping nodes from the node library
   const onDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
-
       const reactFlowBounds = event.currentTarget.getBoundingClientRect();
       const nodeData = event.dataTransfer.getData('application/reactflow/data');
-
       if (!nodeData) return;
-
       try {
         const nodeTemplate = JSON.parse(nodeData);
         const position = {
           x: event.clientX - reactFlowBounds.left,
           y: event.clientY - reactFlowBounds.top,
         };
-
-        const newNode = {
-          id: `${nodeTemplate.type}-${Date.now()}`,
-          type: nodeTemplate.type,
+        const type = String(nodeTemplate.type || 'agent');
+        actions.addNode({
+          id: `${type}-${Date.now()}`,
+          type,
           position,
           data: {
-            name: nodeTemplate.label || 'Untitled Node',
-            type: nodeTemplate.type,
+            label: nodeTemplate.label || 'Untitled Node',
+            type,
             config: nodeTemplate.config || {},
             status: nodeTemplate.status || 'idle',
           },
-        };
-
-        setNodes((nds) => nds.concat(newNode));
+        });
       } catch (error) {
         console.error('Error parsing dropped node data:', error);
       }
     },
-    [setNodes]
+    [actions]
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -182,11 +147,6 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         </span>
         <span className="rounded-lg border border-rose-300/25 bg-rose-500/15 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-rose-100">
           {erroredNodeCount} Issues
-        </span>
-      </div>
-      <div className="absolute right-3 bottom-3 z-10 pointer-events-none">
-        <span className="rounded-lg border border-white/10 bg-black/55 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-slate-300">
-          Drag nodes in from the left panel
         </span>
       </div>
       <ReactFlow

@@ -6,8 +6,7 @@ description:
   Checklist for auditing or building any TNF daemon/script that (a) injects
   keystrokes/prompts into a terminal or app, or (b) claims autonomous execution
   authorization. Use when asked to touch terminal-heartbeat-pulse.cjs,
-  relay-channel-monitor.cjs, cursor-agent-wake.sh,
-  self-improvement-orchestrator.js, orchestrator-system.sh,
+  relay-channel-monitor.cjs, cursor-agent-wake.sh, orchestrator-system.sh,
   DIRECTIVES.md/TURN_ZERO_MANDATE.md, or any new self-prompting/unattended-agent
   mechanism. Not a mandate to run anything automatically — a reference for what
   to check.
@@ -38,8 +37,11 @@ around commit `7cc7922b4e` and `docs/protocols/CHALLENGE_RATIONALE_LOG.md`.
    - For apps with no AppleScript-readable buffer (Kiro, Claude Desktop):
      system-wide idle time via
      `ioreg -c IOHIDSystem | awk '/HIDIdleTime/ {print int($NF/1000000000); exit}'`
-     — see `scripts/orchestrator-system.sh` `check_human_idle()` and
-     `scripts/self-improvement-orchestrator.js` `getSystemIdleSeconds()`.
+     — see `scripts/orchestrator-system.sh` `check_human_idle()`; the per-app
+     Terminal.app variant lives in `scripts/lib/tnf-terminal-attention.cjs`.
+     (The retired self-improvement orchestrator script also used this pattern;
+     it was retired 2026-09-06 — see
+     docs/protocols/reports/SELF-IMPROVEMENT-COMPONENT-TRIAGE-2026-09-06.md.)
 2. **Check the preflight is done fresh, right before the injection call**, not
    from a stale earlier poll — time passes between discovery and action.
 3. **Separate "discover/observe" from "act."** A safety gate should skip the

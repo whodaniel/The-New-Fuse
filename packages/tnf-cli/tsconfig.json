@@ -10,26 +10,37 @@
     "declaration": true,
     "baseUrl": ".",
     "paths": {
-      "@the-new-fuse/*": ["../*/src"]
+      "@the-new-fuse/*": [
+        "../*/src"
+      ]
     }
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
     {
-      "path": "../protocol-contracts"
-    },
-    {
-      "path": "../tnf-core"
+      "path": "../code-graph"
     },
     {
       "path": "../infrastructure"
     },
     {
-      "path": "../tnf-note-taking"
+      "path": "../protocol-contracts"
     },
     {
       "path": "../shared"
+    },
+    {
+      "path": "../tnf-core"
+    },
+    {
+      "path": "../tnf-note-taking"
     }
   ],
-  "exclude": ["dist", "node_modules", "src/**/*.test.ts"]
+  "exclude": [
+    "dist",
+    "node_modules",
+    "src/**/*.test.ts"
+  ]
 }

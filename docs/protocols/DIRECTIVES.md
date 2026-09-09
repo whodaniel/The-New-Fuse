@@ -138,14 +138,16 @@ These are hard requirements. Violation is a protocol failure.
   strict legacy), Agency (client balance), Personal (proactive mandate applies).
   — `AGENTS.md`, `CORE_SYSTEM_PROMPT_ARCHITECTURE.md`
 - **D14 — Turn End + Session Handoff Enforcement.** Before closing / long gap /
-  context switch / significant work, run `node scripts/turn-end.cjs` and include
-  `SESSION_HANDOFF_LATEST.{json,md}` + `AGENT_STATUS_LEDGER.md`. Critical-path
-  changes (`apps/`, `packages/`, `supabase/`, `scripts/`, `data/`,
-  `docs/protocols/`, `.github/workflows/`) MUST carry these or CI fails. Handoff
-  emission is NON-BLOCKING: emit immediately upon completing the next critical
-  work unit (audit, mutation, verification); operator confirmation is NOT a gate
-  for artifact creation. Confirmation remains required only for destructive
-  operations, commits, secrets, or mutation-cycle start. Supabase paths require
+  context switch / significant work, run `pnpm run handoff:emit:verified`
+  (canonical handoff emitter; `scripts/turn-end.cjs` and `turn-end-v2.cjs` are
+  legacy capture paths) and include `SESSION_HANDOFF_LATEST.{json,md}` +
+  `AGENT_STATUS_LEDGER.md`. Critical-path changes (`apps/`, `packages/`,
+  `supabase/`, `scripts/`, `data/`, `docs/protocols/`, `.github/workflows/`)
+  MUST carry these or CI fails. Handoff emission is NON-BLOCKING: emit
+  immediately upon completing the next critical work unit (audit, mutation,
+  verification); operator confirmation is NOT a gate for artifact creation.
+  Confirmation remains required only for destructive operations, commits,
+  secrets, or mutation-cycle start. Supabase paths require
   `verification.supabase_rls_audit = pass`. — `TURN_END_MANDATE.md`,
   `SESSION_HANDOFF_ENFORCEMENT.md`
 - **D15 — Scheduling challenge & verify (delegated 2026-07-28, D26+D27).** Any
@@ -232,8 +234,11 @@ These are hard requirements. Violation is a protocol failure.
   - **Authority roles reuse TNF's existing plain-language vocabulary** —
     `worker | sub-director | super-director`, the canonical agent names from
     `.claude/agents/`. There is no separate authority taxonomy to learn.
-    (`local-director` was invented in the 2026-07-23 session and has been
-    removed; the real entity is `sub-director`.) Specifically:
+    (`local-director` was invented in the 2026-07-23 session; this provenance
+    note was refined in coherence-audit follow-up commit `f8e109bdf`. It is
+    retired from active vocabularies — historical documents retain it, and one
+    legacy `tnf-local-subdirector` key in `~/.tnf/authority/roles.json` is
+    pending normalization. The real entity is `sub-director`.) Specifically:
   - **A shared-secret (`kid: shared`) signature proves bus membership, not
     identity.** Every agent holds `A2A_SECRET_KEY`, so any holder can sign as
     any `agent_id`. Such messages resolve to `worker` regardless of what they
@@ -320,7 +325,11 @@ These are hard requirements. Violation is a protocol failure.
   via `TNF_TERMINAL_HEARTBEAT_ALLOW_PROMPT_INJECTION="true"` AND the crontab
   entry carries a sibling `challenge_rationale` AND a corresponding entry exists
   in `CHALLENGE_RATIONALE_LOG.md`. A frontmost-window pre-check is mandatory
-  before any keystroke path runs. The CI guard
+  before any keystroke path runs. `tmux send-keys` is the same keystroke path:
+  it may exist only in `scripts/lib/tnf-tmux-inject.cjs`, must pass
+  `shouldInjectTmuxPane` (operator-class `tnf-o-*` hard deny, attached-active
+  pane skip, boxed-composer / typing skip), and must not send Enter unless the
+  same opt-in flag is set. The CI guard
   `scripts/protocols/check-operator-terminal-inviolability.cjs` fails any merge
   that violates these rules. The canonical heartbeat channel is `tnf:heartbeat`
   (not `tnf:bus:heartbeat`); envelopes are signed via
@@ -435,8 +444,9 @@ These are hard requirements. Violation is a protocol failure.
   its place today. — `AGENTS.md`
 - **A5 — Spawn subagents & specialized loops.** Orchestrate PicoClaw
   (analyzers), OpenClaw (fleet/executor), ZeroClaw (sandbox) per task shape;
-  route across the Department chain (Scout→Library→Forge→Governance→Connective
-  Journaling). — `AGENTS.md`, `TNF_CLUSTER_ORCHESTRATION_PROTOCOL.md`
+  route across the Cluster pipeline
+  (Scout→Library→Engineering→Governance→Connective Journaling). — `AGENTS.md`,
+  `TNF_CLUSTER_ORCHESTRATION_PROTOCOL.md`
 - **A6 — Probe external surfaces (bounded).** Environment Adapter discovers/
   classifies/probes any local agent, infra, provider, app, info store with a
   ≤500ms bounded-deadline handshake; hang → `unreachable` (never failure).
@@ -573,9 +583,9 @@ federated hierarchy pick them up on next subscription tick.
 3. Inspect → Act → Verify; log thought-stream + tool-calls to ledger (Radical
    Transparency); post status to Agent Status Ledger.
 4. Honor Anti-Lobotomy exclusions; respect HITL gates; bear mandatory doc tags.
-5. Route work through the Department chain: Scout → Library → Forge → Governance
-   → Connective Journaling (Perpetual Motion; handoff without record = systemic
-   failure). — `TNF_CLUSTER_ORCHESTRATION_PROTOCOL.md`
+5. Route work through the Cluster pipeline: Scout → Library → Engineering →
+   Governance → Connective Journaling (Perpetual Motion; handoff without record
+   = systemic failure). — `TNF_CLUSTER_ORCHESTRATION_PROTOCOL.md`
 
 **Adaptive branches (select by trigger):**
 

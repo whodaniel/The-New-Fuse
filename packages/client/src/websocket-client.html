@@ -302,26 +302,34 @@
             const entry = document.createElement('div');
             entry.className = `log-entry ${type}`;
             
-            let content = '';
-            
             // Add timestamp
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'timestamp';
             if (timestamp) {
                 const time = new Date(timestamp);
-                content += `<span class="timestamp">[${time.toLocaleTimeString()}]</span>`;
+                timeSpan.textContent = `[${time.toLocaleTimeString()}]`;
             } else {
                 const now = new Date();
-                content += `<span class="timestamp">[${now.toLocaleTimeString()}]</span>`;
+                timeSpan.textContent = `[${now.toLocaleTimeString()}]`;
             }
+            entry.appendChild(timeSpan);
             
             // Add source if provided
             if (source) {
-                content += `<span class="source">[${source}]</span> `;
+                const sourceSpan = document.createElement('span');
+                sourceSpan.className = 'source';
+                sourceSpan.textContent = `[${source}]`;
+                entry.appendChild(sourceSpan);
+                // Add a space after the source span
+                entry.appendChild(document.createTextNode(' '));
             }
             
-            // Add message content
-            content += message;
+            // Add message content safely using textContent
+            const messageSpan = document.createElement('span');
+            messageSpan.className = 'message-content';
+            messageSpan.textContent = message;
+            entry.appendChild(messageSpan);
             
-            entry.innerHTML = content;
             logContainer.appendChild(entry);
             logContainer.scrollTop = logContainer.scrollHeight;
         }

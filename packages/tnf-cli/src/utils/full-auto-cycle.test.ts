@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import {
+  classifyStrictStatusGate,
+  QualityGateError,
   countTrailingFailures,
   DEFAULT_FULL_AUTO_POST_STEP_TIMEOUT_MS,
   FULL_AUTO_FAIL_STREAK,
@@ -71,4 +73,39 @@ function check(label: string, condition: boolean): void {
   );
 }
 
+for (const [exitCode, stdout, verdict] of [
+  [0, '{"ok":true}', 'passed'],
+  [1, '{"ok":false,"missingRequired":["scorecard"]}', 'failed'],
+  [0, '{"ok":false}', 'failed'],
+  [1, '{"ok":true}', 'unverified'],
+  [1, 'crashed', 'unverified'],
+  [0, '{}', 'unverified'],
+  [0, '{"ok":"true"}', 'unverified'],
+  [null, '{"ok":true}', 'unverified'],
+] as const) {
+  assert.equal(classifyStrictStatusGate({exitCode, stdout}).verdict, verdict);
+}
+assert.equal(classifyStrictStatusGate({exitCode: 0, stdout: '{"ok":true}', timedOut: true}).verdict, 'unverified');
+assert.equal(classifyStrictStatusGate({exitCode: null, stdout: '', spawnError: 'ENOENT'}).verdict, 'unverified');
+const gateError = new QualityGateError('failed', 'missing scorecard');
+assert.equal(gateError.verdict, 'failed');
+assert.equal(gateError.reason, 'missing scorecard');
 console.log('full-auto-cycle.test.ts: ok');
+
+// Recovery retains quarantine on failure or an opted-out quality gate.
+const { resolveFullAutoCompletion } = await import('./full-auto-cycle.js');
+const quarantine = { mode: 'quarantined', quarantinedAt: '2026-01-01T00:00:00Z', quarantineReason: 'five failures' };
+const priorEvents = [{ ok: true }, { ok: false }, { ok: false }];
+const finishedAt = new Date().toISOString();
+assert.equal(resolveFullAutoCompletion(quarantine, priorEvents, { ok: false, finishedAt }).mode, 'quarantined');
+assert.equal(resolveFullAutoCompletion(quarantine, priorEvents, { ok: true, qualityGate: 'skipped', finishedAt }).mode, 'quarantined');
+const recovered = resolveFullAutoCompletion(quarantine, priorEvents, { ok: true, qualityGate: 'passed', finishedAt });
+assert.equal(recovered.mode, 'idle');
+assert.equal(recovered.completedCycles, 2);
+assert.equal(recovered.failedCycles, 2);
+assert.equal(recovered.recoveredAt, finishedAt);
+assert.equal(recovered.quarantineReason, undefined);
+assert.equal(resolveFullAutoCompletion({}, Array.from({ length: 4 }, () => ({ ok: false })), { ok: false, finishedAt }).mode, 'quarantined');
+console.log('full-auto recovery state tests passed');
+
+assert.equal(resolveFullAutoCompletion({ ...quarantine, failedCycles: 230 }, priorEvents, { ok: true, qualityGate: 'passed', finishedAt }).failedCycles, 230);

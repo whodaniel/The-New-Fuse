@@ -11,9 +11,9 @@
  *
  * Scoring is token-based and transparent: each requested capability token is
  * matched against traits (weight 3), category/dacc_role (2), name (2) and
- * description (1), normalized to 0..1. Live state never changes the score —
- * it is a filter (--require-capacity / --include-offline) and a displayed
- * column, so the ranking stays explainable.
+ * description (1), normalized to 0..1. Live state filters and displays but
+ * does not change the base score. Optional routing telemetry (Tier 2) applies
+ * a transparent weight multiplier to produce an adjusted rank.
  *
  * Dependency-free on purpose: reuses the tiny frontmatter parser shape from
  * agents-classify.ts rather than pulling js-yaml into the CLI.
@@ -22,6 +22,21 @@
 import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const LEXICAL_FORGIVENESS_PATH = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+  'lexical-forgiveness.json'
+);
+
+function loadLexicalForgiveness(): { aliases?: Record<string, string[]> } {
+  try {
+    return JSON.parse(fs.readFileSync(LEXICAL_FORGIVENESS_PATH, 'utf8'));
+  } catch {
+    return { aliases: {} };
+  }
+}
 
 interface ParsedSpec {
   id: string;
@@ -47,6 +62,26 @@ interface LiveState {
   busy: boolean;
   capacityDeclared: boolean;
 }
+
+interface TelemetryEntry {
+  agentId: string;
+  capability?: string;
+  success: boolean;
+}
+
+interface CandidateRow {
+  spec: ParsedSpec;
+  score: number;
+  weight: number;
+  adjusted: number;
+  matched: string[];
+  live: LiveState;
+}
+
+const VERIFICATION_PATTERN =
+  /\b(verif(?:y|ication)|qa|audit|inspect|validate|smoke[- ]?test|test[- ]?pass)\b/i;
+
+const TELEMETRY_FILE = 'data/telemetry/routing-telemetry.jsonl';
 
 // ---------------------------------------------------------------------------
 // Tiny YAML-frontmatter parser (same 5 shapes as agents-classify.ts):
@@ -104,10 +139,8 @@ function parseFrontmatter(content: string): Record<string, any> {
 
 function parseFulfillment(fm: Record<string, any>): { vendor: string; model: string } {
   const raw = fm.fulfillment;
-  const vendor = '';
-  const model = '';
-  let outVendor = vendor;
-  let outModel = model;
+  let outVendor = '';
+  let outModel = '';
   const items: string[] = Array.isArray(raw)
     ? raw.map(String)
     : typeof raw === 'string'
@@ -165,6 +198,32 @@ function tokenize(text: string): string[] {
     .filter((t) => t.length > 1);
 }
 
+function expandWantedCapabilities(raw: string): string[] {
+  const rawWanted = String(raw || '')
+    .split(/[\s,]+/)
+    .flatMap((tok) => tok.split(/[-_/]+/))
+    .map((s) => s.trim().toLowerCase())
+    .filter((s) => s.length > 1);
+
+  const wanted: string[] = [];
+  const seen = new Set<string>();
+  for (const token of rawWanted) {
+    if (!seen.has(token)) {
+      seen.add(token);
+      wanted.push(token);
+    }
+    const aliases = loadLexicalForgiveness().aliases?.[token];
+    if (!aliases) continue;
+    for (const alias of aliases) {
+      if (!seen.has(alias)) {
+        seen.add(alias);
+        wanted.push(alias);
+      }
+    }
+  }
+  return wanted;
+}
+
 /**
  * Transparent score: each requested token matched against traits (3),
  * category/dacc_role (2), name (2), description (1); normalized against the
@@ -200,6 +259,58 @@ function scoreSpec(spec: ParsedSpec, wanted: string[]): { score: number; matched
   return { score: perfect > 0 ? raw / perfect : 0, matched };
 }
 
+function hasVerificationCapability(spec: ParsedSpec): boolean {
+  const haystack = [spec.id, spec.name, spec.description, ...spec.traits].join(' ');
+  return VERIFICATION_PATTERN.test(haystack);
+}
+
+function loadRoutingTelemetry(repoRoot: string): TelemetryEntry[] {
+  const filePath = path.join(repoRoot, TELEMETRY_FILE);
+  if (!fs.existsSync(filePath)) return [];
+  const entries: TelemetryEntry[] = [];
+  for (const line of fs.readFileSync(filePath, 'utf8').split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try {
+      const row = JSON.parse(trimmed) as Record<string, unknown>;
+      const agentId = String(row.agentId ?? row.agent_id ?? row.id ?? '').toLowerCase();
+      if (!agentId) continue;
+      entries.push({
+        agentId,
+        capability: row.capability ? String(row.capability).toLowerCase() : undefined,
+        success: row.success !== false && row.outcome !== 'fail',
+      });
+    } catch {
+      // skip malformed lines
+    }
+  }
+  return entries;
+}
+
+/**
+ * Telemetry weight: neutral 1.0 when no samples; otherwise 0.5 + 0.5 * successRate.
+ * Capability-specific rows are preferred when any exist for the requested tokens.
+ */
+function telemetryWeight(specId: string, wanted: string[], telemetry: TelemetryEntry[]): number {
+  const idLower = specId.toLowerCase();
+  let rows = telemetry.filter((e) => e.agentId === idLower);
+  if (rows.length === 0) {
+    rows = telemetry.filter((e) => idLower.includes(e.agentId) || e.agentId.includes(idLower));
+  }
+  if (rows.length === 0) return 1;
+
+  const wantedSet = new Set(wanted);
+  const scoped = rows.filter((e) => !e.capability || wantedSet.has(e.capability));
+  const sample = scoped.length > 0 ? scoped : rows;
+  const successes = sample.filter((e) => e.success).length;
+  const rate = successes / sample.length;
+  return 0.5 + 0.5 * rate;
+}
+
+function round3(n: number): number {
+  return Math.round(n * 1000) / 1000;
+}
+
 function ageSeconds(lastSeen?: string): number | undefined {
   if (!lastSeen) return undefined;
   const ms = Date.parse(lastSeen);
@@ -225,6 +336,37 @@ function toLiveState(row: any): LiveState {
   };
 }
 
+function formatStatus(live: LiveState): string {
+  if (!live.registered) return 'not-reg';
+  if (!live.isOnline) return 'offline';
+  if (live.busy) return 'busy';
+  if (live.maxLoad !== undefined) {
+    return `online[${live.currentLoad ?? 0}/${live.maxLoad}]`;
+  }
+  return live.status ? `online:${live.status}` : 'online';
+}
+
+function printTable(candidates: CandidateRow[]): void {
+  const headers = ['ID', 'SCORE', 'WEIGHT', 'ADJUSTED', 'STATUS', 'CAPABILITIES'];
+  const idWidth = Math.max(headers[0].length, ...candidates.map((c) => c.spec.id.length), 24);
+  const capWidth = Math.max(
+    headers[5].length,
+    ...candidates.map((c) => c.matched.join(', ').length),
+    20
+  );
+
+  console.log(
+    `${headers[0].padEnd(idWidth)}  ${headers[1].padStart(5)}  ${headers[2].padStart(6)}  ${headers[3].padStart(8)}  ${headers[4].padEnd(12)}  ${headers[5]}`
+  );
+  for (const c of candidates) {
+    const caps = c.matched.join(', ');
+    const capsOut = caps.length > capWidth ? `${caps.slice(0, capWidth - 3)}...` : caps;
+    console.log(
+      `${c.spec.id.padEnd(idWidth)}  ${round3(c.score).toFixed(3).padStart(5)}  ${round3(c.weight).toFixed(3).padStart(6)}  ${round3(c.adjusted).toFixed(3).padStart(8)}  ${formatStatus(c.live).padEnd(12)}  ${capsOut}`
+    );
+  }
+}
+
 export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: string): void {
   agentsGroup
     .command('match')
@@ -236,7 +378,12 @@ export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: strin
       '--require-capacity',
       'Only candidates that are live and not busy (declared capacity respected)'
     )
+    .option(
+      '--require-verification',
+      'Only candidates whose spec declares verification/QA capability'
+    )
     .option('--include-offline', 'Keep registered-but-offline candidates (default: dropped)')
+    .option('--no-telemetry', 'Skip routing-telemetry weight adjustment (base score only)')
     .option('--platform <platform>', 'Restrict to candidates whose live row matches this platform')
     .option('--limit <n>', 'Max candidates to show', '10')
     .option('--json', 'Emit machine-readable JSON')
@@ -244,16 +391,14 @@ export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: strin
       async (options: {
         capabilities?: string;
         requireCapacity?: boolean;
+        requireVerification?: boolean;
         includeOffline?: boolean;
+        telemetry?: boolean;
         platform?: string;
         limit?: string;
         json?: boolean;
       }) => {
-        const wanted = String(options.capabilities || '')
-          .split(/[\s,]+/)
-          .flatMap((tok) => tok.split(/[-_/]+/))
-          .map((s) => s.trim().toLowerCase())
-          .filter((s) => s.length > 1);
+        const wanted = expandWantedCapabilities(options.capabilities || '');
         if (wanted.length === 0) {
           console.error(
             'No capabilities requested. Usage: tnf agents match --capabilities "code-analysis,review"'
@@ -262,15 +407,15 @@ export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: strin
           return;
         }
 
+        const useTelemetry = options.telemetry !== false;
+        const telemetry = useTelemetry ? loadRoutingTelemetry(repoRoot) : [];
+
         // 1. Static capability: spec frontmatter.
         const dirs = [
           path.join(repoRoot, '.agent', 'agents'),
           path.join(repoRoot, '.claude', 'agents'),
         ];
         const specs: ParsedSpec[] = [];
-        // The same spec is often mirrored into both directories (Agent
-        // Resource Fabric dedupe domain) — keep the first occurrence so
-        // candidates are unique by id.
         const seenIds = new Set<string>();
         for (const dir of dirs) {
           if (!fs.existsSync(dir)) continue;
@@ -301,7 +446,6 @@ export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: strin
           await client.deregister();
         }
 
-        // Join: spec id ↔ registry row via id/name containment heuristics.
         const joinRow = (spec: ParsedSpec): LiveState => {
           const idLower = spec.id.toLowerCase();
           const nameLower = spec.name.toLowerCase();
@@ -322,13 +466,24 @@ export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: strin
             : { registered: false, busy: false, capacityDeclared: false };
         };
 
-        let candidates = specs.map((spec) => {
+        let candidates: CandidateRow[] = specs.map((spec) => {
           const { score, matched } = scoreSpec(spec, wanted);
-          return { spec, score, matched, live: joinRow(spec) };
+          const weight = useTelemetry ? telemetryWeight(spec.id, wanted, telemetry) : 1;
+          return {
+            spec,
+            score,
+            weight,
+            adjusted: score * weight,
+            matched,
+            live: joinRow(spec),
+          };
         });
 
         // 3. Filters.
         candidates = candidates.filter((c) => c.score > 0);
+        if (options.requireVerification) {
+          candidates = candidates.filter((c) => hasVerificationCapability(c.spec));
+        }
         if (options.platform) {
           candidates = candidates.filter(
             (c) => !c.live.registered || String(c.live.status ?? '') === String(options.platform)
@@ -339,12 +494,13 @@ export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: strin
             (c) => c.live.registered && c.live.isOnline && !c.live.busy
           );
         } else if (!options.includeOffline) {
-          // Default: candidates with a live row that is offline are dropped;
-          // never-registered specs stay (the static directory is still useful).
           candidates = candidates.filter((c) => !c.live.registered || c.live.isOnline);
         }
         candidates.sort(
-          (a, b) => b.score - a.score || Number(b.live.isOnline) - Number(a.live.isOnline)
+          (a, b) =>
+            b.adjusted - a.adjusted ||
+            b.score - a.score ||
+            Number(b.live.isOnline) - Number(a.live.isOnline)
         );
         candidates = candidates.slice(0, Math.max(1, parseInt(options.limit || '10', 10) || 10));
 
@@ -354,15 +510,19 @@ export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: strin
               {
                 requested: wanted,
                 rosterSize: roster.length,
+                telemetrySamples: telemetry.length,
                 count: candidates.length,
                 candidates: candidates.map((c) => ({
                   id: c.spec.id,
                   name: c.spec.name,
-                  score: Math.round(c.score * 1000) / 1000,
+                  score: round3(c.score),
+                  weight: round3(c.weight),
+                  adjusted: round3(c.adjusted),
                   matched: c.matched,
                   category: c.spec.category,
                   dacc_role: c.spec.daccRole,
                   traits: c.spec.traits,
+                  verificationCapable: hasVerificationCapability(c.spec),
                   fulfillment: {
                     vendor: c.spec.vendor || null,
                     model: c.spec.model || null,
@@ -391,31 +551,20 @@ export function registerAgentsMatchCommand(agentsGroup: Command, repoRoot: strin
           console.log(`No agent specs match capabilities: ${wanted.join(', ')}`);
           return;
         }
+
+        const filters: string[] = [];
+        if (options.requireCapacity) filters.push('live + spare capacity');
+        if (options.requireVerification) filters.push('verification-capable');
+        if (!useTelemetry) filters.push('telemetry off');
+
         console.log(
           `Agents matching "${wanted.join(', ')}"` +
-            (options.requireCapacity ? ' (live + spare capacity)' : '') +
-            ` — ${candidates.length} candidate(s), roster ${roster.length}:\n`
+            (filters.length > 0 ? ` (${filters.join(', ')})` : '') +
+            ` — ${candidates.length} candidate(s), roster ${roster.length}` +
+            (useTelemetry ? `, telemetry ${telemetry.length} sample(s)` : '') +
+            ':\n'
         );
-        for (const c of candidates) {
-          const liveStr = !c.live.registered
-            ? 'not registered'
-            : c.live.isOnline
-              ? `online ${c.live.status || ''}` +
-                (c.live.maxLoad !== undefined
-                  ? ` [${c.live.currentLoad ?? 0}/${c.live.maxLoad}]`
-                  : '') +
-                (c.live.lastSeenAgeSec !== undefined ? ` (${c.live.lastSeenAgeSec}s ago)` : '')
-              : `offline (${c.live.lastSeenAgeSec ?? '?'}s ago)`;
-          const ful = c.spec.fulfillmentPlaceholder
-            ? 'fulfillment: TBD'
-            : `fulfillment: ${c.spec.vendor || '?'}/${c.spec.model || '?'}`;
-          console.log(`  ${(Math.round(c.score * 1000) / 1000).toFixed(3)}  ${c.spec.id}`);
-          console.log(`        ${liveStr} · ${ful}`);
-          if (c.spec.traits.length > 0) {
-            console.log(`        traits: ${c.spec.traits.slice(0, 8).join(', ')}`);
-          }
-          console.log(`        matched: ${c.matched.join(', ')}`);
-        }
+        printTable(candidates);
       }
     );
 }

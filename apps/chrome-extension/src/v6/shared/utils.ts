@@ -69,3 +69,15 @@ export function simpleHash(str: string): string {
   }
   return hash.toString(36);
 }
+
+/**
+ * TNF SaaS chat (app.thenewfuse.com/chat) is not a host-model composer like
+ * Gemini/ChatGPT. Panel Enter should broadcast to the relay, not auto-inject
+ * into the in-app agent picker.
+ */
+export function isTnfSaaSChatHost(hostname?: string): boolean {
+  const host = String(
+    hostname || (typeof window !== 'undefined' ? window.location.hostname : '')
+  ).toLowerCase();
+  return host === 'thenewfuse.com' || host === 'www.thenewfuse.com' || host === 'app.thenewfuse.com';
+}

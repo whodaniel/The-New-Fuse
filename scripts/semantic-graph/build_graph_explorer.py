@@ -14,6 +14,10 @@ PALETTE = {
     'filesystem': '#94a3b8', 'codebase-map': '#34d399', 'agent-graph': '#f97316',
     'framework-graph': '#facc15', 'knowledge-tree': '#f43f5e', 'wordcount': '#22d3ee',
     'handoff': '#fb7185', 'wiki-inbox': '#a78bfa', 'observatory': '#4ade80',
+    # Deterministic AST code graph. An origin missing from this palette is
+    # dropped from the legend AND from `activeOrigins`, so its nodes render
+    # uncoloured and cannot be filtered — a new origin must be registered here.
+    'code-graph': '#38bdf8',
 }
 
 TEMPLATE = r"""<!DOCTYPE html>

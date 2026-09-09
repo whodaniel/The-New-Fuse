@@ -12,6 +12,7 @@ import type { Command } from 'commander';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import { ProfileSessionService } from '../services/ProfileSessionService.js';
 import { findCommand } from './_registry.js';
 
 /** Top-level Hermes verbs this module registers (kept in sync for the auditor). */
@@ -292,16 +293,21 @@ export function registerHermesParityGapCommands(program: Command, repoRoot: stri
   if (!findCommand(program, 'logout')) {
     program
       .command('logout')
-      .description('Explain how to clear TNF auth tokens (Hermes parity; no silent deletes)')
-      .action(() => {
-        console.log(chalk.bold('\nTNF Logout\n'));
-        console.log('  Clear shell tokens for this session:');
-        console.log(
-          '    unset TNF_SUPER_ADMIN_TOKEN TNF_SUPER_ADMIN_INPUT_TOKEN CI_SUPER_ADMIN_TOKEN'
-        );
-        console.log('  Provider credentials live in OS keystores / env files — remove only with');
-        console.log('  live operator confirmation. Prefer `tnf authority status` to inspect.');
-        console.log('');
+      .description('End the active TNF profile session (Hermes parity)')
+      .option('--profile <name>', 'Profile name')
+      .action((opts: { profile?: string }) => {
+        try {
+          const ok = new ProfileSessionService().logout(opts.profile);
+          if (ok) {
+            console.log(chalk.green('Logged out'));
+            console.log(chalk.dim('  Next `tnf boot` or `tnf tui` will prompt: tnf login'));
+          } else {
+            console.log(chalk.yellow('No active session'));
+          }
+        } catch (err) {
+          console.error(chalk.red(err instanceof Error ? err.message : String(err)));
+          process.exit(1);
+        }
       });
   }
 

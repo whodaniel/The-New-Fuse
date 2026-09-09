@@ -1,0 +1,63 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "e82cdad1-9ee2-48a7-ad75-c28d04619c78",
+  "created_at": "2026-09-04T00:51:00.000Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "docs/gate-crash-is-not-permission",
+  "head_sha": "d6a55017f252aa2cb26b687e59df6fa3a9f8141a",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "work_summary": [
+    "Implement commercialization scaffolding for the Fuse Connect Chrome Extension."
+  ],
+  "changed_paths": [
+    "packages/database/src/drizzle/schema/users.ts",
+    "apps/api/src/controllers/stripe-webhook.controller.ts",
+    "apps/api/src/controllers/extension-auth.controller.ts",
+    "apps/api/src/app.module.ts",
+    "apps/api/package.json",
+    "docs/protocols/reports/SESSION_HANDOFF_FUSE_CONNECT_COMMERCIALIZATION.json",
+    "docs/protocols/reports/SESSION_HANDOFF_FUSE_CONNECT_COMMERCIALIZATION.md"
+  ],
+  "verification": {
+    "supabase_rls_audit": "pass",
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass"
+  },
+  "continuation": {
+    "owner": "antigravity",
+    "targets": ["stripe-dashboard"],
+    "priority": "high",
+    "resume_checklist": [
+      "Finish the test purchase to confirm the event reaches Supabase."
+    ]
+  },
+  "next_actions": [
+    "Finish the test purchase to confirm the event reaches Supabase."
+  ],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": []
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["protocol-reconciliation"],
+    "staffed_by": ["antigravity"]
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": []
+}

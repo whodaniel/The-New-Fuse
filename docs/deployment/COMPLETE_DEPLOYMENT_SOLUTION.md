@@ -1,8 +1,19 @@
 # Complete CloudRuntime Deployment Solution
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 ## Current Situation
 
 ✅ **Everything is prepared:**
+
 - All Dockerfiles configured
 - CloudRuntime project linked (TNF: 041cee9d-8648-4074-b5a6-0eae436de1d1)
 - JWT Secret generated: `your-jwt-secret-from-env`
@@ -10,6 +21,7 @@
 - Frontend service exists (but failing - needs rebuild)
 
 ❌ **What's missing:**
+
 - API service needs to be created
 - Backend service needs to be created
 - API Gateway service needs to be created
@@ -18,9 +30,11 @@
 
 ### STEP 1: Create Services Manually (2 minutes)
 
-CloudRuntime CLI cannot create services - only the dashboard can. You MUST do this first:
+CloudRuntime CLI cannot create services - only the dashboard can. You MUST do
+this first:
 
 1. **Open CloudRuntime Dashboard:**
+
    ```
    https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
    ```
@@ -32,7 +46,8 @@ CloudRuntime CLI cannot create services - only the dashboard can. You MUST do th
    - Repeat for: `backend`
    - Repeat for: `api-gateway`
 
-**IMPORTANT:** Service names must be EXACTLY: `api`, `backend`, `api-gateway` (all lowercase)
+**IMPORTANT:** Service names must be EXACTLY: `api`, `backend`, `api-gateway`
+(all lowercase)
 
 ### STEP 2: Run Automated Deployment (1 command)
 
@@ -43,6 +58,7 @@ cd . && ./final-deploy.sh
 ```
 
 This script will:
+
 1. Deploy all 4 services (API, Backend, API Gateway, Frontend)
 2. Configure all environment variables automatically
 3. Set up database connections
@@ -53,6 +69,7 @@ This script will:
 The `final-deploy.sh` script automates everything:
 
 ### 1. Deploys All Services
+
 - API service (Port 3001)
 - Backend service (Port 3004)
 - API Gateway (Port 3002)
@@ -61,6 +78,7 @@ The `final-deploy.sh` script automates everything:
 ### 2. Configures Environment Variables
 
 **API Service:**
+
 ```env
 NODE_ENV=production
 PORT=3001
@@ -70,6 +88,7 @@ JWT_SECRET=your-jwt-secret-from-env
 ```
 
 **Backend Service:**
+
 ```env
 NODE_ENV=production
 PORT=3004
@@ -78,6 +97,7 @@ REDIS_URL=${{Redis.REDIS_URL}}
 ```
 
 **API Gateway:**
+
 ```env
 NODE_ENV=production
 PORT=3002
@@ -86,6 +106,7 @@ BACKEND_URL=${{backend.CLOUD_RUNTIME_PRIVATE_DOMAIN}}
 ```
 
 **Frontend:**
+
 ```env
 NODE_ENV=production
 PORT=3000
@@ -95,27 +116,30 @@ VITE_API_URL=https://${{api-gateway.CLOUD_RUNTIME_PUBLIC_DOMAIN}}
 ### 3. Monitors Deployment
 
 The script will show you:
+
 - Deployment URLs for each service
 - Build logs location
 - Expected completion time
 
 ## Timeline
 
-| Step | Time |
-|------|------|
-| Create 3 services manually | 2 minutes |
-| Run deployment script | 1 minute |
-| Services build (automatic) | 40-60 minutes |
-| **Total** | **~60 minutes** |
+| Step                       | Time            |
+| -------------------------- | --------------- |
+| Create 3 services manually | 2 minutes       |
+| Run deployment script      | 1 minute        |
+| Services build (automatic) | 40-60 minutes   |
+| **Total**                  | **~60 minutes** |
 
 ## After Deployment
 
 Check status:
+
 ```bash
 cloud_runtime status
 ```
 
 View logs:
+
 ```bash
 cloud_runtime logs --service api
 cloud_runtime logs --service backend
@@ -124,6 +148,7 @@ cloud_runtime logs --service frontend
 ```
 
 Get service URLs:
+
 ```bash
 # Will show all service URLs
 cloud_runtime service
@@ -132,28 +157,32 @@ cloud_runtime service
 ## If You Get Stuck
 
 ### "Service not found" error
+
 → You didn't create the services in dashboard yet (Step 1)
 
 ### Build fails
+
 → Check logs: `cloud_runtime logs --service <name>`
 
 ### Can't find dashboard
-→ Direct link: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+
+→ Direct link:
+https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 
 ## Success Criteria
 
-✅ All 4 services show "Active" in dashboard
-✅ No errors in logs
-✅ Frontend loads in browser
-✅ Health checks pass
+✅ All 4 services show "Active" in dashboard ✅ No errors in logs ✅ Frontend
+loads in browser ✅ Health checks pass
 
 ---
 
 ## Quick Reference
 
-**Dashboard:** https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+**Dashboard:**
+https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 
 **Deploy command:**
+
 ```bash
 cd . && ./final-deploy.sh
 ```

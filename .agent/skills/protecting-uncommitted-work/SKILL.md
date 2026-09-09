@@ -1,9 +1,13 @@
 ---
 name: protecting-uncommitted-work
 description:
-  How to park and recover uncommitted work in a shared git checkout. Why `git
-  stash` is not a safe park, and the file-by-file recovery ladder that actually
-  gets work back after a destructive tree mutation.
+  How to park, find and recover uncommitted work in a shared git checkout or
+  worktree. Why `git stash` is not a safe park, the file-by-file recovery ladder
+  after a destructive tree mutation, and how work goes missing without anyone
+  deleting it — a stale index.lock freezing a worktree, an interrupted checkout
+  that reads as a mass deletion, a staged deletion left armed, a branch that
+  exists on no remote. Use when work may be stranded, when `git status` reports
+  something implausible, or before removing or repairing any worktree.
 primary_type: operational
 category: engineering/governance
 department: tech
@@ -94,6 +98,72 @@ Work is almost never actually gone. In order:
    ```
 
    Tags are permanent, named, and cannot be buried.
+
+## Work also goes missing without anyone deleting it
+
+The recovery ladder assumes something *happened* to the work. The harder case is
+work nobody touched — it simply stopped being visible. Three shapes, all found in
+one worktree on 2026-09-07:
+
+**A stale `index.lock` freezes a worktree indefinitely.** A checkout interrupted
+at 22:55 on Sep 1 left a 0-byte lock. Every subsequent index write in that
+worktree failed for six days, silently.
+
+```bash
+find .git -name index.lock -exec stat -f '%Sm  %z bytes  %N' -t '%Y-%m-%d %H:%M' {} +
+lsof <path-to-lock>     # no output + old mtime = stale, safe to remove
+```
+
+**An interrupted checkout looks exactly like a mass deletion.** `git status`
+reported 27,083 files deleted; they had never been written. Git writes in index
+order, so an unfinished checkout leaves a clean cutoff. Test before concluding
+anything was destroyed:
+
+```bash
+# if the missing set clusters at the END of index order, it is an unfinished
+# checkout, not a deletion — so complete it rather than "restoring a backup"
+git ls-files --deleted -z | xargs -0 git checkout --
+```
+
+Use `git ls-files --deleted`. **Never `git checkout -- .`** — that also reverts
+genuinely modified files, and modified files are where the unique work lives.
+In this case one of them held the only copy of a fix that existed on no branch.
+
+**A frozen index can hold a staged deletion of the whole repo.** That worktree
+had 27,083 staged deletions (5.45M lines) armed. Any agent running `git commit`
+there would have committed the repo's removal, looking like a normal commit.
+Audit every worktree, not just yours:
+
+```bash
+for w in $(git worktree list --porcelain | awk '/^worktree /{print $2}'); do
+  n=$(git -C "$w" diff --cached --numstat | wc -l)
+  [ "$n" -gt 100 ] && echo "WARN $w: $n staged"
+done
+```
+
+**Committed is not protected.** A branch on no remote is one disk away from gone:
+
+```bash
+git -C "$w" log --oneline @{u}..HEAD      # unpushed commits
+git ls-remote --heads origin "<branch>"   # empty = this machine is the only copy
+```
+
+## Reconciling work stranded across a divergence
+
+Stranded work is usually *older* than main in some respects and *newer* in
+others, so neither side is correct alone. Three-way merge against the common
+ancestor instead of choosing:
+
+```bash
+git show <merge-base>:<file> > /tmp/base
+git show origin/main:<file>  > /tmp/main
+cp <working-copy> /tmp/merged
+git merge-file /tmp/merged /tmp/base /tmp/main
+```
+
+A clean merge with zero conflicts still proves nothing. **Run the result** and
+confirm both parents' behaviours survive, then check which lines were dropped and
+that they are the ones that should lose.
 
 ## Prevention
 

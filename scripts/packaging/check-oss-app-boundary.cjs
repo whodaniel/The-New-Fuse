@@ -162,7 +162,7 @@ function main() {
   }
 
   const external = [
-    ...(manifest.separateOpenSourceSatellites || []).map((e) => ({ ...e, tier: 'satellite' })),
+    ...(manifest.standaloneSatelliteRepos || []).map((e) => ({ ...e, tier: 'satellite' })),
     ...(manifest.nonOssOrPersonalApps || []).map((e) => ({ ...e, tier: 'nonOss' })),
   ];
   const seenExt = new Set();
@@ -244,7 +244,7 @@ function main() {
   console.log('[oss-app-boundary] OK');
   console.log(`regularOpenSourceDownload=${manifest.regularOpenSourceDownload.length}`);
   console.log(`excludedTopLevelApps=${excludedTopLevelApps.size}`);
-  console.log(`separateOpenSourceSatellites=${(manifest.separateOpenSourceSatellites || []).length}`);
+  console.log(`separateOpenSourceSatellites=${(manifest.standaloneSatelliteRepos || []).length}`);
   console.log(`nonOssOrPersonalApps=${(manifest.nonOssOrPersonalApps || []).length}`);
   console.log(`appsExtensionsRedirect=${redirect ? redirect.path : '(missing)'}`);
 }

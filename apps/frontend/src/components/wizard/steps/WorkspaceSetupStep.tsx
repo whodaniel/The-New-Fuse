@@ -52,7 +52,8 @@ export const WorkspaceSetupStep: React.FC = () => {
       enableCollaboration: formData.enableCollaboration,
       endpointUrl: formData.endpointUrl,
       authType: formData.authType,
-      apiKey: formData.apiKey,
+      // Raw apiKey stays in local form state only.
+      apiKeyConfigured: Boolean(formData.apiKey),
       webhookUrl: formData.webhookUrl,
       maxConcurrentRequests: formData.maxConcurrentRequests,
     });

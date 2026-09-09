@@ -1,0 +1,49 @@
+{
+  "$schema": "../../schemas/managed-mcp-runtime.schema.json",
+  "schemaVersion": 1,
+  "runtimeRoot": "~/.tnf/mcp-runtime",
+  "packages": [
+    {
+      "name": "apple-notes-mcp",
+      "version": "2.8.0",
+      "bin": "build/index.js",
+      "wrapper": "apple-notes",
+      "integrity": "sha512-MdgFLy0bxM3nSf3m05F26q3DTgzoncE2bmHl0AgmPmoz8uGwUCtcmh6+5Gh3zl2US6BeyB/u5xMA3Oh3iOC/lw=="
+    },
+    {
+      "name": "exa-mcp-server",
+      "version": "3.4.1",
+      "bin": "dist/stdio.cjs",
+      "wrapper": "exa",
+      "integrity": "sha512-X6g4J9LXLJZ0uK52G8KE/KCaxpaD+wkEHzjkoDTYkC+afxfm5xqWgih3i0hgTfyufl6PggkLeR0L6rDAxW6ETg==",
+      "secret": {
+        "provider": "macos-keychain",
+        "service": "tnf.mcp.exa",
+        "accountEnv": "USER",
+        "environmentVariable": "EXA_API_KEY"
+      }
+    },
+    {
+      "name": "@playwright/mcp",
+      "version": "0.0.79",
+      "bin": "cli.js",
+      "wrapper": "browser",
+      "integrity": "sha512-VpqD4a3vFyGQMY9sh3UJiO6wjcurggkljKfAyCHL0QWGY5m6Ehr3MNsAAHPDHO//n13g0PCjpHatAOiulrqdZQ=="
+    },
+    {
+      "name": "@modelcontextprotocol/server-filesystem",
+      "version": "2026.7.10",
+      "bin": "dist/index.js",
+      "wrapper": "filesystem",
+      "integrity": "sha512-Mmjg4anFBD5OzbPnGJOA0jPPN8645ERhQk38HQLpSenx1ox9bfdPkmAzUnNjeQtqQGFLtKe13J20RtLBmUKMZA=="
+    }
+  ],
+  "hostPolicy": {
+    "forbiddenRuntimeCommands": ["npx", "pnpm dlx", "bunx"],
+    "forbiddenVersionTags": ["latest", "next", "canary"],
+    "retiredServers": {
+      "kilo-media-mcp": "The configured kilo-mcp package does not exist in the npm registry. Remove it instead of resolving a mutable or guessed substitute.",
+      "jules": "The configured packages/jules-skill/src/mcp-server.ts entrypoint does not exist. Retire the registration until a real Jules MCP implementation is restored."
+    }
+  }
+}

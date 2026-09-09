@@ -1,0 +1,100 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "4983e53a-5cbc-44c4-ad1a-751ce146015c",
+  "created_at": "2026-09-05T04:12:43.779Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": ["whodaniel/The-New-Fuse"]
+  },
+  "branch": "main",
+  "head_sha": "4283cb81a2612ed2fb9e1d878caf99d694440e07",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["cli", "protocol"],
+    "staffed_by": ["Cursor-Composer"]
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": true,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "tnf-command-discover",
+      "state": "pass",
+      "observed_at": "2026-09-05T04:04:11.172Z",
+      "value": "announce runtime=tnf from .tnf/command"
+    }
+  ],
+  "project_ids": ["agent-availability-announce"],
+  "work_summary": [
+    "Rehomed /announce to TNF-canonical .tnf/command + .agent/skills; Claude is peer adapter only.",
+    "CommandSourceService precedence: .tnf \u2192 .agent \u2192 peers so Claude mirrors do not shadow TNF.",
+    "Announce defaults auto-detect TNF_PLATFORM/TNF_AGENT_NAME instead of hard-coding Cursor/Claude."
+  ],
+  "changed_paths": [
+    ".tnf/command/announce.md",
+    ".agent/skills/tnf-agent-availability-announce/SKILL.md",
+    ".agent/fleet/corporate/commands/announce.md",
+    ".agent/fleet/users/commands/announce.md",
+    ".claude/commands/announce.md",
+    ".claude/commands/README.md",
+    ".claude/skills/tnf-agent-availability-announce/SKILL.md",
+    "cursor-marketplace/plugins/tnf-harness/commands/tnf-announce.md",
+    "docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md",
+    "docs/protocols/reports/session_handoff_announce-tnf-canonical.json",
+    "docs/protocols/reports/session_handoff_announce-tnf-canonical.md",
+    "packages/tnf-cli/src/slashCommands.ts",
+    "packages/tnf-cli/src/commands/agents-announce.ts",
+    "packages/tnf-cli/src/services/CommandSourceService.ts",
+    "packages/tnf-cli/src/services/CommandSourceService.test.ts",
+    "scripts/agents/announce-availability.cjs"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "TNF-first rehome of announce surfaces"
+  },
+  "continuation": {
+    "owner": "tnf-cli-agent",
+    "targets": ["librarian"],
+    "priority": "medium",
+    "resume_checklist": ["Confirm tnf commands lists announce as runtime=tnf"]
+  },
+  "next_actions": [
+    "Push TNF-canonical announce rehome",
+    "Keep using tnf agents announce from any runtime"
+  ],
+  "artifacts": {
+    "commits": ["50c099d70fdd0bdb1cb098a5860a73f899e3d650"]
+  },
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "recorded": [
+        "Canonical command path is .tnf/command, not .claude/commands"
+      ],
+      "rationale": "Peer CLI dirs are adapters"
+    },
+    "skills": {
+      "considered": true,
+      "proposed": [],
+      "overlap_reviewed": true,
+      "rationale": "Existing tnf-agent-availability-announce remains canonical under .agent"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "require_help": true,
+  "require_repeatability": true,
+  "network": "none",
+  "max_stdout_bytes": 8192,
+  "case_timeout_seconds": 3
+}

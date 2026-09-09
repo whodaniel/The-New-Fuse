@@ -1,6 +1,8 @@
 import * as fs from 'fs';
+import { randomUUID } from 'node:crypto';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { readPersistedDefaultModel } from '../services/ModelsService.js';
 import { resolveBuiltinToolsAsOpenAI } from './llm-tools.js';
 
 export interface LLMMessage {
@@ -10,6 +12,8 @@ export interface LLMMessage {
 
 export interface LLMOptions {
   temperature?: number;
+  /** Reviewer calls require final content, never partial reasoning or a truncated completion. */
+  requireFinalContent?: boolean;
   maxTokens?: number;
   timeoutMs?: number;
   /** OpenAI-style tool definitions to send with the request. */
@@ -41,6 +45,15 @@ export interface LLMOptions {
    * here is honoured with the highest precedence.
    */
   stream?: boolean;
+  /**
+   * Operator-initiated cancel (e.g. Esc / Ctrl-C in `tnf tui`). Aborts the
+   * in-flight HTTP request immediately, skips every retry and — critically —
+   * skips the ENTIRE provider fallback chain: an operator interrupt must not
+   * silently resurrect the turn on a different provider.
+   */
+  signal?: AbortSignal;
+  /** Completed-turn identity; critic calls themselves use the pinned reviewer API. */
+  criticContext?: { agentId?: string; sessionId?: string; turnId?: string; repoRoot?: string };
 }
 
 /**
@@ -162,6 +175,39 @@ function parseRetryAfter(value: string | null): number | null {
  * Returned Response is the LAST attempt's response (success or final
  * failure). The body is left unconsumed; callers parse it as usual.
  */
+/**
+ * User-initiated abort marker. fetch() rejects with a DOMException named
+ * 'AbortError' when a signal fires; this mirrors that shape for aborts we
+ * raise ourselves between tool iterations so callers can detect both with
+ * `err?.name === 'AbortError'`.
+ */
+function userAbortError(): Error {
+  return Object.assign(new Error('Interrupted by operator'), {
+    name: 'AbortError',
+    userAbort: true,
+  });
+}
+
+/**
+ * Combine the operator's AbortSignal with the per-call provider timeout.
+ * Either one firing aborts the request. No-op when no operator signal is
+ * supplied (plain timeout behavior, unchanged).
+ */
+function combineAbortSignals(signal: AbortSignal | undefined, timeoutMs: number): AbortSignal {
+  if (!signal) return AbortSignal.timeout(timeoutMs);
+  return AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)]);
+}
+
+/** True when this rejection is an operator interrupt (never retry/fallback). */
+export function isUserAbort(err: unknown): boolean {
+  return (
+    err instanceof Error &&
+    ((err as any).userAbort === true ||
+      err.name === 'AbortError' ||
+      (err as any).code === 'ABORT_ERR')
+  );
+}
+
 async function fetchWithRetry(url: string, init: RequestInit, context: string): Promise<Response> {
   const max = retryMax();
   const base = retryBaseMs();
@@ -180,7 +226,23 @@ async function fetchWithRetry(url: string, init: RequestInit, context: string): 
             `(last status: ${lastResponse?.status ?? 'network-error'})`
         );
       }
-      await sleep(backoff);
+      if (outerSignal) {
+        await new Promise<void>((resolve, reject) => {
+          if (outerSignal.aborted) {
+            reject(outerSignal.reason);
+            return;
+          }
+          const aborted = () => {
+            clearTimeout(timer);
+            reject(outerSignal.reason);
+          };
+          const timer = setTimeout(() => {
+            outerSignal.removeEventListener('abort', aborted);
+            resolve();
+          }, backoff);
+          outerSignal.addEventListener('abort', aborted, { once: true });
+        });
+      } else await sleep(backoff);
     }
 
     try {
@@ -330,9 +392,11 @@ function applyToolPayload(
  *
  * Resolution order (first usable wins):
  *   1. Explicit env vars (TNF_LLM_BASE_URL + TNF_LLM_API_KEY + TNF_LLM_MODEL)
- *   2. Dynamic provider detection (inspects env, verifies connectivity)
+ *   2. Persisted operator default (~/.config/tnf/model.default.json, written
+ *      by `tnf models --select`; provider def resolved via providers.json)
  *   3. model-providers.json fallback chain (probed in priority order)
- *   4. Hardcoded safe fallback (NVIDIA with verified model)
+ *   4. Dynamic provider detection (inspects env, verifies connectivity)
+ *   5. Hardcoded safe fallback (NVIDIA with verified model)
  *
  * All providers except Gemini-native use the OpenAI-compatible chat/completions
  * endpoint. Gemini-native is kept as a legacy fallback only.
@@ -349,6 +413,9 @@ export class LLMClient {
   public supportsToolChoice = true;
   private readonly role: 'orchestrator' | 'worker' | 'reviewer' | 'subagent';
   private envVars: Record<string, string> = {};
+  private criticSessionId = process.env.TNF_SESSION_ID || randomUUID();
+  private pendingCriticFeedback: string | undefined;
+  private pendingCriticId: string | undefined;
   private providers: ProviderDescriptor[] = [];
   /**
    * Per-call builtin-tool resolver. `applyToolPayload` invokes this with
@@ -376,6 +443,101 @@ export class LLMClient {
     return client;
   }
 
+  /** Explicit reviewer route: no working-model override and no expensive fallback chain. */
+  static async createForModel(provider: string, model: string): Promise<LLMClient> {
+    const client = new LLMClient('reviewer');
+    const { loadProviderConfig } = await import('../services/provider-config.js');
+    const config = loadProviderConfig();
+    const def = config.providers.find((p) => p.enabled && p.id === provider);
+    if (!def) throw new Error('Critic provider unavailable in the configured catalog');
+    const credential = [def.envKey, ...def.altEnvKeys]
+      .filter(Boolean)
+      .map((key) => client.getEnv(key!))
+      .find(Boolean);
+    if (!credential && def.type !== 'local' && !def.authOptional)
+      throw new Error('Critic provider credentials unavailable');
+    if (def.baseUrl.includes('generativelanguage.googleapis.com') && model.includes('/')) {
+      throw new Error('Critic Gemini model must be a native model ID');
+    }
+    client.baseUrl = def.baseUrl;
+    client.apiKey = credential || '';
+    client.model = model;
+    client.providerName = def.id;
+    client.supportsToolChoice = providerSupportsToolChoice(def.baseUrl);
+    return client;
+  }
+
+  /** No fallback and no recursive critic. The caller supplies a bounded AbortSignal. */
+  async chatCompletePinned(messages: LLMMessage[], options: LLMOptions = {}): Promise<string> {
+    return this._callProvider(messages, {
+      ...options,
+      requireFinalContent: true,
+      stream: false,
+      builtinTools: 'none',
+      tools: [],
+      toolChoice: 'none',
+    });
+  }
+
+  private async withCriticFeedback(messages: LLMMessage[]): Promise<LLMMessage[]> {
+    if (!this.pendingCriticFeedback) return messages;
+    // Put review data in a user message, never a system instruction. Keep it in
+    // the caller's history so session persistence includes the feedback.
+    const insertion = messages.at(-1)?.role === 'user' ? messages.length - 1 : messages.length;
+    messages.splice(insertion, 0, { role: 'user', content: this.pendingCriticFeedback });
+    this.pendingCriticFeedback = undefined;
+    if (this.pendingCriticId) {
+      try {
+        const { markCriticPromptDelivered } = await import('../services/TurnCriticService.js');
+        markCriticPromptDelivered(this.pendingCriticId);
+      } catch {
+        /* receipt retention must not discard feedback */
+      }
+      this.pendingCriticId = undefined;
+    }
+    return messages;
+  }
+
+  private async critiqueTurn(
+    messages: LLMMessage[],
+    content: string,
+    options: LLMOptions,
+    evidence?: string
+  ): Promise<void> {
+    if (
+      this.role === 'reviewer' ||
+      process.env.TNF_AGENT_ROLE === 'critic' ||
+      options.signal?.aborted
+    )
+      return;
+    try {
+      const { reviewAgentTurn } = await import('../services/TurnCriticService.js');
+      const receipt = await reviewAgentTurn(
+        {
+          agentId: options.criticContext?.agentId || process.env.TNF_AGENT_ID || this.role,
+          sessionId: options.criticContext?.sessionId || this.criticSessionId,
+          turnId: options.criticContext?.turnId || randomUUID(),
+          input: messages.filter((m) => m.role === 'user').at(-1)?.content || '',
+          output: content,
+          evidence,
+          source: 'agent',
+        },
+        {
+          repoRoot: options.criticContext?.repoRoot,
+          signal: options.signal,
+          onPrompt: (feedback) => {
+            this.pendingCriticFeedback = feedback;
+            return 'queued';
+          },
+        }
+      );
+      if (receipt.delivery?.status === 'queued') this.pendingCriticId = receipt.id;
+    } catch {
+      // A broken optional critic must never discard the completed working turn.
+      console.error('[tnf critic] Review unavailable; working turn preserved');
+    }
+  }
+
   // ── Environment loading ──────────────────────────────────────────────
 
   /** Load .env / .env.local from repo root into this.envVars (not process.env) */
@@ -387,7 +549,7 @@ export class LLMClient {
         const p = path.join(rootDir, file);
         if (fs.existsSync(p)) {
           fs.readFileSync(p, 'utf8')
-            .split('\\n')
+            .split('\n')
             .forEach((line) => {
               const match = line.match(/^([^#=]+)=(.*)$/);
               if (match) {
@@ -456,6 +618,48 @@ export class LLMClient {
       // We consider explicit config as working even if the model is not alive;
       // the caller will handle errors at call time.
       return;
+    }
+
+    // ─── Strategy 1.5: Persisted operator default (model.default.json) ─
+    // `tnf models --select` persists the operator's explicit choice to
+    // ~/.config/tnf/model.default.json. Until 2026-09-05 that file was
+    // write-only: resolution jumped straight from env vars to the
+    // model-providers.json chain, so the recorded default was silently
+    // ignored in every process that did not inherit an interactive shell's
+    // TNF_LLM_* exports (cron, launchd, agent harnesses). The operator's
+    // explicit choice outranks the catalog chain but still loses to
+    // explicit per-process env overrides (Strategy 1).
+    const persisted = readPersistedDefaultModel();
+    if (persisted) {
+      const { loadProviderConfig } = await import('../services/provider-config.js');
+      const def = loadProviderConfig().providers.find(
+        (candidate) =>
+          candidate.enabled && candidate.id.toLowerCase() === persisted.provider.toLowerCase()
+      );
+      if (def) {
+        const credential = [def.envKey, ...def.altEnvKeys]
+          .filter((env): env is string => Boolean(env))
+          .map((env) => this.getEnv(env))
+          .find((value) => Boolean(value));
+        if (credential || def.type === 'local' || def.authOptional) {
+          this.baseUrl = def.baseUrl;
+          this.apiKey = credential || '';
+          this.model = persisted.model;
+          this.providerName = def.id;
+          this.supportsToolChoice = providerSupportsToolChoice(def.baseUrl);
+          return;
+        }
+        if (process.env.TNF_DEBUG_PROVIDERS === 'true') {
+          console.warn(
+            `[tnf] persisted default ${def.id}:${persisted.model} skipped — ` +
+              `no credential in env (${def.envKey ?? 'none'})`
+          );
+        }
+      } else if (process.env.TNF_DEBUG_PROVIDERS === 'true') {
+        console.warn(
+          `[tnf] persisted default provider "${persisted.provider}" is unknown or disabled — ignoring`
+        );
+      }
     }
 
     // ─── Strategy 2: Walk the model-providers.json fallback chain ─────
@@ -576,6 +780,16 @@ export class LLMClient {
   // ── Chat completion ──────────────────────────────────────────────────
 
   async chatComplete(messages: LLMMessage[], options: LLMOptions = {}): Promise<string> {
+    const prepared = await this.withCriticFeedback(messages);
+    const result = await this.chatCompleteCore(prepared, options);
+    await this.critiqueTurn(prepared, result, options);
+    return result;
+  }
+
+  private async chatCompleteCore(
+    messages: LLMMessage[],
+    options: LLMOptions = {}
+  ): Promise<string> {
     if (!this.apiKey || this.apiKey === 'missing-key') {
       // Re-resolve in case env was just loaded
       await this.resolveProvider();
@@ -592,7 +806,7 @@ export class LLMClient {
     const policy = resolveStreamPolicy(options.stream);
     if (policy === 'always') {
       let buffer = '';
-      for await (const chunk of this.chatStream(messages, options)) buffer += chunk;
+      for await (const chunk of this.chatStreamCore(messages, options)) buffer += chunk;
       return buffer;
     }
 
@@ -617,6 +831,19 @@ export class LLMClient {
     messages: LLMMessage[],
     options: LLMOptions = {}
   ): AsyncGenerator<string, void, unknown> {
+    const prepared = await this.withCriticFeedback(messages);
+    let content = '';
+    for await (const chunk of this.chatStreamCore(prepared, options)) {
+      content += chunk;
+      yield chunk;
+    }
+    await this.critiqueTurn(prepared, content, options);
+  }
+
+  private async *chatStreamCore(
+    messages: LLMMessage[],
+    options: LLMOptions = {}
+  ): AsyncGenerator<string, void, unknown> {
     if (!this.apiKey || this.apiKey === 'missing-key') {
       await this.resolveProvider();
       if (!this.apiKey || this.apiKey === 'missing-key') {
@@ -628,7 +855,7 @@ export class LLMClient {
 
     // Gemini doesn't support streaming in the same way — fall back to non-streaming
     if (this.baseUrl.includes('generativelanguage.googleapis.com')) {
-      const full = await this.chatComplete(messages, options);
+      const full = await this.chatCompleteCore(messages, { ...options, stream: false });
       yield full;
       return;
     }
@@ -638,7 +865,7 @@ export class LLMClient {
       yield* this._streamOpenAICompatible(messages, options);
     } catch (err) {
       // Fall back to non-streaming on streaming errors
-      const full = await this.chatComplete(messages, options);
+      const full = await this.chatCompleteCore(messages, { ...options, stream: false });
       yield full;
     }
   }
@@ -666,6 +893,7 @@ export class LLMClient {
     messages: LLMMessage[],
     options: LLMOptions = {}
   ): Promise<string> {
+    messages = await this.withCriticFeedback(messages);
     const calls = providers.map((p) => async () => {
       const url = `${p.baseUrl.replace(/\/$/, '')}/chat/completions`;
       const payload: Record<string, unknown> = {
@@ -683,7 +911,10 @@ export class LLMClient {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + p.apiKey,
         },
-        signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
+        signal: combineAbortSignals(
+          options.signal,
+          options.timeoutMs ?? defaultProviderTimeoutMs()
+        ),
         body: JSON.stringify(payload),
       });
       if (!response.ok) {
@@ -697,6 +928,7 @@ export class LLMClient {
     // Promise.any first wins; all-reject path returns the joiner message.
     try {
       const settled = await Promise.any(calls.map((mk) => mk()));
+      await this.critiqueTurn(messages, settled, options);
       return settled;
     } catch (err) {
       throw new Error(
@@ -721,6 +953,36 @@ export class LLMClient {
    * drive a non-trivial multi-step task end-to-end.
    */
   async chatCompleteWithTools(
+    messages: LLMMessage[],
+    executor: (
+      name: string,
+      args: Record<string, unknown>
+    ) => Promise<string | Record<string, unknown>>,
+    options: LLMOptions & { maxIterations?: number; systemPrompt?: string } = {}
+  ): Promise<{ content: string; toolCallsMade: number; iterations: number; finishReason: string }> {
+    const prepared = await this.withCriticFeedback(messages);
+    let evidence = '';
+    const result = await this.chatCompleteWithToolsCore(
+      prepared,
+      async (name, args) => {
+        const output = await executor(name, args);
+        evidence = (evidence + '\n' + JSON.stringify({ tool: name, args, result: output })).slice(
+          -24000
+        );
+        return output;
+      },
+      options
+    );
+    await this.critiqueTurn(
+      prepared,
+      result.content,
+      options,
+      evidence || 'No tool calls executed.'
+    );
+    return result;
+  }
+
+  private async chatCompleteWithToolsCore(
     messages: LLMMessage[],
     executor: (
       name: string,
@@ -776,6 +1038,7 @@ export class LLMClient {
      * throw or refuse after some internal budget).
      */
     for (let iter = 0; iter < maxIter; iter++) {
+      if (options.signal?.aborted) throw userAbortError();
       iterations++;
       // Fallback-aware raw call: chatComplete walks the provider fallback
       // chain on failure, but this loop previously called _callProviderRaw
@@ -912,7 +1175,10 @@ export class LLMClient {
       {
         method: 'POST',
         headers,
-        signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
+        signal: combineAbortSignals(
+          options.signal,
+          options.timeoutMs ?? defaultProviderTimeoutMs()
+        ),
         body: JSON.stringify(payload),
       },
       `${this.providerName}:${this.model}`
@@ -953,7 +1219,7 @@ export class LLMClient {
       {
         method: 'POST',
         headers,
-        signal: AbortSignal.timeout(timeoutMs),
+        signal: combineAbortSignals(options.signal, timeoutMs),
         body: bodyJson,
       },
       `${this.providerName}:${this.model}`
@@ -991,7 +1257,7 @@ export class LLMClient {
       {
         method: 'POST',
         headers,
-        signal: AbortSignal.timeout(timeoutMs),
+        signal: combineAbortSignals(options.signal, timeoutMs),
         body: bodyJson,
       },
       `${this.providerName}:${this.model} (tools-stripped)`
@@ -1131,6 +1397,12 @@ export class LLMClient {
 
     const data = (await response.json()) as any;
     const choice = data.choices?.[0]?.message;
+    if (
+      options.requireFinalContent &&
+      (data.choices?.[0]?.finish_reason !== 'stop' || !choice?.content)
+    ) {
+      throw new Error('Critic provider returned no complete final answer');
+    }
     // Some models (e.g. GPT-OSS-120B, reasoning models) put output in
     // reasoning_content when content is null. Fall back gracefully.
     return choice?.content || choice?.reasoning_content || choice?.reasoning || '';
@@ -1159,8 +1431,17 @@ export class LLMClient {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(options.timeoutMs ?? defaultProviderTimeoutMs()),
-        body: JSON.stringify({ contents: geminiMessages }),
+        signal: combineAbortSignals(
+          options.signal,
+          options.timeoutMs ?? defaultProviderTimeoutMs()
+        ),
+        body: JSON.stringify({
+          contents: geminiMessages,
+          generationConfig: {
+            maxOutputTokens: options.maxTokens ?? 1000,
+            temperature: options.temperature ?? 0.7,
+          },
+        }),
       }
     );
 
@@ -1170,7 +1451,12 @@ export class LLMClient {
     }
 
     const data = (await response.json()) as any;
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (options.requireFinalContent && data.candidates?.[0]?.finishReason !== 'STOP')
+      throw new Error('Critic provider returned no complete final answer');
+    return (data.candidates?.[0]?.content?.parts || [])
+      .filter((p: { thought?: boolean; text?: string }) => !p.thought)
+      .map((p: { text?: string }) => p.text || '')
+      .join('');
   }
 
   // ── Fallback chain ──────────────────────────────────────────────────
@@ -1188,12 +1474,15 @@ export class LLMClient {
     messages: LLMMessage[],
     options: LLMOptions
   ): Promise<{ ok: boolean; body: unknown }> {
+    // Operator interrupt: never walk the fallback chain — the turn is over.
+    if (options.signal?.aborted) throw userAbortError();
     let lastNotOk: { ok: boolean; body: unknown } | null = null;
     try {
       const primary = await this._callProviderRaw(messages, options);
       if (primary.ok) return primary;
       lastNotOk = primary;
-    } catch {
+    } catch (err) {
+      if (isUserAbort(err)) throw err;
       // fall through to fallback chain
     }
 
@@ -1204,6 +1493,7 @@ export class LLMClient {
       const providerAttemptKey = `${provider.endpoint}::${provider.model}`;
       if (tried.has(providerAttemptKey)) continue;
       tried.add(providerAttemptKey);
+      if (options.signal?.aborted) throw userAbortError();
       if (provider.note && /402|410|exhausted|gone/i.test(provider.note)) continue;
       const key = this.resolveApiKey(provider);
       if (!key) continue;
@@ -1227,11 +1517,12 @@ export class LLMClient {
         this.apiKey = savedApiKey;
         this.model = savedModel;
         this.providerName = savedProvider;
-      } catch {
+      } catch (err) {
         this.baseUrl = savedBaseUrl;
         this.apiKey = savedApiKey;
         this.model = savedModel;
         this.providerName = savedProvider;
+        if (isUserAbort(err)) throw err;
       }
     }
 
@@ -1244,6 +1535,8 @@ export class LLMClient {
     options: LLMOptions,
     primaryError: any
   ): Promise<string | null> {
+    // Operator interrupt: never walk the fallback chain — the turn is over.
+    if (options.signal?.aborted) return null;
     if (this.providers.length === 0) return null;
 
     const sorted = [...this.providers].sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99));
@@ -1277,12 +1570,14 @@ export class LLMClient {
         const result = await this._callProvider(messages, options);
         console.log(`[tnf] Fallback succeeded: ${provider.name} (${provider.model})`);
         return result;
-      } catch {
-        // Restore and try next
+      } catch (err) {
+        // Restore and try next — unless the operator interrupted, in which
+        // case stop the chain walk immediately and surface the abort.
         this.baseUrl = savedBaseUrl;
         this.apiKey = savedApiKey;
         this.model = savedModel;
         this.providerName = savedProvider;
+        if (isUserAbort(err) || options.signal?.aborted) return null;
       }
     }
 

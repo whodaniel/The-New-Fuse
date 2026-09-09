@@ -200,6 +200,7 @@ export default function WorkflowBrowser() {
               size="icon"
               variant="glass"
               className="h-9 w-9"
+              ariaLabel="Favorite workflow"
               onClick={(e) => {
                 e.stopPropagation();
                 onAction(workflow, 'favorite');
@@ -211,6 +212,7 @@ export default function WorkflowBrowser() {
               size="icon"
               variant="glass"
               className="h-9 w-9"
+              ariaLabel="Share workflow"
               onClick={(e) => {
                 e.stopPropagation();
                 onAction(workflow, 'share');

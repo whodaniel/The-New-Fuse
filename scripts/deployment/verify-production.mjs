@@ -227,6 +227,38 @@ async function main() {
     }
   }
 
+  // --- Turnstile site key verification --------------------------------------
+  // If Turnstile is required, the site key must be present in the bundle so
+  // users do not get blocked by "Please complete Turnstile verification".
+  if (bundle) {
+    try {
+      const { body } = await fetchText(`${SITE}${bundle}`);
+      const hasTurnstileKey = body.includes('0x4AAAAAAChQ2ZeB10ay0LvR') || !body.includes('Please complete Turnstile verification');
+      check(
+        'Turnstile widget is not blocking without site key',
+        hasTurnstileKey,
+        hasTurnstileKey
+          ? 'Turnstile key present or requirement disabled'
+          : 'Turnstile verification error present without valid site key'
+      );
+    } catch (err) {
+      check('Turnstile widget is not blocking without site key', false, err.message);
+    }
+  }
+
+  // --- Auth logout route check -----------------------------------------------
+  try {
+    const logoutRes = await fetchText(`${SITE}/auth/logout`);
+    const hasLogoutShell = logoutRes.body.includes('id="root"') || logoutRes.body.includes("id='root'");
+    check(
+      '/auth/logout serves SPA shell',
+      logoutRes.status === 200 && hasLogoutShell,
+      hasLogoutShell ? 'status=200; spa shell ok' : `status=${logoutRes.status}; missing SPA shell`
+    );
+  } catch (err) {
+    check('/auth/logout serves SPA shell', false, err.message);
+  }
+
   finish();
 }
 

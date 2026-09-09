@@ -167,6 +167,39 @@ async function submit(request) {
   return { requestId: record.requestId };
 }
 
+function normalizeRecord(raw, fallbackId = null) {
+  if (!raw || typeof raw !== 'object') return null;
+  const requestId = raw.requestId || raw.id || fallbackId;
+  let requested = raw.requested;
+  if (!Array.isArray(requested) && Array.isArray(raw.capabilities)) {
+    requested = [];
+    for (const cap of raw.capabilities) {
+      const actions = Array.isArray(cap.can) ? cap.can : [cap.can];
+      const resource = typeof cap.with === 'object' && cap.with !== null ? cap.with.resource : cap.with;
+      const conditions = typeof cap.with === 'object' && cap.with !== null ? { ...cap.with } : undefined;
+      if (conditions) delete conditions.resource;
+      for (const action of actions) {
+        requested.push({
+          can: action,
+          with: resource,
+          ...(conditions && Object.keys(conditions).length ? { conditions } : {})
+        });
+      }
+    }
+  }
+  const requesterDid = raw.requesterDid || (typeof raw.requester === 'string' && raw.requester.startsWith('did:') ? raw.requester : 'did:tnf:local:agent:tnfcli:daniels_macbook_pro:001');
+  const requesterRole = raw.requesterRole || 'sub-director';
+  const tier = raw.tier || 'operational';
+  return {
+    ...raw,
+    requestId,
+    requested,
+    requesterDid,
+    requesterRole,
+    tier,
+  };
+}
+
 function pending() {
   ensureDirs();
   return fs
@@ -174,7 +207,7 @@ function pending() {
     .filter((f) => f.endsWith('.json'))
     .map((f) => {
       try {
-        return JSON.parse(fs.readFileSync(path.join(PENDING_DIR, f), 'utf8'));
+        return normalizeRecord(JSON.parse(fs.readFileSync(path.join(PENDING_DIR, f), 'utf8')), f.replace(/\.json$/, ''));
       } catch {
         return null;
       }
@@ -187,11 +220,12 @@ function getRequest(requestId) {
   const p = path.join(PENDING_DIR, `${requestId}.json`);
   if (!fs.existsSync(p)) return null;
   try {
-    return JSON.parse(fs.readFileSync(p, 'utf8'));
+    return normalizeRecord(JSON.parse(fs.readFileSync(p, 'utf8')), requestId);
   } catch {
     return null;
   }
 }
+
 
 // ============================================================================
 // DECIDE (operator-only)

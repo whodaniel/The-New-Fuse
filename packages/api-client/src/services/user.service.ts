@@ -1,5 +1,5 @@
-import { ApiClient } from '../client/ApiClient.js';
 import { BaseService } from './BaseService.js';
+import type { IApiClient } from './IApiClient.js';
 
 /**
  * User interface
@@ -44,7 +44,7 @@ export class UserService extends BaseService {
    * Create a new user service
    * @param api API client instance
    */
-  constructor(api: ApiClient) {
+  constructor(api: IApiClient) {
     super(api, '/users');
   }
 
@@ -101,7 +101,10 @@ export class UserService extends BaseService {
    * @param newPassword New password
    * @returns Promise with password change response
    */
-  async changePassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+  async changePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Promise<{ success: boolean; message: string }> {
     this.validateRequired({ currentPassword, newPassword }, ['currentPassword', 'newPassword']);
     return this.post<{ success: boolean; message: string }>('/change-password', {
       currentPassword,
@@ -146,6 +149,6 @@ export class UserService extends BaseService {
  * console.log(`Profile updated for ${updatedUser.name}`);
  * ```
  */
-export function createUserService(api: ApiClient): UserService {
+export function createUserService(api: IApiClient): UserService {
   return new UserService(api);
 }

@@ -4,8 +4,7 @@ description:
   Checklist for auditing or building any TNF daemon/script that (a) injects
   keystrokes/prompts into a terminal or app, or (b) claims autonomous execution
   authorization. Use when asked to touch terminal-heartbeat-pulse.cjs,
-  relay-channel-monitor.cjs, cursor-agent-wake.sh,
-  self-improvement-orchestrator.js, orchestrator-system.sh,
+  relay-channel-monitor.cjs, cursor-agent-wake.sh, orchestrator-system.sh,
   DIRECTIVES.md/TURN_ZERO_MANDATE.md, or any new self-prompting/unattended-agent
   mechanism. Not a mandate to run anything automatically — a reference for what
   to check.
@@ -36,8 +35,11 @@ around commit `7cc7922b4e` and `docs/protocols/CHALLENGE_RATIONALE_LOG.md`.
    - For apps with no AppleScript-readable buffer (Kiro, Claude Desktop):
      system-wide idle time via
      `ioreg -c IOHIDSystem | awk '/HIDIdleTime/ {print int($NF/1000000000); exit}'`
-     — see `scripts/orchestrator-system.sh` `check_human_idle()` and
-     `scripts/self-improvement-orchestrator.js` `getSystemIdleSeconds()`.
+     — see `scripts/orchestrator-system.sh` `check_human_idle()`; the per-app
+     Terminal.app variant lives in `scripts/lib/tnf-terminal-attention.cjs`.
+     (The retired self-improvement orchestrator script also used this pattern;
+     it was retired 2026-09-06 — see
+     docs/protocols/reports/SELF-IMPROVEMENT-COMPONENT-TRIAGE-2026-09-06.md.)
 2. **Check the preflight is done fresh, right before the injection call**, not
    from a stale earlier poll — time passes between discovery and action.
 3. **Separate "discover/observe" from "act."** A safety gate should skip the
@@ -96,26 +98,26 @@ findings below were all live in `main` at the time, not hypotheticals.
    of crypto calls tells you nothing about whether anything checks them.
 2. **A shared secret cannot establish individual identity.** If every agent
    holds `A2A_SECRET_KEY`, any holder can sign as any `agent_id`. Symmetric
-   *per-agent* keys do not fix this either: whoever must verify agent A needs
+   _per-agent_ keys do not fix this either: whoever must verify agent A needs
    A's key, and anything they can verify with they can forge with. On a
-   multi-verifier bus, identity requires asymmetric signing (Ed25519 here).
-   Ask: *who else holds the key needed to check this message?*
-3. **A key mode selector is a downgrade vector.** `header.kid` (or `alg`, or
-   any "which crypto did we use" field) must be pinned and the weaker mode
-   rejected in enforce mode — otherwise an attacker just selects the weak mode.
-   Same lesson as JWT `alg: none`.
+   multi-verifier bus, identity requires asymmetric signing (Ed25519 here). Ask:
+   _who else holds the key needed to check this message?_
+3. **A key mode selector is a downgrade vector.** `header.kid` (or `alg`, or any
+   "which crypto did we use" field) must be pinned and the weaker mode rejected
+   in enforce mode — otherwise an attacker just selects the weak mode. Same
+   lesson as JWT `alg: none`.
 4. **Check that a guard's trigger condition ever occurs.** `saveRoleRegistry`
-   refused to run when `TNF_AGENT_ID` was set — but nothing in the repo *set*
+   refused to run when `TNF_AGENT_ID` was set — but nothing in the repo _set_
    `TNF_AGENT_ID`, so the guard never fired. `grep -rn 'VAR='` (assignment), not
    just `process.env.VAR` (read), before believing a guard is active.
 5. **File modes are not a boundary against same-uid processes.** `0600` on
-   `~/.tnf/authority/keys/*` and `roles.json` protects against *other users*.
+   `~/.tnf/authority/keys/*` and `roles.json` protects against _other users_.
    Agents run as the operator's uid, so they can read and write those files
    regardless. Say so in the docs instead of letting the mode imply otherwise;
    the real boundary is a separate uid or a biometric-gated key.
 6. **Staged rollouts must not go quiet while still insecure.** A `warn` mode
    that verified legacy-signed traffic successfully would produce a clean log
-   and falsely signal "safe to enforce." Legacy envelopes are made to *fail*
+   and falsely signal "safe to enforce." Legacy envelopes are made to _fail_
    verification deliberately, so a quiet log means the secret was really
    provisioned. Check what a rollout flag's quiet state actually proves.
 7. **Secrets in `.env` are a repo problem, not just a config problem.** A

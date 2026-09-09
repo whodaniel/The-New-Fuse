@@ -2,29 +2,31 @@ name: Tauri Desktop QA
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - main
-      - develop
-      - tnf-cli-harness-implementation
-    paths:
-      - "apps/tauri-desktop/**"
-      - "scripts/qa/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/tauri-desktop-qa.yml"
-  push:
-    branches:
-      - main
-      - develop
-      - tnf-cli-harness-implementation
-      - "cursor/**"
-    paths:
-      - "apps/tauri-desktop/**"
-      - "scripts/qa/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/tauri-desktop-qa.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches:
+  #     - main
+  #     - develop
+  #     - tnf-cli-harness-implementation
+  #   paths:
+  #     - "apps/tauri-desktop/**"
+  #     - "scripts/qa/**"
+  #     - "package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/tauri-desktop-qa.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+  #     - tnf-cli-harness-implementation
+  #     - "cursor/**"
+  #   paths:
+  #     - "apps/tauri-desktop/**"
+  #     - "scripts/qa/**"
+  #     - "package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/tauri-desktop-qa.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

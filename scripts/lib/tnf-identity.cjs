@@ -27,23 +27,31 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-/**
- * Authority roles, using TNF's existing plain-language vocabulary.
- *
- * These are the canonical agent names from `.claude/agents/` — the same words
- * that already appear in staffing and orchestration — NOT a new taxonomy.
- * `local-director` was an invention of the 2026-07-23 session and has been
- * removed; the real entity is `sub-director` (displayName "Local Sub-Director").
- *
- * Deliberately distinct from `daccRole` (director | orchestrator | broker |
- * worker | participant) in packages/database/src/drizzle/schema/agents.ts.
- * That field is *classification*, derived by `deriveDaccRole()` in
- * packages/tnf-cli/src/commands/agents-classify.ts via a substring match on the
- * agent's filename (`n.includes('director') -> 'director'`). It answers "what
- * kind of agent is this," and must never answer "what may this agent do" — if
- * it did, renaming a file to `x-director.md` would be a privilege escalation.
- */
-const VALID_ROLES = Object.freeze(['worker', 'sub-director', 'super-director']);
+let contracts;
+try {
+  contracts = require('@the-new-fuse/control-plane-contracts');
+} catch {
+  contracts = require(path.resolve(__dirname, '../../packages/control-plane-contracts'));
+}
+
+const {
+  VALID_ROLES,
+  RESIDENCIES,
+  ROLE_RANK,
+  MAX_CHAIN_DEPTH,
+  isValidRole,
+  buildAgentDid,
+  parseAgentDid,
+  didToCanonicalEntityId,
+  residencyOf,
+  canonicalGrantMaterial,
+  signGrant,
+  verifyGrant,
+  attenuationHolds,
+  verifyGrantChain,
+  crossResidencyGrants,
+  normalizeDidSegment,
+} = contracts;
 
 const AUTHORITY_DIR =
   process.env.TNF_AUTHORITY_DIR || path.join(os.homedir(), '.tnf', 'authority');
@@ -79,10 +87,6 @@ function ensureAuthorityLayout() {
   } catch {
     /* best-effort */
   }
-}
-
-function isValidRole(role) {
-  return typeof role === 'string' && VALID_ROLES.includes(role);
 }
 
 function normalizeAgentId(agentId) {
@@ -287,8 +291,22 @@ function resolveRoleForMessage({ verified, agentId, claimedRole } = {}) {
   };
 }
 
-function keyPathFor(agentId) {
+/**
+ * Filesystem-safe form of an agent id, for key filenames.
+ *
+ * A `did:tnf` contains colons, which are illegal in Windows filenames and are
+ * displayed as `/` by macOS Finder. `:` maps to `~`, which cannot appear in a
+ * DID segment (`[a-z0-9_]`) and does not appear in legacy bare ids, so the
+ * encoding is injective and leaves every existing key file untouched.
+ */
+function fsSafeAgentId(agentId) {
   const id = normalizeAgentId(agentId);
+  if (!id) return null;
+  return id.replace(/:/g, '~');
+}
+
+function keyPathFor(agentId) {
+  const id = fsSafeAgentId(agentId);
   if (!id) {
     throw new Error('[tnf-identity] invalid agent id for key path');
   }
@@ -319,13 +337,13 @@ function pubkeysDir() {
 }
 
 function privateKeyPathFor(agentId) {
-  const id = normalizeAgentId(agentId);
+  const id = fsSafeAgentId(agentId);
   if (!id) throw new Error('[tnf-identity] invalid agent id for key path');
   return path.join(KEYS_DIR, `${id}.ed25519`);
 }
 
 function publicKeyPathFor(agentId) {
-  const id = normalizeAgentId(agentId);
+  const id = fsSafeAgentId(agentId);
   if (!id) throw new Error('[tnf-identity] invalid agent id for key path');
   return path.join(PUBKEYS_DIR, `${id}.pub`);
 }
@@ -518,12 +536,77 @@ function bootstrapAgentIdentity(agentId, requestedRole = 'worker') {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Traceable authority identifiers (did:tnf)
+// ---------------------------------------------------------------------------
+/**
+ * TNF had nine identifier systems and the only one that authorized anything —
+ * the key of `roles.json` — was a bare ad-hoc string like
+ * `"tnf-local-subdirector"`. It carried no tenant, no residency, no instance,
+ * and matched none of the federated namespaces, so a grant could not be traced
+ * to an entity.
+ *
+ * `did:tnf` closes that without inventing a tenth namespace. It is the
+ * `canonicalEntityId` (`TNF:[SCOPE:]CATEGORY:PROVIDER:NAME:INSTANCE`, per
+ * packages/relay-core/src/contracts/identity.ts) expressed as a DID, because a
+ * DID is what the authority contracts already require:
+ * `CapabilityGrant.iss`/`aud` are DIDs, and `tnf-elevation-broker.cjs` rejects a
+ * `requesterDid` that does not start with `did:`.
+ *
+ *   did:tnf:<scope>:<category>:<provider>:<name>:<instance>
+ *
+ * The SCOPE segment — present in the canonical builder since inception and
+ * populated by nothing — carries residency and tenancy:
+ *
+ *   local                       the installed harness on a user's machine
+ *   cloud                       TNF's own control plane
+ *   cloud_<tenantId>            a server-side agent belonging to one tenant
+ *
+ * Examples:
+ *   did:tnf:cloud:user:tnf:daniel_goldberg:001        super-admin (the owner)
+ *   did:tnf:cloud:system:tnfcore:super_director:001   the SaaS orchestrator
+ *   did:tnf:cloud_acme:agent:tnfcore:reviewer:001     a tenant's cloud agent
+ *   did:tnf:local:agent:tnfcli:mbp-2015:001           an installed harness
+ *
+ * Note what is deliberately NOT here: `idNumber` (`ID#:<Base58>`) is a
+ * sequential reputation counter verified by a symmetric HMAC, so anyone able to
+ * verify it can forge it. It must never key an authority grant. Nor may an NFT
+ * id — that path was disabled fail-closed as a P0 on 2026-08-25 because
+ * `nft-authorized:${nft_id}` was a template literal, not a signature.
+ */
+/**
+ * The cloud read path: resolve a subject's role from signed grant rows, falling
+ * back to the local `roles.json` registry via contracts.
+ */
+function resolveRoleFromGrants(subjectDid, grants, opts = {}) {
+  return contracts.resolveRoleFromGrants(subjectDid, grants, {
+    fallbackResolver: (id) => resolveRole(id),
+    ...opts,
+  });
+}
+
 function canRequestElevation(role) {
-  return role === 'super-director' || role === 'sub-director';
+  return role === 'super-admin' || role === 'super-director' || role === 'sub-director';
 }
 
 module.exports = {
   VALID_ROLES,
+  RESIDENCIES,
+  // Traceable authority identifiers (did:tnf)
+  buildAgentDid,
+  canonicalGrantMaterial,
+  signGrant,
+  verifyGrant,
+  attenuationHolds,
+  crossResidencyGrants,
+  verifyGrantChain,
+  resolveRoleFromGrants,
+  MAX_CHAIN_DEPTH,
+  ROLE_RANK,
+  parseAgentDid,
+  didToCanonicalEntityId,
+  residencyOf,
+  fsSafeAgentId,
   authorityDir,
   rolesPath,
   keysDir,

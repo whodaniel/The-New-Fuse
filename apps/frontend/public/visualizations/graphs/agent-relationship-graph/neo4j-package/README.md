@@ -9,10 +9,12 @@ Nodes now include:
 - `daccRole` — hierarchy seat (director/orchestrator/broker/worker/…)
 - `platform` — fulfillment surface (antigravity/claude/pi/master-clock/…)
 - `workerAction` — work type (may be `orchestrator` without holding the baton)
-- `batonHolder` / `batonIdentity` — only `master-clock-baton` is the protocol baton
+- `batonHolder` / `batonIdentity` — only `master-clock-baton` is the protocol
+  baton
 
-`cluster: orchestration` is a **work-domain affinity label**, not baton ownership.
-Canonical taxonomy viz: `/visualizations/graphs/dacc-role-platform-axes.html`
+`cluster: orchestration` is a **work-domain affinity label**, not baton
+ownership. Canonical taxonomy viz:
+`/visualizations/graphs/dacc-role-platform-axes.html`
 
 ## Files
 

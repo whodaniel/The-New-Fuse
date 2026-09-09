@@ -1,0 +1,106 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "2e5866b0-06dd-4d73-b164-48acf6fd8ca2",
+  "created_at": "2026-09-09T02:57:08.329Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "fix/codex-tnf-lifecycle-20260909",
+  "head_sha": "f68bd99d8bc38298a2082bf1232652b5b6355410",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Reconciled origin/main 53d2fdf99 into Codex TNF integration PR351",
+    "Preserved incoming distribution fix and both agent ledger histories"
+  ],
+  "changed_paths": [
+    "apps/api/src/controllers/relay-health.controller.ts",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/workspace-leases.json",
+    "scripts/sync-repos.sh",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T025708-2e5866b0.json",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T025708-2e5866b0.md",
+    "docs/protocols/reports/handoffs/2026/2e5866b0-06dd-4d73-b164-48acf6fd8ca2.json"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "Merge reconciliation only. Source implementation unchanged from f68bd99d8 with 10 tests and native lifecycle proof. Preserved incoming public API declaration export fix. Both ledger entries retained. Shared latest handoff stays incoming main while new scoped receipt binds this branch."
+  },
+  "continuation": {
+    "owner": "codex-tnf-lifecycle",
+    "targets": ["codex-tnf-lifecycle"],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": [
+    "Complete deliberate merge and push PR351",
+    "Merge PR351 and verify remote main",
+    "Retain runtime checkout and queue one current-thread Turn Zero"
+  ],
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "rationale": "Merge uses established scope and ownership rules"
+    },
+    "skills": {
+      "considered": true,
+      "rationale": "Existing TNF gateway skill covers this continuation"
+    },
+    "gaps": {
+      "considered": true,
+      "open": [
+        {
+          "summary": "Native bare slash aliases unsupported; supported skill entry verified"
+        }
+      ]
+    }
+  },
+  "freshness_receipts": [],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": "merge",
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": ["f68bd99d8bc38298a2082bf1232652b5b6355410"]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "session_id": "01a083f1-bbb5-7203-903b-c49157fbedb3",
+  "session_harness": "codex",
+  "task_id": "codex-tnf-lifecycle-20260909",
+  "checkout_id": "co_mtthcrri_ed282b67",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": ["c8be5f41-a1c4-47ac-b269-a2d82a943fd4"],
+  "record_hash": "6e5bc7db748eedae9a1274aa8f2af3e0877d16376a6295b349382a76fed431a2"
+}

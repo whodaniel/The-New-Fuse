@@ -1,0 +1,148 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "04f20e10-5b5e-4c0b-8463-011e52c38807",
+  "created_at": "2026-09-06T06:34:01.646Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "tnf/sessions-jump-and-llm-resilience",
+  "head_sha": "c36b48f050c3c05ebd820f44ee2c8ad056dacca5",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "TNF-0108: canonical handoff registry - schema 0.3, immutable per-emit records, metadata-only index with explicit supersession, scoped generated views"
+  ],
+  "changed_paths": [
+    "docs/protocols/HANDOFF_REGISTRY_PROTOCOL.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/schemas/tnf-session-handoff.schema.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/reports/handoffs/2026/99dd8182-0a60-4b63-82cf-238d1bc777ae.json",
+    "scripts/harness/handoff-registry.cjs",
+    "scripts/harness/handoff-registry.test.cjs",
+    "scripts/protocols/emit-session-handoff.cjs",
+    "scripts/turn-end-v2.cjs"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Auto-verify 2026-09-06T06:34:07.661Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+  },
+  "continuation": {
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": [
+    "Migrate gate consumers to registry-first reads (T6)",
+    "Enable registry verify --enforce in CI"
+  ],
+  "artifacts": {
+    "commits": ["c36b48f050c3c05ebd820f44ee2c8ad056dacca5"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "private_control_plane",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:10.075Z",
+      "value": "d3e52f001fd6ebe325a92cfb2246d04c8394893f"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:11.389Z",
+      "value": "1e680a2108b66d921a8d827daf3fad36cfc78c86"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:12.981Z",
+      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:14.504Z",
+      "value": "[]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:16.620Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:19.132Z",
+      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:19.316Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:19.603Z",
+      "value": "155a3b9273bad34ec15046ebf323d53e0854dc31\n2026-09-01"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:21.195Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=d3e52f001fd6ebe325a92cfb2246d04c8394893f\nbranch=main\ndirty=12"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:21.243Z",
+      "value": "REDIS_UNREACHABLE\nRELAY_OK"
+    }
+  ],
+  "session_id": "e449093a-5756-470b-b574-8b426fadfb9f",
+  "session_harness": "pi-coding-agent",
+  "task_id": "TNF-0108",
+  "checkout_id": "co_mtpe199t_2c40fc93",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": ["99dd8182-0a60-4b63-82cf-238d1bc777ae"],
+  "record_hash": "f2d239fe68649abeb76ffaab3a05315110c3ef18ad7aa6ace557f94bebd59ba7"
+}

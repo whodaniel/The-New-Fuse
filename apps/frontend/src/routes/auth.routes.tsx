@@ -12,6 +12,7 @@ import { Route } from 'react-router-dom';
 
 const LoginPage = lazy(() => import('../pages/auth/Login'));
 const RegisterPage = lazy(() => import('../pages/auth/Register'));
+const LogoutPage = lazy(() => import('../pages/auth/Logout'));
 const AuthIndexPage = lazy(() => import('../pages/auth'));
 const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPassword'));
 const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPassword'));
@@ -26,11 +27,13 @@ export const authRoutes: ReactElement[] = [
   // Auth index
   <Route key="auth-index" path="/auth" element={<AuthIndexPage />} />,
 
-  // Login/Register
+  // Login/Register/Logout
   <Route key="login" path="/login" element={<LoginPage />} />,
   <Route key="register" path="/register" element={<RegisterPage />} />,
+  <Route key="logout" path="/logout" element={<LogoutPage />} />,
   <Route key="auth-login" path="/auth/login" element={<LoginPage />} />,
   <Route key="auth-register" path="/auth/register" element={<RegisterPage />} />,
+  <Route key="auth-logout" path="/auth/logout" element={<LogoutPage />} />,
 
   // Password management
   <Route
@@ -65,8 +68,10 @@ export const AUTH_ROUTES = [
   '/auth',
   '/login',
   '/register',
+  '/logout',
   '/auth/login',
   '/auth/register',
+  '/auth/logout',
   '/auth/forgot-password',
   '/auth/reset-password',
   '/auth/sso',

@@ -1,8 +1,19 @@
 # The New Fuse - Final Deployment Steps to CloudRuntime
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 ## ✅ What's Ready
 
 All services are prepared and ready to deploy:
+
 - ✅ Dockerfiles configured for all services
 - ✅ cloud_runtime.toml files configured
 - ✅ Project linked to TNF (041cee9d-8648-4074-b5a6-0eae436de1d1)
@@ -13,10 +24,12 @@ All services are prepared and ready to deploy:
 
 ### Step 1: Create Services in CloudRuntime Dashboard (5 minutes)
 
-Since CloudRuntime CLI requires interactive input for service creation, you need to create empty services through the web dashboard first.
+Since CloudRuntime CLI requires interactive input for service creation, you need
+to create empty services through the web dashboard first.
 
 1. **Open Your CloudRuntime Project**
-   - Visit: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
+   - Visit:
+     https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1?environmentId=f706eaae-de9e-4a9b-a970-944dd4a6be41
    - You should see your TNF project dashboard
 
 2. **Create API Service**
@@ -45,7 +58,8 @@ Since CloudRuntime CLI requires interactive input for service creation, you need
    - Click "+ New" → "Database" → "PostgreSQL" → Wait for provisioning
    - Click "+ New" → "Database" → "Redis" → Wait for provisioning
 
-After this step, you should have 4 services + 2 databases in your CloudRuntime dashboard.
+After this step, you should have 4 services + 2 databases in your CloudRuntime
+dashboard.
 
 ### Step 2: Deploy All Services (15 minutes)
 
@@ -103,6 +117,7 @@ JWT_SECRET=<paste-the-secret-generated-below>
 ```
 
 Generate JWT Secret:
+
 ```bash
 openssl rand -base64 32
 ```
@@ -142,7 +157,8 @@ PORT=3000
 VITE_API_URL=https://${{api-gateway.CLOUD_RUNTIME_PUBLIC_DOMAIN}}
 ```
 
-**Note**: After adding variables, click "Deploy" to restart each service with the new configuration.
+**Note**: After adding variables, click "Deploy" to restart each service with
+the new configuration.
 
 ### Step 4: Monitor Deployments (ongoing)
 
@@ -167,6 +183,7 @@ cloud_runtime logs --service frontend
 Once all builds complete:
 
 1. **Check Service Health**
+
    ```bash
    # Get API URL
    cloud_runtime service --service api
@@ -192,37 +209,41 @@ Once all builds complete:
 
 ## 🚀 Automated Deployment Script
 
-I've created `deploy-to-services.sh` for you. After creating services in the dashboard, run:
+I've created `deploy-to-services.sh` for you. After creating services in the
+dashboard, run:
 
 ```bash
 ./deploy-to-services.sh
 ```
 
 This will:
+
 - Link each service directory to its CloudRuntime service
 - Deploy all services in sequence
 - Show deployment URLs and status
 
 ## ⏱️ Expected Timeline
 
-| Step | Duration |
-|------|----------|
-| Create services in dashboard | 5 min |
-| Deploy all services (builds) | 40-60 min |
-| Configure environment variables | 10 min |
-| Verify deployments | 5 min |
-| **Total** | **60-80 minutes** |
+| Step                            | Duration          |
+| ------------------------------- | ----------------- |
+| Create services in dashboard    | 5 min             |
+| Deploy all services (builds)    | 40-60 min         |
+| Configure environment variables | 10 min            |
+| Verify deployments              | 5 min             |
+| **Total**                       | **60-80 minutes** |
 
 ## 🐛 Troubleshooting
 
 ### Build Fails
 
 **Check logs:**
+
 ```bash
 cloud_runtime logs --service <service-name>
 ```
 
 **Common issues:**
+
 - Missing dependencies: Check package.json
 - Build timeout: CloudRuntime has 15-minute limit (should be fine)
 - Out of memory: Services use ~512MB each
@@ -230,6 +251,7 @@ cloud_runtime logs --service <service-name>
 ### Service Won't Start
 
 **Check:**
+
 - Environment variables are set correctly
 - DATABASE_URL uses CloudRuntime template syntax
 - Port matches the service configuration
@@ -237,6 +259,7 @@ cloud_runtime logs --service <service-name>
 ### Cannot Link Service
 
 **If `cloud_runtime link --service <name>` fails:**
+
 - Verify service exists in dashboard
 - Use exact service name (case-sensitive)
 - Make sure you're in the correct project
@@ -279,6 +302,7 @@ Save these URLs - you'll need them for testing and integration.
 ## 💰 Cost Estimate
 
 **CloudRuntime Hobby Plan ($5/month):**
+
 - 4 services × ~512MB RAM = ~2GB
 - PostgreSQL: ~256MB
 - Redis: ~128MB
@@ -308,7 +332,8 @@ Save these URLs - you'll need them for testing and integration.
 
 ## 📚 Additional Resources
 
-- **Project Dashboard**: https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
+- **Project Dashboard**:
+  https://thenewfuse.com/project/041cee9d-8648-4074-b5a6-0eae436de1d1
 - **CloudRuntime Docs**: https://docs.thenewfuse.com
 - **Support**: https://discord.gg/cloud_runtime
 - **Local Guide**: See `CLOUD_RUNTIME_DEPLOYMENT_INSTRUCTIONS.md`
@@ -325,6 +350,7 @@ Save these URLs - you'll need them for testing and integration.
 **Questions or Issues?**
 
 Check the logs:
+
 ```bash
 cloud_runtime logs --service <service-name>
 ```

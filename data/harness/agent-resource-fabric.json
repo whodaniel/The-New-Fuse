@@ -2,7 +2,7 @@
   "$schema": "./agent-resource-fabric.schema.json",
   "spec": "tnf/agent-resource-fabric/0.1",
   "version": "0.1.0",
-  "updatedAt": "2026-08-22T16:45:00.000Z",
+  "updatedAt": "2026-09-09T02:45:00.911827+00:00",
   "centralRoot": "~/.tnf/agent-resources",
   "objectStore": "objects/sha256",
   "indexPath": "index/resources.json",
@@ -93,7 +93,7 @@
     {
       "id": "codex",
       "runtime": "Codex",
-      "discoveryState": "known-frontload-only",
+      "discoveryState": "known-native-skills-and-hooks",
       "surfaces": [
         {
           "id": "codex-agents",
@@ -106,6 +106,32 @@
           "redirectStrategy": "managed-pointer",
           "redirectVerified": false,
           "consumerTags": ["codex", "instruction"]
+        },
+        {
+          "id": "codex-tnf-skill",
+          "path": "~/.agents/skills/tnf",
+          "resourceKind": "skill",
+          "publisher": "tnf",
+          "mutability": "read-mostly",
+          "sensitivity": "internal",
+          "centralization": "shared-copy",
+          "redirectStrategy": "symlink",
+          "redirectVerified": true,
+          "consumerTags": ["codex", "skill", "tnf"],
+          "verification": "scripts/harness/codex-lifecycle-probe.cjs; native Codex 0.153.4 skills/list"
+        },
+        {
+          "id": "codex-lifecycle-hooks",
+          "path": "~/.codex/hooks.json",
+          "resourceKind": "config",
+          "publisher": "local",
+          "mutability": "host-owned",
+          "sensitivity": "internal",
+          "centralization": "host-local",
+          "redirectStrategy": "native-config",
+          "redirectVerified": false,
+          "consumerTags": ["codex", "lifecycle"],
+          "verification": "scripts/harness/codex-lifecycle-probe.cjs; trust and execution are host-specific"
         }
       ]
     },

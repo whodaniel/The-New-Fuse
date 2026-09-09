@@ -44,3 +44,20 @@ test('two identical failures escalate to halt', () => {
   clearEscalationHalt(root);
   assert.doesNotThrow(() => assertNotEscalationHalted(root));
 });
+
+test('full-auto failures use their own breaker without poisoning or clearing global escalation', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tnf-cycle-receipt-'));
+  try {
+    const input = { intent: 'audit', cmd: 'node', args: ['audit.cjs'], cwd: root, ok: false, durationMs: 1, error: 'audit failed' };
+    for (let i = 0; i < 6; i++) recordCommandOutcome(root, { ...input, escalationScope: 'full-auto' });
+    assert.equal(readEscalationState(root).halted, false);
+    recordCommandOutcome(root, input);
+    recordCommandOutcome(root, input);
+    const before = readEscalationState(root);
+    assert.equal(before.halted, true);
+    recordCommandOutcome(root, { ...input, ok: true, escalationScope: 'full-auto' });
+    assert.deepEqual(readEscalationState(root), before);
+    const receipts = fs.readFileSync(path.join(root, 'docs/operations/tnf-action-receipts.jsonl'), 'utf8').trim().split('\n');
+    assert.equal(receipts.length, 9);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});

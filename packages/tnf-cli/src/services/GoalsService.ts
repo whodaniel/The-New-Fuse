@@ -1,7 +1,5 @@
 import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import { UnifiedLedgerClient } from './UnifiedLedgerClient.js';
 
 interface GoalTask {
   id: string;
@@ -47,6 +45,10 @@ export interface Goal {
   completedAt?: string;
   dueDate?: string;
   notes?: string;
+  /** Owning authenticated TNF account (cloud identity key). */
+  ownerAccountId?: string;
+  /** Stable per-user id (profile_id) owning this goal. */
+  ownerUserId?: string;
 }
 
 export interface GoalSubject {
@@ -82,67 +84,49 @@ export interface GoalCreateInput {
 }
 
 export class GoalsService {
-  private goalsDir: string;
-  private configPath: string;
-  private config: GoalsConfig;
+  constructor(private readonly ledger = new UnifiedLedgerClient()) {}
 
-  constructor() {
-    this.goalsDir = path.join(os.homedir(), '.tnf', 'goals');
-    this.configPath = path.join(this.goalsDir, 'config.json');
-    this.config = this.loadConfig();
+  private async loadGoals(): Promise<Goal[]> {
+    const [goals, records] = await Promise.all([
+      this.ledger.request<any[]>('GET', 'goals'),
+      this.ledger.request<any[]>('GET', 'records'),
+    ]);
+    const byId = new Map(records.map((record) => [record.id, record]));
+    return goals.map((row) => {
+      const metadata = row.metadata || {};
+      const tasks: GoalTask[] = (row.linkedRecordIds || [])
+        .map((id: string) => byId.get(id))
+        .filter(Boolean)
+        .map((record: any) => ({
+          id: record.id,
+          description: record.description || record.title,
+          completed: record.status === 'completed',
+          createdAt: record.createdAt,
+          completedAt: record.status === 'completed' ? record.updatedAt : undefined,
+        }));
+      return this.migrateGoal({
+        ...metadata,
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        slug: metadata.slug || this.generateSlug(row.title),
+        priority: metadata.priority || 'medium',
+        status:
+          row.status === 'archived' ? 'abandoned' : row.status === 'draft' ? 'active' : row.status,
+        category: metadata.category || 'general',
+        tags: metadata.tags || [],
+        tasks,
+        progress: tasks.length
+          ? Math.round((tasks.filter((task) => task.completed).length / tasks.length) * 100)
+          : row.status === 'completed'
+            ? 100
+            : 0,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+      });
+    });
   }
 
-  private loadConfig(): GoalsConfig {
-    if (!fs.existsSync(this.goalsDir)) {
-      fs.mkdirSync(this.goalsDir, { recursive: true });
-    }
-    if (fs.existsSync(this.configPath)) {
-      try {
-        const raw = fs.readFileSync(this.configPath, 'utf8');
-        return JSON.parse(raw);
-      } catch {
-        /* ignore */
-      }
-    }
-    return { priorities: {} };
-  }
-
-  private saveConfig(): void {
-    if (!fs.existsSync(this.goalsDir)) {
-      fs.mkdirSync(this.goalsDir, { recursive: true });
-    }
-    fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2));
-  }
-
-  private getGoalsFile(): string {
-    return path.join(this.goalsDir, 'goals.json');
-  }
-
-  private loadGoals(): Goal[] {
-    const file = this.getGoalsFile();
-    if (fs.existsSync(file)) {
-      try {
-        const raw = fs.readFileSync(file, 'utf8');
-        const stored = JSON.parse(raw) as Goal[];
-        const migrated = stored.map((g) => this.migrateGoal(g));
-        // Persist the migration once so other readers (dashboard, exports)
-        // see the cross-agent shape rather than re-deriving it every load.
-        if (migrated.some((g, i) => g !== stored[i])) this.saveGoals(migrated);
-        return migrated;
-      } catch {
-        /* ignore */
-      }
-    }
-    return [];
-  }
-
-  /**
-   * Forward-migrate a persisted goal.
-   *
-   * Goals written before cross-agent parity carry `hermesFeature: string`.
-   * Lift those into the `parity` shape so every consumer can assume it, while
-   * leaving the legacy key in place for anything still reading it.
-   */
   private generateFederatedId(title: string, category: string, tags: string[]): string {
     const hash = crypto
       .createHash('sha256')
@@ -161,13 +145,6 @@ export class GoalsService {
     return { ...goal, federatedId, parity: { agent: 'hermes', feature: goal.hermesFeature } };
   }
 
-  private saveGoals(goals: Goal[]): void {
-    if (!fs.existsSync(this.goalsDir)) {
-      fs.mkdirSync(this.goalsDir, { recursive: true });
-    }
-    fs.writeFileSync(this.getGoalsFile(), JSON.stringify(goals, null, 2));
-  }
-
   private generateSlug(title: string): string {
     return title
       .toLowerCase()
@@ -182,7 +159,7 @@ export class GoalsService {
 
   // Initialize with default goals if none exist
   async initializeDefaults(): Promise<Goal[]> {
-    const existing = this.loadGoals();
+    const existing = await this.loadGoals();
     if (existing.length > 0) return existing;
 
     const defaults: GoalCreateInput[] = [
@@ -285,8 +262,8 @@ export class GoalsService {
       },
     ];
 
-    const goals = defaults.map((input) => this.createGoalFromInput(input));
-    this.saveGoals(goals);
+    const goals: Goal[] = [];
+    for (const input of defaults) goals.push(await this.create(input));
     return goals;
   }
 
@@ -317,103 +294,61 @@ export class GoalsService {
   }
 
   async list(): Promise<Goal[]> {
-    let goals = this.loadGoals();
-    if (goals.length === 0) {
-      goals = await this.initializeDefaults();
-    }
-    return goals;
+    return this.loadGoals();
   }
 
   async get(idOrSlug: string): Promise<Goal | undefined> {
-    const goals = await this.list();
-    return goals.find((g) => g.id === idOrSlug || g.slug === idOrSlug);
+    return (await this.list()).find((goal) => goal.id === idOrSlug || goal.slug === idOrSlug);
   }
 
   async create(input: GoalCreateInput): Promise<Goal> {
-    const goals = await this.list();
     const goal = this.createGoalFromInput(input);
-    goals.push(goal);
-    this.saveGoals(goals);
-    return goal;
+    const { tasks, id, createdAt, updatedAt, ...metadata } = goal;
+    const row = await this.ledger.request<any>('POST', 'goals', {
+      title: goal.title,
+      description: goal.description,
+      metadata,
+    });
+    return { ...goal, id: row.id, createdAt: row.createdAt, updatedAt: row.updatedAt };
   }
 
   async update(
     id: string,
     updates: Partial<Omit<Goal, 'id' | 'createdAt' | 'tasks'>>
   ): Promise<Goal | null> {
-    const goals = await this.list();
-    const idx = goals.findIndex((g) => g.id === id);
-    if (idx === -1) return null;
-
-    goals[idx] = { ...goals[idx], ...updates, updatedAt: new Date().toISOString() };
-    this.saveGoals(goals);
-    return goals[idx];
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const goals = await this.list();
-    const filtered = goals.filter((g) => g.id !== id);
-    if (filtered.length === goals.length) return false;
-    this.saveGoals(filtered);
-    return true;
-  }
-
-  async setProgress(id: string, progress: number): Promise<Goal | null> {
-    const clamped = Math.max(0, Math.min(100, progress));
-    return this.update(id, { progress });
-  }
-
-  async setStatus(id: string, status: Goal['status']): Promise<Goal | null> {
-    const updates: Partial<Goal> = { status };
-    if (status === 'completed') {
-      updates.completedAt = new Date().toISOString();
-      updates.progress = 100;
-    }
-    return this.update(id, updates);
+    const goal = await this.get(id);
+    if (!goal) return null;
+    const { tasks, id: ignored, createdAt, updatedAt, ...metadata } = { ...goal, ...updates };
+    const row = await this.ledger.request<any>('PATCH', `goals/${encodeURIComponent(id)}`, {
+      title: metadata.title,
+      description: metadata.description,
+      status: metadata.status === 'abandoned' ? 'archived' : metadata.status,
+      metadata,
+    });
+    if (!row) return null;
+    return (await this.get(id)) || null;
   }
 
   async addTask(goalId: string, description: string): Promise<GoalTask | null> {
-    const goals = await this.list();
-    const goal = goals.find((g) => g.id === goalId);
-    if (!goal) return null;
-
-    const task: GoalTask = {
-      id: `task-${Date.now().toString(36)}`,
-      description,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    };
-
-    goal.tasks.push(task);
-    this.recalculateProgress(goal);
-    this.saveGoals(goals);
-    return task;
+    if (!(await this.get(goalId))) return null;
+    const row = await this.ledger.request<any>(
+      'POST',
+      `goals/${encodeURIComponent(goalId)}/tasks`,
+      { title: description, description }
+    );
+    return { id: row.id, description, completed: false, createdAt: row.createdAt };
   }
 
   async completeTask(goalId: string, taskId: string): Promise<Goal | null> {
-    const goals = await this.list();
-    const goal = goals.find((g) => g.id === goalId);
-    if (!goal) return null;
-
-    const task = goal.tasks.find((t) => t.id === taskId);
-    if (!task) return null;
-
-    task.completed = true;
-    task.completedAt = new Date().toISOString();
-    this.recalculateProgress(goal);
-    this.saveGoals(goals);
-    return goal;
-  }
-
-  private recalculateProgress(goal: Goal): void {
-    if (goal.tasks.length === 0) return;
-    const completed = goal.tasks.filter((t) => t.completed).length;
-    goal.progress = Math.round((completed / goal.tasks.length) * 100);
-    if (goal.progress === 100 && goal.status !== 'completed') {
-      goal.status = 'completed';
-      goal.completedAt = new Date().toISOString();
-    }
-    goal.updatedAt = new Date().toISOString();
+    const goal = await this.get(goalId);
+    if (!goal || !goal.tasks.some((task) => task.id === taskId)) return null;
+    await this.ledger.request('PATCH', `records/${encodeURIComponent(taskId)}`, {
+      status: 'completed',
+    });
+    const updated = await this.get(goalId);
+    if (updated?.progress === 100)
+      return this.update(goalId, { status: 'completed', completedAt: new Date().toISOString() });
+    return updated || null;
   }
 
   async getStats(): Promise<{

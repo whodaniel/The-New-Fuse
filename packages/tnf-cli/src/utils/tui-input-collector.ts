@@ -28,6 +28,15 @@ export interface TuiInputCollectorOptions {
   /** Optional wall-clock stall defense (ms). 0 / undefined = off. */
   stallTimeoutMs?: number;
   stallFallbackPrompt?: string;
+  /**
+   * Fired (debounced) when one or more lines are parked while a turn is in
+   * flight, so the operator gets immediate confirmation that their typed
+   * input was captured and will run after the current turn. Receives the
+   * number of lines parked since the last drain.
+   */
+  onBusyQueued?: (lineCount: number) => void;
+  /** Quiet window before the busy-queue ack fires (ms). Default 350. */
+  busyAckDebounceMs?: number;
 }
 
 export interface TuiInputCollector {
@@ -70,6 +79,27 @@ export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInpu
   let stallTimer: ReturnType<typeof setTimeout> | null = null;
   let disposed = false;
 
+  // Busy-queue ack: debounce so a multiline paste parked during a turn
+  // acknowledges once with the total line count, not once per line.
+  const busyAckDebounceMs = opts.busyAckDebounceMs ?? 350;
+  let busyAckTimer: ReturnType<typeof setTimeout> | null = null;
+  let busyAckLines = 0;
+  const scheduleBusyAck = () => {
+    if (!opts.onBusyQueued) return;
+    busyAckLines += 1;
+    if (busyAckTimer) clearTimeout(busyAckTimer);
+    busyAckTimer = setTimeout(() => {
+      busyAckTimer = null;
+      const count = busyAckLines;
+      busyAckLines = 0;
+      try {
+        opts.onBusyQueued!(count);
+      } catch {
+        /* ack is best-effort */
+      }
+    }, busyAckDebounceMs);
+  };
+
   const clearStall = () => {
     if (stallTimer) {
       clearTimeout(stallTimer);
@@ -107,6 +137,7 @@ export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInpu
       // Park fragments until takeBusyQueue() at end of turn (debounce not needed
       // while turn is in flight — flush joins everything once).
       busyCoalescer.pushFragment(line);
+      scheduleBusyAck();
       return;
     }
 
@@ -118,9 +149,18 @@ export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInpu
 
   opts.rl.on('line', onLine);
 
+  const clearBusyAck = () => {
+    if (busyAckTimer) {
+      clearTimeout(busyAckTimer);
+      busyAckTimer = null;
+    }
+    busyAckLines = 0;
+  };
+
   return {
     setMode(next) {
       mode = next;
+      if (next !== 'busy') clearBusyAck();
     },
 
     getMode() {
@@ -157,6 +197,7 @@ export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInpu
     },
 
     takeBusyQueue() {
+      clearBusyAck();
       const flushed = busyCoalescer.flushNow();
       return flushed && flushed.trim() ? flushed : null;
     },
@@ -164,6 +205,7 @@ export function createTuiInputCollector(opts: TuiInputCollectorOptions): TuiInpu
     dispose() {
       disposed = true;
       clearStall();
+      clearBusyAck();
       opts.rl.off('line', onLine);
       idleCoalescer.dispose();
       busyCoalescer.dispose();

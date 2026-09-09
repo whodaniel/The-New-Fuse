@@ -112,9 +112,17 @@ enforcement lands it is.
 
 ### R4 — Declare a path lease before multi-file work
 
-Tier 2. Write the intended glob set to the lease file before editing; check it
-before writing. Cheapest real win in this protocol: it prevents collisions with
-no isolation cost, and TNF already has the primitives (`AGENT_STATUS_LEDGER.md`,
+Tier 2. Write the intended glob set to the lease file
+(`docs/protocols/workspace-leases.json`) before editing; check it before writing
+(`node scripts/harness/check-workspace-lease.cjs` — Turn Zero runs it, and
+`--claim "glob1,glob2"` registers the lease in the same step). Enforcement is at
+the action site: the pre-commit lease gate blocks any commit whose staged paths
+fall under another agent's ACTIVE lease — sweeps cannot absorb your staged work,
+and you cannot commit over theirs (TNF_WORKSPACE_LEASE_GATE=advisory opts out
+for one commit). Emitting a session handoff auto-leases the session's
+changed_paths (TTL 120m, `TNF_HANDOFF_NO_LEASE=1` to disable). automatically
+now). Cheapest real win in this protocol: it prevents collisions with no
+isolation cost, and TNF already has the primitives (`AGENT_STATUS_LEDGER.md`,
 the handoff artifacts, the pre-commit gate harness).
 
 ### R5 — Shared build artifacts need a declared owner
@@ -128,6 +136,62 @@ resolves.
 Anything that copies a repo (`sync-repos --dry-run`, export staging) writes to a
 declared scratch root with a size budget and cleans up on exit, including on
 abort. `/tmp` on the operator machine is the same volume as the repo.
+
+### R7 — Completion includes workspace cleanup
+
+Artifact classification, lossless archival, restore receipts and producer
+budgets follow
+[AI agent artifact retention](AI_AGENT_ARTIFACT_RETENTION_PROTOCOL.md).
+
+Every TNF agent owns the disk lifecycle of its run, including worktrees, scratch
+files, generated build outputs, test artifacts, and task-specific caches.
+Completion means **verify → commit → push → merge into canonical main → verify
+remote merge → clean up → verify cleanup**, or an explicit retained-work handoff
+when a gate prevents completion. An open PR or completed agent process is not a
+reason to leave an orphaned workspace.
+
+Before removing anything:
+
+1. Inventory the exact paths, their owner, Git status (including untracked and
+   ignored files), local-only commits, active processes, leases, and locks.
+   Record disk availability before cleanup. `du` measures directory usage; it
+   does not prove how much unique APFS or hardlinked storage will be reclaimed.
+2. Verify the remote merge and preserve a durable, small receipt containing the
+   branch/head, PR/merge SHA, checks, and remaining work. Squash/rebase merges
+   need explicit integration evidence: the branch tip may not be an ancestor of
+   main. Compare the accepted diff/tree at the merge commit; do not infer merge
+   success from a closed PR or a stale local tracking ref.
+3. Confirm that no process still uses the workspace and no other agent owns its
+   contents. Preserve logs, receipts, source, credentials, member data, and
+   user-supplied inputs that still have value. Keep evidence outside any
+   directory that will be removed, under the existing audit/handoff storage
+   policy, with an explicit retention reason.
+
+Remove completed, verified, agent-owned worktrees with Git-aware tooling from
+outside the target directory. Do not automatically retry a refusal with
+`--force`. Remove disposable task-local caches, failed build outputs, temporary
+scripts, exports, and duplicate scratch files by exact path. Retire the checkout
+in the canonical checkout ledger and release only this run's leases; clean up
+its obsolete worktree metadata. Retained branch refs are cheap recovery pointers
+and may remain when deletion would require forcing an unmerged check.
+
+Shared dependency stores, npm/pnpm caches, Cargo caches/targets, Docker volumes,
+Git object databases, and other agents' workspaces require independent ownership
+and active-use checks. Do not run blanket `git clean`, `git prune`, cache
+purges, or host-wide deletion as routine turn-end cleanup. Age, a stale
+heartbeat, a missing terminal, or an ignored path alone never proves that data
+is disposable.
+
+After removal, verify path absence, `git worktree list`, ledger retirement,
+retained recovery refs, and current disk availability. Record the paths removed
+and any observed space change without claiming directory size as reclaimed
+bytes. If a workspace or artifact must remain, record its owner, exact path,
+reason, next action, and review/expiry condition in the handoff. Agents should
+check and bound scratch usage during long runs as well as at completion.
+
+This is a required operating discipline for every TNF agent. It does not assert
+that an automatic host-wide garbage collector exists or authorize agents to
+remove another owner's work.
 
 ---
 
@@ -170,12 +234,24 @@ asymmetry is precisely the gap: on 2026-08-09 no gate objected to stashing 138
 files belonging to three agents, while several gates correctly blocked a
 well-formed commit.
 
-| Point              | Check                                                             | Status                                                                                                                                                                                                                                                                    |
-| ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Turn Zero          | resolve task class → tier; refuse Tier 4 work in a shared tree    | **live via `scripts/harness/resolve-workspace-tier.cjs`** — advisory / called manually, not yet auto-invoked by the onboarder                                                                                                                                             |
-| pre-mutation guard | block `stash`/`checkout`/`reset`/`clean` when foreign paths dirty | **live for stash/reset/merge/rebase** (`workspace-mutation-guard.cjs`); `checkout -f`/`clean -f` are undetectable by any git hook (see that script's own COVERAGE comment) — Turn Zero tier resolution is the complementary control for exactly that gap, not a fix to it |
-| pre-commit         | existing handoff / secret / build / authority gates               | **live**                                                                                                                                                                                                                                                                  |
-| lease check        | warn on writes outside a declared lease                           | proposed                                                                                                                                                                                                                                                                  |
+**Rollout completion (2026-09-05):** every row in the enforcement table above is
+now real. Turn Zero resolves the tier task-aware (receipt field
+`workspaceIsolation`), the resolver provisions the required workspace on demand
+(`--provision`, idempotent, disk-preflight-gated, reusing the
+`tnf worktree create` primitive), and the lease check runs against
+`docs/protocols/workspace-leases.json` with the same advisory/enforce split.
+Agent instruction surfaces are wired: `AGENTS.md` (Codex/opencode/kilo/jules)
+and `CLAUDE.md` (Claude). Remaining residual risk is unchanged: `checkout -f`
+and `clean -f` remain undetectable by git hooks — the control is the Turn Zero
+receipt, so read it.
+
+| Point              | Check                                                             | Status                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Turn Zero          | resolve task class → tier; refuse Tier 4 work in a shared tree    | **live — auto-invoked, task-aware** (`scripts/harness/resolve-workspace-tier.cjs`): `turn-zero-v2-gate.cjs` runs it with the session task, reports the result in the receipt, and adds a warning on violation (`TNF_WORKSPACE_TIER_ENFORCE=1` + `--require-write-ready` hardens it to a blocker). Provisioning closes the loop: `--provision` creates the required worktree (via the existing `tnf worktree create` primitive, git fallback, disk-preflight-gated). Third R1 violation (2026-09-01) confirms this gap is load-bearing: the agent that violated R1 had correctly used `git worktree add` to create its workspace, proving it has the capability — the failure is that nothing re-invoked tier resolution when the task changed. |
+| pre-mutation guard | block `stash`/`checkout`/`reset`/`clean` when foreign paths dirty | **live for stash/reset/merge/rebase** (`workspace-mutation-guard.cjs`); `checkout -f`/`clean -f` are undetectable by any git hook (see that script's own COVERAGE comment) — Turn Zero tier resolution is the complementary control for exactly that gap, not a fix to it                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| pre-commit         | existing handoff / secret / build / authority gates               | **live**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| lease check        | warn on writes outside a declared lease                           | **live — enforced at commit** — `scripts/harness/check-workspace-lease.cjs` checks the current dirty set (unstaged + staged + untracked) against active leases in `docs/protocols/workspace-leases.json` at Turn Zero, AND the staged set at pre-commit (`--gate`): a commit over another agent's active lease is blocked (`TNF_WORKSPACE_LEASE_GATE=advisory` opts out per commit). Claims: Turn Zero `--claim`, or auto-leased at handoff emission (TTL 120m). A lease is a committed row (agent, paths, acquiredAt, ttlMinutes); expired or malformed leases are inert; your own leases never violate against you. `TNF_WORKSPACE_LEASE_ENFORCE=1` hardens the Turn Zero check to a blocker.                                                |
+| sweep source rule  | sweeps carry data/docs/reports only, never source                 | **live — enforced at commit** — `.husky/commit-msg` → `scripts/protocols/sweep-source-gate.cjs`: a `sweep:` commit staging source paths (`packages/**/src`, `apps/**/src`, `scripts/**`, `.husky/**`, `*.ts/tsx/cjs/mjs/sh`) is blocked. Deliberate exception: `TNF_ALLOW_SWEEP_SOURCE=1`. The rule was prompt-only in the heartbeat template until a sweep committed source on 2026-09-05; now validated at the action site (lesson: validate on read when the writer set is unbounded).                                                                                                                                                                                                                                                      |
 
 **2026-08-27 incident (second occurrence of the 2026-08-09 failure mode).** A
 concurrent agent process on this machine ran a branch-maintenance-class
@@ -190,6 +266,26 @@ It is advisory, not a hook: it cannot retroactively block a forced checkout, and
 it does not yet run automatically at every session's Turn Zero — wiring it into
 the onboarder is real future work, deliberately left undone here because that
 flow is complex enough that changing it blind risks more than today's gap costs.
+
+**2026-09-01 incident (third occurrence; serial worktree reuse).** A Claude
+session's Tier-3 worktree (`.claude/worktrees/workflow-builder-consolidation`,
+locked to pid 22464) was repurposed for four additional, unrelated tasks via
+plain `git checkout <branch>` over ~14 hours — without spinning up fresh
+worktrees, re-onboarding, or re-evaluating task class. Reflog:
+`worktree-workflow-builder-consolidation` →
+`feat/workflow-builder-tauri-migration` (01:03) →
+`fix/workflow-execution-engine` (01:34) → `fix/fuse-connect-browser-parity`
+(06:47) → `fix/api-dev-stale-tsbuildinfo` (08:56). Each checkout is
+branch-maintenance class per `agent-workspace-policy.json` and should have been
+Tier 4 (separate clone) per R1. No work was lost because each task's commits
+landed before the next checkout — but the violation is structural: the lock file
+continued to declare `workflow-builder-consolidation` as the purpose, the tier
+was never re-evaluated, and any concurrent agent trusting the lock or the
+worktree name would have been misled. This is the same failure mode as
+2026-08-09 (§1) and 2026-08-27, now recurring against an agent that created the
+worktree correctly in the first place. The gap is the same: `checkout <branch>`
+is not interceptable by `workspace-mutation-guard.cjs` (it is not a hook
+trigger), and tier resolution at Turn Zero is still advisory, not automatic.
 
 ---
 
@@ -218,7 +314,11 @@ Applied on 2026-08-09: both maintenance stashes preserved as
 - **Tier 3 `CARGO_TARGET_DIR`** — shared (save 3.3 GB/worktree, accept lock
   contention) or per-worktree (avoid contention, pay disk). Operator call;
   record in the policy file.
-- **Lease format** — extend `AGENT_STATUS_LEDGER.md` or a dedicated
-  `data/protocols/path-leases.json`.
-- **Enforcement depth** — advisory warnings first, or hard refusal from the
-  outset.
+- ~~**Lease format** — extend `AGENT_STATUS_LEDGER.md` or a dedicated
+  `data/protocols/path-leases.json`.~~ **Decided 2026-09-05:** dedicated
+  `docs/protocols/workspace-leases.json` (schemaVersion 1; the commit that adds
+  a row IS the broadcast).
+- ~~**Enforcement depth** — advisory warnings first, or hard refusal from the
+  outset.~~ **Decided 2026-09-05:** advisory by default (Gate 3: Turn Zero must
+  never be why a cold start fails); per-environment hardening via
+  `TNF_WORKSPACE_TIER_ENFORCE=1` / `TNF_WORKSPACE_LEASE_ENFORCE=1`.

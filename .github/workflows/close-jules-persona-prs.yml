@@ -5,8 +5,10 @@
 name: Close Jules persona PRs
 
 on:
-  pull_request:
-    types: [opened, reopened, ready_for_review]
+  workflow_dispatch:
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   types: [opened, reopened, ready_for_review]
 
 permissions:
   pull-requests: write

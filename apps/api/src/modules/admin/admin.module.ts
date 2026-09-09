@@ -3,15 +3,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { CacheService } from '../../cache/cache.service';
 import { AdminBackupController } from '../../controllers/admin-backup.controller';
 import { AdminConfigController } from '../../controllers/admin-config.controller';
-import { AdminMetricsController } from '../../controllers/admin-metrics.controller';
 import { AdminHarnessRuntimeController } from '../../controllers/admin-harness-runtime.controller';
+import { AdminMetricsController } from '../../controllers/admin-metrics.controller';
 import { AdminUsersController } from '../../controllers/admin-users.controller';
 import { AdminController } from '../../controllers/admin.controller';
 import { SecurityLoggingService } from '../../security/security-logging.service';
 import { AuditService } from '../../services/audit.service';
 import { BackupCronService } from '../../services/backup-cron.service';
-import { MetricsService } from '../../services/metrics.service';
+import { DatabaseService } from '../../services/database';
 import { HarnessRuntimeService } from '../../services/harness-runtime.service';
+import { MetricsService } from '../../services/metrics.service';
 import { RoleService } from '../../services/role.service';
 import { AuthModule } from '../auth/auth.module';
 import { UnifiedLedgerModule } from '../unified-ledger/unified-ledger.module';
@@ -51,6 +52,7 @@ import { ChronologicalProcessesService } from './chronological-processes.service
     CacheService,
     HarnessRuntimeService,
     ChronologicalProcessesService,
+    DatabaseService,
   ],
   exports: [RoleService, AuditService, MetricsService],
 })

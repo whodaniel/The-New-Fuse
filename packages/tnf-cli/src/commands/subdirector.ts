@@ -79,10 +79,21 @@ export function registerSubdirectorCommand(
     .option('--grant <caps...>', 'Grant specific capabilities (or "all")')
     .option('--revoke <caps...>', 'Revoke specific capabilities')
     .option('--status', 'View effective authority status')
-    .action((options: any) => {
-      // Lazy load service to avoid cyclic deps if any
-
+    .action(async (options: any) => {
       const auth = new LocalSubdirectorAuthorityService(repoRoot);
+
+      // First run with no flags is the operator asking "what is my posture?".
+      // That is the moment to offer the shipped defaults rather than silently
+      // materialising them, so route it through the onboarding prompt. Any
+      // explicit flag is a deliberate instruction and skips the question.
+      const noFlags =
+        !options.enable && !options.pause && !options.grant && !options.revoke && !options.status;
+      if (auth.isFirstRun() && noFlags) {
+        const { ensureLocalSubdirectorAuthority } = await import('../boot/wizard.js');
+        await ensureLocalSubdirectorAuthority(repoRoot);
+        return;
+      }
+
       const current = auth.getConfig();
 
       if (options.enable) current.autonomyEnabled = true;

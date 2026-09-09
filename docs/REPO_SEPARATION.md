@@ -32,11 +32,11 @@ The flagship name `The-New-Fuse` now belongs to the **public** publication repo,
 because that is the artifact the world should find. The private development
 monorepo is `whodaniel/tnf-monorepo`.
 
-| Name                     | Before 2026-07-25         | After                         |
-| ------------------------ | ------------------------- | ----------------------------- |
-| `whodaniel/The-New-Fuse`      | private combined monorepo | **public** open runtime                |
+| Name                          | Before 2026-07-25         | After                                 |
+| ----------------------------- | ------------------------- | ------------------------------------- |
+| `whodaniel/The-New-Fuse`      | private combined monorepo | **public** open runtime               |
 | `whodaniel/fuse-open-runtime` | public open runtime       | redirects to `The-New-Fuse` (retired) |
-| `whodaniel/tnf-monorepo`      | _(did not exist)_         | **private** combined monorepo          |
+| `whodaniel/tnf-monorepo`      | _(did not exist)_         | **private** combined monorepo         |
 
 **Any remote still pointing at `whodaniel/The-New-Fuse` for monorepo work is now
 aimed at the PUBLIC repo.** Pushing the monorepo there publishes proprietary
@@ -92,6 +92,7 @@ tnf-monorepo/
 │   ├── vscode-extension/       # 🟢
 │   ├── chrome-extension/       # 🟢
 │   ├── mcp-servers/            # 🟢
+│   ├── browser-control-surfaces/ # 🟢 browser automation + agent orchestration surfaces
 │   └── extensions → ../../TNF-Extensions   # local clones; not a packaged offering
 ```
 
@@ -170,8 +171,8 @@ them routes code to the wrong repo.
 
 The regular open-source download is **9 apps**:
 
-`api`, `api-gateway`, `backend`, `chrome-extension`, `frontend`, `mcp-servers`,
-`relay-server`, `tauri-desktop`, `vscode-extension`.
+`api`, `api-gateway`, `backend`, `browser-control-surfaces`, `chrome-extension`,
+`frontend`, `mcp-servers`, `relay-server`, `tauri-desktop`, `vscode-extension`.
 
 The full three-bucket classification lives in
 [`data/distribution/oss-app-boundary.json`](../data/distribution/oss-app-boundary.json)

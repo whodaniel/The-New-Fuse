@@ -184,11 +184,12 @@ export function IntegrationStatusGrid({
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0"
+                    aria-label="Edit integration"
                     onClick={() => onEdit?.(config)}
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="More options">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </div>
@@ -211,6 +212,7 @@ export function IntegrationStatusGrid({
                     variant="ghost"
                     size="sm"
                     className="h-6 w-6 p-0"
+                    aria-label="Open endpoint URL"
                     onClick={() => window.open(config.endpoint_url, '_blank')}
                   >
                     <ExternalLink className="h-3 w-3" />

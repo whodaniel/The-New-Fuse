@@ -1,30 +1,32 @@
 name: Route Surface Parity Gate
 
 on:
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - "apps/frontend/src/ComprehensiveRouter.tsx"
-      - "apps/frontend/src/config/sidebarNavigation.ts"
-      - "apps/frontend/src/config/routeCatalog.ts"
-      - "apps/frontend/src/config/legacyRedirects.ts"
-      - "apps/frontend/scripts/audit-parity-ledger.mjs"
-      - "apps/frontend/scripts/generate-route-surface-matrix.mjs"
-      - "apps/frontend/package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/route-surface-parity-gate.yml"
-  push:
-    branches: [main, develop]
-    paths:
-      - "apps/frontend/src/ComprehensiveRouter.tsx"
-      - "apps/frontend/src/config/sidebarNavigation.ts"
-      - "apps/frontend/src/config/routeCatalog.ts"
-      - "apps/frontend/src/config/legacyRedirects.ts"
-      - "apps/frontend/scripts/audit-parity-ledger.mjs"
-      - "apps/frontend/scripts/generate-route-surface-matrix.mjs"
-      - "apps/frontend/package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/route-surface-parity-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: [main, develop]
+  #   paths:
+  #     - "apps/frontend/src/ComprehensiveRouter.tsx"
+  #     - "apps/frontend/src/config/sidebarNavigation.ts"
+  #     - "apps/frontend/src/config/routeCatalog.ts"
+  #     - "apps/frontend/src/config/legacyRedirects.ts"
+  #     - "apps/frontend/scripts/audit-parity-ledger.mjs"
+  #     - "apps/frontend/scripts/generate-route-surface-matrix.mjs"
+  #     - "apps/frontend/package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/route-surface-parity-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main, develop]
+  #   paths:
+  #     - "apps/frontend/src/ComprehensiveRouter.tsx"
+  #     - "apps/frontend/src/config/sidebarNavigation.ts"
+  #     - "apps/frontend/src/config/routeCatalog.ts"
+  #     - "apps/frontend/src/config/legacyRedirects.ts"
+  #     - "apps/frontend/scripts/audit-parity-ledger.mjs"
+  #     - "apps/frontend/scripts/generate-route-surface-matrix.mjs"
+  #     - "apps/frontend/package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/route-surface-parity-gate.yml"
   workflow_dispatch:
 
 jobs:

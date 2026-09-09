@@ -1,14 +1,14 @@
+import { API_BASE } from '@/config/api';
 import {
   getAccessToken,
   getAuthTokenCandidates as sessionTokenCandidates,
   silentRefreshAccessToken,
 } from '@/services/authSession';
-import { API_BASE } from '@/config/api';
 import {
+  getRateLimitRetryAfterMs,
   isRateLimitBlocked,
   noteRateLimitResponse,
   RateLimitedError,
-  getRateLimitRetryAfterMs,
 } from '@/utils/rateLimitCoordinator';
 
 const AUTH_TOKEN_KEYS = ['auth_token', 'authToken', 'accessToken', 'token', 'AUTH_TOKEN'] as const;
@@ -131,12 +131,12 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
     }
 
     const canRetryToken = i < authOptions.length - 1;
-    if ((response.status === 401 || response.status === 403) && canRetryToken) {
+    if (response.status === 401 && canRetryToken) {
       continue;
     }
 
     // Silent refresh once, then retry original request with new bearer.
-    if (response.status === 401 || response.status === 403) {
+    if (response.status === 401) {
       const refreshed = await silentRefreshAccessToken();
       if (refreshed) {
         const retryHeaders = { ...attemptHeaders, Authorization: `Bearer ${refreshed}` };

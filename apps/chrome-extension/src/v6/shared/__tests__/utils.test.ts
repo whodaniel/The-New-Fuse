@@ -1,4 +1,4 @@
-import { isControlPlaneRelayMessage, simpleHash } from '../utils';
+import { isControlPlaneRelayMessage, isTnfSaaSChatHost, simpleHash } from '../utils';
 
 describe('Shared Utils', () => {
   describe('isControlPlaneRelayMessage', () => {
@@ -20,6 +20,16 @@ describe('Shared Utils', () => {
       expect(
         isControlPlaneRelayMessage({ content: 'hello from another agent', messageType: 'text' })
       ).toBe(false);
+    });
+  });
+
+  describe('isTnfSaaSChatHost', () => {
+    it('matches the public TNF chat origins and ignores other hosts', () => {
+      expect(isTnfSaaSChatHost('app.thenewfuse.com')).toBe(true);
+      expect(isTnfSaaSChatHost('thenewfuse.com')).toBe(true);
+      expect(isTnfSaaSChatHost('www.thenewfuse.com')).toBe(true);
+      expect(isTnfSaaSChatHost('gemini.google.com')).toBe(false);
+      expect(isTnfSaaSChatHost('localhost')).toBe(false);
     });
   });
 

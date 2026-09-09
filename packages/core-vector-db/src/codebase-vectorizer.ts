@@ -26,6 +26,8 @@ export class CodebaseVectorizer {
   private openai: OpenAI;
   private embeddingModel = 'text-embedding-3-small';
   private batchSize = 100;
+  /** Root of the most recent scan; extractRelationships rebuilds the graph against it. */
+  private lastScanRoot: string | null = null;
 
   constructor() {
     this.openai = new OpenAI({
@@ -40,6 +42,7 @@ export class CodebaseVectorizer {
     console.log('🚀 Starting codebase vectorization...');
 
     // 1. Scan codebase and extract entities
+    this.lastScanRoot = rootPath;
     const entities = await this.scanCodebase(rootPath);
     console.log(`📊 Found ${entities.length} code entities`);
 
@@ -61,119 +64,64 @@ export class CodebaseVectorizer {
   }
 
   /**
-   * Scan codebase and extract code entities
+   * Scan the codebase and extract code entities.
+   *
+   * Entity discovery is delegated to @the-new-fuse/code-graph, which parses
+   * real tree-sitter ASTs. Until 2026-09-07 this method used regular
+   * expressions and said so in a comment ("production would use TypeScript AST
+   * or tree-sitter"); it could only see `export`-prefixed declarations and
+   * silently missed everything else.
+   *
+   * Content slices are still read here, because the graph records where a
+   * symbol is defined but not its text, and the text is what gets embedded.
    */
   private async scanCodebase(rootPath: string): Promise<CodeEntity[]> {
+    const { collectFiles, extractFile } = await import('@the-new-fuse/code-graph');
     const entities: CodeEntity[] = [];
-    const extensions = ['.ts', '.tsx', '.js', '.jsx', '.py', '.java', '.go', '.rs'];
+    const files = await collectFiles(rootPath);
 
-    const scan = async (dir: string): Promise<void> => {
-      const entries = await fs.readdir(dir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
-
-        // Skip node_modules, .git, dist, build
-        if (
-          entry.name === 'node_modules' ||
-          entry.name === '.git' ||
-          entry.name === 'dist' ||
-          entry.name === 'build' ||
-          entry.name === '.next'
-        ) {
-          continue;
-        }
-
-        if (entry.isDirectory()) {
-          await scan(fullPath);
-        } else if (entry.isFile()) {
-          const ext = path.extname(entry.name);
-          if (extensions.includes(ext)) {
-            const content = await fs.readFile(fullPath, 'utf-8');
-            const relativePath = path.relative(rootPath, fullPath);
-
-            // Add file-level entity
-            entities.push({
-              filePath: relativePath,
-              entityType: 'file',
-              entityName: entry.name,
-              content: content.substring(0, 10000), // Limit content size
-              language: ext.substring(1),
-              metadata: {
-                size: content.length,
-                lines: content.split('\n').length,
-              },
-            });
-
-            // Extract functions/classes (simplified - would use AST parser in production)
-            const codeEntities = await this.extractCodeEntities(content, relativePath, ext);
-            entities.push(...codeEntities);
-          }
-        }
+    for (const filePath of files) {
+      const relativePath = path.relative(rootPath, filePath).split(path.sep).join('/');
+      let content: string;
+      try {
+        content = await fs.readFile(filePath, 'utf-8');
+      } catch {
+        continue;
       }
-    };
+      const lines = content.split('\n');
 
-    await scan(rootPath);
-    return entities;
-  }
+      entities.push({
+        filePath: relativePath,
+        entityType: 'file',
+        entityName: path.basename(filePath),
+        content: content.substring(0, 10000),
+        language: path.extname(filePath).substring(1),
+        metadata: { size: content.length, lines: lines.length },
+      });
 
-  /**
-   * Extract functions, classes, etc. from code
-   * (Simplified version - production would use TypeScript AST or tree-sitter)
-   */
-  private async extractCodeEntities(
-    content: string,
-    filePath: string,
-    extension: string
-  ): Promise<CodeEntity[]> {
-    const entities: CodeEntity[] = [];
-    const lines = content.split('\n');
-
-    // TypeScript/JavaScript patterns
-    if (['.ts', '.tsx', '.js', '.jsx'].includes(extension)) {
-      // Find class declarations
-      const classRegex = /^export\s+(?:class|interface)\s+(\w+)/gm;
-      let match;
-      while ((match = classRegex.exec(content)) !== null) {
-        const lineNumber = content.substring(0, match.index).split('\n').length;
-        entities.push({
-          filePath,
-          entityType: content[match.index + 7] === 'c' ? 'class' : 'interface',
-          entityName: match[1],
-          content: this.extractBlock(lines, lineNumber - 1),
-          startLine: lineNumber,
-          language: extension.substring(1),
-          metadata: { exported: true },
-        });
+      let extraction;
+      try {
+        extraction = await extractFile(filePath, rootPath);
+      } catch {
+        // A file the parser cannot handle yields its file-level entity only,
+        // rather than failing the whole vectorization run.
+        continue;
       }
+      if (!extraction) continue;
 
-      // Find function declarations
-      const funcRegex = /^export\s+(?:async\s+)?function\s+(\w+)/gm;
-      while ((match = funcRegex.exec(content)) !== null) {
-        const lineNumber = content.substring(0, match.index).split('\n').length;
+      for (const node of extraction.nodes) {
+        if (node.kind === 'file' || node.kind === 'external') continue;
+        const startLine = node.sourceLocation
+          ? Number(node.sourceLocation.replace(/^L/, ''))
+          : undefined;
         entities.push({
-          filePath,
-          entityType: 'function',
-          entityName: match[1],
-          content: this.extractBlock(lines, lineNumber - 1),
-          startLine: lineNumber,
-          language: extension.substring(1),
-          metadata: { exported: true },
-        });
-      }
-
-      // Find arrow functions assigned to const/let
-      const arrowRegex = /^export\s+const\s+(\w+)\s*=\s*(?:async\s+)?\(/gm;
-      while ((match = arrowRegex.exec(content)) !== null) {
-        const lineNumber = content.substring(0, match.index).split('\n').length;
-        entities.push({
-          filePath,
-          entityType: 'function',
-          entityName: match[1],
-          content: this.extractBlock(lines, lineNumber - 1),
-          startLine: lineNumber,
-          language: extension.substring(1),
-          metadata: { exported: true, arrowFunction: true },
+          filePath: relativePath,
+          entityType: node.kind as CodeEntity['entityType'],
+          entityName: node.label,
+          content: startLine ? this.extractBlock(lines, startLine - 1) : '',
+          ...(startLine ? { startLine } : {}),
+          language: node.language ?? path.extname(filePath).substring(1),
+          metadata: { ...(node.meta ?? {}), astDerived: true },
         });
       }
     }
@@ -181,9 +129,6 @@ export class CodebaseVectorizer {
     return entities;
   }
 
-  /**
-   * Extract code block (simplified - would use AST for proper bracket matching)
-   */
   private extractBlock(lines: string[], startLine: number, maxLines = 100): string {
     const block = lines.slice(startLine, startLine + maxLines);
     return block.join('\n').substring(0, 5000); // Limit size
@@ -295,58 +240,53 @@ export class CodebaseVectorizer {
   private async extractRelationships(_entities: any[]): Promise<void> {
     console.log('🔗 Extracting code relationships...');
 
-    // Get all entities with their content
-    const allEntitiesResult = await query(
-      `SELECT id, file_path, entity_name, entity_type, content FROM code_entities`
-    );
-
-    if (allEntitiesResult.rows.length === 0) return;
-
-    const allEntities = allEntitiesResult.rows;
-    const relationships: Relationship[] = [];
-
-    for (const entity of allEntities) {
-      // Extract import statements
-      const importRegex = /import\s+.*\s+from\s+['"](.+)['"]/g;
-      let match;
-
-      while ((match = importRegex.exec(entity.content)) !== null) {
-        const importPath = match[1];
-
-        // Find matching entity
-        const importedEntity = allEntities.find((e: any) => e.file_path.includes(importPath));
-
-        if (importedEntity) {
-          relationships.push({
-            fromEntityId: entity.id,
-            toEntityId: importedEntity.id,
-            relationshipType: 'imports',
-          });
-        }
-      }
-
-      // Extract function calls (simplified)
-      const callRegex = /(\w+)\(/g;
-      while ((match = callRegex.exec(entity.content)) !== null) {
-        const calledFunction = match[1];
-
-        const calledEntity = allEntities.find(
-          (e: any) =>
-            e.entity_name === calledFunction &&
-            (e.entity_type === 'function' || e.entity_type === 'method')
-        );
-
-        if (calledEntity && calledEntity.id !== entity.id) {
-          relationships.push({
-            fromEntityId: entity.id,
-            toEntityId: calledEntity.id,
-            relationshipType: 'calls',
-          });
-        }
-      }
+    // Previously: /(\w+)\(/g over raw text, matched against every same-named
+    // entity in the corpus. That matches `if (`, `for (` and `while (`, and then
+    // invents an edge to an unrelated function. Relationships now come from the
+    // AST graph, and each carries the provenance defined in
+    // docs/protocols/TNF_CODE_GRAPH_PROTOCOL.md.
+    const rootPath = this.lastScanRoot;
+    if (!rootPath) {
+      console.warn('  no scan root recorded; run vectorizeCodebase() first');
+      return;
     }
 
-    // Store relationships
+    const { buildGraph } = await import('@the-new-fuse/code-graph');
+    const { graph } = await buildGraph(rootPath, { root: rootPath });
+
+    const stored = await query(
+      `SELECT id, file_path, entity_name, entity_type FROM code_entities`
+    );
+    if (stored.rows.length === 0) return;
+
+    // Graph node ids are `<relPath>#<symbol>`; DB rows are keyed by
+    // (file_path, entity_name). Match on that pair, never on name alone.
+    const idByKey = new Map<string, bigint>();
+    for (const row of stored.rows) {
+      idByKey.set(`${row.file_path}#${row.entity_name}`, row.id);
+      if (row.entity_type === 'file') idByKey.set(row.file_path, row.id);
+    }
+
+    const supported = new Set(['imports', 'calls', 'extends', 'implements', 'uses']);
+    const relationships: Relationship[] = [];
+    let unmapped = 0;
+
+    for (const edge of graph.edges) {
+      if (!supported.has(edge.relation)) continue; // `defines`/`contains` are containment, not dependency
+      const from = idByKey.get(edge.source);
+      const to = idByKey.get(edge.target);
+      if (from === undefined || to === undefined || from === to) {
+        unmapped += 1;
+        continue;
+      }
+      relationships.push({
+        fromEntityId: from,
+        toEntityId: to,
+        relationshipType: edge.relation as Relationship['relationshipType'],
+        metadata: { confidence: edge.confidence, evidence: edge.evidence },
+      });
+    }
+
     for (const rel of relationships) {
       await query(
         `INSERT INTO code_relationships (from_entity_id, to_entity_id, relationship_type, metadata)
@@ -356,7 +296,11 @@ export class CodebaseVectorizer {
       );
     }
 
-    console.log(`Stored ${relationships.length} relationships`);
+    // Report what did not map rather than letting the count imply full coverage.
+    console.log(
+      `Stored ${relationships.length} relationships` +
+        (unmapped ? ` (${unmapped} graph edge(s) had no stored entity on one end)` : '')
+    );
   }
 
   /**

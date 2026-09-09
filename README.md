@@ -57,6 +57,31 @@ Use `.tnf.local.env` for machine-specific assets such as `TNF_ROOT`,
 `TNF_RELAY_URL`, custom `TNF_PORTS`, and intentional occupied-port allowances.
 See `docs/reference/local-runtime-profile.md`.
 
+### Managed MCP and progressive skills
+
+TNF can provision external stdio MCP packages once into an immutable,
+integrity-pinned machine runtime instead of running `npx` during every agent
+startup. Host migration backs up touched registries and keeps API keys in the
+macOS Keychain.
+
+```bash
+pnpm run tnf:harness:mcp-runtime -- provision --apply
+pnpm run tnf:harness:mcp-runtime -- migrate-hosts --apply
+pnpm run tnf:harness:mcp-runtime -- verify
+pnpm run tnf:harness:mcp-runtime:probe -- --concurrent 2 --smoke-readonly
+```
+
+Specialized skills are discovered progressively rather than injected into every
+session. Audit or repair active global skill roots with:
+
+```bash
+pnpm run skills:progressive:guard
+pnpm run skills:progressive:guard:apply
+```
+
+Then traverse `.agent/SKILL_MANIFEST.md` →
+`pnpm run skills:bank:query -- <term>` → one selected `SKILL.md` body.
+
 ### Current LLM provider/model selection
 
 The CLI reads TNF's canonical 22-provider catalog, bundles that catalog in the
@@ -73,6 +98,7 @@ tnf models --select # arrows, PageUp/PageDown, type-to-filter, Enter
 If a provider is offline or has no configured key, TNF keeps its durable catalog
 entries visible and reports that live discovery was unavailable rather than
 silently presenting an empty menu. See `docs/UNIFIED_LLM_CATALOG.md`.
+
 For using the **local open-source install** together with a **thenewfuse.com
 account**, see `docs/reference/local-oss-with-hosted-account.md`.
 
@@ -115,10 +141,10 @@ runtime, public contract, private SaaS control plane, separate satellite, or
 personal/client business material before it lands.
 
 Current engineering reconciliation and external-gate status is recorded in
-`docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md`.
-Canonical-only boundary and declaration checks are repository-scoped in CI;
-the generated public overlay validates its own runtime surface and must never
-be treated as a second monorepo source.
+`docs/operations/CANONICAL_RECONCILIATION_STATUS_2026-08-21.md`. Canonical-only
+boundary and declaration checks are repository-scoped in CI; the generated
+public overlay validates its own runtime surface and must never be treated as a
+second monorepo source.
 
 Satellite repositories declare their runtime boundary with the versioned
 `tnf-extension.json` contract documented in

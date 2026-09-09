@@ -19,6 +19,17 @@
  * Usage
  *   node scripts/harness/resolve-workspace-tier.cjs --task-class <class> [--json]
  *   node scripts/harness/resolve-workspace-tier.cjs --describe "<free text>" [--json]
+ *   node scripts/harness/resolve-workspace-tier.cjs --describe "<text>" --provision [--json]
+ *
+ * --provision closes the loop the guidance used to leave dangling: when the
+ * tier requires a worktree, it actually creates one (idempotent, disk
+ * preflight-gated) via the existing `tnf worktree create` primitive, falling
+ * back to a plain `git worktree add` when the CLI build is unavailable. It is
+ * deliberately a NO-OP for the `clone` tier (branch-maintenance/history-rewrite
+ * need a separate clone, which a caller must provision deliberately) and for
+ * shared tiers (no worktree needed). Provision failures never change the exit
+ * code — this tool is advisory (see --enforce); a failed provision is reported,
+ * not fatal.
  *
  * --task-class must match a key in docs/protocols/agent-workspace-policy.json
  * byTaskClass. --describe does lightweight keyword matching as a fallback for
@@ -96,15 +107,82 @@ function isSharedCanonicalCheckout(repoRoot) {
 }
 
 function parseArgs(argv) {
-  const opts = { taskClass: null, describe: null, json: false, enforce: false };
+  const opts = { taskClass: null, describe: null, json: false, enforce: false, provision: null };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--task-class') opts.taskClass = argv[++i];
     else if (a === '--describe') opts.describe = argv[++i];
     else if (a === '--json') opts.json = true;
     else if (a === '--enforce') opts.enforce = true;
+    else if (a === '--provision') {
+      // `--provision` optionally takes a worktree name; a following flag or
+      // end-of-argv means "derive the name".
+      const next = argv[i + 1];
+      if (next !== undefined && !next.startsWith('-')) {
+        opts.provision = next;
+        i += 1;
+      } else {
+        opts.provision = '';
+      }
+    }
   }
   return opts;
+}
+
+function defaultWorktreeName(taskClass) {
+  const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
+  return `agent-${taskClass}-${stamp}`;
+}
+
+/**
+ * Create the worktree through the existing TNF primitive when possible.
+ * `tnf worktree create` (WorktreeService) owns the root, branch naming and
+ * idempotency rules; this shells out to the built CLI and falls back to a
+ * direct `git worktree add` with the same conventions when the build is
+ * missing, so provisioning never depends on a compiled artifact.
+ */
+function provisionWorktree(repoRoot, name, taskClass) {
+  const { execFileSync } = require('node:child_process');
+  const worktreeName = name || defaultWorktreeName(taskClass);
+  const outcome = { name: worktreeName, attempted: true, created: false, reused: false, worktreePath: null, branch: null, via: null, error: null };
+  const cliEntry = path.join(repoRoot, 'packages', 'tnf-cli', 'dist', 'cli.js');
+  if (fs.existsSync(cliEntry)) {
+    try {
+      const out = execFileSync(process.execPath, [cliEntry, 'worktree', 'create', worktreeName, '--json'], {
+        cwd: repoRoot,
+        encoding: 'utf8',
+        timeout: 120000,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      const parsed = JSON.parse(out);
+      outcome.created = Boolean(parsed.created);
+      outcome.reused = !parsed.created;
+      outcome.worktreePath = parsed.worktree?.worktreePath || null;
+      outcome.branch = parsed.worktree?.branch || null;
+      outcome.via = 'tnf worktree create';
+      return outcome;
+    } catch (err) {
+      outcome.error = `tnf worktree create failed (${String(err.stderr || err.message).slice(0, 300)}) — falling back to git`;
+    }
+  }
+  try {
+    const branch = `tnf/worktree/${worktreeName}`;
+    const worktreePath = path.join(repoRoot, '.tnf', 'worktrees', worktreeName);
+    fs.mkdirSync(path.dirname(worktreePath), { recursive: true });
+    execFileSync('git', ['worktree', 'add', worktreePath, '-b', branch], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      timeout: 120000,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    outcome.created = true;
+    outcome.worktreePath = worktreePath;
+    outcome.branch = branch;
+    outcome.via = 'git worktree add';
+  } catch (err) {
+    outcome.error = `git worktree add failed: ${String(err.stderr || err.message).slice(0, 300)}`;
+  }
+  return outcome;
 }
 
 function main(argv) {
@@ -113,6 +191,11 @@ function main(argv) {
   if (!repoRoot) {
     console.error('[resolve-workspace-tier] policy file not found from cwd; failing open (no restriction).');
     return 0;
+  }
+
+  if (opts.provision !== null && !opts.describe && !opts.taskClass) {
+    console.error('[resolve-workspace-tier] --provision needs the task context: pass --describe "<text>" or --task-class <class>.');
+    return 2;
   }
 
   let policy;
@@ -154,14 +237,101 @@ function main(argv) {
     sharedCanonicalCheckout: sharedCheckout,
     violatesR1: violation,
     guidance: violation
-      ? `Per TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL R1, "${taskClass}" work requires ${tier.workspace || tierName} — not the shared checkout. Use EnterWorktree (root: ${policy.worktree?.root || '.claude/worktrees'}), or a separate clone for anything moving HEAD.`
+      ? `Per TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL R1, "${taskClass}" work requires ${tier.workspace || tierName} — not the shared checkout. Provision one with: node scripts/harness/resolve-workspace-tier.cjs --describe "<task>" --provision   (or: tnf worktree create <name>)`
       : 'OK to proceed in the current workspace for this task class.',
   };
+
+  // Disk preflight. R1 *mandates* a separate worktree/clone for these task
+  // classes but nothing checked there was room for one. On 2026-09-02 a
+  // worktree add on a near-full volume failed mid-checkout, left a partial
+  // tree, and drove the machine to 35 MB free -- at which point the shell
+  // began failing commands with no output. Refusing to advise a checkout we
+  // cannot fit is cheaper than recovering from a half-written one.
+  if (violation) {
+    try {
+      const df = require('node:child_process')
+        .execSync('df -k / | tail -1', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+        .trim()
+        .split(/\s+/);
+      const availMb = Math.floor(Number(df[3]) / 1024);
+      // Comparable existing TNF worktrees measured 462-596 MB; require ~2x.
+      if (Number.isFinite(availMb) && availMb < 1200) {
+        result.diskWarning = `only ${availMb} MB free on / — a TNF worktree checkout needs ~500-600 MB and has failed mid-checkout below this. Free space before creating one.`;
+      }
+      result.availMb = availMb;
+    } catch {
+      /* preflight is advisory; never let it be why this tool fails */
+    }
+  }
+
+  // --provision: actually create the workspace the tier demands. Only the
+  // `worktree` tier provisions automatically; `clone`-tier work (branch
+  // maintenance, history rewrite) moves HEAD itself and must be provisioned
+  // deliberately by the caller; shared tiers need nothing.
+  if (opts.provision !== null) {
+    if (!violation) {
+      result.provision = { attempted: false, reason: `tier "${tierName}" does not require an isolated workspace; nothing provisioned` };
+    } else if (tierName === 'clone') {
+      result.provision = {
+        attempted: false,
+        reason: `tier "clone" requires a separate clone (HEAD-moving work); clone one deliberately, e.g.: git clone <origin> ../tnf-clone-${taskClass}`,
+      };
+    } else if (result.diskWarning) {
+      result.provision = {
+        attempted: false,
+        reason: `refusing to provision: ${result.diskWarning}`,
+      };
+    } else {
+      result.provision = provisionWorktree(repoRoot, opts.provision, taskClass);
+      // Register isolated checkout in the host-canonical ledger (TNF-0106).
+      // Failures are reported, never fatal — same posture as provision itself.
+      if (result.provision?.worktreePath && !result.provision.error) {
+        try {
+          const ledgerScript = path.join(__dirname, 'checkout-ledger.cjs');
+          const args = [
+            ledgerScript,
+            'register',
+            '--path',
+            result.provision.worktreePath,
+            '--kind',
+            'worktree',
+            '--task',
+            String(taskClass),
+            '--json',
+          ];
+          if (result.provision.branch) {
+            args.splice(args.length - 1, 0, '--branch', result.provision.branch);
+          }
+          const out = execFileSync(process.execPath, args, {
+            cwd: repoRoot,
+            encoding: 'utf8',
+            timeout: 30000,
+            stdio: ['ignore', 'pipe', 'pipe'],
+          });
+          result.provision.checkoutLedger = JSON.parse(out);
+        } catch (err) {
+          result.provision.checkoutLedgerError = String(err.stderr || err.message).slice(0, 300);
+        }
+      }
+    }
+  }
 
   if (opts.json) {
     console.log(JSON.stringify(result, null, 2));
   } else {
     console.log(`[resolve-workspace-tier] task-class=${result.taskClass} -> tier=${result.tier} (${result.workspace})`);
+    if (result.diskWarning) console.log(`  ⛔ DISK: ${result.diskWarning}`);
+    if (result.provision) {
+      const p = result.provision;
+      if (p.attempted === false) {
+        console.log(`  ⑂ provision: skipped — ${p.reason}`);
+      } else if (p.error) {
+        console.log(`  ⑂ provision: FAILED — ${p.error}`);
+      } else {
+        console.log(`  ⑂ provision: ${p.created ? 'created' : 'reusing'} ${p.worktreePath} (branch ${p.branch}, via ${p.via})`);
+        console.log(`    cd ${p.worktreePath} && rerun Turn Zero there before starting work.`);
+      }
+    }
     if (violation) {
       console.log(`  ⚠ ${result.guidance}`);
     } else {

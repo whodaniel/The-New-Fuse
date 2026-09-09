@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './design-system.css';
+@import './design-system.css' layer(components);
 @import './landing-animations.css';
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 @config "../../tailwind.config.ts";

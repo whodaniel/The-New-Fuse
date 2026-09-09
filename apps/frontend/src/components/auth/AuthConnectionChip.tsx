@@ -50,24 +50,16 @@ export default function AuthConnectionChip({ compact = false }: { compact?: bool
   const { isAuthenticated, user } = useAuth();
   const [session, setSession] = useState<AuthSessionSnapshot>(() => getAuthSessionSnapshot());
 
-  useEffect(() => {
-    const unsub = subscribeAuthSession(setSession);
-    void validateAuthSession();
-    const timer = window.setInterval(() => {
-      void validateAuthSession();
-    }, 60_000);
-    return () => {
-      unsub();
-      window.clearInterval(timer);
-    };
-  }, []);
+  useEffect(() => subscribeAuthSession(setSession), []);
 
   useEffect(() => {
-    // Re-validate when AuthProvider user flips.
+    if (!isAuthenticated) return;
     void validateAuthSession();
+    const timer = window.setInterval(() => void validateAuthSession(), 60_000);
+    return () => window.clearInterval(timer);
   }, [isAuthenticated, user?.id]);
 
-  const state = session.state;
+  const state = isAuthenticated ? session.state : 'unauthenticated';
   const label = labelFor(state);
   const detail =
     state === 'authenticated'
@@ -107,7 +99,9 @@ export default function AuthConnectionChip({ compact = false }: { compact?: bool
         <button
           type="button"
           className="underline underline-offset-2 hover:opacity-90"
-          onClick={() => void validateAuthSession()}
+          onClick={() => {
+            if (isAuthenticated) void validateAuthSession();
+          }}
         >
           Retry
         </button>

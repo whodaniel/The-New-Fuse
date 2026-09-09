@@ -1,0 +1,71 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "34966cdb-d2aa-416e-b3ab-a5f30c9dc3da",
+  "created_at": "2026-09-05T05:13:05Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "main",
+  "head_sha": "9ea5f51f0e6f08a980c5b06454a7e861e8e6a2ec",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node"],
+    "staffed_by": ["cursor"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-SELF-IMPROVEMENT"],
+  "work_summary": [
+    "Restored ~/.agents/skills/tnf-self-improvement-loop as a symlink to the Claude skills tree so the documented reflect.sh path resolves.",
+    "Wired first-class `tnf reflect` CLI command + `/reflect` slash entry that spawns reflect.sh (agents path, then Claude-tree fallback).",
+    "Updated command-surface.snapshot.json and skill docs; verified `tnf reflect` exit 0 and help listing."
+  ],
+  "changed_paths": [
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_REFLECT_CLI_20260905.json",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_REFLECT_CLI_20260905.md",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "packages/tnf-cli/src/commands/reflect.ts",
+    "packages/tnf-cli/src/slashCommands.ts"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "pnpm --filter @the-new-fuse/tnf-cli build OK; command-surface snapshot updated; tnf reflect exit 0 wrote reflect-20260905T050131Z.md; tnf --help lists reflect."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Confirm `tnf reflect` after pull on another machine (symlink may be host-local).",
+      "Optional: keep ~/.agents/skills/tnf-self-improvement-loop symlink in host bootstrap."
+    ]
+  },
+  "next_actions": [
+    "Commit and push the tnf reflect CLI surface with this scoped handoff receipt.",
+    "No further CLI changes required for reflect wiring."
+  ]
+}

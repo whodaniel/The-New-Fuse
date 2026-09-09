@@ -26,6 +26,7 @@ const OnboardingPreviewPage = lazy(() => import('../pages/preview/OnboardingPrev
 const NotFound = lazy(() => import('../pages/NotFound'));
 const VisualizationsPage = lazy(() => import('../pages/Visualizations'));
 const VisualizationSurfaceViewerPage = lazy(() => import('../pages/VisualizationSurfaceViewer'));
+const MasterGraphPage = lazy(() => import('../pages/MasterGraph'));
 const TerminalGraphPage = lazy(() => import('../pages/TerminalGraph'));
 const SystemStatusPage = lazy(() => import('../pages/SystemStatus'));
 const UnauthorizedPage = lazy(() => import('../pages/Unauthorized'));
@@ -121,6 +122,8 @@ export const coreRoutes: ReactElement[] = [
   <Route key="docs" path="/docs" element={<DocsPage />} />,
   <Route key="docs-wildcard" path="/docs/*" element={<DocsPage />} />,
 
+  <Route key="master-graph" path="/visualizations/master-graph" element={<MasterGraphPage />} />,
+
   // Visualizations
   <Route key="visualizations" path="/visualizations" element={<VisualizationsPage />} />,
   <Route
@@ -173,6 +176,7 @@ export const PUBLIC_ROUTES = [
   '/blog',
   '/marketplace',
   '/visualizations',
+  '/visualizations/master-graph',
   '/visualizations/surface',
   '/visualizations/terminals',
   '/visualizations/concordance',

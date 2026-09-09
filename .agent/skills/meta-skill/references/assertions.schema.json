@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "require_help",
+    "require_repeatability",
+    "network",
+    "max_stdout_bytes",
+    "case_timeout_seconds"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "require_help": {
+      "const": true
+    },
+    "require_repeatability": {
+      "const": true
+    },
+    "network": {
+      "const": "none"
+    },
+    "max_stdout_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8192
+    },
+    "case_timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    }
+  }
+}

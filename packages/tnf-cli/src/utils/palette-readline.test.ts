@@ -321,6 +321,20 @@ console.log('\npalette-readline — Tab completes without running');
   check('shift-tab walks backwards instead of completing', h.rl.line === '/agents', h.rl.line);
 }
 
+{
+  const h = makeHarness();
+  h.rl.typeAll('/regi');
+  h.rl.pressTab();
+  h.rl.typeAll('alice');
+  const submitted = h.rl.pressEnter();
+  const resolved = resolveSlashDropdownInput(submitted, h.state);
+  check(
+    'typing after completion preserves arguments',
+    resolved === '/agents register alice',
+    resolved
+  );
+}
+
 console.log('\npalette-readline — dismissal');
 
 {

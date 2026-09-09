@@ -71,7 +71,7 @@ codified and every action is logically cohesive.
 ### D. The Unified Ledger Clerk (Orchestration)
 
 - **Action:** Track every handoff between departments (Scouting -> Library ->
-  Forge -> Governance) via unique Project IDs.
+  Engineering -> Governance) via unique Project IDs.
 - **Goal:** Provide absolute visibility into the long-tail story of system
   evolution.
 

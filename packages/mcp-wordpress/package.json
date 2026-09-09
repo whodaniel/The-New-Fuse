@@ -1,0 +1,40 @@
+{
+  "name": "@the-new-fuse/mcp-wordpress",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WordPress spoke adapter for TNF — REST + Application Passwords as MCP tools (not a control plane)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/mcp-server.js",
+    "test": "echo \"No tests\" && exit 0"
+  },
+  "peerDependencies": {
+    "@the-new-fuse/mcp-core": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@the-new-fuse/mcp-core": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "typescript": "^5.7.2"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    },
+    "./tools": {
+      "types": "./dist/tools.d.ts",
+      "default": "./dist/tools.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

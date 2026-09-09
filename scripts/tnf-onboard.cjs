@@ -566,7 +566,7 @@ function frontloadSystemPromptTemplate() {
     '## Raw Agent Prompt',
     '',
     '```text',
-    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    'Before planning or acting, run Turn Zero V2 (current Turn Zero) from the repository root: pnpm run tnf:onboard -- --task "<current task>". It runs scripts/protocols/turn-zero-v2-gate.cjs, derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation. Law: docs/protocols/TURN_ZERO_MANDATE.md.',
     '```',
     '',
     '## Relay URL Precedence',
@@ -605,7 +605,7 @@ function resourceMapTemplate() {
     '## Raw Agent Prompt',
     '',
     '```text',
-    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    'Before planning or acting, run Turn Zero V2 (current Turn Zero) from the repository root: pnpm run tnf:onboard -- --task "<current task>". It runs scripts/protocols/turn-zero-v2-gate.cjs, derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation. Law: docs/protocols/TURN_ZERO_MANDATE.md.',
     '```',
     '',
     '## MCP Configuration',
@@ -646,7 +646,7 @@ function onboardingTemplate() {
     '## Raw Agent Prompt',
     '',
     '```text',
-    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.',
+    'Before planning or acting, run Turn Zero V2 (current Turn Zero) from the repository root: pnpm run tnf:onboard -- --task "<current task>". It runs scripts/protocols/turn-zero-v2-gate.cjs, derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation. Law: docs/protocols/TURN_ZERO_MANDATE.md.',
     '```',
     '',
   ].join('\n');
@@ -1577,7 +1577,7 @@ async function main() {
 
   printHeader('Prompt For Raw AI CLI Sessions');
   console.log(
-    'Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.'
+    'Before planning or acting, run Turn Zero V2 (current Turn Zero) from the repository root: pnpm run tnf:onboard -- --task "<current task>". It runs scripts/protocols/turn-zero-v2-gate.cjs, derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation. Law: docs/protocols/TURN_ZERO_MANDATE.md.'
   );
   console.log('- Launch raw AI CLIs from the TNF repository root so ./docs/... resolves.');
 }

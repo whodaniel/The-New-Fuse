@@ -1,101 +1,77 @@
 # Navigation and Route Audit
 
-Generated: 2026-05-17T04:36:35.129Z
+Generated: 2026-09-02T00:38:35.338Z
 
 ## Counts
 
-- router paths: 205
-- legacy redirect from-paths: 36
-- effective router paths (router + redirects): 241
-- all-pages paths: 184
-- canonical sidebar paths: 54
-- canonical sidebar paths not in router: 3
-- sidebar paths: 54
-- sidebar paths not in router: 3
-- all-pages paths not in router: 17
-- router paths not in all-pages: 50
+- router paths: 248
+- legacy redirect from-paths: 35
+- effective router paths (router + redirects): 271
+- all-pages paths: 246
+- canonical sidebar paths: 60
+- canonical sidebar paths not in router: 0
+- sidebar paths: 60
+- sidebar paths not in router: 0
+- all-pages paths not in router: 0
+- router paths not in all-pages: 0
+- router redirect-only paths (excluded from all-pages diff): 41
 
-## Canonical Sidebar Paths Not In Router
+## Router Redirect-Only Paths (Excluded From All-Pages Diff)
 
-- `/workflows/nexus?layer=lexicon`
-- `/workflows/nexus?layer=memory`
-- `/workflows/nexus?layer=topology&from=observatory`
-
-## Sidebar Paths Not In Router
-
-- `/workflows/nexus?layer=lexicon`
-- `/workflows/nexus?layer=memory`
-- `/workflows/nexus?layer=topology&from=observatory`
-
-## All Pages Paths Not In Router
-
-- `/ambassador`
-- `/api/admin/features/:id/evaluate`
-- `/automations`
-- `/bookmarks`
-- `/careers`
-- `/channels`
-- `/chats`
-- `/comparisons`
-- `/datasets`
-- `/faq`
-- `/files`
-- `/models`
-- `/skills`
-- `/system`
-- `/terminal`
-- `/testimonials`
-- `/tools`
-
-## Router Paths Not In All Pages
-
-- `/3d-library`
-- `/about`
-- `/admin/control-panel`
-- `/admin/marketplace`
-- `/agents/catalog/:id`
+- `/admin/dashboard`
+- `/admin/experimental-features`
+- `/admin/onboarding`
+- `/agent-builder`
 - `/agents/create`
 - `/agents/pfp-catalog`
 - `/agents/pfp-prompts`
 - `/agents/pfp-studio`
+- `/agents/unified-creator`
+- `/ai-command-center`
 - `/app`
-- `/auth/callback`
-- `/auth/google/callback`
-- `/capabilities`
-- `/codebase-map`
-- `/dashboard/architecture`
-- `/dashboard/calendar`
+- `/automations`
+- `/bookmarks`
+- `/browser`
+- `/channels`
+- `/chat-page`
+- `/chats`
+- `/comparisons`
+- `/components-nav`
+- `/dashboard/agents/new`
 - `/dashboard/command-center`
-- `/dashboard/datasets`
-- `/dashboard/fairtable`
-- `/dashboard/files`
-- `/dashboard/launchpad`
-- `/dashboard/logs`
-- `/dashboard/observability`
-- `/fairtable`
-- `/fairtable/:viewType`
-- `/features`
-- `/goals/:id`
-- `/hub`
-- `/llm-rankings`
-- `/macro-timeline`
-- `/membership`
-- `/nexus`
-- `/perpetual-status`
-- `/plans/:id`
-- `/platform`
-- `/product-map`
-- `/resources/skills`
-- `/resources/templates`
-- `/resources/workflows`
-- `/status`
-- `/system-status`
-- `/terminals`
-- `/timeline/module`
-- `/visualizations`
-- `/visualizations/concordance`
-- `/visualizations/surface`
-- `/visualizations/terminals`
-- `/workflows/builder-enhanced`
-- `/workflows/builder-n8n`
-- `/workflows/nexus`
+- `/dashboard/unified-chat`
+- `/datasets`
+- `/faq`
+- `/files`
+- `/home`
+- `/integrations`
+- `/landing-page`
+- `/models`
+- `/multi-agent-chat`
+- `/multi-agent-chat-demo`
+- `/simple-landing`
+- `/skills`
+- `/system`
+- `/tasks-page`
+- `/terminal`
+- `/testimonials`
+- `/tools`
+- `/workspace-chat`
+- `/workspace/chat`
+- `/workspace/layout`
+
+## Canonical Sidebar Paths Not In Router
+
+- none
+
+## Sidebar Paths Not In Router
+
+- none
+
+## All Pages Paths Not In Router
+
+- none
+
+## Router Paths Not In All Pages
+
+- none

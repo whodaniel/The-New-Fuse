@@ -1,4 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
+import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { consumeDeepLinkNext } from '@/services/authSession';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -39,7 +40,7 @@ const OAuthCallback = () => {
       }
       const magicLinkToken = hashParams.get('access_token');
       if (magicLinkToken) {
-        await login(magicLinkToken);
+        await handleSSOCallback('supabase', '');
         navigate(next, { replace: true });
         return;
       }
@@ -61,11 +62,44 @@ const OAuthCallback = () => {
         navigate(next, { replace: true });
         return;
       }
+
+      // Check if Supabase SDK already consumed the tokens from the URL on load
+      if (hasSupabaseConfig && supabase) {
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data?.session?.access_token) {
+            console.log(
+              'OAuthCallback: Existing Supabase session detected, forwarding to dashboard'
+            );
+            navigate(next, { replace: true });
+            return;
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+
       console.error('OAuthCallback: No code, token, or access_token found in URL');
       navigate('/auth/login?error=no_auth_data', { replace: true });
     };
     run().catch((err) => {
       console.error('OAuth callback handling failed:', err);
+      // If we have an active session in Supabase, navigate to next instead of showing error
+      if (hasSupabaseConfig && supabase) {
+        supabase.auth
+          .getSession()
+          .then(({ data }) => {
+            if (data?.session) {
+              navigate(next, { replace: true });
+              return;
+            }
+            navigate('/auth/login?error=auth_failed', { replace: true });
+          })
+          .catch(() => {
+            navigate('/auth/login?error=auth_failed', { replace: true });
+          });
+        return;
+      }
       navigate('/auth/login?error=auth_failed', { replace: true });
     });
   }, [location, navigate, login, handleSSOCallback]);

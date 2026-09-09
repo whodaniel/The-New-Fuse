@@ -2,8 +2,8 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 /**
@@ -250,7 +250,7 @@ contract AgentProvenance is AccessControl, Pausable, ReentrancyGuard {
             collaboration.contributions[agentTokenIds[i]] = contributions[i];
             
             // Record individual provenance relationships
-            recordProvenance(
+            this.recordProvenance(
                 outputTokenId,
                 agentTokenIds[i],
                 RelationshipType.Collaboration,

@@ -8,9 +8,10 @@ import {
 } from '@/components/ui';
 import { NodeProperties, NodeToolbox, WorkflowCanvas } from '@/components/workflow';
 import WorkflowAIAssistantPanel from '@/components/workflow/WorkflowAIAssistantPanel';
-import { WorkflowHostProvider, WorkflowProvider } from '@the-new-fuse/workflow-builder';
-import { saasWorkflowHost } from '@/workflow/saas-workflow-host';
+import WorkflowUrlBootstrap from '@/components/workflow/WorkflowUrlBootstrap';
 import { useWorkflow } from '@/hooks';
+import { saasWorkflowHost } from '@/workflow/saas-workflow-host';
+import { WorkflowHostProvider, WorkflowProvider } from '@the-new-fuse/workflow-builder';
 import {
   ChevronLeft,
   ChevronRight,
@@ -303,6 +304,13 @@ const WorkflowBuilderContent: React.FC = () => {
 
         {/* Main content */}
         <div className="flex-1 flex overflow-hidden relative">
+          <div className="absolute top-0 inset-x-0 z-40">
+            <WorkflowUrlBootstrap
+              onMeta={() => {
+                /* name comes from API load via panel; keep local state if present */
+              }}
+            />
+          </div>
           {/* Left sidebar - Node toolbox - Collapses to LEFT */}
           <div
             className={`${

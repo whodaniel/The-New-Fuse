@@ -1,12 +1,16 @@
 name: PR Automation
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
-  pull_request_review:
-    types: [submitted]
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request_review:
+  #   types: [submitted]
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # issue_comment:
+  #   types: [created]
 
 permissions:
   contents: write

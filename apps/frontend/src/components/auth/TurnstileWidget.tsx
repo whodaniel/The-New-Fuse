@@ -47,21 +47,36 @@ export default function TurnstileWidget({
 
     let cancelled = false;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let verifyTimeoutId: ReturnType<typeof setTimeout> | null = null;
     let retryId: ReturnType<typeof setTimeout> | null = null;
-    let rendered = false;
+    let tokenReceived = false;
 
-    const finishWithBypass = (reason: string) => {
-      if (cancelled || rendered) return;
+    const finishWithBypass = (reason: string, force = false) => {
+      if (cancelled || (tokenReceived && !force)) return;
       console.warn(`[TurnstileWidget] ${reason} - allowing bypass`);
       const existing = document.getElementById(TURNSTILE_SCRIPT_ID) as HTMLScriptElement | null;
       if (existing) existing.dataset.status = 'error';
       setLoadError(true);
       setIsLoading(false);
-      onTokenChange(' bypass');
+      tokenReceived = true;
+      onTokenChange('bypass');
     };
 
+    const onWindowError = (event: ErrorEvent) => {
+      const msg = (event.message || '').toLowerCase();
+      if (
+        msg.includes('turnstile') ||
+        msg.includes('challenges.cloudflare.com') ||
+        msg.includes('postmessage') ||
+        msg.includes('no available adapters')
+      ) {
+        finishWithBypass('Turnstile runtime origin/adapter error', true);
+      }
+    };
+    window.addEventListener('error', onWindowError);
+
     const renderWidget = () => {
-      if (cancelled || rendered || !window.turnstile) return;
+      if (cancelled || tokenReceived || !window.turnstile) return;
 
       // Turnstile will not reliably mount into display:none / zero-size nodes.
       // Retry briefly until the visible container is attached.
@@ -76,24 +91,33 @@ export default function TurnstileWidget({
           action,
           theme,
           callback: (token: string) => {
+            tokenReceived = true;
             setIsLoading(false);
             onTokenChange(token);
           },
           'expired-callback': () => onTokenChange(null),
-          'error-callback': () => onTokenChange(null),
+          'error-callback': () => {
+            console.warn('[TurnstileWidget] Cloudflare Turnstile error-callback fired');
+            finishWithBypass('Turnstile verification error', true);
+          },
         });
-        rendered = true;
         setIsLoading(false);
+
+        // Verification timeout: If no token received within 4 seconds after render, bypass
+        verifyTimeoutId = setTimeout(() => {
+          if (cancelled || tokenReceived) return;
+          finishWithBypass('Turnstile token receipt timeout', true);
+        }, 4000);
       } catch (err) {
         console.error('[TurnstileWidget] Failed to render widget:', err);
-        finishWithBypass('Failed to render widget');
+        finishWithBypass('Failed to render widget', true);
       }
     };
 
     const handleScriptError = () => {
       if (cancelled) return;
       console.error('[TurnstileWidget] Failed to load Cloudflare Turnstile script');
-      finishWithBypass('Failed to load Cloudflare Turnstile script');
+      finishWithBypass('Failed to load Cloudflare Turnstile script', true);
     };
 
     const existingScript = document.getElementById(TURNSTILE_SCRIPT_ID) as HTMLScriptElement | null;
@@ -139,13 +163,15 @@ export default function TurnstileWidget({
 
     // Always clear the spinner — even if window.turnstile exists but never rendered.
     timeoutId = setTimeout(() => {
-      if (cancelled || rendered) return;
-      finishWithBypass('Turnstile load timeout');
-    }, TURNSTILE_LOAD_TIMEOUT_MS);
+      if (cancelled || tokenReceived) return;
+      finishWithBypass('Turnstile load timeout', true);
+    }, 5000);
 
     return () => {
       cancelled = true;
+      window.removeEventListener('error', onWindowError);
       if (timeoutId) clearTimeout(timeoutId);
+      if (verifyTimeoutId) clearTimeout(verifyTimeoutId);
       if (retryId) clearTimeout(retryId);
       if (window.turnstile && widgetIdRef.current) {
         try {

@@ -1,0 +1,127 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "56987548-4f10-4f36-a430-f77d32db325a",
+  "created_at": "2026-09-07T18:19:08.400Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "feat/critic-template-20260907",
+  "head_sha": "cc47f752297a5fed1d3303d9d015384dcf13b402",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "project_ids": [],
+  "work_summary": [
+    "Added discoverable generic critic agent and specialty brief guide; verified real agent-spec discovery plus YAML and relative links; model behavior evaluation not run"
+  ],
+  "changed_paths": [
+    ".agent/agents/critic-agent.md",
+    "docs/agents/CRITIC_AGENT_TEMPLATE.md",
+    "docs/protocols/reports/SESSION_HANDOFF_CRITIC_TEMPLATE_20260907.json",
+    "docs/protocols/reports/SESSION_HANDOFF_CRITIC_TEMPLATE_20260907.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "PASS: actual agents-specs command discovers critic-agent; js-yaml parses frontmatter and specialty brief; relative links resolve; git diff --check. No model-level evaluation run. Task-specific handoff preserves shared handoff lease."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Read .agent/agents/critic-agent.md and docs/agents/CRITIC_AGENT_TEMPLATE.md",
+      "Supply actual artifact evidence and specialty criteria when invoking a critic."
+    ]
+  },
+  "next_actions": [
+    "Optionally run the documented critic behavioral acceptance cases with a selected worker."
+  ],
+  "artifacts": {
+    "commits": ["cc47f752297a5fed1d3303d9d015384dcf13b402"],
+    "deployment_urls": [],
+    "database_migrations": []
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "session_harness": "codex",
+  "checkout_id": "co_mtrkb199_2940b0e9",
+  "task_id": "critic-template",
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "rationale": "Applied existing agent discovery and isolated workspace practices"
+    },
+    "skills": {
+      "considered": true,
+      "rationale": "Reusable artifact is an agent definition rather than a skill"
+    },
+    "gaps": {
+      "considered": true,
+      "open": [
+        {
+          "summary": "Model-level behavioral acceptance cases documented but not executed"
+        }
+      ]
+    },
+    "self_audit": {
+      "checks": [
+        {
+          "id": "work-summary-not-stale",
+          "ok": true,
+          "detail": "1 item(s), distinct from the previous handoff"
+        },
+        {
+          "id": "classification-complete",
+          "ok": true,
+          "detail": "all four fields set"
+        },
+        {
+          "id": "reflection-answered",
+          "ok": true,
+          "detail": "lessons.considered=true skills.considered=true"
+        },
+        {
+          "id": "gaps-considered",
+          "ok": true,
+          "detail": "1 open gap(s) recorded"
+        },
+        {
+          "id": "next-actions-not-all-inherited",
+          "ok": true,
+          "detail": "3 action(s), 2 inherited from the previous handoff"
+        },
+        {
+          "id": "changed-paths-recorded",
+          "ok": true,
+          "detail": "2 recorded, 4 dirty in the working tree"
+        }
+      ],
+      "findings": 0
+    }
+  }
+}

@@ -1,10 +1,18 @@
 #!/usr/bin/env node
 'use strict';
 
+/**
+ * Turn Zero V2 gate — foundational TNF protocol (product/domain-neutral).
+ * Not lane-owned, not video-specific. Resolve from the active repo root;
+ * worktree copies are checkout shadows, not alternate authorities.
+ * Law: docs/protocols/TURN_ZERO_MANDATE.md
+ */
+
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
 const { hydrateStage } = require('./frontload-manifest.cjs');
+const { validateHandoff } = require('./validate-session-handoff.cjs');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const CANONICAL = 'whodaniel/tnf-monorepo';
@@ -75,19 +83,40 @@ function repoReceipt() {
 }
 
 const VALID = {
-  domain: new Set(['corporate', 'agency', 'personal', 'unknown']),
+  domain: new Set(['core', 'agency', 'personal', 'unknown']),
   destination: new Set(['oss_runtime', 'public_contract', 'private_control_plane', 'satellite', 'external', 'unknown']),
   residency: new Set(['product_state', 'bounded_working', 'external_durable', 'secret_machine_local', 'unknown']),
   sensitivity: new Set(['public', 'internal', 'private', 'restricted', 'unknown']),
 };
-function envOrUnknown(name) { return String(process.env[name] || 'unknown').trim().toLowerCase(); }
-function classificationReceipt() {
-  return {
-    workDomain: envOrUnknown('TNF_WORK_DOMAIN'),
-    artifactDestination: envOrUnknown('TNF_ARTIFACT_DESTINATION'),
-    dataResidency: envOrUnknown('TNF_DATA_RESIDENCY'),
-    sensitivity: envOrUnknown('TNF_DATA_SENSITIVITY'),
-  };
+// TURN_ZERO_MANDATE.md: "Classification is recorded in handoff state." The
+// handoff is the record; the TNF_* environment variables are explicitly
+// "environment hints" (same doc). Read the record first and let a hint override
+// it, recording which source won so the receipt stays auditable (D5, Gate 4).
+const CLASSIFICATION_AXES = [
+  ['workDomain', 'work_domain', 'TNF_WORK_DOMAIN'],
+  ['artifactDestination', 'artifact_destination', 'TNF_ARTIFACT_DESTINATION'],
+  ['dataResidency', 'data_residency', 'TNF_DATA_RESIDENCY'],
+  ['sensitivity', 'sensitivity', 'TNF_DATA_SENSITIVITY'],
+];
+function classificationReceipt(recordedClassification) {
+  const record = recordedClassification || {};
+  const value = {};
+  const source = {};
+  for (const [key, recordedKey, envName] of CLASSIFICATION_AXES) {
+    const hint = String(process.env[envName] || '').trim().toLowerCase();
+    const recorded = String(record[recordedKey] || '').trim().toLowerCase();
+    if (hint && hint !== 'unknown') {
+      value[key] = hint;
+      source[key] = recorded && recorded !== hint ? `env-override(handoff=${recorded})` : 'env';
+    } else if (recorded) {
+      value[key] = recorded;
+      source[key] = 'handoff';
+    } else {
+      value[key] = 'unknown';
+      source[key] = 'unset';
+    }
+  }
+  return { ...value, source };
 }
 function validateClassification(c) {
   const errors = [];
@@ -99,12 +128,87 @@ function validateClassification(c) {
   if (publicDest && ['private', 'restricted'].includes(c.sensitivity)) errors.push(`${c.sensitivity} content cannot target ${c.artifactDestination}`);
   if (c.dataResidency === 'secret_machine_local' && c.artifactDestination !== 'external') errors.push('secret_machine_local data must remain external to repository source');
   if (['personal', 'agency'].includes(c.workDomain) && publicDest && c.sensitivity !== 'public') errors.push('personal/agency material must be sanitized to public product-neutral form before public destination');
-  const unresolved = Object.values(c).some((value) => value === 'unknown');
+  const unresolved = CLASSIFICATION_AXES.some(([key]) => c[key] === 'unknown');
   return { ok: errors.length === 0 && !unresolved, unresolved, errors };
 }
 
 function csv(name) { return String(process.env[name] || '').split(',').map((s) => s.trim()).filter(Boolean); }
 function capabilityReceipt() { return { required: csv('TNF_REQUIRED_CAPABILITIES'), staffedBy: csv('TNF_STAFFED_BY') }; }
+
+/**
+ * Workspace isolation receipts (TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL).
+ * Advisory by default: a tier violation is a WARNING. With
+ * TNF_WORKSPACE_TIER_ENFORCE=1 (and --require-write-ready) it becomes a
+ * blocker, so an operator can harden a session without hardening every
+ * cold start (Gate 3: Turn Zero must never be why a cold start fails).
+ */
+function runAdvisoryNode(relPath, args, timeoutMs = 15000) {
+  const result = spawnSync(process.execPath, [path.join(ROOT, relPath), ...args], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    timeout: timeoutMs,
+  });
+  let parsed = null;
+  if (result.stdout && result.status !== null && result.stdout.trim().startsWith('{')) {
+    try { parsed = JSON.parse(result.stdout); } catch { /* keep raw output */ }
+  }
+  return {
+    status: result.status,
+    error: result.error?.message || (result.stderr ? String(result.stderr).slice(0, 300) : ''),
+    parsed,
+  };
+}
+
+function workspaceTierReceipt(task = '') {
+  const enforced = process.env.TNF_WORKSPACE_TIER_ENFORCE === '1';
+  const args = ['--json'];
+  const trimmed = String(task || '').trim();
+  if (trimmed) args.push('--describe', trimmed);
+  else args.push('--task-class', 'edit'); // documented default tier when no task is known
+  if (enforced) args.push('--enforce');
+  const run = runAdvisoryNode('scripts/harness/resolve-workspace-tier.cjs', args);
+  if (run.status === 0 && run.parsed) return { resolved: true, enforced, violatesR1: false, ...run.parsed };
+  if (run.status === 1 && run.parsed) return { resolved: true, enforced, violatesR1: true, ...run.parsed };
+  return { resolved: false, enforced, violatesR1: false, error: run.error || `resolver exited ${run.status}` };
+}
+
+function workspaceLeaseReceipt() {
+  const enforced = process.env.TNF_WORKSPACE_LEASE_ENFORCE === '1';
+  const args = ['--json'];
+  if (enforced) args.push('--enforce');
+  const run = runAdvisoryNode('scripts/harness/check-workspace-lease.cjs', args);
+  if (run.status === 0 && run.parsed) return { resolved: true, enforced, violated: false, ...run.parsed };
+  if (run.status === 1 && run.parsed) return { resolved: true, enforced, violated: true, ...run.parsed };
+  return { resolved: false, enforced, violated: false, error: run.error || `lease checker exited ${run.status}` };
+}
+
+function workspaceCheckoutReceipt() {
+  // Host-canonical checkout ledger (TNF-0106). Advisory by default; enforce
+  // with TNF_CHECKOUT_LEDGER_ENFORCE=1. Model/provider never gate writeReady.
+  const enforced = process.env.TNF_CHECKOUT_LEDGER_ENFORCE === '1';
+  const args = ['verify', '--json'];
+  if (enforced) args.push('--enforce');
+  const run = runAdvisoryNode('scripts/harness/checkout-ledger.cjs', args);
+  if (run.status === 0 && run.parsed) {
+    return {
+      resolved: true,
+      enforced,
+      ok: Boolean(run.parsed.ok),
+      writeReady: Boolean(run.parsed.writeReady),
+      ...run.parsed,
+    };
+  }
+  if (run.status === 1 && run.parsed) {
+    return { resolved: true, enforced, ok: false, writeReady: false, ...run.parsed };
+  }
+  return {
+    resolved: false,
+    enforced,
+    ok: false,
+    writeReady: false,
+    error: run.error || `checkout ledger exited ${run.status}`,
+  };
+}
 
 function hydrationReceipt(task = '') {
   const q = String(task || '').toLowerCase();
@@ -172,6 +276,7 @@ function orientationSummary(repository) {
       freshAgainstCurrentHead: relation.relation === 'exact' || relation.relation === 'ancestor',
       nextActions: Array.isArray(handoff.next_actions) ? handoff.next_actions : [],
       resumeChecklist: Array.isArray(handoff.continuation?.resume_checklist) ? handoff.continuation.resume_checklist : [],
+      classification: handoff.classification && typeof handoff.classification === 'object' ? handoff.classification : null,
     } : null,
     canonicalDevelopment: productMap?.policy?.canonicalDevelopment || CANONICAL,
     onboardingContractPresent: fs.existsSync(path.join(ROOT, ONBOARDING_CONTRACT)),
@@ -195,12 +300,15 @@ function printFreshness() {
 function parseArgs(argv) {
   const idx = argv.indexOf('--task');
   const consumerIdx = argv.indexOf('--consumer');
+  const claimIdx = argv.indexOf('--claim');
   return {
     json: argv.includes('--json'),
     requireWriteReady: argv.includes('--require-write-ready'),
     writeReceipt: argv.includes('--write-receipt'),
     task: idx >= 0 ? argv[idx + 1] || '' : '',
     consumer: consumerIdx >= 0 ? argv[consumerIdx + 1] || 'unknown' : (process.env.TNF_HARNESS_CONSUMER || 'turn-zero-v2'),
+    claim: claimIdx >= 0 ? argv[claimIdx + 1] || '' : '',
+    claimTtl: Number(argv[argv.indexOf('--claim-ttl-min') + 1]) || undefined,
   };
 }
 
@@ -214,13 +322,37 @@ function persistReceipt(payload) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const repository = repoReceipt();
-  const classification = classificationReceipt();
+  const orientation = orientationSummary(repository);
+  const classification = classificationReceipt(orientation.handoff?.classification);
   const classificationValidation = validateClassification(classification);
   const capabilities = capabilityReceipt();
   const stageA = hydrateStage({ root: ROOT, stage: 'A', consumer: args.consumer });
   const taskHydration = hydrationReceipt(args.task || process.env.TNF_TASK || '');
   const taskHydrationState = taskHydrationStatus(taskHydration);
-  const orientation = orientationSummary(repository);
+  const workspaceTier = workspaceTierReceipt(args.task || process.env.TNF_TASK || '');
+  const workspaceLease = workspaceLeaseReceipt();
+  const workspaceCheckout = workspaceCheckoutReceipt();
+
+  // R4 automation: a session that knows its scope at start can claim it here
+  // (--claim "glob1,glob2"), registering a TTL lease row so the commit-time
+  // lease gate protects the scope before any byte is written. Fails open.
+  if (args.claim) {
+    try {
+      const { acquireLeases } = require('../harness/check-workspace-lease.cjs');
+      const claimPaths = String(args.claim).split(',').map((s) => s.trim()).filter(Boolean).slice(0, 40);
+      const row = acquireLeases(ROOT, {
+        paths: claimPaths,
+        ttlMinutes: args.claimTtl,
+        task: args.task || process.env.TNF_TASK || null,
+      });
+      workspaceLease.claimed = { agent: row.agent, paths: row.paths, ttlMinutes: row.ttlMinutes };
+      console.log(`- lease claimed: ${row.paths.join(', ')} → ${row.agent} (ttl ${row.ttlMinutes}m)`);
+      console.log('  commit docs/protocols/workspace-leases.json with your next changeset to broadcast (R3).');
+    } catch (err) {
+      workspaceLease.claimError = err.message;
+      console.warn(`- lease claim failed (continuing): ${err.message}`);
+    }
+  }
   const blockers = [];
   const warnings = [];
 
@@ -231,18 +363,82 @@ function main() {
   if (repository.operationInProgress) blockers.push(`git ${repository.operationInProgress} is in progress`);
   if (orientation.handoff?.relationToCurrentHead === 'diverged') warnings.push('SESSION_HANDOFF_LATEST diverges from current HEAD; treat it as historical continuation context until reconciled');
   if (orientation.handoff?.relationToCurrentHead === 'unknown') warnings.push('SESSION_HANDOFF_LATEST relation to current HEAD could not be proven; treat freshness as unknown');
-  if (orientation.handoff?.relationToCurrentHead === 'ancestor' && (orientation.handoff.commitsSince || 0) > 0) warnings.push(`SESSION_HANDOFF_LATEST is an ancestor ${orientation.handoff.commitsSince} commit(s) behind current HEAD; inspect intervening commits before relying on continuation details`);
+  // TURN_ZERO_MANDATE "Turn End Contract": a turn that committed work and never
+  // emitted a handoff leaves the next session to reconstruct it from the diff.
+  // Until 2026-09-07 this was advisory only, and the contract named
+  // scripts/turn-end-v2.cjs — a script with zero call sites — so nothing
+  // required or verified Turn End at all.
+  //
+  // The evidence is already computed above: a handoff that is an ancestor N
+  // commits behind HEAD means N commits landed after the last one was emitted.
+  // Below the threshold it stays a warning (a session may legitimately commit
+  // before ending its turn); at or above it, and only where this checkout is
+  // about to be trusted for mutation, it blocks.
+  const turnEndStaleAfter = Number(process.env.TNF_TURN_END_STALE_AFTER_COMMITS || 3);
+  const handoffCommitsSince = orientation.handoff?.commitsSince || 0;
+  if (orientation.handoff?.relationToCurrentHead === 'ancestor' && handoffCommitsSince > 0) {
+    const detail = `SESSION_HANDOFF_LATEST is an ancestor ${handoffCommitsSince} commit(s) behind current HEAD; inspect intervening commits before relying on continuation details`;
+    if (args.requireWriteReady && handoffCommitsSince >= turnEndStaleAfter) {
+      blockers.push(
+        `${detail}. Turn End was not run for those commits — emit one before mutating ` +
+          `(node scripts/protocols/emit-session-handoff.cjs), or raise ` +
+          `TNF_TURN_END_STALE_AFTER_COMMITS deliberately.`
+      );
+    } else {
+      warnings.push(detail);
+    }
+  }
   for (const item of taskHydrationState) {
     if (!item.present && /USER_CONTEXT_STORAGE/.test(item.path)) warnings.push(`${item.path} is not on this branch; storage work may live on an active PR and must be reconciled before implementation`);
+  }
+  // Validate-on-read: the handoff is a plain file in a shared checkout, so any
+  // agent with a file-write tool can replace it. Never classify or resume from
+  // a record that does not satisfy its own schema.
+  const handoffValidation = validateHandoff();
+  if (!handoffValidation.ok) {
+    const detail = handoffValidation.findings.slice(0, 3).map((f) => `${f.pointer || '<root>'}: ${f.message}`).join('; ');
+    warnings.push(`SESSION_HANDOFF_LATEST fails its schema (${handoffValidation.findings.length} finding(s)) — treat continuation context as unknown: ${detail}`);
+    for (const signal of handoffValidation.signals) warnings.push(`handoff fabrication signal — ${signal}`);
+    if (args.requireWriteReady) blockers.push(`SESSION_HANDOFF_LATEST is not schema-valid; recover it before mutating (node scripts/protocols/validate-session-handoff.cjs)`);
+  }
+
+  for (const [key] of CLASSIFICATION_AXES) {
+    if (String(classification.source[key]).startsWith('env-override')) {
+      warnings.push(`classification ${key} taken from environment hint, overriding the recorded handoff value (${classification.source[key]}); the handoff is the record per TURN_ZERO_MANDATE`);
+    }
   }
   if (args.requireWriteReady && !classificationValidation.ok) {
     blockers.push(...classificationValidation.errors);
     if (classificationValidation.unresolved) blockers.push('classification is unresolved');
   }
+  if (workspaceTier.resolved && workspaceTier.violatesR1) {
+    const message = `workspace tier "${workspaceTier.tier}" does not permit "${workspaceTier.taskClass}" work in the shared checkout — provision an isolated workspace (node scripts/harness/resolve-workspace-tier.cjs --describe "<task>" --provision)`;
+    if (workspaceTier.enforced) blockers.push(message);
+    else warnings.push(message);
+  } else if (!workspaceTier.resolved) {
+    warnings.push(`workspace tier could not be resolved (${workspaceTier.error}) — treat the shared checkout as edit-tier only`);
+  }
+  if (workspaceLease.resolved && workspaceLease.violated) {
+    const message = `dirty set overlaps another agent's active workspace lease (${[...new Set(workspaceLease.violations.map((v) => v.agent))].join(', ')}) — coordinate or claim the lease in docs/protocols/workspace-leases.json`;
+    if (workspaceLease.enforced) blockers.push(message);
+    else warnings.push(message);
+  } else if (!workspaceLease.resolved) {
+    warnings.push(`workspace lease check could not run (${workspaceLease.error}) — proceed with extra coordination care`);
+  }
+  if (workspaceCheckout.resolved && !workspaceCheckout.ok) {
+    const message = `checkout ledger verify failed (${(workspaceCheckout.reasons || [workspaceCheckout.error]).filter(Boolean).join('; ') || 'unknown'}) — run: node scripts/harness/checkout-ledger.cjs migrate && verify`;
+    if (workspaceCheckout.enforced) blockers.push(message);
+    else warnings.push(message);
+  } else if (!workspaceCheckout.resolved) {
+    warnings.push(`checkout ledger check could not run (${workspaceCheckout.error}) — proceed with isolation care`);
+  }
 
   const payload = {
     protocol: 'TNF_TURN_ZERO_V2',
+    scope: 'foundational-canonical',
     canonicalSource: CANONICAL,
+    repoRoot: ROOT,
+    gatePath: path.join(ROOT, 'scripts/protocols/turn-zero-v2-gate.cjs'),
     lifecycle: ['RESPOND','ORIENT','CLASSIFY','HYDRATE','STAFF','ACT','VERIFY','PROPAGATE','HANDOFF'],
     repository,
     stageA,
@@ -252,6 +448,13 @@ function main() {
     capabilities,
     taskHydration,
     taskHydrationState,
+    workspaceIsolation: {
+      policy: 'docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md',
+      checkoutPolicy: 'docs/protocols/workspace-checkouts.md',
+      tier: workspaceTier,
+      lease: workspaceLease,
+      checkout: workspaceCheckout,
+    },
     harnessed: stageA.ok,
     writeReady: blockers.length === 0 && classificationValidation.ok,
     blockers,
@@ -262,6 +465,8 @@ function main() {
   if (args.json) console.log(JSON.stringify(payload, null, 2));
   else {
     console.log('=== Turn Zero V2 / Harness Receipt ===');
+    console.log('- scope: foundational TNF protocol (not lane/domain-owned; worktree copies are not alternate authorities)');
+    console.log(`- repo root: ${ROOT}`);
     console.log(`- repository: ${repository.normalizedOrigin || 'unknown'} @ ${repository.branch}:${repository.head.slice(0,12) || 'unknown'}`);
     console.log(`- repository mode: ${repository.mode}`);
     console.log(`- Stage A manifest hydration: ${stageA.ok ? 'PASS' : 'FAIL'} (${stageA.entries.length} rails)`);
@@ -275,8 +480,28 @@ function main() {
       for (const action of orientation.handoff.nextActions.slice(0, 4)) console.log(`  next: ${action}`);
     }
     console.log(`- classification: ${classification.workDomain} / ${classification.artifactDestination} / ${classification.dataResidency} / ${classification.sensitivity}`);
+    console.log(`  source: ${CLASSIFICATION_AXES.map(([key]) => `${key}=${classification.source[key]}`).join(' ')}`);
     console.log('- task-scoped hydration plan:');
     for (const item of taskHydrationState) console.log(`  ${item.present ? 'OK' : 'MISS'} ${item.path}`);
+    console.log('- workspace isolation (TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL):');
+    if (workspaceTier.resolved) {
+      console.log(`  ${workspaceTier.violatesR1 ? 'VIOLATION' : 'OK'} task-class=${workspaceTier.taskClass} tier=${workspaceTier.tier} (${workspaceTier.workspace})${workspaceTier.enforced ? ' [enforced]' : ''}`);
+      if (workspaceTier.diskWarning) console.log(`  ⛔ DISK: ${workspaceTier.diskWarning}`);
+    } else {
+      console.log(`  UNRESOLVED (${workspaceTier.error})`);
+    }
+    if (workspaceLease.resolved) {
+      console.log(`  ${workspaceLease.violated ? 'VIOLATION' : 'OK'} lease-check agent=${workspaceLease.agent} dirty=${workspaceLease.dirtyCount} active-leases=${workspaceLease.activeLeases.length}${workspaceLease.enforced ? ' [enforced]' : ''}`);
+    } else {
+      console.log(`  UNRESOLVED (${workspaceLease.error})`);
+    }
+    if (workspaceCheckout.resolved) {
+      console.log(
+        `  ${workspaceCheckout.ok ? 'OK' : 'WARN'} checkout-ledger id=${workspaceCheckout.checkoutId || 'none'} kind=${workspaceCheckout.kind || '?'} writeReady=${workspaceCheckout.writeReady}${workspaceCheckout.enforced ? ' [enforced]' : ''}`
+      );
+    } else {
+      console.log(`  UNRESOLVED checkout-ledger (${workspaceCheckout.error})`);
+    }
     warnings.forEach((w) => console.log(`▲ ${w}`));
     console.log('\n=== State Freshness ===');
     console.log(printFreshness());

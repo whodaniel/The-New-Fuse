@@ -20,6 +20,7 @@ const KnowledgeHub = lazy(() => import('../pages/KnowledgeHub'));
 const VoiceHub = lazy(() => import('../pages/VoiceHub'));
 const VirtualLibraryHub = lazy(() => import('../pages/VirtualLibraryHub'));
 const MissionControl = lazy(() => import('../pages/MissionControl'));
+const GoogleEcosystemHub = lazy(() => import('../pages/GoogleEcosystemHub'));
 
 export const ROUTE_COMPONENTS: Record<string, React.LazyExoticComponent<React.FC>> = {
   '/mission': MissionControl,
@@ -27,6 +28,7 @@ export const ROUTE_COMPONENTS: Record<string, React.LazyExoticComponent<React.FC
   '/terminal': SwarmTerminal,
   '/voice': VoiceHub,
   '/library': VirtualLibraryHub,
+  '/google-hub': GoogleEcosystemHub,
   '/agents': AgentHub,
   '/a2a': A2AControl,
   '/chat': MultiAgentChat,

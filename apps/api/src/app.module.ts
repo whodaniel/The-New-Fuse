@@ -23,10 +23,12 @@ import { AgentHandoffController } from './controllers/agent-handoff.controller';
 import { AgentPfpOverridesController } from './controllers/agent-pfp-overrides.controller';
 import { AgentProxyController } from './controllers/agent-proxy.controller';
 import { AiController } from './controllers/ai.controller';
+import { AuthorityGrantsController } from './controllers/authority-grants.controller';
 import { AvailableModelsController } from './controllers/available-models.controller';
 import { BridgesController } from './controllers/bridges.controller';
 import { CommunityController } from './controllers/community.controller';
 import { CompoundingMemoryController } from './controllers/compounding-memory.controller';
+import { ExtensionAuthController } from './controllers/extension-auth.controller';
 import { HealthController } from './controllers/health.controller';
 import { LLMIntelController } from './controllers/llm-intel.controller';
 import { MCPServerController } from './controllers/mcp.controller';
@@ -36,6 +38,7 @@ import { OnboardingController } from './controllers/onboarding.controller';
 import { OrchestrationController } from './controllers/orchestration.controller';
 import { ProviderKeysController } from './controllers/provider-keys.controller';
 import { PublicInfoController } from './controllers/public-info.controller';
+import { StripeWebhookController } from './controllers/stripe-webhook.controller';
 import { SystemController } from './controllers/system.controller';
 import { UserManagementController } from './controllers/user-management.controller';
 import { WebSocketController } from './controllers/websocket.controller';
@@ -56,6 +59,7 @@ import { ChatModule } from './modules/chat/chat.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { DirectorModule } from './modules/director/director.module';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
+import { DurableTasksModule } from './modules/durable-tasks/durable-tasks.module';
 import { ExportModule } from './modules/export/export.module';
 import { LocalRuntimeModule } from './modules/local-runtime/local-runtime.module';
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
@@ -72,6 +76,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
 import { AgentApiGrantsService } from './services/agent-api-grants.service';
 import { AgentHandoffService } from './services/agent-handoff.service';
 import { AgentPfpOverridesService } from './services/agent-pfp-overrides.service';
+import { AuthorityGrantsService } from './services/authority-grants.service';
 import { HarnessOAuthRotationService } from './services/harness-oauth-rotation.service';
 import { ProviderCatalogService } from './services/provider-catalog.service';
 import { ProviderKeysService } from './services/provider-keys.service';
@@ -164,6 +169,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     ResourcesModule,
     TerminalsModule,
     LocalRuntimeModule,
+    DurableTasksModule,
     UnifiedLedgerModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm
@@ -179,6 +185,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     MCPServerController, // MCP server management (20+ endpoints)
     AgentPfpOverridesController,
     AgentGrantsController,
+    AuthorityGrantsController,
     AgentHandoffController,
     AgentProxyController,
     AiController,
@@ -199,6 +206,8 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     OnboardingController,
     PublicInfoController, // M02: /docs, /pricing, /features as JSON
     BridgesController, // M05: /bridges/telegram, /bridges/whatsapp health
+    ExtensionAuthController,
+    StripeWebhookController,
   ],
   providers: [
     AppService,
@@ -215,6 +224,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     ProviderCatalogService, // Shared provider naming/catalog for the picker and the chat executor
     HarnessOAuthRotationService,
     AgentApiGrantsService,
+    AuthorityGrantsService,
     AgentHandoffService,
     WorkflowExecutionService,
     // Middleware

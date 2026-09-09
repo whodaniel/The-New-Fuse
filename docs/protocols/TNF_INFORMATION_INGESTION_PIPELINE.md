@@ -86,4 +86,7 @@ By default artifacts are written to:
   artifact is then moved to
   `../User-Data/$USER/intelligence-artifacts/_archive/`. The `source_pointer`
   MUST be preserved indefinitely to maintain the Attribution Overrule.
+- **Video Intelligence Specification:** Audiovisual and YouTube stream
+  deconstruction across personas, 8 knowledge pillars, and multimodal cost tiers
+  is formalized in `docs/protocols/TNF_VIDEO_INTELLIGENCE_SPECIFICATION.md`.
 - This pipeline is a staging layer and does not bypass TNF adoption gates.

@@ -1,0 +1,99 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "c8f2e1a4-7b3d-4f9a-9e2c-1d5a8b6f4e3c",
+  "created_at": "2026-09-05T03:15:00.000Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": ["whodaniel/The-New-Fuse"]
+  },
+  "branch": "main",
+  "head_sha": "d0cd89ea152e00f6258647498aed47f9baaf3618",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["frontend", "personal-intelligence"],
+    "staffed_by": ["tnf-cli-agent"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "turn-zero-v2",
+      "state": "pass",
+      "observed_at": "2026-09-05T03:10:00.000Z",
+      "value": "Turn Zero V2 gate passed"
+    }
+  ],
+  "project_ids": ["personal-intelligence-hub"],
+  "work_summary": [
+    "Refactored PlatformHub from Google-AI-only concordance to unified personal intelligence hub",
+    "Added multi-source module architecture (Google AI, Apple Notes, Google Drive, Dropbox, OneDrive, Local device, Private GitHub, CLI/file import)",
+    "Implemented SPA fallback guard for Cloudflare Pages (readJsonOrHtmlGuard detects HTML fallback)",
+    "Replaced false 'cloud sync success' messaging with honest 'not provisioned' state",
+    "Google AI is now one module mirror, not the hub identity",
+    "Added new components: GoogleAiSourceModule, SourceIngestPanel",
+    "Added new types: PersonalIntelItem, SourceModuleStatus, UnifiedPersonalIntelPayload"
+  ],
+  "changed_paths": ["apps/frontend/src/pages/PlatformHub.tsx"],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Frontend-only change, no database or secrets touched"
+  },
+  "continuation": {
+    "owner": "tnf-cli-agent",
+    "targets": [
+      "Deploy to Cloudflare Pages and verify SPA fallback behavior",
+      "Implement remaining source module connectors (Apple Notes, Drive, Dropbox, OneDrive)",
+      "Wire SourceIngestPanel to actual mirror sync commands"
+    ],
+    "priority": "high",
+    "resume_checklist": [
+      "Run pnpm build and verify no TypeScript errors",
+      "Deploy to Cloudflare Pages staging",
+      "Test /platform page with and without local-intel mirror files"
+    ]
+  },
+  "next_actions": [
+    "Deploy to Cloudflare Pages and verify SPA fallback behavior",
+    "Implement remaining source module connectors",
+    "Wire SourceIngestPanel to actual mirror sync commands"
+  ],
+  "artifacts": {
+    "commits": [],
+    "deployment_urls": [],
+    "database_migrations": []
+  },
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "recorded": [
+        "SPA fallback on Cloudflare Pages returns index.html with 200 for missing static assets — must guard against parsing HTML as JSON",
+        "Honest 'not provisioned' UX is better than false success claims for cloud sync features"
+      ],
+      "rationale": "These lessons apply to all static-asset-dependent features on Cloudflare Pages"
+    },
+    "skills": {
+      "considered": true,
+      "proposed": [],
+      "overlap_reviewed": true,
+      "rationale": "No new skill needed — existing personal-intelligence components and types cover this"
+    }
+  }
+}

@@ -335,6 +335,13 @@
   <script>
     const API_URL = window.location.origin + '/api';
 
+    function escapeHTML(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
     async function loadDashboard() {
       try {
         // Check authentication
@@ -393,8 +400,8 @@
       tbody.innerHTML = videos.map(video => `
         <tr>
           <td>
-            <div style="font-weight: 600;">${video.title || 'Untitled'}</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">${video.channel_name || ''}</div>
+            <div style="font-weight: 600;">${escapeHTML(video.title) || 'Untitled'}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">${escapeHTML(video.channel_name) || ''}</div>
           </td>
           <td>
             <span class="status-badge status-${video.status}">${video.status}</span>

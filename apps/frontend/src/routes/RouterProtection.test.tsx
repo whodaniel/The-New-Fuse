@@ -76,10 +76,20 @@ vi.mock('../config/legacyRedirects', () => ({
 
 // Mock Lazy components that we don't care about specifically but need to render to avoid errors
 vi.mock('../layouts/PremiumLayout', () => ({
-  default: ({ children }: any) => <div data-testid="premium-layout">{children}</div>,
+  default: ({ children }: any) => (
+    <div data-testid="premium-layout">
+      <a href="#main-content">Skip to main content</a>
+      <aside data-testid="premium-sidebar">Canonical Sidebar</aside>
+      <div data-testid="ask-ai-dock">Ask AI</div>
+      {children}
+    </div>
+  ),
 }));
 vi.mock('../layouts/PublicLayout', () => ({
   default: ({ children }: any) => <div data-testid="public-layout">{children}</div>,
+}));
+vi.mock('../layouts/AppShell', () => ({
+  default: () => <div data-testid="app-shell-only">Shell Only</div>,
 }));
 vi.mock('../components/SmartNavigation', () => ({
   default: () => <div data-testid="smart-nav">Smart Nav</div>,
@@ -132,6 +142,11 @@ describe('Router Protection', () => {
   it('Dashboard: Renders for authenticated user', async () => {
     setup('/dashboard', true, ['USER']);
     expect(await screen.findByTestId('page-dashboard')).toBeInTheDocument();
+    expect(screen.getByTestId('premium-layout')).toBeInTheDocument();
+    expect(screen.getByTestId('premium-sidebar')).toBeInTheDocument();
+    expect(screen.getByTestId('ask-ai-dock')).toBeInTheDocument();
+    expect(screen.getByText('Skip to main content')).toBeInTheDocument();
+    expect(screen.queryByTestId('app-shell-only')).not.toBeInTheDocument();
   });
 
   // Suspected unprotected routes - We verify that they ARE accessible unauthenticated (failing security)

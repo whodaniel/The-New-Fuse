@@ -46,6 +46,8 @@ export interface DebugConfig {
   mcpServers?: Record<string, unknown>;
   agents?: Record<string, unknown>;
   custom?: Record<string, unknown>;
+  /** User-owned automatic turn critic settings (project files cannot change routing). */
+  critic?: Record<string, unknown>;
 }
 
 const SECRET_KEY_PATTERN =
@@ -144,6 +146,7 @@ export class DebugService {
         config.mcpServers = data.mcpServers;
         config.agents = data.agents;
         config.custom = data.custom;
+        config.critic = data.critic;
       } catch {}
     }
 

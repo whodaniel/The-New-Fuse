@@ -191,6 +191,44 @@ _Psychological Flow States for Deep Work_, _Multi-Model Verification
 Triangles_), the agent MUST log a proposed vector addition to
 [`docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md`](file://<TNF_ROOT>/docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md).
 
+### Required Modality-Gap Pass
+
+Transcript presence is not evidence completeness. Before distillation, run a
+separate modality-gap pass over timestamped transcript segments and identify
+places where meaning depends on information outside the words. Examples include
+“as you can see,” “this diagram,” “right here,” “listen to the difference,”
+screen-only configuration, cursor gestures, silent demonstrations, missing or
+inaudible captions, and references whose noun is absent from nearby text.
+
+Each suspected gap must produce:
+
+```json
+{
+  "timestamp": 123,
+  "modality": "visual|audio|external-artifact|transcript-loss",
+  "cue": "the attributed phrase or detected discontinuity",
+  "missingContext": "what cannot be established from transcript alone",
+  "recoveryPlan": "frame, clip, OCR, audio analysis, linked source, or manual review",
+  "status": "resolved|unresolved|not-material",
+  "confidence": 0.0
+}
+```
+
+Do not promote a factoid or implementation plan that depends on an unresolved
+gap as verified. Preserve it as an attributed hypothesis with an explicit
+verification requirement.
+
+### Pipeline Completion Gate
+
+The ingestion run is complete only when every new playlist video is accounted
+for through:
+
+`playlist delta → timestamped transcript → modality-gap pass → evidence recovery or explicit unresolved state → actionable factoids/plans → action queue or non-actionable classification`
+
+A successful source manifest alone is insufficient. The run fails completion
+when processed sources are absent from downstream reconciliation, including the
+specific condition `manifest successes > 0` and `action queue sources_seen = 0`.
+
 ---
 
 ## 5. The Master Video Ingestion Prompt Specification (V4 - User-Centric & Creative)
@@ -243,4 +281,21 @@ transcript and extract actionable intelligence across all operational vectors:
   operated that falls outside the above categories.
 - Propose a concrete new extraction parameter / rule to permanently upgrade
   TNF's ingestion protocol.
+
+### 8. Modality-Gap Analysis
+
+- Identify transcript phrases or discontinuities that imply missing visual,
+  audio, or linked-artifact context.
+- For every material gap, record timestamp, modality, missing context, recovery
+  plan, resolution status, and confidence.
+- Keep claims dependent on unresolved gaps explicitly unverified.
+
+### 9. Executable Distillation
+
+- Emit atomic actionable factoids with source timestamps, confidence, and
+  verification needs.
+- Emit implementation plans that map to an existing TNF target surface and
+  include inspect, implementation, and verification steps.
+- Reconcile each processed video into the action queue or a reasoned
+  non-actionable/deferred state.
 ```

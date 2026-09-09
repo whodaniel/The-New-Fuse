@@ -1,0 +1,195 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "8fce6914-036d-4e1d-bafb-0c95df8d70b8",
+  "created_at": "2026-09-06T06:44:19.875Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "tnf/sessions-jump-and-llm-resilience",
+  "head_sha": "c36b48f050c3c05ebd820f44ee2c8ad056dacca5",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "TNF-0108: canonical handoff registry - schema 0.3, immutable per-emit records, metadata-only index with explicit supersession, scoped generated views"
+  ],
+  "changed_paths": [
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/HANDOFF_REGISTRY_PROTOCOL.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/handoffs/2026/04f20e10-5b5e-4c0b-8463-011e52c38807.json",
+    "docs/protocols/reports/handoffs/2026/099e54cf-8c74-462e-99f0-0fd2c85fe8f1.json",
+    "docs/protocols/reports/handoffs/2026/99dd8182-0a60-4b63-82cf-238d1bc777ae.json",
+    "docs/protocols/schemas/tnf-session-handoff.schema.json",
+    "scripts/harness/handoff-registry.cjs",
+    "scripts/harness/handoff-registry.test.cjs",
+    "scripts/protocols/emit-session-handoff.cjs",
+    "scripts/turn-end-v2.cjs",
+    "apps/api/logs/.76e5aaeb28e010d4c3e49a6218291a322552cba3-audit.json",
+    "apps/api/logs/.9898631597298d74f2f31a22d14fc356b34270af-audit.json",
+    "apps/api/src/app.module.ts",
+    "apps/api/src/controllers/relay-health.controller.ts",
+    "apps/api/src/fuseApp.ts",
+    "apps/api/src/modules/durable-tasks/durable-tasks.controller.ts",
+    "apps/api/src/modules/durable-tasks/durable-tasks.module.ts",
+    "apps/api/src/modules/durable-tasks/durable-tasks.pg-store.ts",
+    "apps/api/src/modules/durable-tasks/durable-tasks.service.ts",
+    "apps/api/src/modules/durable-tasks/durable-tasks.store.ts",
+    "data/harness/ANOMALY_PAYLOAD.md",
+    "data/harness/active-sieve-manifest.json",
+    "data/llm-intel/arena-intel-latest.json",
+    "data/llm-intel/arena-intel.json",
+    "data/llm-intel/ranking-recommendations.json",
+    "data/llm-intel/ranking-report-latest.md",
+    "data/llm-provider-status.json",
+    "data/marketplace/catalog-items.json",
+    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
+    "docs/protocols/workspace-leases.json",
+    "packages/mcp-wordpress/README.md",
+    "packages/mcp-wordpress/package.json",
+    "packages/mcp-wordpress/src/client.ts",
+    "packages/mcp-wordpress/src/index.ts",
+    "packages/mcp-wordpress/src/mcp-server.ts",
+    "packages/mcp-wordpress/src/tools.ts",
+    "packages/mcp-wordpress/tsconfig.json",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "apps/api/src/modules/durable-tasks/durable-tasks.byoc.ts",
+    "apps/api/src/modules/durable-tasks/durable-tasks.executor.ts",
+    "apps/api/src/modules/durable-tasks/durable-tasks.heavy-providers.ts",
+    "apps/api/src/modules/wordpress/",
+    "apps/frontend/src/utils/marketingAttribution.ts",
+    "docs/byoc-runner-setup.md",
+    "docs/integrations/wordpress-spoke.md",
+    "packages/mcp-wordpress/src/scalenut-pipeline.ts",
+    "packages/mcp-wordpress/test/",
+    "packages/mcp-wordpress/wordpress-mu-plugin/",
+    "packages/mcp-wordpress/wordpress-plugin/",
+    "packages/tnf-byoc-runner/",
+    "packages/tnf-cli/src/commands/wordpress.ts",
+    "docs/protocols/reports/handoffs/2026/8fce6914-036d-4e1d-bafb-0c95df8d70b8.json"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Auto-verify 2026-09-06T06:44:38.330Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+  },
+  "continuation": {
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": [
+    "Migrate gate consumers to registry-first reads (T6)",
+    "Enable registry verify --enforce in CI"
+  ],
+  "artifacts": {
+    "commits": ["c36b48f050c3c05ebd820f44ee2c8ad056dacca5"]
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "private_control_plane",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:10.075Z",
+      "value": "d3e52f001fd6ebe325a92cfb2246d04c8394893f"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:11.389Z",
+      "value": "1e680a2108b66d921a8d827daf3fad36cfc78c86"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:12.981Z",
+      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:14.504Z",
+      "value": "[]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:16.620Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:19.132Z",
+      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:19.316Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:19.603Z",
+      "value": "155a3b9273bad34ec15046ebf323d53e0854dc31\n2026-09-01"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:21.195Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=d3e52f001fd6ebe325a92cfb2246d04c8394893f\nbranch=main\ndirty=12"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-09-05T06:15:21.243Z",
+      "value": "REDIS_UNREACHABLE\nRELAY_OK"
+    }
+  ],
+  "session_id": "480418f4-9899-497d-b973-3d3b785d0544",
+  "session_harness": "pi-coding-agent",
+  "task_id": "TNF-0108",
+  "checkout_id": "co_mtpe199t_2c40fc93",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": ["099e54cf-8c74-462e-99f0-0fd2c85fe8f1"],
+  "record_hash": "371b955556e73fb9b129de1af4e5b177001a82877c3dbc3bd988fc82a292c970"
+}

@@ -34,11 +34,17 @@ Commands:
 
 Local pre-push is optimized for speed and early signal:
 
-- Blocking: privacy guard, secret sweep, docs PII guard
+- Blocking: privacy guard, secret sweep, docs PII guard, and high-risk direct
+  publication to main/master
 - Advisory: handoff freshness, strict RLS audit, conflict tiering, ownership
   ledger emission
 
-CI remains the strict policy surface:
+The intended CI policy includes the checks below. Its privacy/security workflow
+is currently manual-only; it is not an automatic merge boundary.
+[Synchronized review](SYNCHRONIZED_REVIEW_GATE.md) enforces the local TNF merge
+path using current GitHub approval evidence.
+
+CI policy:
 
 - Session handoff enforcement
 - Supabase strict RLS audit
@@ -90,7 +96,11 @@ Automation:
 
 - Classifier: `scripts/protocols/classify-change-tier.cjs`
 - Local advisory: `pnpm run conflict:tier`
-- CI PR gate: `pnpm run conflict:tier:ci`
+- Manual CI classifier: `pnpm run conflict:tier:ci` (unconditional tier
+  rejection)
+- Enforced reviewed merge: `bash scripts/safe-merge-to-main.sh <PR>`
+- Review contract and limits:
+  [Synchronized review gate](SYNCHRONIZED_REVIEW_GATE.md)
 
 ## Workflow Cross-Check Matrix
 

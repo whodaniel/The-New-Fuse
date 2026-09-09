@@ -1,11 +1,15 @@
 import react from '@vitejs/plugin-react';
+import { promises as fsp } from 'fs';
 import { createRequire } from 'module';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv, Plugin } from 'vite';
-import compression from 'vite-plugin-compression';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { brotliCompressSync, gzipSync, constants as zlibConstants } from 'zlib';
+import { excludeVisualizations } from './exclude-visualizations';
+import { buildMasterGraph } from './scripts/build-master-graph.mjs';
+import { handleMasterGraph } from './shared/master-graph-api';
 
 // Create require for ESM context
 const require = createRequire(import.meta.url);
@@ -18,16 +22,99 @@ function ethersBrowserResolve(): Plugin {
     resolveId(source, importer) {
       // Redirect ethers IPC socket provider to a local browser-safe shim.
       if (source === './provider-ipcsocket.js' && importer && importer.includes('ethers')) {
-        return path.resolve(__dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
+        return path.resolve(import.meta.dirname, 'src/stubs/ethers-provider-ipcsocket-browser.js');
       }
       // Prevent axios Node adapter from pulling server-only modules into browser bundles.
       if (
         source === 'axios/lib/adapters/http.js' ||
         source.endsWith('/axios/lib/adapters/http.js')
       ) {
-        return path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts');
+        return path.resolve(import.meta.dirname, 'src/stubs/axios-http-adapter.ts');
       }
       return null;
+    },
+  };
+}
+
+const COMPRESSIBLE_FILE_RE = /\.(js|mjs|css|html|svg)$/i;
+// Matches vite-plugin-compression's default threshold so artifacts stay comparable.
+const COMPRESS_THRESHOLD_BYTES = 1025;
+
+async function walkBuildOutput(dir: string, collected: string[] = []): Promise<string[]> {
+  for (const entry of await fsp.readdir(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      await walkBuildOutput(full, collected);
+    } else {
+      collected.push(full);
+    }
+  }
+  return collected;
+}
+
+/**
+ * Deterministic precompression (.gz / .br sidecars) replacing
+ * vite-plugin-compression@0.5.1. The upstream plugin fires unawaited
+ * concurrent fs writes for every file inside closeBundle, which intermittently
+ * aborts large builds with "ENOENT ... .gz". This implementation compresses
+ * strictly sequentially and produces the same sidecar artifacts (origin file
+ * kept, same filter, same 1025-byte threshold, same zlib settings).
+ */
+function deterministicCompression(algorithm: 'gzip' | 'brotliCompress'): Plugin {
+  let outputDir = '';
+  const ext = algorithm === 'gzip' ? '.gz' : '.br';
+  let configLogger: { warn: (msg: string) => void } = console;
+  return {
+    name: `tnf:precompression-${algorithm}`,
+    apply: 'build',
+    enforce: 'post',
+    configResolved(resolvedConfig) {
+      outputDir = path.isAbsolute(resolvedConfig.build.outDir)
+        ? resolvedConfig.build.outDir
+        : path.resolve(resolvedConfig.root, resolvedConfig.build.outDir);
+      configLogger = resolvedConfig.logger;
+    },
+    async closeBundle() {
+      let files: string[];
+      try {
+        files = (await walkBuildOutput(outputDir)).filter((file) =>
+          COMPRESSIBLE_FILE_RE.test(file)
+        );
+      } catch {
+        return;
+      }
+      let written = 0;
+      let savedKb = 0;
+      for (const file of files) {
+        // Per-file fault tolerance: in this environment other TNF jobs may
+        // build into the same dist concurrently; a vanished file must log a
+        // warning, never abort the build.
+        try {
+          const stat = await fsp.stat(file);
+          if (stat.size < COMPRESS_THRESHOLD_BYTES) continue;
+          const content = await fsp.readFile(file);
+          const compressed =
+            algorithm === 'gzip'
+              ? gzipSync(content, { level: zlibConstants.Z_BEST_COMPRESSION })
+              : brotliCompressSync(content, {
+                  params: {
+                    [zlibConstants.BROTLI_PARAM_QUALITY]: zlibConstants.BROTLI_MAX_QUALITY,
+                    [zlibConstants.BROTLI_PARAM_MODE]: zlibConstants.BROTLI_MODE_TEXT,
+                  },
+                });
+          await fsp.writeFile(`${file}${ext}`, compressed);
+          written += 1;
+          savedKb += (stat.size - compressed.byteLength) / 1024;
+        } catch (fileError) {
+          configLogger.warn(
+            `[tnf:precompression-${algorithm}] skipped ${path.basename(file)}: ${String(fileError)}`
+          );
+        }
+      }
+      // eslint-disable-next-line no-console
+      console.log(
+        `[tnf:precompression-${algorithm}] ${written} sidecars written, saved ~${savedKb.toFixed(0)} KB`
+      );
     },
   };
 }
@@ -62,6 +149,31 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      {
+        name: 'master-graph-api',
+        configureServer(server) {
+          server.middlewares.use(async (req, res, next) => {
+            if (req.url?.split('?')[0] !== '/api/master-graph') return next();
+            try {
+              const headers = new Headers();
+              for (const key of ['authorization', 'cookie']) {
+                const value = req.headers[key];
+                if (typeof value === 'string') headers.set(key, value);
+              }
+              const response = await handleMasterGraph({
+                request: new Request(`http://localhost${req.url}`, { method: req.method, headers }),
+                env: { ASSETS: { fetch: async () => Response.json(buildMasterGraph()) } },
+              });
+              res.statusCode = response.status;
+              response.headers.forEach((value, key) => res.setHeader(key, value));
+              res.end(await response.text());
+            } catch {
+              res.statusCode = 503;
+              res.end(JSON.stringify({ error: 'Graph build unavailable' }));
+            }
+          });
+        },
+      },
       // Resolve ethers Node.js-only modules to browser versions
       ethersBrowserResolve(),
       // Custom SPA fallback and CORS plugin
@@ -120,7 +232,7 @@ export default defineConfig(({ mode }) => {
       react(),
       tsconfigPaths({
         ignoreConfigErrors: true,
-        projects: [path.resolve(__dirname, 'tsconfig.json')],
+        projects: [path.resolve(import.meta.dirname, 'tsconfig.json')],
       }),
       // Provide Node.js polyfills for browser (required by ethers.js, @uauth, etc.)
       nodePolyfills({
@@ -153,21 +265,11 @@ export default defineConfig(({ mode }) => {
           gzipSize: true,
           brotliSize: true,
         }),
-      // Compression plugins for better performance
-      enableBuildCompression &&
-        compression({
-          algorithm: 'gzip',
-          ext: '.gz',
-          // Keep compression deterministic and avoid JSON artifact edge cases.
-          filter: /\.(js|mjs|css|html|svg)$/i,
-        }),
-      enableBuildCompression &&
-        compression({
-          algorithm: 'brotliCompress',
-          ext: '.br',
-          // Keep compression deterministic and avoid JSON artifact edge cases.
-          filter: /\.(js|mjs|css|html|svg)$/i,
-        }),
+      // Compression for better performance — deterministic replacement for
+      // vite-plugin-compression (see deterministicCompression docstring).
+      enableBuildCompression && deterministicCompression('gzip'),
+      enableBuildCompression && deterministicCompression('brotliCompress'),
+      excludeVisualizations(),
     ].filter(Boolean),
     resolve: {
       // Force all packages to use the same React instance to prevent
@@ -185,44 +287,56 @@ export default defineConfig(({ mode }) => {
       mainFields: ['browser', 'module', 'main'],
       conditions: ['import', 'module', 'browser', 'default'],
       alias: {
-        '@': path.resolve(__dirname, 'src'),
+        '@': path.resolve(import.meta.dirname, 'src'),
         // Note: @the-new-fuse/core is NOT aliased because it contains Node.js-only code
         // @the-new-fuse/utils is aliased to a browser-safe shim
-        '@the-new-fuse/utils': path.resolve(__dirname, 'src/stubs/utils-shim.ts'),
-        '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
-        '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
-        '@the-new-fuse/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
+        '@the-new-fuse/utils': path.resolve(import.meta.dirname, 'src/stubs/utils-shim.ts'),
+        '@the-new-fuse/types': path.resolve(import.meta.dirname, '../../packages/types/src'),
+        '@the-new-fuse/shared': path.resolve(import.meta.dirname, '../../packages/shared/src'),
+        '@the-new-fuse/api-client': path.resolve(
+          import.meta.dirname,
+          '../../packages/api-client/src'
+        ),
         '@the-new-fuse/ui-consolidated': path.resolve(
-          __dirname,
+          import.meta.dirname,
           '../../packages/ui-consolidated/dist'
         ),
         '@the-new-fuse/workflow-builder': path.resolve(
-          __dirname,
+          import.meta.dirname,
           '../../packages/workflow-builder/dist'
         ),
-        '@the-new-fuse/config': path.resolve(__dirname, '../../config'),
-        '@the-new-fuse/a2a-react': path.resolve(__dirname, '../../packages/a2a-react/src'),
-        '@the-new-fuse/a2a-core': path.resolve(__dirname, '../../packages/a2a-core/src/types.ts'),
+        '@the-new-fuse/config': path.resolve(import.meta.dirname, '../../config'),
+        '@the-new-fuse/a2a-react': path.resolve(
+          import.meta.dirname,
+          '../../packages/a2a-react/src'
+        ),
+        '@the-new-fuse/a2a-core': path.resolve(
+          import.meta.dirname,
+          '../../packages/a2a-core/src/types.ts'
+        ),
         // Stub Node.js-only modules for browser compatibility
-        winston: path.resolve(__dirname, 'src/stubs/winston.ts'),
-        'winston-daily-rotate-file': path.resolve(__dirname, 'src/stubs/winston.ts'),
-        ioredis: path.resolve(__dirname, 'src/stubs/empty.ts'),
+        winston: path.resolve(import.meta.dirname, 'src/stubs/winston.ts'),
+        'winston-daily-rotate-file': path.resolve(import.meta.dirname, 'src/stubs/winston.ts'),
+        ioredis: path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
         // Additional Node.js modules that should not be in browser bundles
-        'mysql2/promise': path.resolve(__dirname, 'src/stubs/empty.ts'),
-        mysql2: path.resolve(__dirname, 'src/stubs/empty.ts'),
-        '@nestjs/common': path.resolve(__dirname, 'src/stubs/nestjs-common.ts'),
-        '@nestjs/swagger': path.resolve(__dirname, 'src/stubs/nestjs-swagger.ts'),
-        'class-validator': path.resolve(__dirname, 'src/stubs/class-validator.ts'),
+        'mysql2/promise': path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
+        mysql2: path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
+        '@nestjs/common': path.resolve(import.meta.dirname, 'src/stubs/nestjs-common.ts'),
+        '@nestjs/swagger': path.resolve(import.meta.dirname, 'src/stubs/nestjs-swagger.ts'),
+        'class-validator': path.resolve(import.meta.dirname, 'src/stubs/class-validator.ts'),
         // Stub zlib to fix "Cannot read properties of undefined (reading 'Z_SYNC_FLUSH')"
-        zlib: path.resolve(__dirname, 'src/stubs/zlib.ts'),
-        'node:zlib': path.resolve(__dirname, 'src/stubs/zlib.ts'),
-        http2: path.resolve(__dirname, 'src/stubs/empty.ts'),
-        'node:http2': path.resolve(__dirname, 'src/stubs/empty.ts'),
+        zlib: path.resolve(import.meta.dirname, 'src/stubs/zlib.ts'),
+        'node:zlib': path.resolve(import.meta.dirname, 'src/stubs/zlib.ts'),
+        http2: path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
+        'node:http2': path.resolve(import.meta.dirname, 'src/stubs/empty.ts'),
         // Force browser-safe shims for Node-only transitive deps
-        'axios/lib/adapters/http.js': path.resolve(__dirname, 'src/stubs/axios-http-adapter.ts'),
-        'xmlhttprequest-ssl': path.resolve(__dirname, 'src/stubs/xmlhttprequest-ssl.ts'),
-        'form-data': path.resolve(__dirname, 'src/stubs/form-data.ts'),
-        'lucide-react': path.resolve(__dirname, 'src/stubs/lucide-react.tsx'),
+        'axios/lib/adapters/http.js': path.resolve(
+          import.meta.dirname,
+          'src/stubs/axios-http-adapter.ts'
+        ),
+        'xmlhttprequest-ssl': path.resolve(import.meta.dirname, 'src/stubs/xmlhttprequest-ssl.ts'),
+        'form-data': path.resolve(import.meta.dirname, 'src/stubs/form-data.ts'),
+        'lucide-react': path.resolve(import.meta.dirname, 'src/stubs/lucide-react.tsx'),
       },
     },
     define: {
@@ -289,8 +403,8 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 500,
       rollupOptions: {
         input: {
-          index: path.resolve(__dirname, 'index.html'),
-          app: path.resolve(__dirname, 'app.html'),
+          index: path.resolve(import.meta.dirname, 'index.html'),
+          app: path.resolve(import.meta.dirname, 'app.html'),
         },
         // Optimize bundle size by eliminating unnecessary code
         treeshake: {

@@ -32,6 +32,9 @@ SYSTEM_ORIGINS = frozenset({
     "wiki", "memory-graph", "concept-kg", "filesystem", "codebase-map",
     "agent-graph", "framework-graph", "knowledge-tree", "wordcount",
     "observatory", "wiki-inbox",
+    # Deterministic AST code graph (@the-new-fuse/code-graph). SYSTEM, not user:
+    # its nodes are source paths and symbol names, never operator-owned content.
+    "code-graph",
 })
 USER_ORIGINS = frozenset({"handoff"})
 USER_OUT = os.path.join(OUT, "user")
@@ -41,6 +44,10 @@ USER_OUT = os.path.join(OUT, "user")
 PERSONAL_IDENTIFIERS = ("danielgoldberg", "whodaniel", "bizsynth")
 
 # Edge-type aliases collapsed at emit so filters/queries stay usable.
+# Confidence labels carried on code-graph edges. Any other value is rejected at
+# merge time rather than silently normalised away.
+CODE_EDGE_CONFIDENCES = frozenset({"EXTRACTED", "INFERRED", "AMBIGUOUS"})
+
 EDGE_TYPE_ALIASES = {
     "implements": "rel_implements",
     "depends_on": "rel_dependson",
@@ -51,6 +58,10 @@ EDGE_TYPE_ALIASES = {
     "visualized-by": "visualized_by",
     "handoff_chain": "handoff",
     "ran_session": "handoff",
+    # code-graph relations keep their own names; `calls`/`imports`/`extends` are
+    # already unambiguous and `uses`/`implements` fold into the existing aliases.
+    "defines": "code_defines",
+    "contains": "code_contains",
 }
 
 

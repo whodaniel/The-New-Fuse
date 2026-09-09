@@ -23,7 +23,8 @@ env:
 
 jobs:
   full-build:
-    name: Manual full build
+    # Keep this context aligned with the public main required-check contract.
+    name: Build Summary
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -36,6 +37,9 @@ jobs:
 
       - name: Install once
         run: pnpm install --no-frozen-lockfile --prefer-offline
+
+      - name: Verify Express request contracts
+        run: pnpm exec tsc --ignoreConfig --noEmit --skipLibCheck --strict --esModuleInterop --moduleResolution node --ignoreDeprecations 6.0 --types node,passport tests/api/express-request-contract.typecheck.ts
 
       - name: Build packages
         run: pnpm run build:packages
@@ -57,6 +61,14 @@ jobs:
           test -d apps/api/dist -o -d apps/api/build
           test -d apps/backend/dist -o -d apps/backend/build
           test -d apps/api-gateway/dist -o -d apps/api-gateway/build
+
+      - name: Verify installed CLI
+        env:
+          TNF_SKIP_CORE_FLEET: "1"
+          TNF_INSTALL_AUTO_ONBOARD: "0"
+        run: |
+          bash scripts/install-tnf-cli.sh --from-local --bin-dir "$RUNNER_TEMP/tnf-launch-bin" --skip-onboard
+          "$RUNNER_TEMP/tnf-launch-bin/tnf" --version
 
       - name: Production smoke checks
         if: ${{ inputs.run_smoke }}

@@ -1,6 +1,4 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import { UnifiedLedgerClient } from './UnifiedLedgerClient.js';
 
 export interface KanbanTask {
   id: string;
@@ -13,6 +11,10 @@ export interface KanbanTask {
   createdAt: string;
   updatedAt: string;
   assignedTo?: string;
+  /** Owning authenticated TNF account (cloud identity key). */
+  ownerAccountId?: string;
+  /** Stable per-user id (profile_id) owning this task. */
+  ownerUserId?: string;
 }
 
 export interface KanbanBoard {
@@ -23,69 +25,94 @@ export interface KanbanBoard {
   tasks: KanbanTask[];
   createdAt: string;
   updatedAt: string;
+  /** Owning authenticated TNF account (cloud identity key). */
+  ownerAccountId?: string;
+  /** Stable per-user id (profile_id) owning this board. */
+  ownerUserId?: string;
 }
 
+/** A board is a plan; its cards are projections of that plan's linked records. */
 export class KanbanService {
-  private readonly boardsDir: string;
-  private currentBoard: KanbanBoard | null = null;
-
-  constructor(boardsDir?: string) {
-    this.boardsDir = boardsDir || path.join(os.homedir(), '.tnf', 'kanban');
-    this.ensureDir();
+  private currentBoardId: string | null = null;
+  private readonly ledger: UnifiedLedgerClient;
+  constructor(client?: UnifiedLedgerClient | string) {
+    if (typeof client === 'string')
+      throw new Error(
+        'Local Kanban directories are legacy data; use an authenticated ledger client and explicit migration'
+      );
+    this.ledger = client || new UnifiedLedgerClient();
   }
-
-  private ensureDir(): void {
-    fs.mkdirSync(this.boardsDir, { recursive: true });
-  }
-
-  private getBoardPath(boardId: string): string {
-    return path.join(this.boardsDir, `${boardId}.json`);
-  }
-
-  private generateId(): string {
-    return `KAN-${Date.now().toString(36).toUpperCase()}`;
-  }
-
-  async createBoard(name: string, description?: string): Promise<KanbanBoard> {
-    const board: KanbanBoard = {
-      id: `board-${Date.now().toString(36)}`,
-      name,
-      description,
-      columns: ['todo', 'doing', 'done'],
-      tasks: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+  private task(row: any): KanbanTask {
+    return {
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      column:
+        row.status === 'completed'
+          ? 'done'
+          : ['in_progress', 'under_review'].includes(row.status)
+            ? 'doing'
+            : 'todo',
+      priority: ['critical', 'urgent', 'high'].includes(row.priority)
+        ? 'high'
+        : row.priority === 'low'
+          ? 'low'
+          : 'medium',
+      agent: row.assignee,
+      assignedTo: row.assignee,
+      tags: row.tags,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
     };
-
-    await this.saveBoard(board);
-    this.currentBoard = board;
-    return board;
   }
-
-  async loadBoard(boardId: string): Promise<KanbanBoard> {
-    const boardPath = this.getBoardPath(boardId);
-    if (!fs.existsSync(boardPath)) {
-      throw new Error(`Board not found: ${boardId}`);
-    }
-
-    const board = JSON.parse(fs.readFileSync(boardPath, 'utf8'));
-    this.currentBoard = board;
-    return board;
+  private async project(plan: any, loadedRecords?: any[]): Promise<KanbanBoard> {
+    const records = loadedRecords || (await this.ledger.request<any[]>('GET', 'records'));
+    const ids = new Set(plan.linkedRecordIds || []);
+    return {
+      id: plan.id,
+      name: plan.name,
+      description: plan.objective,
+      columns: ['todo', 'doing', 'done'],
+      tasks: records
+        .filter((row) => ids.has(row.id) && row.kind === 'task' && row.status !== 'archived')
+        .map((row) => this.task(row)),
+      createdAt: plan.createdAt,
+      updatedAt: plan.updatedAt,
+    };
   }
-
-  async saveBoard(board: KanbanBoard): Promise<void> {
-    board.updatedAt = new Date().toISOString();
-    fs.writeFileSync(this.getBoardPath(board.id), JSON.stringify(board, null, 2));
-  }
-
-  async listBoards(): Promise<KanbanBoard[]> {
-    const files = fs.readdirSync(this.boardsDir).filter((f) => f.endsWith('.json'));
-    return files.map((f) => {
-      const content = fs.readFileSync(path.join(this.boardsDir, f), 'utf8');
-      return JSON.parse(content);
+  async createBoard(name: string, description?: string): Promise<KanbanBoard> {
+    const plan = await this.ledger.request<any>('POST', 'plans', {
+      name,
+      objective: description || '',
+      metadata: { view: 'kanban' },
     });
+    this.currentBoardId = plan.id;
+    return this.project(plan);
   }
-
+  async loadBoard(boardId: string): Promise<KanbanBoard> {
+    const plan = await this.ledger.request<any>('GET', `plans/${encodeURIComponent(boardId)}`);
+    if (!plan) throw new Error(`Board not found: ${boardId}`);
+    this.currentBoardId = plan.id;
+    return this.project(plan);
+  }
+  async listBoards(): Promise<KanbanBoard[]> {
+    const [plans, records] = await Promise.all([
+      this.ledger.request<any[]>('GET', 'plans'),
+      this.ledger.request<any[]>('GET', 'records'),
+    ]);
+    return Promise.all(
+      plans.filter((plan) => plan.status !== 'archived').map((plan) => this.project(plan, records))
+    );
+  }
+  private async current(): Promise<KanbanBoard> {
+    if (this.currentBoardId) return this.loadBoard(this.currentBoardId);
+    const boards = await this.listBoards();
+    if (boards.length) {
+      this.currentBoardId = boards[0].id;
+      return boards[0];
+    }
+    return this.createBoard('Default Board', 'Default Kanban board');
+  }
   async addTask(
     title: string,
     options: {
@@ -96,95 +123,66 @@ export class KanbanService {
       tags?: string[];
     } = {}
   ): Promise<KanbanTask> {
-    const board = this.currentBoard || (await this.getDefaultBoard());
-
-    const task: KanbanTask = {
-      id: this.generateId(),
-      title,
-      description: options.description,
-      column: options.column || 'todo',
-      priority: options.priority || 'medium',
-      agent: options.agent,
-      tags: options.tags || [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      assignedTo: options.agent,
-    };
-
-    board.tasks.push(task);
-    await this.saveBoard(board);
-    return task;
+    const board = await this.current();
+    const row = await this.ledger.request<any>(
+      'POST',
+      `plans/${encodeURIComponent(board.id)}/tasks`,
+      {
+        title,
+        description: options.description || '',
+        priority: options.priority || 'medium',
+        assignee: options.agent,
+        tags: options.tags || [],
+        status: this.status(options.column || 'todo'),
+      }
+    );
+    return this.task(row);
   }
-
-  async moveTask(taskId: string, newColumn: 'todo' | 'doing' | 'done'): Promise<KanbanTask> {
-    const board = this.currentBoard || (await this.getDefaultBoard());
-    const task = board.tasks.find((t) => t.id === taskId);
-
-    if (!task) {
-      throw new Error(`Task not found: ${taskId}`);
-    }
-
-    task.column = newColumn;
-    task.updatedAt = new Date().toISOString();
-    await this.saveBoard(board);
-    return task;
+  private status(column: 'todo' | 'doing' | 'done'): string {
+    if (!['todo', 'doing', 'done'].includes(column)) throw new Error('Invalid Kanban column');
+    return { todo: 'queued', doing: 'in_progress', done: 'completed' }[column];
   }
-
-  async getTasks(column?: 'todo' | 'doing' | 'done'): Promise<KanbanTask[]> {
-    const board = this.currentBoard || (await this.getDefaultBoard());
-    if (column) {
-      return board.tasks.filter((t) => t.column === column);
-    }
-    return board.tasks;
-  }
-
-  async getAllTasks(): Promise<Record<string, KanbanTask[]>> {
-    const board = this.currentBoard || (await this.getDefaultBoard());
-    const tasks: Record<string, KanbanTask[]> = { todo: [], doing: [], done: [] };
-
-    for (const task of board.tasks) {
-      tasks[task.column].push(task);
-    }
-
-    return tasks;
-  }
-
-  async deleteTask(taskId: string): Promise<void> {
-    const board = this.currentBoard || (await this.getDefaultBoard());
-    const index = board.tasks.findIndex((t) => t.id === taskId);
-
-    if (index === -1) {
-      throw new Error(`Task not found: ${taskId}`);
-    }
-
-    board.tasks.splice(index, 1);
-    await this.saveBoard(board);
-  }
-
   async updateTask(
     taskId: string,
     updates: Partial<Omit<KanbanTask, 'id' | 'createdAt'>>
   ): Promise<KanbanTask> {
-    const board = this.currentBoard || (await this.getDefaultBoard());
-    const task = board.tasks.find((t) => t.id === taskId);
-
-    if (!task) {
+    const board = await this.current();
+    if (!board.tasks.some((task) => task.id === taskId))
       throw new Error(`Task not found: ${taskId}`);
-    }
-
-    Object.assign(task, updates, { updatedAt: new Date().toISOString() });
-    await this.saveBoard(board);
-    return task;
+    const patch: Record<string, unknown> = {};
+    for (const key of ['title', 'description', 'priority', 'tags'] as const)
+      if (updates[key] !== undefined) patch[key] = updates[key];
+    if (updates.column !== undefined) patch.status = this.status(updates.column);
+    if (updates.agent !== undefined || updates.assignedTo !== undefined)
+      patch.assignee = updates.assignedTo ?? updates.agent;
+    const row = await this.ledger.request<any>(
+      'PATCH',
+      `records/${encodeURIComponent(taskId)}`,
+      patch
+    );
+    if (!row) throw new Error(`Task not found: ${taskId}`);
+    return this.task(row);
   }
-
-  private async getDefaultBoard(): Promise<KanbanBoard> {
-    const boards = await this.listBoards();
-    if (boards.length > 0) {
-      this.currentBoard = boards[0];
-      return boards[0];
-    }
-
-    // Create default board
-    return await this.createBoard('Default Board', 'Default Kanban board');
+  async moveTask(taskId: string, column: 'todo' | 'doing' | 'done'): Promise<KanbanTask> {
+    return this.updateTask(taskId, { column });
+  }
+  async getTasks(column?: 'todo' | 'doing' | 'done'): Promise<KanbanTask[]> {
+    const tasks = (await this.current()).tasks;
+    return column ? tasks.filter((task) => task.column === column) : tasks;
+  }
+  async getAllTasks(): Promise<Record<string, KanbanTask[]>> {
+    const tasks = await this.getTasks();
+    return {
+      todo: tasks.filter((t) => t.column === 'todo'),
+      doing: tasks.filter((t) => t.column === 'doing'),
+      done: tasks.filter((t) => t.column === 'done'),
+    };
+  }
+  async deleteTask(taskId: string): Promise<void> {
+    if (!(await this.current()).tasks.some((task) => task.id === taskId))
+      throw new Error(`Task not found: ${taskId}`);
+    await this.ledger.request('PATCH', `records/${encodeURIComponent(taskId)}`, {
+      status: 'archived',
+    });
   }
 }

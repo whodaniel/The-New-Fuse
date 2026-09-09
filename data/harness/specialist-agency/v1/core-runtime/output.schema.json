@@ -1,0 +1,106 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "role",
+    "status",
+    "summary",
+    "artifacts",
+    "verification",
+    "next_action"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "const": "core-runtime"
+    },
+    "status": {
+      "enum": ["designed", "implemented", "verified", "blocked"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["uri", "sha256", "media_type", "bytes", "expires_at"],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "expires_at": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "exit_code", "evidence"],
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exit_code": {
+            "type": "integer"
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["uri", "sha256", "media_type", "bytes", "expires_at"],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "media_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "expires_at": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

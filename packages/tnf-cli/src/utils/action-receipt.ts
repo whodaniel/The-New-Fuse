@@ -25,6 +25,7 @@ export type ActionReceipt = {
   localRealm?: string;
   authorityGrant?: string[];
   delegatedAuthority?: string[];
+  escalationScope?: 'global' | 'full-auto';
 };
 
 export type EscalationState = {
@@ -148,6 +149,7 @@ export function recordCommandOutcome(
     localRealm?: string;
     authorityGrant?: string[];
     delegatedAuthority?: string[];
+  escalationScope?: 'global' | 'full-auto';
   }
 ): ActionReceipt {
   const receipt: ActionReceipt = {
@@ -166,8 +168,13 @@ export function recordCommandOutcome(
     localRealm: input.localRealm,
     authorityGrant: input.authorityGrant,
     delegatedAuthority: input.delegatedAuthority,
+    escalationScope: input.escalationScope,
   };
   appendActionReceipt(repoRoot, receipt);
+
+  // Full-auto owns its bounded cycle circuit breaker. Keep empirical receipts,
+  // but do not let its repeated audit failures halt unrelated boot commands.
+  if (input.escalationScope === 'full-auto') return receipt;
 
   const prev = readEscalationState(repoRoot);
   if (input.ok) {

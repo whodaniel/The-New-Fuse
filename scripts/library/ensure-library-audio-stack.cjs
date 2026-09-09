@@ -45,9 +45,9 @@ function resolveKwsDir() {
 
 function resolveRelayDir() {
   const candidates = [
+    path.join(ROOT, 'apps/virtual-library-blueprints/ai-relay'),
     path.join(ROOT, 'apps/extensions/virtual-library-blueprints/ai-relay'),
     path.join(ROOT, '../TNF-Extensions/virtual-library-blueprints/ai-relay'),
-    path.join(ROOT, 'apps/virtual-library-blueprints/ai-relay'),
   ];
   return candidates.find((dir) => fs.existsSync(path.join(dir, 'server.mjs')));
 }

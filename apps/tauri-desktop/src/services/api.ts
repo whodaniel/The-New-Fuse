@@ -32,8 +32,16 @@ function friendlyApiError(error: unknown): string {
 class ApiService {
   private baseUrl: string = API_BASE_URL;
   private token: string | null = null;
+  // Set by AuthProvider so a 401 (e.g. the platform token's 15-minute expiry
+  // outliving a much longer Supabase session) can trigger one re-exchange +
+  // retry instead of silently failing every request until the user reloads.
+  private tokenRefresher: (() => Promise<string | null>) | null = null;
 
   constructor() {}
+
+  setTokenRefresher(fn: (() => Promise<string | null>) | null) {
+    this.tokenRefresher = fn;
+  }
 
   setBaseUrl(url: string) {
     this.baseUrl = url;
@@ -46,6 +54,45 @@ class ApiService {
 
   clearToken() {
     this.token = null;
+  }
+
+  /**
+   * Exchange a Supabase-issued access token for this platform's own short-lived
+   * JWT. Every guarded route on the backend (secure-auth.guard.ts, the gateway's
+   * GatewayAuthGuard) verifies bearer tokens against this app's own JWT_SECRET —
+   * a raw Supabase token will never pass that check. This must be called before
+   * `setToken()` is given a Supabase session token, or every authenticated
+   * request will 401 even though the user is "signed in" from Supabase's POV.
+   */
+  async exchangeSupabaseToken(
+    supabaseAccessToken: string
+  ): Promise<{ accessToken: string; refreshToken?: string } | null> {
+    const result = await this.request<{
+      accessToken?: string;
+      access_token?: string;
+      token?: string;
+      refreshToken?: string;
+      refresh_token?: string;
+    }>('/api/auth/supabase', {
+      method: 'POST',
+      body: JSON.stringify({ accessToken: supabaseAccessToken }),
+    });
+
+    if (!result.success || !result.data) {
+      console.error('Supabase → platform token exchange failed:', result.error);
+      return null;
+    }
+
+    const accessToken = result.data.accessToken || result.data.access_token || result.data.token;
+    if (!accessToken) {
+      console.error('Supabase → platform token exchange returned no access token');
+      return null;
+    }
+
+    return {
+      accessToken,
+      refreshToken: result.data.refreshToken || result.data.refresh_token,
+    };
   }
 
   /**
@@ -64,7 +111,11 @@ class ApiService {
     }
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    isRetry = false
+  ): Promise<ApiResponse<T>> {
     try {
       const targetUrl = `${this.baseUrl}${endpoint}`;
       const attachToken = Boolean(this.token) && this.shouldAttachToken(targetUrl);
@@ -84,6 +135,22 @@ class ApiService {
           const retryAfter = response.headers.get('Retry-After');
           const hint = retryAfter ? ` (retry after ${retryAfter}s)` : '';
           throw new Error(`HTTP 429: Too Many Requests${hint}`);
+        }
+        if (
+          response.status === 401 &&
+          attachToken &&
+          !isRetry &&
+          endpoint !== '/api/auth/supabase' &&
+          this.tokenRefresher
+        ) {
+          // Platform token (15 min) can legitimately outlive itself mid-session
+          // while the underlying Supabase session is still valid — re-exchange
+          // once before giving up, rather than surfacing a spurious "signed out".
+          const refreshed = await this.tokenRefresher().catch(() => null);
+          if (refreshed) {
+            this.setToken(refreshed);
+            return this.request<T>(endpoint, options, true);
+          }
         }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -186,10 +253,24 @@ class ApiService {
     name: string;
     nodes: unknown[];
     edges: unknown[];
+    description?: string;
+    localGraphId?: string;
   }): Promise<ApiResponse<{ id: string }>> {
+    // Nest POST/PATCH /api/workflows expects flat nodes/edges (controller wraps definition).
     const body = {
       name: payload.name,
-      description: 'Canvas workflow from TNF Desktop',
+      description: payload.description || 'Synced from TNF Desktop Workflow Builder',
+      nodes: payload.nodes,
+      edges: payload.edges,
+      status: 'DRAFT',
+      tags: ['tauri-desktop', 'canvas-sync'],
+      version: 1,
+      triggers: [],
+      variables: {
+        source: 'tauri-desktop',
+        localGraphId: payload.localGraphId || null,
+      },
+      // Some older gateways still expect nested definition — harmless duplicate.
       definition: {
         nodes: payload.nodes,
         edges: payload.edges,
@@ -197,19 +278,45 @@ class ApiService {
       },
     };
 
+    const extractId = (data: unknown, fallback?: string): string | undefined => {
+      if (!data || typeof data !== 'object') return fallback;
+      const row = data as Record<string, unknown>;
+      const nested =
+        row.data && typeof row.data === 'object' ? (row.data as Record<string, unknown>) : null;
+      const id = row.id || nested?.id || row.workflowId || (row.workflow as any)?.id;
+      return id ? String(id) : fallback;
+    };
+
     if (payload.id) {
-      const updated = await this.workflowRequest<{ id: string }>(`/${payload.id}`, {
+      const updated = await this.workflowRequest<unknown>(`/${payload.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(body),
+      });
+      if (updated.success) {
+        return { success: true, data: { id: payload.id } };
+      }
+      // Some stacks only expose PUT
+      const put = await this.workflowRequest<unknown>(`/${payload.id}`, {
         method: 'PUT',
         body: JSON.stringify(body),
       });
-      return updated.success ? { success: true, data: { id: payload.id } } : updated;
+      return put.success
+        ? { success: true, data: { id: payload.id } }
+        : { success: false, error: put.error || updated.error };
     }
 
-    const created = await this.workflowRequest<{ id: string }>('', {
+    const created = await this.workflowRequest<unknown>('', {
       method: 'POST',
       body: JSON.stringify(body),
     });
-    return created;
+    if (!created.success) {
+      return { success: false, error: created.error };
+    }
+    const id = extractId(created.data);
+    if (!id) {
+      return { success: false, error: 'API created workflow but returned no id' };
+    }
+    return { success: true, data: { id } };
   }
 
   async executeWorkflow(

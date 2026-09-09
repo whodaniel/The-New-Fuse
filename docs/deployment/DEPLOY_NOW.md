@@ -1,10 +1,21 @@
 # Deploy The New Fuse to CloudRuntime - Step-by-Step Guide
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 **Status**: ✅ CloudRuntime CLI installed and you're logged in!
 
 ## Quick Deploy (Follow These Steps)
 
 ### Step 1: Navigate to Your Project
+
 ```bash
 cd .
 ```
@@ -12,11 +23,13 @@ cd .
 ### Step 2: Create CloudRuntime Project
 
 **Option A: Use CloudRuntime Dashboard (Recommended)**
+
 1. Go to https://cloud_runtime.app/new
 2. Click "Deploy from GitHub repo" or "Empty Project"
 3. Name it "the-new-fuse"
 
 **Option B: Use CLI**
+
 ```bash
 cloud_runtime init
 # Follow prompts to create new project
@@ -63,6 +76,7 @@ cd ../..
 In CloudRuntime Dashboard (https://cloud_runtime.app/dashboard):
 
 **For API Service:**
+
 1. Click on the API service
 2. Go to "Variables" tab
 3. Add these:
@@ -74,6 +88,7 @@ In CloudRuntime Dashboard (https://cloud_runtime.app/dashboard):
    ```
 
 **For Frontend Service:**
+
 1. Click on the Frontend service
 2. Go to "Variables" tab
 3. Add these:
@@ -97,10 +112,12 @@ Visit the Frontend URL to see your app!
 If you want the absolute minimum to get started:
 
 **Deploy only these 2 services:**
+
 1. API Service (backend)
 2. Frontend (UI)
 
 **Plus:**
+
 - PostgreSQL database (from CloudRuntime)
 
 This gives you a working application with less complexity.
@@ -108,17 +125,20 @@ This gives you a working application with less complexity.
 ## If Something Goes Wrong
 
 ### Check Build Logs
+
 ```bash
 cloud_runtime logs --service api
 cloud_runtime logs --service frontend
 ```
 
 ### Check Service Status
+
 ```bash
 cloud_runtime status
 ```
 
 ### Redeploy if needed
+
 ```bash
 cd apps/api
 cloud_runtime up --detach
@@ -133,6 +153,7 @@ I've created a script for you. Run this:
 ```
 
 This script will:
+
 1. Create the project if needed
 2. Deploy API service
 3. Deploy Frontend
@@ -140,10 +161,8 @@ This script will:
 
 ## What's Already Done
 
-✅ Dockerfiles created and optimized
-✅ CloudRuntime configuration files updated
-✅ All services configured for production
-✅ You're logged into CloudRuntime
+✅ Dockerfiles created and optimized ✅ CloudRuntime configuration files updated
+✅ All services configured for production ✅ You're logged into CloudRuntime
 
 ## What You Need to Do
 
@@ -169,10 +188,10 @@ This script will:
 - **Pro Plan**: $20/month (for production)
 
 Your current setup will likely use:
+
 - API Service: ~512MB RAM
 - Frontend: ~256MB RAM
-- PostgreSQL: ~256MB RAM
-**Total: ~1GB RAM** (fits in Hobby plan)
+- PostgreSQL: ~256MB RAM **Total: ~1GB RAM** (fits in Hobby plan)
 
 ## Need Help?
 

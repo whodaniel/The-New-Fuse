@@ -12,8 +12,22 @@
     "declarationMap": true,
     "sourceMap": true,
     "skipLibCheck": true,
-    "types": ["node", "jest"]
+    "types": [
+      "node",
+      "jest"
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.spec.ts"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "references": [
+    {
+      "path": "../code-graph"
+    }
+  ]
 }

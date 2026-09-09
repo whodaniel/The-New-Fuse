@@ -27,3 +27,11 @@
 ## 2026-03-05 - lodash.debounce React Anti-Pattern
 **Learning:** Using `lodash.debounce` directly inline in a component's render body (e.g. `const watch = debounce(...)`) completely breaks the debounce mechanism. The component creates a brand new debounced function every render, meaning multiple keystrokes will trigger multiple independent timers instead of cancelling previous ones, causing huge performance issues and excessive callback firing.
 **Action:** Always wrap `lodash.debounce` in `useMemo` with an empty dependency array. To prevent stale closures of reactive state (like `promptInput`), use `useRef` updated via `useEffect` to capture the latest values and reference them inside the memoized debounced function. Always call `.cancel()` on unmount to prevent leaks.
+
+## 2024-05-30 - O(n log n) sorting inside renders
+**Learning:** Components doing heavy array manipulation inline (like filtering and sorting bundle data arrays) can silently introduce O(n log n) performance bottlenecks on every render. The `BundleAnalyzer` component was sorting heavy mock structures on every update.
+**Action:** Always wrap heavy data transformation (filters/sorts) in `useMemo` so that they only recompute when the specific dependencies (like selected filters or sorting criteria) change.
+
+## 2024-06-25 - React useEffect Anti-Pattern for Derived State
+**Learning:** Components that manage derived state like `filteredItems` using `useState` and `useEffect` (where the effect updates the state based on other dependency states like `searchQuery` or `priceRange`) cause severe double re-renders and unnecessary state updates, especially when combined with expensive operations like filtering and sorting (O(n log n)).
+**Action:** Always refactor derived state computation out of `useEffect` into a clean `useMemo` hook that recalculates directly when dependencies change, eliminating the intermediate state variable entirely.

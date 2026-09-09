@@ -460,3 +460,8 @@ export type OfferStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED' | 'E
 export type WalletType = 'SMART_ACCOUNT' | 'EOA' | 'MULTI_SIG';
 
 export type TransactionStatus = 'PENDING' | 'CONFIRMED' | 'FAILED' | 'CANCELLED';
+
+export type {
+  AuthorityGrant,
+  NewAuthorityGrant,
+} from './schema/authority-grants.js';

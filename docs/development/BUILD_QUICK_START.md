@@ -19,10 +19,10 @@ pnpm run build:production:verbose
 
 ```bash
 # Optimized build for CloudRuntime
-pnpm run build:cloud_runtime
+pnpm run build:cloud-run
 
 # With verbose logging
-pnpm run build:cloud_runtime:verbose
+pnpm run build:cloud-run:verbose
 ```
 
 ### Component Builds
@@ -62,7 +62,7 @@ pnpm install --frozen-lockfile
 **Solution:**
 
 ```bash
-pnpm run build:cloud_runtime
+pnpm run build:cloud-run
 # or
 pnpm run build:low-memory
 ```
@@ -91,10 +91,10 @@ pnpm run build:production:verbose
 NODE_ENV=production pnpm run build:all
 
 # Verbose logging
-BUILD_VERBOSE=true pnpm run build:cloud_runtime
+BUILD_VERBOSE=true pnpm run build:cloud-run
 
 # Skip frontend (API only)
-BUILD_FRONTEND=false pnpm run build:cloud_runtime
+BUILD_FRONTEND=false pnpm run build:cloud-run
 
 # Low memory mode
 BUILD_MEMORY_LIMIT=1024 pnpm run build:all
@@ -119,7 +119,7 @@ The build system automatically handles dependencies:
 | Command            | Use Case                              |
 | ------------------ | ------------------------------------- |
 | `build:production` | Full production build with validation |
-| `build:cloud_runtime`    | Deploying to CloudRuntime                  |
+| `build:cloud-run`  | Deploying to CloudRuntime             |
 | `build:all`        | Quick full build during development   |
 | `build:packages`   | Only changed package code             |
 | `build:api`        | Only changed API code                 |

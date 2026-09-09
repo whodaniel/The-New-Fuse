@@ -27,7 +27,8 @@ const Register: React.FC = () => {
   const [cfTurnstileToken, setCfTurnstileToken] = useState<string | null>(null);
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
-  const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
+  const requireTurnstile =
+    isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE) && Boolean(turnstileSiteKey);
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
@@ -74,13 +75,14 @@ const Register: React.FC = () => {
 
     setIsLoading(true);
     try {
-      if (requireTurnstile && !cfTurnstileToken) {
-        throw new Error('Please complete Turnstile verification');
-      }
+      const turnstileToken =
+        cfTurnstileToken && cfTurnstileToken !== 'bypass' && cfTurnstileToken !== ' bypass'
+          ? cfTurnstileToken
+          : undefined;
 
       const result = await register(name, email, password, {
         inviteCode: inviteCode.trim() || undefined,
-        cfTurnstileToken: cfTurnstileToken || undefined,
+        cfTurnstileToken: turnstileToken,
       });
 
       if (result?.requiresEmailVerification) {
@@ -111,39 +113,31 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
+    <main className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
       <div className="w-full max-w-md rounded-md border border-slate-800 bg-slate-900 p-4">
         <div className="mb-6 flex justify-center">
           <TnfLogo size={48} showWordmark wordmarkClassName="text-lg text-white" />
         </div>
         <h1 className="text-2xl font-semibold text-white">Create account</h1>
-        <p className="mt-2 text-sm text-slate-400">Fresh register flow for Cloudflare auth</p>
+        <p className="mt-2 text-sm text-slate-400">Create your TNF account to get started.</p>
 
         {error && (
-          <div className="mt-4 rounded-md border border-red-900 bg-red-950 p-3 text-sm text-red-200">
+          <div
+            role="alert"
+            className="mt-4 rounded-md border border-red-900 bg-red-950 p-3 text-sm text-red-200"
+          >
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-md mb-4">
-            <label className="block text-[10px] uppercase tracking-widest text-blue-400 font-bold mb-1">
-              Canonical Identity (Exacting Tracking)
-            </label>
-            <div className="font-mono text-xs text-blue-200/70 break-all">
-              user_{name.toLowerCase().replace(/[^a-z0-9]/g, '') || '...'}_[TIMESTAMP]
-            </div>
-            <p className="text-[9px] text-gray-400 mt-1">
-              Your unique protocol identifier for strict attribution and mesh sovereignty.
-            </p>
-          </div>
-
           <div>
             <label htmlFor="name" className="block text-sm text-slate-300">
               Name
             </label>
             <input
               id="name"
+              autoComplete="name"
               type="text"
               required
               value={name}
@@ -159,6 +153,7 @@ const Register: React.FC = () => {
             </label>
             <input
               id="email"
+              autoComplete="username"
               type="email"
               required
               value={email}
@@ -191,6 +186,7 @@ const Register: React.FC = () => {
             </label>
             <input
               id="password"
+              autoComplete="new-password"
               type="password"
               required
               minLength={8}
@@ -207,6 +203,7 @@ const Register: React.FC = () => {
             </label>
             <input
               id="confirmPassword"
+              autoComplete="new-password"
               type="password"
               required
               minLength={8}
@@ -254,7 +251,7 @@ const Register: React.FC = () => {
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 };
 

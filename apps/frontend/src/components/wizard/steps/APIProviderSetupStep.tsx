@@ -28,7 +28,15 @@ export const APIProviderSetupStep: React.FC = () => {
   };
 
   useEffect(() => {
-    updateSessionData(formData);
+    // Persist non-secret provider choices only. Raw keys stay in local form state
+    // (and eventually secure local storage) — never in shared wizard session.
+    updateSessionData({
+      providerMode: formData.providerMode,
+      openaiKeyConfigured: Boolean(formData.openaiKey),
+      anthropicKeyConfigured: Boolean(formData.anthropicKey),
+      googleKeyConfigured: Boolean(formData.googleKey),
+      openRouterKeyConfigured: Boolean(formData.openRouterKey),
+    });
   }, [formData, updateSessionData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

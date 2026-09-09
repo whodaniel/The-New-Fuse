@@ -1,32 +1,34 @@
 name: Protocol Schema Gate
 
 on:
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - "docs/protocols/**"
-      - "scripts/validate-protocol-schemas.cjs"
-      - "scripts/protocols/twip-conformance.cjs"
-      - "scripts/protocols/enforce-session-handoff.cjs"
-      - "scripts/protocols/emit-session-handoff.cjs"
-      - "scripts/protocols/validate-handoff-source-drift.cjs"
-      - "scripts/protocols/validate-turn-zero-authority.cjs"
-      - "scripts/protocols/validate-locked-doc-ledger.cjs"
-      - ".github/workflows/protocol-schema-gate.yml"
-      - "package.json"
-  push:
-    branches: [main, develop]
-    paths:
-      - "docs/protocols/**"
-      - "scripts/validate-protocol-schemas.cjs"
-      - "scripts/protocols/twip-conformance.cjs"
-      - "scripts/protocols/enforce-session-handoff.cjs"
-      - "scripts/protocols/emit-session-handoff.cjs"
-      - "scripts/protocols/validate-handoff-source-drift.cjs"
-      - "scripts/protocols/validate-turn-zero-authority.cjs"
-      - "scripts/protocols/validate-locked-doc-ledger.cjs"
-      - ".github/workflows/protocol-schema-gate.yml"
-      - "package.json"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: [main, develop]
+  #   paths:
+  #     - "docs/protocols/**"
+  #     - "scripts/validate-protocol-schemas.cjs"
+  #     - "scripts/protocols/twip-conformance.cjs"
+  #     - "scripts/protocols/enforce-session-handoff.cjs"
+  #     - "scripts/protocols/emit-session-handoff.cjs"
+  #     - "scripts/protocols/validate-handoff-source-drift.cjs"
+  #     - "scripts/protocols/validate-turn-zero-authority.cjs"
+  #     - "scripts/protocols/validate-locked-doc-ledger.cjs"
+  #     - ".github/workflows/protocol-schema-gate.yml"
+  #     - "package.json"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main, develop]
+  #   paths:
+  #     - "docs/protocols/**"
+  #     - "scripts/validate-protocol-schemas.cjs"
+  #     - "scripts/protocols/twip-conformance.cjs"
+  #     - "scripts/protocols/enforce-session-handoff.cjs"
+  #     - "scripts/protocols/emit-session-handoff.cjs"
+  #     - "scripts/protocols/validate-handoff-source-drift.cjs"
+  #     - "scripts/protocols/validate-turn-zero-authority.cjs"
+  #     - "scripts/protocols/validate-locked-doc-ledger.cjs"
+  #     - ".github/workflows/protocol-schema-gate.yml"
+  #     - "package.json"
   workflow_dispatch:
 
 jobs:
