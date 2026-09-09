@@ -181,6 +181,54 @@
       "options": [],
       "commands": [
         {
+          "name": "announce",
+          "aliases": [],
+          "description": "Announce this interactive session as available (or offline) for local Subdirector dispatch",
+          "options": [
+            {
+              "flags": "--agent-id <id>",
+              "description": "Stable agent id (default: derived from host/tty/name)"
+            },
+            {
+              "flags": "--cadence-sec <n>",
+              "description": "Expected re-announce cadence seconds"
+            },
+            {
+              "flags": "--capabilities <list>",
+              "description": "Comma-separated capability tokens"
+            },
+            {
+              "flags": "--json",
+              "description": "Emit machine-readable receipt JSON"
+            },
+            {
+              "flags": "--name <name>",
+              "description": "Agent display name (default: TNF_AGENT_NAME or tnf-<platform>-worker)"
+            },
+            {
+              "flags": "--offline",
+              "description": "Withdraw from dispatch (status=offline, dispatchable=false)"
+            },
+            {
+              "flags": "--platform <platform>",
+              "description": "Platform taxonomy token (default: TNF_PLATFORM or auto-detect; not Claude-bound)"
+            },
+            {
+              "flags": "--role <role>",
+              "description": "DACC role (usually worker)"
+            },
+            {
+              "flags": "--to <agentId>",
+              "description": "Local Subdirector agent id"
+            },
+            {
+              "flags": "--tty <tty>",
+              "description": "Override tty label for stable id derivation"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "bank",
           "aliases": [],
           "description": "Agent bank governance and cross-runtime distribution",
@@ -330,12 +378,20 @@
               "description": "Max candidates to show"
             },
             {
+              "flags": "--no-telemetry",
+              "description": "Skip routing-telemetry weight adjustment (base score only)"
+            },
+            {
               "flags": "--platform <platform>",
               "description": "Restrict to candidates whose live row matches this platform"
             },
             {
               "flags": "--require-capacity",
               "description": "Only candidates that are live and not busy (declared capacity respected)"
+            },
+            {
+              "flags": "--require-verification",
+              "description": "Only candidates whose spec declares verification/QA capability"
             },
             {
               "flags": "-c, --capabilities <list>",
@@ -564,7 +620,12 @@
           "name": "models",
           "aliases": [],
           "description": "List available models for the current provider",
-          "options": [],
+          "options": [
+            {
+              "flags": "-s, --search <query>",
+              "description": "Filter models by name or keyword"
+            }
+          ],
           "commands": []
         },
         {
@@ -764,6 +825,34 @@
             {
               "flags": "--plan",
               "description": "Dry-run report only (default safe mode if neither flag set)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "grant",
+          "aliases": [],
+          "description": "Grant an authority role to an agent id (operator only)",
+          "options": [
+            {
+              "flags": "--note <text>",
+              "description": "Reason, recorded in the registry entry"
+            },
+            {
+              "flags": "--revoke",
+              "description": "Remove the grant instead of setting it"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "init",
+          "aliases": [],
+          "description": "Interactive operator setup: identify yourself, provision the bus secret, seat the directors",
+          "options": [
+            {
+              "flags": "--rotate-secret",
+              "description": "Replace an existing bus secret (invalidates in-flight signatures)"
             }
           ],
           "commands": []
@@ -1626,6 +1715,49 @@
       "commands": []
     },
     {
+      "name": "critic",
+      "aliases": [],
+      "description": "Inspect and run the automatic turn critic",
+      "options": [],
+      "commands": [
+        {
+          "name": "config",
+          "aliases": [],
+          "description": "Show resolved user critic settings and their config path",
+          "options": [],
+          "commands": []
+        },
+        {
+          "name": "review",
+          "aliases": [],
+          "description": "Review a completed external-agent handoff and route its critique",
+          "options": [
+            {
+              "flags": "--handoff <path>",
+              "description": "TNF session handoff JSON to review"
+            },
+            {
+              "flags": "--json",
+              "description": "Emit receipt JSON; prompt feedback remains queued"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show recent critic receipts and delivery status",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "cron",
       "aliases": [],
       "description": "Cron and scheduled tasks management",
@@ -1938,6 +2070,554 @@
             {
               "flags": "--json",
               "description": "Emit machine-readable JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "durable-tasks",
+      "aliases": ["dtasks"],
+      "description": "DurableTask runtime — Ghost AI design/spec, waits, HTTP, sessions, batch (Phases 1–6)",
+      "options": [],
+      "commands": [
+        {
+          "name": "apply-workflow",
+          "aliases": [],
+          "description": "Apply design-agent output into builder store; --sync-api POSTs Nest /api/workflows",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override durable-tasks store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--project <projectId>",
+              "description": "Project id"
+            },
+            {
+              "flags": "--prompt <text>",
+              "description": "Design prompt (runs design-agent then applies)"
+            },
+            {
+              "flags": "--run <runId>",
+              "description": "Apply from an existing completed design-agent run"
+            },
+            {
+              "flags": "--sync-api",
+              "description": "POST/PATCH Nest workflows (requires TNF_API_URL; optional TNF_API_TOKEN)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "batch",
+          "aliases": [],
+          "description": "Batch-enqueue payloads (JSON array, max 1000)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--payloads <json>",
+              "description": "JSON array of payload objects"
+            },
+            {
+              "flags": "--project <projectId>",
+              "description": "Ownership project id"
+            },
+            {
+              "flags": "--user <userId>",
+              "description": "Ownership user id"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "cancel",
+          "aliases": [],
+          "description": "Cancel a non-terminal TaskRun",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "define",
+          "aliases": [],
+          "description": "Create or version-bump a DurableTask definition",
+          "options": [
+            {
+              "flags": "--concurrency <n>",
+              "description": "Queue concurrency limit"
+            },
+            {
+              "flags": "--description <text>",
+              "description": "Human description"
+            },
+            {
+              "flags": "--dir <path>",
+              "description": "Override durable-tasks store directory"
+            },
+            {
+              "flags": "--handler <name>",
+              "description": "Builtin handler: echo | fail | fail-once | sleep:<ms> | wait-token | idempotent:<key>"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--machine <preset>",
+              "description": "Machine preset: small|medium|large"
+            },
+            {
+              "flags": "--max-attempts <n>",
+              "description": "Retry max attempts"
+            },
+            {
+              "flags": "--queue <name>",
+              "description": "Queue name"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "demo",
+          "aliases": [],
+          "description": "End-to-end smoke: echo, retry, Ghost AI design+spec",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Store directory (default: temp under /tmp)"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "deploy",
+          "aliases": [],
+          "description": "Pin deployedVersion for skew protection on new triggers",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--env <name>",
+              "description": "Environment label"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "events",
+          "aliases": [],
+          "description": "List realtime run events (since seq)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--since <n>",
+              "description": "Only events with seq > n"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "ghost-setup",
+          "aliases": [],
+          "description": "Ensure design-agent + generate-spec DurableTasks exist",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "list",
+          "aliases": [],
+          "description": "List DurableTask definitions",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "mcp-serve",
+          "aliases": [],
+          "description": "Stdio MCP-ish JSON-RPC tools for DurableTask (register via tnf mcp add)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "mint-token",
+          "aliases": [],
+          "description": "Mint a PublicRunToken for client status reads",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "query",
+          "aliases": [],
+          "description": "TRQL-lite run query (e.g. status:COMPLETED taskId:demo limit:10)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "replay",
+          "aliases": [],
+          "description": "Replay a prior run (new run id, same payload)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "runs",
+          "aliases": [],
+          "description": "List TaskRuns",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--status <status>",
+              "description": "Filter by status"
+            },
+            {
+              "flags": "--task <id>",
+              "description": "Filter by task id"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "schedule-add",
+          "aliases": [],
+          "description": "Add interval schedule that triggers a DurableTask",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--every-ms <n>",
+              "description": "Interval milliseconds"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--payload <json>",
+              "description": "Payload JSON object"
+            },
+            {
+              "flags": "--task <taskId>",
+              "description": "DurableTask id"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "serve",
+          "aliases": [],
+          "description": "HTTP: wait callbacks, enqueue, webhook ingress, run event SSE",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--host <host>",
+              "description": "Bind host"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--port <n>",
+              "description": "Bind port (0 = ephemeral)"
+            },
+            {
+              "flags": "--webhook-secret <secret>",
+              "description": "Require x-tnf-durable-secret on webhook routes"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "session-append",
+          "aliases": [],
+          "description": "Append a message to a DurableSession",
+          "options": [
+            {
+              "flags": "--content <text>",
+              "description": "Message content"
+            },
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--role <role>",
+              "description": "Role"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "session-create",
+          "aliases": [],
+          "description": "Create a DurableSession channel (not SessionManager chat)",
+          "options": [
+            {
+              "flags": "--channel <name>",
+              "description": "Channel name"
+            },
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show one TaskRun (optionally authorize with --public-token)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--public-token <token>",
+              "description": "Public run token (client-scoped read)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "steer",
+          "aliases": [],
+          "description": "Send mid-run steering input",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--message <text>",
+              "description": "Steering message"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "trigger",
+          "aliases": [],
+          "description": "Enqueue a TaskRun (thin enqueue — does not execute inline)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--payload <json>",
+              "description": "JSON object payload"
+            },
+            {
+              "flags": "--project <projectId>",
+              "description": "Ownership project id"
+            },
+            {
+              "flags": "--user <userId>",
+              "description": "Ownership user id"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "wait-complete",
+          "aliases": [],
+          "description": "Complete a WaitToken and resume WAITING runs",
+          "options": [
+            {
+              "flags": "--data <json>",
+              "description": "JSON payload returned to the run"
+            },
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--public-token <token>",
+              "description": "Optional wait public token auth"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "wait-create",
+          "aliases": [],
+          "description": "Create a WaitToken (HITL / callback)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
+            },
+            {
+              "flags": "--timeout <spec>",
+              "description": "Timeout e.g. 30s, 10m"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "worker",
+          "aliases": [],
+          "description": "Run the local DurableTask worker (required for QUEUED runs to execute)",
+          "options": [
+            {
+              "flags": "--dir <path>",
+              "description": "Override store directory"
+            },
+            {
+              "flags": "--idle-stop <n>",
+              "description": "Stop after N idle ticks (useful in scripts)"
+            },
+            {
+              "flags": "--json",
+              "description": "Emit tick events as JSON lines"
+            },
+            {
+              "flags": "--once",
+              "description": "Process at most one run then exit"
+            },
+            {
+              "flags": "--poll-ms <n>",
+              "description": "Idle poll interval"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "workflows",
+          "aliases": [],
+          "description": "List AI-applied builder graphs (~/.tnf/workflow-graphs)",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable JSON"
             }
           ],
           "commands": []
@@ -2808,6 +3488,106 @@
       ]
     },
     {
+      "name": "graph",
+      "aliases": [],
+      "description": "Deterministic AST code graph: build it, then traverse it instead of grepping.",
+      "options": [],
+      "commands": [
+        {
+          "name": "build",
+          "aliases": [],
+          "description": "Parse a directory into a code graph and save it under ~/.tnf/code-graph/.",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit the build summary as JSON"
+            },
+            {
+              "flags": "--no-cluster",
+              "description": "Skip community detection"
+            },
+            {
+              "flags": "--quiet",
+              "description": "Suppress progress output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "explain",
+          "aliases": [],
+          "description": "Everything the graph knows about one node.",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit the explanation as JSON"
+            },
+            {
+              "flags": "--target <path>",
+              "description": "Which built graph to use (defaults to the most recent)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "path",
+          "aliases": [],
+          "description": "Shortest route between two concepts, with the weakest link on it.",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit the path as JSON"
+            },
+            {
+              "flags": "--target <path>",
+              "description": "Which built graph to use (defaults to the most recent)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "query",
+          "aliases": [],
+          "description": "Traverse the graph from the nodes that best match a question.",
+          "options": [
+            {
+              "flags": "--budget <tokens>",
+              "description": "Approximate token cap on the answer"
+            },
+            {
+              "flags": "--dfs",
+              "description": "Follow one chain deep instead of gathering breadth-first"
+            },
+            {
+              "flags": "--json",
+              "description": "Emit the result subgraph as JSON"
+            },
+            {
+              "flags": "--min-confidence <level>",
+              "description": "EXTRACTED | INFERRED | AMBIGUOUS"
+            },
+            {
+              "flags": "--target <path>",
+              "description": "Which built graph to use (defaults to the most recent)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "List built graphs and what each one contains.",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Emit the listing as JSON"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "growth-audit",
       "aliases": [],
       "description": "Inventory AI/runtime data growth paths (Hermes, TNF, Cursor, caches); diff vs last snapshot",
@@ -3550,6 +4330,18 @@
           "commands": []
         },
         {
+          "name": "bind",
+          "aliases": [],
+          "description": "Bind Virtual Library + notes vault to the authenticated TNF account",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
           "name": "status",
           "aliases": [],
           "description": "Show Virtual Library canonicalization status",
@@ -3580,14 +4372,51 @@
             }
           ],
           "commands": []
+        },
+        {
+          "name": "wire-timeline",
+          "aliases": [],
+          "description": "Push library stories/narratives/factoids into the account timeline",
+          "options": [
+            {
+              "flags": "--api <url>",
+              "description": "API base including /api"
+            },
+            {
+              "flags": "--file <path>",
+              "description": "JSON file of narrative items"
+            },
+            {
+              "flags": "--from-local",
+              "description": "Import ~/.tnf/personal-intelligence factoid JSON"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable output"
+            },
+            {
+              "flags": "--token <jwt>",
+              "description": "Auth JWT (or TNF_JWT)"
+            }
+          ],
+          "commands": []
         }
       ]
     },
     {
       "name": "list",
       "aliases": [],
-      "description": "List all registered agents",
-      "options": [],
+      "description": "List live bus agents plus the defined agent roster",
+      "options": [
+        {
+          "flags": "--all",
+          "description": "Show full detail for every defined agent"
+        },
+        {
+          "flags": "--json",
+          "description": "Emit roster as JSON"
+        }
+      ],
       "commands": []
     },
     {
@@ -3610,6 +4439,46 @@
         {
           "flags": "--tauri",
           "description": "Launch native Tauri desktop shell"
+        }
+      ],
+      "commands": []
+    },
+    {
+      "name": "login",
+      "aliases": [],
+      "description": "Sign in to TNF (cloud profile session; free accounts OK). Alias of: tnf profile login --cloud",
+      "options": [
+        {
+          "flags": "--cloud-endpoint <url>",
+          "description": "Cloud endpoint override"
+        },
+        {
+          "flags": "--json",
+          "description": "Machine-readable JSON"
+        },
+        {
+          "flags": "--local",
+          "description": "Local-only session (skip cloud link)"
+        },
+        {
+          "flags": "--passphrase <secret>",
+          "description": "Optional local passphrase"
+        },
+        {
+          "flags": "--profile <name>",
+          "description": "Profile name"
+        }
+      ],
+      "commands": []
+    },
+    {
+      "name": "logout",
+      "aliases": [],
+      "description": "End the active TNF profile session (next `tnf boot` / `tnf tui` will prompt to sign in)",
+      "options": [
+        {
+          "flags": "--profile <name>",
+          "description": "Profile name"
         }
       ],
       "commands": []
@@ -4216,6 +5085,10 @@
         {
           "flags": "--verbose",
           "description": "Show detailed model information"
+        },
+        {
+          "flags": "-s, --search <query>",
+          "description": "Search or filter models by ID, name, or keyword"
         }
       ],
       "commands": []
@@ -4380,6 +5253,10 @@
         {
           "flags": "--database-url <url>",
           "description": "Override DATABASE_URL for this run"
+        },
+        {
+          "flags": "--interactive",
+          "description": "Run the interactive personalization wizard (writes ~/.tnf/profiles/<handle>.json; non-TTY applies defaults)"
         },
         {
           "flags": "--no-require-cloud-db",
@@ -6509,6 +7386,86 @@
       ]
     },
     {
+      "name": "timeline",
+      "aliases": [],
+      "description": "Account-scoped personal timeline (unified-ledger)",
+      "options": [],
+      "commands": [
+        {
+          "name": "bind",
+          "aliases": [],
+          "description": "Bind timeline surface to the authenticated TNF account",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "bootstrap",
+          "aliases": [],
+          "description": "Bootstrap private personal timeline segments for the JWT user",
+          "options": [
+            {
+              "flags": "--api <url>",
+              "description": "API base including /api"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable output"
+            },
+            {
+              "flags": "--token <jwt>",
+              "description": "Auth JWT (or TNF_JWT)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "status",
+          "aliases": [],
+          "description": "Show timeline + library account binding status",
+          "options": [
+            {
+              "flags": "--json",
+              "description": "Machine-readable output"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "sync",
+          "aliases": [],
+          "description": "Sync library narratives/factoids into the account timeline",
+          "options": [
+            {
+              "flags": "--api <url>",
+              "description": "API base including /api"
+            },
+            {
+              "flags": "--file <path>",
+              "description": "JSON file of narrative items"
+            },
+            {
+              "flags": "--from-local",
+              "description": "Import ~/.tnf/personal-intelligence factoid JSON"
+            },
+            {
+              "flags": "--json",
+              "description": "Machine-readable output"
+            },
+            {
+              "flags": "--token <jwt>",
+              "description": "Auth JWT (or TNF_JWT)"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
       "name": "tools",
       "aliases": [],
       "description": "Tools and toolset management",
@@ -6697,6 +7654,101 @@
       "name": "version",
       "aliases": [],
       "description": "Print TNF CLI version (Hermes parity; same as --version)",
+      "options": [],
+      "commands": []
+    },
+    {
+      "name": "video",
+      "aliases": [],
+      "description": "Shared video-intelligence pipeline (all agents)",
+      "options": [],
+      "commands": [
+        {
+          "name": "ingestion-completion-gate",
+          "aliases": [],
+          "description": "Enforce manifest-to-action-queue completion gate",
+          "options": [
+            {
+              "flags": "--action-queue <path>",
+              "description": "action queue JSON"
+            },
+            {
+              "flags": "--gaps-dir <dir>",
+              "description": "directory containing gaps_*.json reports"
+            },
+            {
+              "flags": "--json <path>",
+              "description": "write machine-readable verdict here"
+            },
+            {
+              "flags": "--manifest <path>",
+              "description": "pipeline manifest JSON"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "modality-gap-pass",
+          "aliases": [],
+          "description": "Detect modality gaps in a timestamped transcript",
+          "options": [
+            {
+              "flags": "--min-confidence <n>",
+              "description": "minimum confidence threshold"
+            },
+            {
+              "flags": "--output <path>",
+              "description": "write gaps JSON here"
+            },
+            {
+              "flags": "--transcript <path>",
+              "description": "transcript file (VTT/bracketed/plain)"
+            }
+          ],
+          "commands": []
+        },
+        {
+          "name": "visual-recovery",
+          "aliases": [],
+          "description": "Resolve visual gaps via frames + OCR/vision model",
+          "options": [
+            {
+              "flags": "--gaps <path>",
+              "description": "gaps JSON from modality-gap-pass"
+            },
+            {
+              "flags": "--max-gaps <n>",
+              "description": "limit gaps to process"
+            },
+            {
+              "flags": "--ocr",
+              "description": "try tesseract OCR before vision"
+            },
+            {
+              "flags": "--out-dir <dir>",
+              "description": "frame output directory"
+            },
+            {
+              "flags": "--video-file <path>",
+              "description": "local video file"
+            },
+            {
+              "flags": "--video-url <url>",
+              "description": "YouTube/video URL"
+            },
+            {
+              "flags": "--vision-cmd <cmd>",
+              "description": "command template with {frame}"
+            }
+          ],
+          "commands": []
+        }
+      ]
+    },
+    {
+      "name": "video-ingest",
+      "aliases": [],
+      "description": "Ingest video intelligence against vetted corpus (Track 2)",
       "options": [],
       "commands": []
     },

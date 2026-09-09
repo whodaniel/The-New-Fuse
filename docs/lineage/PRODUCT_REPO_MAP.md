@@ -31,7 +31,7 @@ TNF Repo Separation Sync stays **disabled** until a dry-run of the
 TNF/                          # not a git repo
 ├── The-New-Fuse/             # tnf-monorepo working tree
 │   └── apps/
-│       ├── api … vscode-extension   # nine OSS form factors
+│       ├── api … vscode-extension   # ten OSS form factors
 │       └── extensions → ../../TNF-Extensions
 └── TNF-Extensions/           # local clones; not a packaged offering
     ├── adk-gateway           → tnf-adk-gateway
@@ -47,11 +47,11 @@ Listed in
 Do not recreate a packed `TNF-Extensions` GitHub repo. Do not put satellites
 back under `tnf-monorepo/apps/` except as the `extensions` symlink.
 
-| Class                            | Examples                                                                                                                                                           |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Class                            | Examples                                                                                                                                                                                                         |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Optional OSS-shaped satellites   | `tnf-ai-arcade`, `tnf-poker-room`, `tnf-casin8-games`, `tnf-telegram-mcp`, `tnf-visualization-hub`, `tnf-adk-gateway`, `tnf-openclaw` (optional adapter, not required to staff TNF), `tnf-audio-trigger-kws-mvp` |
-| Private / proprietary satellites | `tnf-nexus-orchestrator`, `tnf-picoclaw-overseer` (optional adapter), `tnf-cloud-sandbox`, `tnf-myphoneremote-api`                                                                    |
-| Operator workstream              | `virtual-library-blueprints`                                                                                                                                       |
+| Private / proprietary satellites | `tnf-nexus-orchestrator`, `tnf-picoclaw-overseer` (optional adapter), `tnf-cloud-sandbox`, `tnf-myphoneremote-api`                                                                                               |
+| Operator workstream              | `virtual-library-blueprints`                                                                                                                                                                                     |
 
 Current Nexus source is `tnf-nexus-orchestrator`. `NexusOrchestrator` is an
 archive.

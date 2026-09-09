@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "tnf/delegate-return/0.1",
+  "title": "TNF Delegate Return",
+  "type": "object",
+  "description": "Lightweight delegate completion handoff addressed to a parent handoff (chain, not overwrite). Replaces the 18-field root handoff schema for subordinate agent returns.",
+  "required": [
+    "spec",
+    "delegate_return_id",
+    "created_at",
+    "parent_handoff_id",
+    "grant_id",
+    "agent_id",
+    "work_summary",
+    "changed_paths",
+    "verification",
+    "continuation",
+    "next_actions",
+    "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "spec": {
+      "type": "string",
+      "const": "tnf/delegate-return/0.1",
+      "description": "Schema identifier for versioning and validation"
+    },
+    "delegate_return_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this delegate return"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of delegate completion"
+    },
+    "parent_handoff_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The handoff ID this delegate return addresses (enables chaining)"
+    },
+    "grant_id": {
+      "type": "string",
+      "description": "Capability grant ID that authorized this delegation"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "TNF agent identity that executed the work (e.g., TNF:LOCAL:AGENT:CLAUDE:001)"
+    },
+    "work_summary": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Human-readable summary of work completed"
+    },
+    "changed_paths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Repository-relative paths modified by this delegation"
+    },
+    "verification": {
+      "type": "object",
+      "required": ["privacy_guard", "secret_sweep", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "privacy_guard": {
+          "type": "string",
+          "enum": ["pass", "fail", "na"],
+          "description": "PII/credential sweep result"
+        },
+        "secret_sweep": {
+          "type": "string",
+          "enum": ["pass", "fail", "na"],
+          "description": "Secret/key exposure check result"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Verification details or failure reasons"
+        }
+      }
+    },
+    "continuation": {
+      "type": "object",
+      "required": ["owner", "targets", "priority", "resume_checklist"],
+      "additionalProperties": false,
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "Agent or human responsible for next steps"
+        },
+        "targets": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Specific files, tasks, or systems to resume"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Urgency of continuation"
+        },
+        "resume_checklist": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Concrete steps to resume work"
+        }
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Immediate next actions for the owner"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["completed", "failed", "partial", "blocked"],
+      "description": "Overall delegation outcome"
+    }
+  }
+}

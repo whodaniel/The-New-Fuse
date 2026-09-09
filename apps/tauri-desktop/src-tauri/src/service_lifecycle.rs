@@ -888,11 +888,11 @@ pub async fn start_story_architect_relay(app: AppHandle) -> Result<ServiceLifecy
     let relay_candidates = [
         repo
             .join("apps")
-            .join("extensions")
             .join("virtual-library-blueprints")
             .join("ai-relay"),
         repo
             .join("apps")
+            .join("extensions")
             .join("virtual-library-blueprints")
             .join("ai-relay"),
     ];
@@ -901,7 +901,7 @@ pub async fn start_story_architect_relay(app: AppHandle) -> Result<ServiceLifecy
         .find(|dir| dir.join("server.mjs").is_file())
         .ok_or_else(|| {
             format!(
-                "Story Architect relay not found under apps/extensions/virtual-library-blueprints/ai-relay (or legacy apps/virtual-library-blueprints/ai-relay) in {}",
+                "Story Architect relay not found under apps/virtual-library-blueprints/ai-relay (or fallback apps/extensions/virtual-library-blueprints/ai-relay) in {}",
                 repo.display()
             )
         })?;

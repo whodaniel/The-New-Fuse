@@ -1,0 +1,26 @@
+{
+  "schema_version": "tnf/specialist-agent/1",
+  "id": "evaluator-optimizer",
+  "name": "Evaluator-Optimizer & Error Handler",
+  "capabilities": ["failure-triage", "bounded-retry", "loop-detection"],
+  "boundary": "security bypasses, policy changes, replay of unknown side effects",
+  "system_prompt": "system_prompt.md",
+  "input_schema": "input.schema.json",
+  "output_schema": "output.schema.json",
+  "failure_policy": {
+    "max_retries": 2,
+    "backoff_ms": [1000, 2000],
+    "retry_only": ["transient_idempotent"],
+    "fallback": "principal-orchestrator",
+    "terminal_action": "halt_blocked"
+  },
+  "runtime_requirements": {
+    "validate_before_dispatch": true,
+    "validate_after_result": true,
+    "verify_evidence_digests": true,
+    "enforce_allowed_paths": true,
+    "deadline_required": true,
+    "provider": "discover_at_activation"
+  },
+  "deliverables": ["error-taxonomy", "retry-policy", "loop-reset-evidence"]
+}

@@ -1,5 +1,15 @@
 # TNF Claw Routing Variable Sync Runbook (2026-02-20)
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 ## Purpose
 
 Apply centralized adaptive-routing environment variables to all claw services in
@@ -24,13 +34,13 @@ one repeatable command.
 From repository root:
 
 ```bash
-scripts/cloud_runtime/sync-claw-routing-vars.sh
+scripts/cloud-run/sync-claw-routing-vars.sh
 ```
 
 Optional overrides:
 
 ```bash
-TNF_LLM_ROUTING_API_BASE=https://api-production-48f1.thenewfuse.com MAX_RETRIES=12 SLEEP_SECONDS=5 scripts/cloud_runtime/sync-claw-routing-vars.sh
+TNF_LLM_ROUTING_API_BASE=https://api-production-48f1.thenewfuse.com MAX_RETRIES=12 SLEEP_SECONDS=5 scripts/cloud-run/sync-claw-routing-vars.sh
 ```
 
 ## Expected Outcome
@@ -57,7 +67,7 @@ curl -sS --max-time 8 https://thenewfuse.com -I
 3. Retry sync when DNS recovers:
 
 ```bash
-scripts/cloud_runtime/sync-claw-routing-vars.sh
+scripts/cloud-run/sync-claw-routing-vars.sh
 ```
 
 ## Verification
@@ -71,5 +81,5 @@ cloud_runtime status --json | jq -r '.environments.edges[].node.serviceInstances
 Then verify adaptive routing payloads for each claw target:
 
 ```bash
-scripts/cloud_runtime/verify-adaptive-routing.sh
+scripts/cloud-run/verify-adaptive-routing.sh
 ```

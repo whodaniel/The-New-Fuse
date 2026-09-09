@@ -192,6 +192,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'User registration' })
   @ApiBody({ description: 'Registration data' })
   @ApiResponse({ status: 201, description: 'Registration successful' })
@@ -207,6 +208,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Refresh authentication token' })
   @ApiBody({ description: 'Refresh token payload' })
   @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
@@ -219,6 +221,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @Version(['1', VERSION_NEUTRAL])
   @UseGuards(GatewayAuthGuard)
   @ApiOperation({ summary: 'User logout' })
   @ApiBearerAuth('JWT-auth')
@@ -235,6 +238,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @Version(['1', VERSION_NEUTRAL])
   @UseGuards(GatewayAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get current user details' })
@@ -248,6 +252,7 @@ export class AuthController {
   }
 
   @Post('google')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Google sign-in with Firebase ID token' })
   async googleAuth(@Body() body: GoogleAuthDto) {
     if (!body.idToken) {
@@ -257,6 +262,7 @@ export class AuthController {
   }
 
   @Post('supabase')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Exchange Supabase access token for TNF JWT' })
   async supabaseAuth(@Body() body: SupabaseAuthDto) {
     if (!body.accessToken) {
@@ -266,6 +272,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Initiate password reset flow' })
   @ApiBody({ description: 'Email for password reset' })
   @ApiResponse({ status: 200, description: 'Reset email sent if user exists' })
@@ -275,6 +282,7 @@ export class AuthController {
   }
 
   @Get('verify-email')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Verify email using token after registration' })
   @ApiResponse({ status: 302, description: 'Redirect to success page after verification' })
   async verifyEmail() {
@@ -288,6 +296,7 @@ export class AuthController {
   }
 
   @Post('reset-password')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Complete password reset using token' })
   @ApiBody({ description: 'Reset token and new password' })
   @ApiResponse({ status: 200, description: 'Password reset successful' })
@@ -329,6 +338,7 @@ export class AuthController {
   }
 
   @Post('validate')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Validate a JWT token and return exp + scopes (Layer 5 ping)',
@@ -399,6 +409,7 @@ export class AuthController {
   // adding a strategy under `oauthStrategies` -- no controller change.
 
   @Get('oauth/:provider/authorize')
+  @Version(['1', VERSION_NEUTRAL])
   @HttpCode(HttpStatus.FOUND)
   @ApiOperation({ summary: 'Begin OAuth/OIDC redirect flow (Layer 1)' })
   @ApiResponse({ status: 302, description: 'Redirect to provider consent screen' })
@@ -430,6 +441,7 @@ export class AuthController {
   }
 
   @Get('oauth/:provider/callback')
+  @Version(['1', VERSION_NEUTRAL])
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Complete OAuth/OIDC redirect flow (Layer 1)' })
   @ApiQuery({ name: 'code', required: true })
@@ -468,6 +480,7 @@ export class AuthController {
   // No password, no clipboard juggling, no application seeding error.
 
   @Post('magic/request')
+  @Version(['1', VERSION_NEUTRAL])
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({ summary: 'Issue a one-time magic link (Layer 4)' })
   @ApiResponse({ status: 202, description: 'Link issued (delivered via email if configured)' })
@@ -500,6 +513,7 @@ export class AuthController {
   }
 
   @Get('magic/redeem')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Redeem a magic link token (Layer 4)' })
   @ApiQuery({ name: 'token', required: true })
   @ApiQuery({ name: 'email', required: false })

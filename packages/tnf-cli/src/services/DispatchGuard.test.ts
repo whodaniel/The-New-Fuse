@@ -15,6 +15,7 @@
 import {
   DEFAULT_LIVENESS_WINDOW_MS,
   decideDispatch,
+  isDurableQueueRecipient,
   resolveRecipient,
   type RegisteredAgent,
 } from './DispatchGuard.js';
@@ -122,14 +123,54 @@ const edge = resolveRecipient(
   opts
 );
 check('just past the window is stale', edge.status === 'stale');
+// isOnline may only DOWNGRADE. Observed 2026-09-05: tnf-local-subdirector sat
+// in the registry at isOnline:true with a lastSeen half an hour past its 300s
+// cadence, because the process that refreshes the row was itself blocked. A
+// stored flag that outvotes the clock reports a dead recipient as live and
+// sends an operator directive into a channel with no subscriber.
 check(
-  'the registry’s own isOnline wins when present (one liveness source)',
+  'a stale heartbeat is stale even when the row still claims isOnline: true',
   resolveRecipient(
     'x',
     [{ agentId: 'x', lastSeen: ago(10 * 60 * 60 * 1000), isOnline: true }],
     opts
-  ).status === 'live'
+  ).status === 'stale'
 );
+check(
+  'isOnline: false is believed — an agent may declare itself stood down',
+  resolveRecipient('x2', [{ agentId: 'x2', lastSeen: ago(1000), isOnline: false }], opts).status ===
+    'stale'
+);
+check(
+  'a fresh heartbeat with isOnline: true is live',
+  resolveRecipient('x3', [{ agentId: 'x3', lastSeen: ago(1000), isOnline: true }], opts).status ===
+    'live'
+);
+// Durable delivery must follow how a recipient CONSUMES, not what its role is
+// called. The sub-director is drained from a LIST queue while registered
+// director/orchestrator; under the old role-only rule its directives went
+// pub/sub-only and were dropped whenever it was not live at that instant.
+check(
+  'the sub-director gets a durable queue write despite a non-worker role',
+  isDurableQueueRecipient('tnf-local-subdirector', 'director') &&
+    isDurableQueueRecipient('tnf-cli-agent', 'orchestrator') &&
+    isDurableQueueRecipient('sub-director', 'director')
+);
+check(
+  'the original worker rule still holds (role and id shape)',
+  isDurableQueueRecipient('anything', 'worker') &&
+    isDurableQueueRecipient('hermes-codegen-worker', 'participant')
+);
+check(
+  'an ordinary participant still gets PUBLISH only',
+  !isDurableQueueRecipient('web-gemini-green-agent', 'participant') &&
+    !isDurableQueueRecipient(undefined, undefined)
+);
+check(
+  'recipient id matching is case and whitespace tolerant',
+  isDurableQueueRecipient('  TNF-Local-Subdirector  ', 'director')
+);
+
 check(
   'a missing lastSeen is stale, never assumed live',
   resolveRecipient('y', [{ agentId: 'y' }], opts).status === 'stale'

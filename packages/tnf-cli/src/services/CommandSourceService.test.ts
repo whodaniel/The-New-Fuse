@@ -7,6 +7,9 @@
  * `ProjectConfigService` read only `.tnf/command/*.md`, a directory that does
  * not exist in this repo.
  *
+ * Precedence: `.tnf` → `.agent` → peer runtimes (`.claude`, …). Same-named
+ * skills in `.agent/skills` beat `.claude/skills` mirrors.
+ *
  * Everything here runs against a synthetic tree in a temp dir, so the
  * assertions do not drift when the real repo's 795 definitions change.
  *
@@ -98,6 +101,15 @@ try {
   write('.codex/prompts/plan.md', '---\ndescription: Plan the work\n---\nBody.');
   write('.pi/prompts/review.md', '---\ndescription: Review the diff\n---\nBody.');
   write('.tnf/command/native.md', '---\ndescription: A native TNF command\n---\nBody.');
+  // Same skill name in .agent (TNF) and .claude (peer) — .agent must win.
+  write(
+    '.agent/skills/shared-skill/SKILL.md',
+    '---\nname: shared-skill\ndescription: AGENT canonical\n---\nBody.'
+  );
+  write(
+    '.claude/skills/shared-skill/SKILL.md',
+    '---\nname: shared-skill\ndescription: CLAUDE mirror\n---\nBody.'
+  );
   // Same name in both scopes — project must win.
   write('.claude/commands/shared.md', '---\ndescription: PROJECT version\n---\nBody.');
   write('.claude/commands/shared.md', '---\ndescription: USER version\n---\nBody.', home);
@@ -123,6 +135,12 @@ try {
   check('finds .pi/prompts', byName('review')?.kind === 'prompt');
   check('finds .tnf/command', byName('native')?.runtime === 'tnf');
   check('finds user-scope entries', byName('user-only')?.scope === 'user');
+  check(
+    '.agent/skills beats .claude/skills for same name',
+    byName('shared-skill')?.runtime === 'agent' &&
+      byName('shared-skill')?.description === 'AGENT canonical',
+    JSON.stringify(byName('shared-skill'))
+  );
 
   check('skips README.md', !byName('README'));
   check('reads the description', byName('deploy')?.description === 'Deploy the stack');

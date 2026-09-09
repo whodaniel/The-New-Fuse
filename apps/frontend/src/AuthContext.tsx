@@ -18,6 +18,8 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   isSlowLoading: boolean;
+  sessionUnavailable?: boolean;
+  retrySession?: () => void;
   login: (
     emailOrToken: string,
     password?: string,

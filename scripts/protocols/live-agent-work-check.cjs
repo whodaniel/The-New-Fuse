@@ -5,6 +5,7 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { resolveGateToken } = require('../lib/tnf-gate-token.cjs');
 
 const ROOT = path.resolve(__dirname, '../..');
 const HOME = os.homedir();
@@ -417,7 +418,7 @@ function collectTokens() {
   return {
     TNF_SUPER_ADMIN_TOKEN: Boolean(process.env.TNF_SUPER_ADMIN_TOKEN),
     TNF_SUPER_ADMIN_INPUT_TOKEN: Boolean(process.env.TNF_SUPER_ADMIN_INPUT_TOKEN),
-    TNF_GATE_POLICY_TOKEN: Boolean(process.env.TNF_GATE_POLICY_TOKEN),
+    TNF_GATE_POLICY_TOKEN: Boolean(resolveGateToken().token),
     TNF_CLOUD_REDIS_URL: Boolean(process.env.TNF_CLOUD_REDIS_URL),
   };
 }

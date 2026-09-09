@@ -1,5 +1,15 @@
 # Database Production Deployment Guide
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 ## Table of Contents
 
 1. [Production Configuration](#production-configuration)
@@ -45,14 +55,16 @@ CREATE_SYSTEM_AGENTS=false
 
 ### DATABASE_URL Parameters Explained
 
-- **connection_limit**: Max number of connections in the pool (default: 10, recommended: 20-50)
+- **connection_limit**: Max number of connections in the pool (default: 10,
+  recommended: 20-50)
 - **pool_timeout**: Seconds to wait for connection from pool (default: 10)
 - **sslmode**: SSL mode (require, prefer, disable)
   - Use `require` for production
   - Use `prefer` for development with SSL-capable databases
   - Use `disable` only for local development
 - **connect_timeout**: Connection timeout in seconds (default: 5)
-- **statement_timeout**: Query timeout in milliseconds (optional, e.g., 30000 for 30s)
+- **statement_timeout**: Query timeout in milliseconds (optional, e.g., 30000
+  for 30s)
 
 ### Recommended Production URL
 
@@ -66,7 +78,8 @@ postgresql://user:pass@host:5432/db?schema=public&connection_limit=30&pool_timeo
 
 ### CloudRuntime / Heroku / AWS RDS
 
-Most managed database services provide a `DATABASE_URL`. Simply copy it and add the recommended parameters:
+Most managed database services provide a `DATABASE_URL`. Simply copy it and add
+the recommended parameters:
 
 ```bash
 # Original CloudRuntime URL
@@ -390,6 +403,7 @@ connections = ((core_count * 2) + effective_spindle_count)
 ```
 
 For a 4-core server with SSD:
+
 ```
 connections = (4 * 2) + 1 = 9
 ```
@@ -479,12 +493,14 @@ await drizzleService.cleanupOldLogs(30);
 ### Monitoring Tools
 
 1. **PgHero**: Web-based PostgreSQL performance dashboard
+
    ```bash
    gem install pghero
    pghero config:set DATABASE_URL=$DATABASE_URL
    ```
 
 2. **pg_stat_monitor**: Advanced query monitoring
+
    ```sql
    CREATE EXTENSION pg_stat_monitor;
    ```
@@ -601,9 +617,11 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly_user;
 
 #### 1. Connection Pool Exhausted
 
-**Symptoms**: "Error: Timed out fetching a new connection from the connection pool"
+**Symptoms**: "Error: Timed out fetching a new connection from the connection
+pool"
 
 **Solutions**:
+
 ```bash
 # Increase connection limit
 DATABASE_URL="...?connection_limit=50"
@@ -616,6 +634,7 @@ DATABASE_URL="...?connection_limit=50"
 **Symptoms**: High response times, timeout errors
 
 **Solutions**:
+
 ```sql
 -- Find slow queries
 SELECT * FROM pg_stat_activity WHERE state = 'active' AND query_start < NOW() - INTERVAL '30 seconds';
@@ -631,6 +650,7 @@ SELECT pg_terminate_backend(pid);
 **Symptoms**: "Migration failed to apply"
 
 **Solutions**:
+
 ```bash
 # Check migration status
 npx drizzle migrate status
@@ -648,6 +668,7 @@ VALUES ('unique-id', 'checksum', NOW(), '20250101000000_migration_name', NULL, N
 **Symptoms**: Large database size, slow queries despite indexes
 
 **Solutions**:
+
 ```sql
 -- Check table bloat
 SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
@@ -664,6 +685,7 @@ VACUUM FULL ANALYZE table_name;
 **Symptoms**: "SSL connection error" or "certificate verify failed"
 
 **Solutions**:
+
 ```bash
 # Disable SSL verification (NOT recommended for production)
 DATABASE_URL="...?sslmode=disable"
@@ -778,6 +800,5 @@ For issues or questions:
 4. Contact database administrator
 5. Create issue in project repository
 
-**Last Updated**: 2025-11-18
-**Schema Version**: 1.0.0
-**Drizzle Version**: 6.19.0
+**Last Updated**: 2025-11-18 **Schema Version**: 1.0.0 **Drizzle Version**:
+6.19.0

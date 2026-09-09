@@ -192,10 +192,24 @@ function validateSessionHandoff(schema) {
     assert(required.has(key), `tnf-session-handoff.schema.json: required must include ${key}`);
   });
 
-  assert(
-    schema?.properties?.spec?.const === 'tnf/session-handoff/0.2',
-    'tnf-session-handoff.schema.json: spec const must be tnf/session-handoff/0.2',
-  );
+  // 0.3 added individually-addressable registry fields while keeping 0.2
+  // artifacts valid, so spec widened from a const to an enum. Pin the accepted
+  // set exactly: dropping or adding a version must update this gate.
+  const specProperty = schema?.properties?.spec || {};
+  const acceptedSpecs = specProperty.const ? [specProperty.const] : specProperty.enum || [];
+  const supportedSpecs = ['tnf/session-handoff/0.2', 'tnf/session-handoff/0.3'];
+  supportedSpecs.forEach((spec) => {
+    assert(
+      acceptedSpecs.includes(spec),
+      `tnf-session-handoff.schema.json: spec must accept ${spec}`,
+    );
+  });
+  acceptedSpecs.forEach((spec) => {
+    assert(
+      supportedSpecs.includes(spec),
+      `tnf-session-handoff.schema.json: spec accepts unsupported ${spec}`,
+    );
+  });
 
   assert(
     schema?.properties?.protocol_ack?.const === 'TNF_PROTOCOL_ACK',

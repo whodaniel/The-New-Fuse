@@ -109,7 +109,7 @@ export function OAuthInstanceRotationControl() {
 
   const oneShotCommand = useMemo(() => {
     return [
-      'bash scripts/cloud_runtime/sync-openclaw-oauth-instance.sh',
+      'bash scripts/cloud-run/sync-openclaw-oauth-instance.sh',
       `--service ${service}`,
       `--provider ${provider}`,
       `--auth-file "${authFile}"`,

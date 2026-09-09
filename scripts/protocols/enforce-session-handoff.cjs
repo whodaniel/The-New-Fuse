@@ -307,6 +307,17 @@ function ensureReceiptBinding(handoff, mode, receiptJsonPath) {
 }
 
 function main() {
+  // Boot validates the current runtime receipt, not the files in a past commit.
+  // Keep staged/CI coverage semantics unchanged for publication gates.
+  if (mode === 'runtime') {
+    const handoff = validateSchemaAndPayload(HANDOFF_JSON, HANDOFF_SCHEMA);
+    ensureFreshHandoff(handoff);
+    ensureMarkdownAck(HANDOFF_MD);
+    ensureReceiptBinding(handoff, mode, HANDOFF_JSON);
+    if (!fs.existsSync(STATUS_LEDGER)) fail(`Missing status ledger file: ${STATUS_LEDGER}`);
+    console.log('[session-handoff-gate] OK (runtime): current handoff is fresh, schema-valid, and repository-bound');
+    return;
+  }
   const files = getFilesForMode(mode).map(normalizePath).filter(Boolean);
   if (!files.length) {
     console.log(`[session-handoff-gate] OK (${mode}): no files to inspect`);
@@ -344,17 +355,58 @@ function main() {
       // ignore parse errors; leave ledgerSatisfied=false to keep gate strict
     }
   }
-  // Find all scoped receipts in the change set
+  // Find all handoff receipts in the change set. changedSet is lower-cased,
+  // so the global SESSION_HANDOFF_LATEST.json ALSO matches the session_handoff_
+  // filter below. A per-agent receipt plus a co-staged LATEST (the normal
+  // turn-end shape) must NOT be treated as ambiguity — prefer the per-agent
+  // receipt and ignore the co-staged LATEST. Only two or more per-agent
+  // receipts is genuine ambiguity.
+  const globalLatestLower = HANDOFF_JSON.toLowerCase();
   const scopedJsonCandidates = Array.from(changedSet).filter(f => f.startsWith('docs/protocols/reports/session_handoff_') && f.endsWith('.json'));
-  
-  if (scopedJsonCandidates.length === 0) {
-    fail('Critical-path changes require a valid scoped handoff receipt. No docs/protocols/reports/SESSION_HANDOFF_*.json found in this change set.');
+  // A merge carries every receipt the incoming branch ever committed. Those are
+  // history, not claims this commit is making, so counting them as competing
+  // receipts reports an ambiguity that does not exist — the shape
+  // tnf-honest-guard-review calls a verdict the guard never established. A staged
+  // blob byte-identical to the merge source's was carried, not authored here.
+  const mergeCarried = new Set();
+  let inMerge = false;
+  try {
+    runGit(['rev-parse', '--verify', '--quiet', 'MERGE_HEAD']);
+    inMerge = true;
+  } catch {
+    inMerge = false;
   }
-  if (scopedJsonCandidates.length > 1) {
-    fail('Multiple handoff JSON receipts found in this change set. Only one receipt per commit is permitted to prevent ambiguity.');
+  if (inMerge) {
+    // changedSet is lower-cased above, but git paths are case-sensitive, so
+    // resolve the real path before asking git about the blob.
+    const originalCase = new Map(files.map((f) => [normalizePath(f).toLowerCase(), normalizePath(f)]));
+    for (const f of scopedJsonCandidates) {
+      const real = originalCase.get(f) || f;
+      try {
+        if (runGit(['show', `:${real}`]) === runGit(['show', `MERGE_HEAD:${real}`])) mergeCarried.add(f);
+      } catch {
+        // Unreadable on either side: treat as authored here and keep it counted.
+      }
+    }
+  }
+  const perAgentReceipts = scopedJsonCandidates
+    .filter((f) => f !== globalLatestLower)
+    .filter((f) => !mergeCarried.has(f));
+
+  if (perAgentReceipts.length > 1) {
+    fail('Multiple per-agent handoff JSON receipts found in this change set. Only one receipt per agent per commit is permitted to prevent ambiguity.');
   }
 
-  const receiptJsonPath = scopedJsonCandidates[0];
+  let receiptJsonPath;
+  if (perAgentReceipts.length === 1) {
+    // Per-agent receipt wins; a co-staged global LATEST is ignored.
+    receiptJsonPath = perAgentReceipts[0];
+  } else if (scopedJsonCandidates.length === 1) {
+    // Only the global LATEST is present — global semantics apply.
+    receiptJsonPath = scopedJsonCandidates[0];
+  } else {
+    fail('Critical-path changes require a valid scoped handoff receipt. No docs/protocols/reports/SESSION_HANDOFF_*.json found in this change set.');
+  }
   const receiptBase = receiptJsonPath.slice(0, -5);
   const receiptMdPath = receiptBase + '.md';
 

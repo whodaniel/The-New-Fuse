@@ -169,6 +169,9 @@ const TerminalGraphPage: React.FC = () => {
               Back to Visualizations
             </Link>
             <h1 className="text-3xl font-semibold text-white">Terminal Graph</h1>
+            <Link to="/visualizations/master-graph" className="text-sm text-cyan-300">
+              Explore architecture and runtime relationships →
+            </Link>
             <p className="mt-2 max-w-3xl text-sm text-slate-300">
               Holistic TWIP projection of terminal identities, process topology, and runtime
               ownership hints for TNF agent orchestration.

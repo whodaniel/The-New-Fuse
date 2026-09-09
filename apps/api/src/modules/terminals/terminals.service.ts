@@ -63,7 +63,10 @@ type RuntimeOwnershipHint = {
 export class TerminalsService {
   private readonly logger = new Logger(TerminalsService.name);
 
-  async getTerminalGraph(query: TerminalGraphQueryDto) {
+  async getTerminalGraph(
+    query: TerminalGraphQueryDto,
+    context?: { viewerUserId?: string | null }
+  ) {
     const snapshotPath = process.env.TWIP_INVENTORY_SNAPSHOT_PATH
       ? path.resolve(process.env.TWIP_INVENTORY_SNAPSHOT_PATH)
       : path.join(process.cwd(), 'data', 'protocols', 'twip-inventory.snapshot.json');
@@ -108,6 +111,7 @@ export class TerminalsService {
       safety: {
         commandsRedacted: !query.includeCommands,
         tenantScopedFilter: query.tenantId || null,
+        viewerUserId: context?.viewerUserId ?? null,
       },
       summary: {
         requestedLimit: query.limit,

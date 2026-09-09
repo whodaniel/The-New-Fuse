@@ -2,6 +2,8 @@ import { invoke } from '@tauri-apps/api/core';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PageShell from '../components/layout/PageShell';
 import { useRoute } from '../components/route-context';
+import { useOperatorSynergy } from '../hooks/useOperatorSynergy';
+import { relayAuthHint } from '../lib/relayAuthHint';
 import apiService from '../services/api';
 
 /**
@@ -117,6 +119,8 @@ function computeLayout(displays: MirrorDisplay[], cW: number, cH: number) {
 
 const MissionControl: React.FC = () => {
   const { navigate } = useRoute();
+  const { state: synergy } = useOperatorSynergy();
+  const authHint = relayAuthHint(synergy);
   const [summary, setSummary] = useState<SummaryPayload | null>(null);
   const [mirror, setMirror] = useState<MirrorPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -252,11 +256,47 @@ end tell`;
         {error ? (
           <div className="mc-offline">
             <div className="mc-offline-text">
-              <strong>Local runtime offline.</strong> {error}
+              <strong>Desktop local-runtime bridge offline.</strong> {error}
+              <span className="mc-offline-sub">
+                This is the desktop app's own local API (goals, cron, terminal mirror) — a separate
+                thing from the relay/federation connection below.
+              </span>
             </div>
             <div className="mc-offline-actions">
-              <button type="button" className="mc-offline-btn" onClick={() => navigate('/settings')}>Settings &rarr; environment</button>
-              <button type="button" className="mc-offline-btn mc-offline-primary" onClick={() => { refreshSummary(); refreshMirror(); }}>Retry Connection</button>
+              <button
+                type="button"
+                className="mc-offline-btn"
+                onClick={() => navigate('/settings')}
+              >
+                Settings &rarr; environment
+              </button>
+              <button
+                type="button"
+                className="mc-offline-btn mc-offline-primary"
+                onClick={() => {
+                  refreshSummary();
+                  refreshMirror();
+                }}
+              >
+                Retry Connection
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {authHint ? (
+          <div className="mc-offline mc-offline-relay">
+            <div className="mc-offline-text">
+              <strong>Relay/federation offline.</strong> {authHint}
+            </div>
+            <div className="mc-offline-actions">
+              <button
+                type="button"
+                className="mc-offline-btn"
+                onClick={() => navigate('/settings')}
+              >
+                Settings &rarr; Relay auth
+              </button>
             </div>
           </div>
         ) : null}
@@ -267,7 +307,14 @@ end tell`;
             <header className="mc-card-header">
               <h2>Goals</h2>
               <span className="mc-zone mc-zone-personal">PERSONAL</span>
-              <button type="button" className="mc-add-btn" onClick={() => console.log('Add Goal')} title="Add new goal">+ New</button>
+              <button
+                type="button"
+                className="mc-add-btn"
+                onClick={() => console.log('Add Goal')}
+                title="Add new goal"
+              >
+                + New
+              </button>
             </header>
             {goals.length === 0 ? (
               <p className="mc-empty">
@@ -308,7 +355,14 @@ end tell`;
             <header className="mc-card-header">
               <h2>Scheduled Jobs</h2>
               <span className="mc-zone mc-zone-personal">PERSONAL</span>
-              <button type="button" className="mc-add-btn" onClick={() => console.log('Add Scheduled Job')} title="Schedule new job">+ New</button>
+              <button
+                type="button"
+                className="mc-add-btn"
+                onClick={() => console.log('Add Scheduled Job')}
+                title="Schedule new job"
+              >
+                + New
+              </button>
             </header>
             {cronJobs.length === 0 ? (
               <p className="mc-empty">
@@ -442,12 +496,31 @@ end tell`;
           display: flex;
           align-items: center;
           justify-content: space-between;
+          gap: 12px;
           padding: 10px 14px;
           border-radius: 10px;
           border: 1px solid rgba(239, 68, 68, 0.35);
           background: rgba(239, 68, 68, 0.08);
           color: #fca5a5;
           font-size: 13px;
+        }
+
+        .mc-offline-sub {
+          display: block;
+          margin-top: 4px;
+          font-size: 11px;
+          color: rgba(252, 165, 165, 0.75);
+        }
+
+        .mc-offline-relay {
+          border-color: rgba(245, 158, 11, 0.35);
+          background: rgba(245, 158, 11, 0.08);
+          color: #fcd34d;
+        }
+
+        .mc-offline-relay .mc-offline-btn {
+          border-color: rgba(245, 158, 11, 0.3);
+          color: #fcd34d;
         }
 
         .mc-offline-actions {

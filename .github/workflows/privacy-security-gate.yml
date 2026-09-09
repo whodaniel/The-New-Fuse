@@ -3,8 +3,9 @@ name: Privacy And Security Gate (Self-hosted)
 # Security remains automatic, but it runs once on the PR using operator-owned
 # capacity. The same protections also exist in local pre-push tooling.
 on:
-  pull_request:
-    branches: ["**"]
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: ["**"]
   workflow_dispatch:
 
 permissions:

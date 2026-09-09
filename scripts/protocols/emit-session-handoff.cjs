@@ -8,10 +8,134 @@ const path = require('node:path');
 const { upgrade: upgradeSessionHandoff } = require('../turn-end-v2.cjs');
 
 const repoRoot = process.cwd();
-const handoffJsonPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.json');
-const handoffMdPath = path.join(repoRoot, 'docs/protocols/reports/SESSION_HANDOFF_LATEST.md');
+const reportsDir = path.join(repoRoot, 'docs/protocols/reports');
+// Legacy shared surface — still written for existing consumers (turn-end-v2,
+// sync-handoff-cache, resume checklists). NOT authoritative: concurrent
+// emitters clobbered each other here (one session's receipt recorded another
+// session's branch/SHA, observed live 2026-09-01), and co-staging it is what
+// jammed the gate before the per-agent preference landed.
+const handoffJsonPath = path.join(reportsDir, 'SESSION_HANDOFF_LATEST.json');
+const handoffMdPath = path.join(reportsDir, 'SESSION_HANDOFF_LATEST.md');
 const ledgerPath = path.join(repoRoot, 'docs/protocols/AGENT_STATUS_LEDGER.md');
 const livingStatePath = path.join(repoRoot, 'docs/protocols/LIVING_STATE.md');
+
+/* --------------------------------------------------------------------------
+ * Ported from scripts/turn-end-v2.cjs (2026-09-07).
+ *
+ * That script is the Turn End implementation TURN_ZERO_MANDATE documents, but it
+ * has zero call sites — every reference to it is in docs — while THIS emitter is
+ * the one the handoff gate validates by name. Two implementations writing the
+ * same SESSION_HANDOFF_LATEST files is the "capability implemented many times"
+ * shape, and enforcing the documented-but-dead one would have clobbered the live
+ * handoff with receipts the gate cannot read.
+ *
+ * These four capabilities existed only in that script. They are ported here
+ * rather than lost, so the live path becomes the superset before the dead one
+ * is retired.
+ * -------------------------------------------------------------------------- */
+
+const CANONICAL_SOURCE = 'whodaniel/tnf-monorepo';
+const FRESHNESS_PATH = path.join(repoRoot, 'data/protocols/state-freshness.json');
+
+/** `git@github.com:o/r.git` and `https://github.com/o/r` both reduce to `o/r`. */
+/** This file's command helper takes a string, not an argv array. */
+function runGitSafe(command) {
+  try {
+    return run(command);
+  } catch {
+    return '';
+  }
+}
+
+function normalizeOrigin(input) {
+  const raw = String(input || '').trim().replace(/\.git$/, '');
+  const ssh = raw.match(/^git@github\.com:(.+)$/);
+  if (ssh) return ssh[1];
+  const https = raw.match(/^https?:\/\/github\.com\/(.+)$/);
+  if (https) return https[1];
+  return raw || 'unknown';
+}
+
+/**
+ * State-freshness receipts, classified. A receipt that was never probed is
+ * PROBE_FAILED, not absent — the distinction the freshness mandate exists for.
+ */
+function freshnessReceipts() {
+  try {
+    const data = JSON.parse(fs.readFileSync(FRESHNESS_PATH, 'utf8'));
+    return Object.entries(data.receipts || {}).map(([id, r]) => {
+      const age = r.observedAt
+        ? Math.max(0, Math.floor((Date.now() - Date.parse(r.observedAt)) / 1000))
+        : Infinity;
+      let state = 'FRESH';
+      if (r.split) state = 'SPLIT';
+      else if (!r.ok) state = 'PROBE_FAILED';
+      else if (age > Number(r.ttlSeconds || 0)) state = 'STALE';
+      return { id, state, observed_at: r.observedAt || '', value: String(r.value || '').slice(0, 500) };
+    });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Name any git operation left open in this checkout.
+ *
+ * A handoff emitted mid-merge describes a tree that does not exist yet, and the
+ * next session inherits it as if it were settled. On 2026-09-07 a shared
+ * checkout sat mid-merge for hours while handoffs were emitted from it.
+ */
+function operationInProgress() {
+  try {
+    const gitDir = run('git rev-parse --git-dir');
+    if (!gitDir) return null;
+    const abs = path.resolve(repoRoot, gitDir);
+    for (const [name, marker] of [
+      ['merge', 'MERGE_HEAD'],
+      ['cherry-pick', 'CHERRY_PICK_HEAD'],
+      ['revert', 'REVERT_HEAD'],
+      ['rebase', 'rebase-merge'],
+      ['rebase', 'rebase-apply'],
+    ]) {
+      if (fs.existsSync(path.join(abs, marker))) return name;
+    }
+  } catch {
+    /* unreadable git dir: reported as unknown by the caller, never as clean */
+  }
+  return null;
+}
+
+/** Turn End reflection, from repeatable --lesson / --skill / --gap flags. */
+function buildReflection(argv) {
+  const collect = (flag) =>
+    argv.reduce((acc, a, i) => (a === flag && argv[i + 1] ? [...acc, argv[i + 1]] : acc), []);
+  const single = (flag) => {
+    const i = argv.indexOf(flag);
+    return i !== -1 ? argv[i + 1] || true : null;
+  };
+  const lessons = collect('--lesson');
+  const skills = collect('--skill');
+  const gaps = collect('--gap');
+  const noLessons = single('--no-lessons');
+  const noSkills = single('--no-skills');
+  const noGaps = single('--no-gaps');
+
+  const reflection = {
+    lessons: { considered: Boolean(lessons.length || noLessons) },
+    skills: { considered: Boolean(skills.length || noSkills) },
+    gaps: { considered: Boolean(gaps.length || noGaps) },
+  };
+  if (lessons.length) reflection.lessons.recorded = lessons;
+  if (noLessons && noLessons !== true) reflection.lessons.rationale = noLessons;
+  if (skills.length) {
+    reflection.skills.proposed = skills;
+    reflection.skills.overlap_reviewed = true;
+  }
+  if (noSkills && noSkills !== true) reflection.skills.rationale = noSkills;
+  if (gaps.length) reflection.gaps.open = gaps.map((g) => ({ summary: g }));
+  if (noGaps && noGaps !== true) reflection.gaps.rationale = noGaps;
+  return reflection;
+}
 
 function run(command, options = {}) {
   return execSync(command, {
@@ -248,7 +372,7 @@ function updateLedger(handoffId) {
 
   const content = fs.readFileSync(ledgerPath, 'utf8');
   if (content.includes(handoffId)) return;
-  const row = `| ${new Date().toISOString().slice(0, 10)} | Orchestrator | Published SESSION_HANDOFF_LATEST (${handoffId}) | ✅ HANDOFF_READY |`;
+  const row = `| ${new Date().toISOString().slice(0, 10)} | Orchestrator | Published scoped session handoff (${handoffId}) | ✅ HANDOFF_READY |`;
   const lines = content.split('\n');
 
   const headerPattern = /^\|\s*Date\s*\|\s*Agent\s*\|\s*Action\s*\|\s*Outcome\s*\|$/i;
@@ -302,9 +426,29 @@ function syncLivingState(handoffPayload) {
   const headShort = String(handoffPayload.head_sha || '').slice(0, 12);
   const aligned = tipAligned(handoffPayload);
   const statusMarker = aligned ? '[STATUS:SYNCHRONIZED]' : '[STATUS:DRIFT]';
+  // The emitting agent's first next-action silently became the fleet's Current
+  // Directive. On 2026-09-02 that replaced a standing operator directive
+  // ("Deploy frontend to Cloudflare Pages") with a routine per-session action,
+  // and only a memory note caught it. A handoff records what one session did;
+  // it is not authority to retarget the fleet.
+  //
+  // Default is now preserve. Set TNF_HANDOFF_SET_DIRECTIVE=1 to retarget.
+  const existingDirective = (() => {
+    const m = fs
+      .readFileSync(livingStatePath, 'utf8')
+      .match(/<!--\s*CURRENT_DIRECTIVE:START\s*-->\s*\n+\*\*Current Directive:\*\*\s*([^\n]*)/);
+    return m ? m[1].trim() : '';
+  })();
+  const overrideDirective = Boolean(process.env.TNF_HANDOFF_SET_DIRECTIVE);
+  const directiveText = !overrideDirective && existingDirective ? existingDirective : leadAction;
+  if (existingDirective && directiveText !== leadAction) {
+    console.log(
+      `[emit-session-handoff] preserved Current Directive: "${existingDirective}" (set TNF_HANDOFF_SET_DIRECTIVE=1 to replace)`
+    );
+  }
   const fence = [
     '<!-- CURRENT_DIRECTIVE:START -->',
-    `**Current Directive:** ${leadAction}`,
+    `**Current Directive:** ${directiveText}`,
     '<!-- CURRENT_DIRECTIVE:END -->',
   ].join('\n');
   const historyLine = `- ${new Date().toISOString()} handoff \`${handoffId}\` head \`${headShort}\` project \`${projectId}\` — ${leadAction}`;
@@ -392,6 +536,24 @@ function main() {
   const handoffId = crypto.randomUUID();
   const createdAt = new Date().toISOString();
 
+  // Primary artifact: a per-agent scoped receipt. It is minted at commit-prep
+  // time — branch and head_sha are bound HERE, freshness is NOW — and it is
+  // what the session-handoff gate prefers over the shared LATEST. The receipt
+  // must declare itself in changed_paths so gate coverage is self-contained.
+  const ownerSlug = String(process.env.TNF_AGENT_ID || input.owner || 'agent')
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+  const scopedSlug = !ownerSlug || ownerSlug === 'latest' ? 'agent' : ownerSlug;
+  const scopedStamp = `${createdAt.replace(/[-:]/g, '').replace(/\..+/, '')}-${handoffId.slice(0, 8)}`;
+  const scopedJsonPath = path.join(reportsDir, `session_handoff_${scopedSlug}-${scopedStamp}.json`);
+  const scopedMdPath = `${scopedJsonPath.slice(0, -5)}.md`;
+  for (const scopedPath of [scopedJsonPath, scopedMdPath]) {
+    const rel = path.relative(repoRoot, scopedPath).replace(/\\/g, '/');
+    if (!changedPaths.includes(rel)) changedPaths.push(rel);
+  }
+
   const summary = input.summary.length
     ? input.summary
     : [
@@ -442,12 +604,30 @@ function main() {
       resume_checklist: resumeChecklist,
     },
     next_actions: nextActions,
+    // Turn End reflection (Axiom 8): a turn that learned something and did not
+    // record it leaves the next session to rediscover it the hard way.
+    reflection: buildReflection(process.argv.slice(2)),
+    // Schema field names, not invented ones: tnf-session-handoff.schema.json
+    // already defines freshness_receipts and nests the repository facts under
+    // repository_context. It was written for turn-end-v2's richer output, so the
+    // live emitter conforms to the existing contract rather than widening it.
+    // State-freshness receipts, classified FRESH / STALE / SPLIT / PROBE_FAILED.
+    freshness_receipts: freshnessReceipts(),
+    repository_context: {
+      origin: runGitSafe('git remote get-url origin'),
+      actual: normalizeOrigin(runGitSafe('git remote get-url origin')),
+      canonical_source: CANONICAL_SOURCE,
+      // A handoff emitted mid-merge describes a tree that does not exist yet.
+      // Naming the open operation stops the next session inheriting it as settled.
+      operation_in_progress: operationInProgress(),
+      dirty: Boolean(runGitSafe('git status --porcelain')),
+    },
     artifacts: {
       commits: [headSha],
     },
   });
 
-  const markdown = `# SESSION_HANDOFF_LATEST
+  const markdown = `# SESSION_HANDOFF (${scopedSlug})
 
 Protocol ACK: \`TNF_PROTOCOL_ACK\`
 Spec: \`${handoffPayload.spec}\`
@@ -491,13 +671,110 @@ ${handoffPayload.continuation.resume_checklist.map((line) => `- ${line}`).join('
 ${nextActions.map((line) => `- ${line}`).join('\n')}
 `;
 
+  ensureDirFor(scopedJsonPath);
   ensureDirFor(handoffJsonPath);
-  ensureDirFor(handoffMdPath);
+  // Primary: per-agent scoped receipt — collision-free across concurrent
+  // agents and preferred by the session-handoff gate.
+  fs.writeFileSync(scopedJsonPath, `${JSON.stringify(handoffPayload, null, 2)}\n`, 'utf8');
+  fs.writeFileSync(scopedMdPath, `${markdown.trimEnd()}\n`, 'utf8');
+  // Legacy compatibility copy for LATEST consumers (turn-end-v2,
+  // sync-handoff-cache, resume checklists). Non-authoritative.
   fs.writeFileSync(handoffJsonPath, `${JSON.stringify(handoffPayload, null, 2)}\n`, 'utf8');
   fs.writeFileSync(handoffMdPath, `${markdown.trimEnd()}\n`, 'utf8');
   updateLedger(handoffId);
   syncLivingState(handoffPayload);
   syncLedgerP0(handoffPayload);
+
+  // Auto-lease (R4 automation): the paths this session just touched are hot;
+  // register a TTL lease so sweep actors cannot absorb follow-up edits to
+  // them under their own messages (the lease gate blocks commits over
+  // another agent's active lease). Opt out with TNF_HANDOFF_NO_LEASE=1.
+  try {
+    if (process.env.TNF_HANDOFF_NO_LEASE !== '1') {
+      const { acquireLeases } = require('../harness/check-workspace-lease.cjs');
+      const leasePaths = changedPaths.filter((p) => p !== '(no-diff-detected)').slice(0, 40);
+      if (leasePaths.length) {
+        const ttl = Number(process.env.TNF_HANDOFF_LEASE_TTL_MIN) || 120;
+        acquireLeases(repoRoot, {
+          paths: leasePaths,
+          ttlMinutes: ttl,
+          task: 'session-handoff continuation window',
+        });
+        console.log(`[emit-session-handoff] leased ${leasePaths.length} changed path(s) (ttl ${ttl}m) — TNF_HANDOFF_NO_LEASE=1 to disable`);
+      }
+    }
+  } catch (err) {
+    console.warn(`[emit-session-handoff] lease registration skipped: ${err.message}`);
+  }
+
+  // Second pass: the writes above (receipt files, ledger, LIVING_STATE) are
+  // themselves changes, but changed_paths was gathered before any of them
+  // existed — so the staged handoff gate blocked the first emit with
+  // "changed_paths does not cover critical changed files: …LIVING_STATE.md"
+  // (hit three times on 2026-09-05). Re-gather now that every artifact is on
+  // disk and rewrite the receipts with the complete set.
+  try {
+    const finalPaths = gatherChangedPaths();
+    const merged = [...new Set([
+      ...handoffPayload.changed_paths.filter((p) => p !== '(no-diff-detected)'),
+      ...finalPaths,
+    ])];
+    const nextPaths = merged.length ? merged : ['(no-diff-detected)'];
+    if (JSON.stringify(nextPaths) !== JSON.stringify(handoffPayload.changed_paths)) {
+      handoffPayload.changed_paths = nextPaths;
+      fs.writeFileSync(handoffJsonPath, `${JSON.stringify(handoffPayload, null, 2)}\n`, 'utf8');
+      const updatedMarkdown = markdown.replace(
+        /## Changed Paths\n[\s\S]*?\n\n## Verification/,
+        `## Changed Paths\n${nextPaths.map((line) => `- ${line}`).join('\n')}\n\n## Verification`,
+      );
+      fs.writeFileSync(handoffMdPath, `${updatedMarkdown.trimEnd()}\n`, 'utf8');
+      console.log(`[emit-session-handoff] second-pass changed_paths: ${nextPaths.length} path(s)`);
+    }
+  } catch (err) {
+    console.warn(`[emit-session-handoff] second-pass changed_paths skipped: ${err.message}`);
+  }
+
+  // Canonical registry publication (TNF-0108): every emitted handoff becomes
+  // an individually addressable immutable record plus one metadata-only
+  // registry row. Supersession is explicit (this record supersedes the
+  // currently active scoped record) — most-recently-written never silently
+  // becomes everyone's next directive. The record is canonical; the
+  // SESSION_HANDOFF_LATEST files are generated compatibility views, with the
+  // JSON view rewritten below from the finalized record body.
+  try {
+    const registry = require('../harness/handoff-registry.cjs');
+    const published = registry.publish({
+      repoRoot,
+      handoff: handoffPayload,
+      opts: {
+        sessionId: process.env.TNF_SESSION_ID || null,
+        taskId: process.env.TNF_TASK_ID || (handoffPayload.project_ids || [])[0] || null,
+        turnStatus: 'turn_complete',
+        taskStatus: process.env.TNF_TASK_STATUS || 'in_progress',
+      },
+    });
+    console.log(
+      `[emit-session-handoff] registry row ${published.row.handoff_id} (${published.row.state}, checkout ${published.row.checkout_id})`
+    );
+    if (published.superseded.length) {
+      console.log(`[emit-session-handoff] explicitly superseded: ${published.superseded.join(', ')}`);
+    }
+    // View = record: regenerate LATEST.json from the finalized body.
+    fs.writeFileSync(handoffJsonPath, `${JSON.stringify(handoffPayload, null, 2)}\n`, 'utf8');
+    // The commit gate prefers this per-agent view. It must contain the same
+    // finalized body (including the registry copy's changed-path coverage).
+    fs.writeFileSync(scopedJsonPath, `${JSON.stringify(handoffPayload, null, 2)}\n`, 'utf8');
+    const cacheFile = registry.writeCurrentCache({
+      repoRoot,
+      row: published.row,
+      body: JSON.parse(fs.readFileSync(published.recordPath, 'utf8')),
+    });
+    if (cacheFile) {
+      console.log(`[emit-session-handoff] per-checkout cache: ${path.relative(os.homedir(), cacheFile)}`);
+    }
+  } catch (err) {
+    console.warn(`[emit-session-handoff] registry publication skipped: ${err.message}`);
+  }
 
   try {
     const { syncFromRepo } = require('../lib/sync-handoff-cache.cjs');
@@ -508,8 +785,10 @@ ${nextActions.map((line) => `- ${line}`).join('\n')}
     );
   }
 
-  console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffJsonPath)}`);
-  console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffMdPath)}`);
+  console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, scopedJsonPath)}`);
+  console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, scopedMdPath)}`);
+  console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffJsonPath)} (legacy)`);
+  console.log(`[emit-session-handoff] wrote ${path.relative(repoRoot, handoffMdPath)} (legacy)`);
   console.log(`[emit-session-handoff] updated ${path.relative(repoRoot, ledgerPath)}`);
   console.log(`[emit-session-handoff] synced ${path.relative(repoRoot, livingStatePath)}`);
 }

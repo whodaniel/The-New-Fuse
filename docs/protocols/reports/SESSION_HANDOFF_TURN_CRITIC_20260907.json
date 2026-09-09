@@ -1,0 +1,141 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "24d3cd1c-6cd3-48e0-ae55-906faf16b918",
+  "created_at": "2026-09-07T19:01:32.678Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "feat/turn-critic-20260907",
+  "head_sha": "00a674c78db7bd39d7adcb2dbf09c4a11b76126e",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "project_ids": [],
+  "work_summary": [
+    "Implemented automatic Flash turn critic with configurable prompt terminal federation file and webhook routing; native and external turn-end hooks; 14 protocol checks and CLI typecheck compile bundle pass; live Flash inference and terminal verified; shared relay rejects AUTH_REQUIRED"
+  ],
+  "changed_paths": [
+    "docs/agents/CRITIC_AGENT_TEMPLATE.md",
+    "packages/tnf-cli/package.json",
+    "packages/tnf-cli/scripts/bundle-cli.cjs",
+    "packages/tnf-cli/scripts/copy-provider-catalog.cjs",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/command-surface.snapshot.json",
+    "packages/tnf-cli/src/services/DebugService.ts",
+    "packages/tnf-cli/src/utils/llm-client.ts",
+    "scripts/turn-end-v2.cjs",
+    "docs/agents/AUTOMATIC_TURN_CRITIC.md",
+    "packages/tnf-cli/src/commands/critic.ts",
+    "packages/tnf-cli/src/critic-entry.ts",
+    "packages/tnf-cli/src/services/TurnCriticService.test.ts",
+    "packages/tnf-cli/src/services/TurnCriticService.ts",
+    "packages/tnf-cli/src/services/critic-config.ts",
+    "docs/protocols/reports/SESSION_HANDOFF_TURN_CRITIC_20260907.json",
+    "docs/protocols/reports/SESSION_HANDOFF_TURN_CRITIC_20260907.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "PASS: 14 HTTP/WebSocket protocol checks; 9 abort checks; 9 persisted-model checks; 3 turn-end help checks; 565-path command-surface oracle; CLI typecheck and tsc compile with dependency artifacts; split CLI and critic entry bundles. Live AIHubMix Gemini Flash-Lite final inference and actual turn-end prompt delivery passed. Dedicated terminal viewer started and output verified; test viewer closed. Live shared relay registration rejected AUTH_REQUIRED; delivery failure recorded. No full monorepo readiness claim."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Read docs/agents/AUTOMATIC_TURN_CRITIC.md",
+      "Inspect critic receipts with tnf critic status --json"
+    ]
+  },
+  "next_actions": [
+    "Restart updated native TNF agents to use the turn critic.",
+    "Configure relay authentication before choosing federated delivery.",
+    "External runtimes must emit the TNF turn-end hook per completed turn."
+  ],
+  "artifacts": {
+    "commits": ["00a674c78db7bd39d7adcb2dbf09c4a11b76126e"],
+    "deployment_urls": [],
+    "database_migrations": []
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "session_harness": "codex",
+  "task_id": "turn-critic",
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "rationale": "Applied existing provider catalog and agent-template authority"
+    },
+    "skills": {
+      "considered": true,
+      "rationale": "Feature extends runtime services rather than adding a skill"
+    },
+    "gaps": {
+      "considered": true,
+      "open": [
+        {
+          "summary": "Shared relay rejects registration with AUTH_REQUIRED; external CLIs require per-turn TNF hook events"
+        }
+      ]
+    },
+    "self_audit": {
+      "checks": [
+        {
+          "id": "work-summary-not-stale",
+          "ok": true,
+          "detail": "1 item(s), distinct from the previous handoff"
+        },
+        {
+          "id": "classification-complete",
+          "ok": true,
+          "detail": "all four fields set"
+        },
+        {
+          "id": "reflection-answered",
+          "ok": true,
+          "detail": "lessons.considered=true skills.considered=true"
+        },
+        {
+          "id": "gaps-considered",
+          "ok": true,
+          "detail": "1 open gap(s) recorded"
+        },
+        {
+          "id": "next-actions-not-all-inherited",
+          "ok": true,
+          "detail": "3 action(s), 2 inherited from the previous handoff"
+        },
+        {
+          "id": "changed-paths-recorded",
+          "ok": true,
+          "detail": "15 recorded, 17 dirty in the working tree"
+        }
+      ],
+      "findings": 0
+    }
+  }
+}

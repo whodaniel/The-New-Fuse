@@ -7,9 +7,17 @@ if (!_subdirectorGuard.acquired) {
   process.exit(0);
 }
 
-// --- Fleet-wide pause gate (2026-07-21) ---
+// --- Fleet-wide pause gate (2026-07-21; priority admission 2026-09-05) ---
+//
+// This runtime is the local sub-director: the agent an operator directive has
+// to reach in order for anything to be delegated at all. Gating it at normal
+// priority meant a load-induced pause took the delegation path down with the
+// work it was throttling, and nothing could tell the fleet what to do about
+// being loaded. It asks for high priority; the admission is still refused by
+// an operator pause, by injection-paused, and above the hard resource ceiling.
 const { isFleetPaused } = require('../lib/tnf-fleet-mode.cjs');
-if (isFleetPaused()) {
+const FLEET_GATE = { priority: 'high' };
+if (isFleetPaused(FLEET_GATE)) {
   console.log(JSON.stringify({ ok: true, skipped: 'fleet-paused' }));
   process.exit(0);
 }
@@ -587,7 +595,7 @@ async function scanOnce() {
     console.log('[local-subdirector] scan skipped: previous scan is still running');
     return;
   }
-  if (isFleetPaused()) {
+  if (isFleetPaused(FLEET_GATE)) {
     console.log(JSON.stringify({ ok: true, skipped: 'fleet-paused' }));
     shutdown();
     return;

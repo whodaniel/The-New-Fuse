@@ -1,9 +1,12 @@
 name: Gitlink Integrity
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main]
 
 jobs:
   gitlink-check:

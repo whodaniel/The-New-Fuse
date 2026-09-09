@@ -47,7 +47,7 @@ if [ $? -ne 0 ]; then
     git push -f origin $BRANCH_NAME
 
     # Merge the PR
-    gh pr merge $PR_NUMBER --squash
+    bash "$(git rev-parse --show-toplevel)/scripts/safe-merge-to-main.sh" "$PR_NUMBER" --squash || exit $?
   else
     echo "Manual conflict resolution required"
     exit 1
@@ -57,7 +57,7 @@ else
   git push origin $BRANCH_NAME
 
   # Merge the PR
-  gh pr merge $PR_NUMBER --squash
+  bash "$(git rev-parse --show-toplevel)/scripts/safe-merge-to-main.sh" "$PR_NUMBER" --squash || exit $?
 fi
 
 # Go back to main

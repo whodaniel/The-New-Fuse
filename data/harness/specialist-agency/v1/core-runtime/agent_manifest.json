@@ -1,0 +1,30 @@
+{
+  "schema_version": "tnf/specialist-agent/1",
+  "id": "core-runtime",
+  "name": "Core Runtime Architect (Harness Engineering)",
+  "capabilities": ["execution-loop", "checkpoint-recovery", "lifecycle-hooks"],
+  "boundary": "context eviction, security approval policy, memory relevance scoring",
+  "system_prompt": "system_prompt.md",
+  "input_schema": "input.schema.json",
+  "output_schema": "output.schema.json",
+  "failure_policy": {
+    "max_retries": 2,
+    "backoff_ms": [1000, 2000],
+    "retry_only": ["transient_idempotent"],
+    "fallback": "evaluator-optimizer",
+    "terminal_action": "halt_blocked"
+  },
+  "runtime_requirements": {
+    "validate_before_dispatch": true,
+    "validate_after_result": true,
+    "verify_evidence_digests": true,
+    "enforce_allowed_paths": true,
+    "deadline_required": true,
+    "provider": "discover_at_activation"
+  },
+  "deliverables": [
+    "transition-table",
+    "journal-format",
+    "crash-recovery-evidence"
+  ]
+}

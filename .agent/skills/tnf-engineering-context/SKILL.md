@@ -132,6 +132,13 @@ boundary, not an invitation to race it.
 - coordinate an explicit handoff when overlap is unavoidable;
 - never trust an ownership or completion claim without a current receipt.
 
+## Artifact lifecycle
+
+For disk cleanup, generated artifacts, retention jobs or snapshot producers,
+read `docs/protocols/AI_AGENT_ARTIFACT_RETENTION_PROTOCOL.md`. Use the existing
+retention entrypoint in plan mode before applying bounded archival. Completion
+includes workspace isolation R7 cleanup or an explicit retained-work handoff.
+
 ## Turn End Contract (MANDATORY)
 
 At the conclusion of your engineering session, or before any handoff to another

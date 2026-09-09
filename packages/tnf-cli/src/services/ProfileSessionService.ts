@@ -9,8 +9,8 @@ import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypt
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { AuthService } from './AuthService.js';
 import { resolveActiveProfileName } from './AgentStateLedgerService.js';
+import { AuthService } from './AuthService.js';
 import { ProfileSession, ProfileWhoAmI } from './agent-state-types.js';
 
 const DEFAULT_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
@@ -88,7 +88,11 @@ export class ProfileSessionService {
     if (!fs.existsSync(dir)) return [];
     const names = new Set<string>();
     for (const entry of fs.readdirSync(dir)) {
-      if (entry.endsWith('.json') && entry !== 'active.json' && entry !== 'user-profile-schema.json') {
+      if (
+        entry.endsWith('.json') &&
+        entry !== 'active.json' &&
+        entry !== 'user-profile-schema.json'
+      ) {
         names.add(entry.replace(/\.json$/, ''));
       }
       const full = path.join(dir, entry);
@@ -137,7 +141,7 @@ export class ProfileSessionService {
     if (!session) {
       throw new ProfileSessionError(
         'UNAUTHENTICATED',
-        `No active session for profile '${name}'. Run: tnf profile login`
+        `No active session for profile '${name}'. Run: tnf login`
       );
     }
     return session;
@@ -147,12 +151,14 @@ export class ProfileSessionService {
    * Authentication proves identity. Mutation still needs authority from
    * ~/.tnf/authority. Login alone never grants mutation authority.
    */
-  requireMutationAuthority(options: {
-    profile?: string;
-    agentId?: string;
-    allowedRoles?: string[];
-    action?: string;
-  } = {}): {
+  requireMutationAuthority(
+    options: {
+      profile?: string;
+      agentId?: string;
+      allowedRoles?: string[];
+      action?: string;
+    } = {}
+  ): {
     session: ProfileSession;
     authorityRole: string | null;
     rolesPath: string;
@@ -188,13 +194,15 @@ export class ProfileSessionService {
     return { session, authorityRole, rolesPath };
   }
 
-  login(options: {
-    profile?: string;
-    passphrase?: string;
-    identityMode?: ProfileSession['identityMode'];
-    cloud?: boolean;
-    cloudEndpoint?: string;
-  } = {}): ProfileSession {
+  login(
+    options: {
+      profile?: string;
+      passphrase?: string;
+      identityMode?: ProfileSession['identityMode'];
+      cloud?: boolean;
+      cloudEndpoint?: string;
+    } = {}
+  ): ProfileSession {
     const profile = options.profile || this.getActiveProfileName();
     ensureDir(this.profileDir(profile));
 
@@ -235,12 +243,27 @@ export class ProfileSessionService {
     }
 
     const profileDoc = this.readProfile(profile) || {};
+    // `--cloud` implies cloud identity (free accounts included). Do not require a
+    // separate `--identity-mode cloud` flag or cloudLinked stays false forever.
     const identityMode =
       options.identityMode ||
+      (options.cloud ? 'cloud' : undefined) ||
       (String(profileDoc.identityMode || 'local') as ProfileSession['identityMode']);
     const cloudEndpoint =
       options.cloudEndpoint || String(profileDoc.cloudEndpoint || this.cloudEndpointDefault);
-    const cloudLinked = Boolean(options.cloud) && identityMode === 'cloud';
+    const cloudLinked = Boolean(options.cloud) || identityMode === 'cloud';
+
+    if (cloudLinked && profileDoc.identityMode !== 'cloud') {
+      const updated = {
+        ...profileDoc,
+        identityMode: 'cloud',
+        cloudEndpoint,
+        updatedAt: this.now().toISOString(),
+      };
+      fs.writeFileSync(this.profileJsonPath(profile), `${JSON.stringify(updated, null, 2)}\n`, {
+        mode: 0o600,
+      });
+    }
 
     const authenticatedAt = this.now();
     const session: ProfileSession = {
@@ -248,8 +271,8 @@ export class ProfileSessionService {
       sessionId: randomBytes(16).toString('hex'),
       authenticatedAt: authenticatedAt.toISOString(),
       expiresAt: new Date(authenticatedAt.getTime() + this.sessionTtlMs).toISOString(),
-      identityMode,
-      cloudEndpoint: cloudLinked || identityMode === 'cloud' ? cloudEndpoint : undefined,
+      identityMode: cloudLinked ? 'cloud' : identityMode,
+      cloudEndpoint: cloudLinked ? cloudEndpoint : undefined,
       cloudLinked,
     };
 
@@ -284,7 +307,9 @@ export class ProfileSessionService {
     try {
       const pendingDir = path.join(this.tnfHome, 'authority', 'pending');
       if (fs.existsSync(pendingDir)) {
-        elevationPendingCount = fs.readdirSync(pendingDir).filter((n) => n.endsWith('.json')).length;
+        elevationPendingCount = fs
+          .readdirSync(pendingDir)
+          .filter((n) => n.endsWith('.json')).length;
       }
     } catch {
       // ignore

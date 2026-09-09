@@ -372,6 +372,15 @@ const VISUALIZATION_SECTIONS: VisualizationSection[] = [
     zone: 'system',
     items: [
       {
+        title: 'Master Graph Evidence',
+        description:
+          'Inspect fresh observations, source declarations, and legacy claims. Functional wiring remains unverified.',
+        href: '/visualizations/master-graph',
+        tags: ['Graph', 'Evidence', 'Unverified wiring'],
+        status: 'needs-work',
+        integration: 'native-route',
+      },
+      {
         title: 'Terminal Graph View',
         description: 'Route-integrated terminal board for macro state and execution context.',
         href: '/visualizations/terminals',

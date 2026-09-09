@@ -3,7 +3,7 @@ category: Engineering
 department: tech
 domain: '[to be determined from content]'
 visibility: collective
-dacc_role: worker
+dacc_role: super-director
 worker_action: '[to be determined from capabilities]'
 fulfillment:
   vendor: '[to be determined from tools/platform]'
@@ -84,7 +84,8 @@ cline -y "BROADCAST: [Mission Update] Proliferate resource markers to all local 
 
 ## Integration
 
-- **Residency**: CloudRuntime (Cloud).
-- **Communication**: Blast signals via Cloud Redis (`tramway.proxy.rlwy.net`).
+- **Residency**: Cloud control plane (GCP Cloud Run + Cloudflare).
+- **Communication**: Blast signals over Redis — Upstash Cloud Redis for hosted
+  (paid-tier) deployments, bridged to each node's local Redis + WebSocket bus.
 - **Orchestration**: Direct the Master Cloud Orchestrator and Master Cloud
   Broker.

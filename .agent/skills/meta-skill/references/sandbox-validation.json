@@ -1,0 +1,264 @@
+{
+  "version": 1,
+  "observed_at": "2026-09-05T20:53:32.634Z",
+  "docker_version": "28.1.1",
+  "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+  "test_suites": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+  },
+  "isolation": "Identical compiler snapshot with separate state ledger to avoid an active AGY admission lock",
+  "canonical_source_hashes": {
+    "scripts/gate.cjs": "1588ecbc9fa921a2c73012b0696df34d37b98ab7f93c1a171f13e1b2335598f1",
+    "scripts/lint.py": "738fface4ba52b04d47e78773679170ccf0448301815fd589b2b9330747b9e43",
+    "scripts/sandbox.test.cjs": "599e685a825ff55774e57b30f1ef8101096e204ec039067db4c19cd5da1e5e02",
+    "references/dispatch.schema.json": "6c6a15f4739c512266363afb928627b007d795bd9468804e94a099395e689e3c",
+    "references/evals.schema.json": "f68079914b6f55b43209d7423f7a34fb62c79bff5d1ccda4a4b9961af9b43a94",
+    "references/assertions.schema.json": "b63ef1cd77c957a03282aad2e23f2845828763150f38758b58ff9dfe8266ba9c",
+    "references/candidate.json": "778740b94fd60555596a150b2ae18ab79f690e3c2b79267f168660abdde6b61e"
+  },
+  "admission_receipts": [
+    {
+      "version": 1,
+      "receipt_id": "3d905f3b-ec5a-4380-b59a-a08432f33a2a",
+      "candidate_sha256": "bbd40d2511310b2938f8e4995d7a6751570de8b058be328d116fb831817f8f5c",
+      "status": "quarantined",
+      "skill_name": "normalize-text",
+      "reason": "sandbox_execution_failed:137",
+      "steps": ["received", "validated", "linted", "quarantined"],
+      "policy_sha256": "387bb8b2133cedd2f25fb6866d266974e9ffde80067792772bc5ea81b10243e6",
+      "receipt_sha256": "6d58ebf70b9e97a86f5128328e7c0a6f68221d99ebde5a92e46baed4e6ea9f77"
+    },
+    {
+      "version": 1,
+      "receipt_id": "6481680e-b5a9-458e-b507-5ac7c2cc41de",
+      "candidate_sha256": "232d164b33289419c4854eeb2aa508eb20fe735d5844ea5ffe6bc0442204e317",
+      "status": "active",
+      "skill_name": "verify-sandbox-isolation",
+      "candidate": {
+        "version": 1,
+        "action": "synthesize",
+        "request_id": "normalize-example",
+        "skill_name": "verify-sandbox-isolation",
+        "lineage": [],
+        "triggers": {
+          "positive": ["normalize text"],
+          "negative": ["do not normalize"]
+        },
+        "skill_markdown": "---\nname: verify-sandbox-isolation\ndescription: Normalize text deterministically. Use when normalizing text. Do not use for translation.\n---\n\n# Normalize text\n\nRun scripts/skill.py --help for discovery. Supply --input-json with a text string.\n",
+        "artifact": {
+          "language": "python-pep723",
+          "source": "# /// script\n# requires-python = \">=3.11\"\n# dependencies = []\n# ///\nimport argparse\nimport json\nparser = argparse.ArgumentParser(description=\"Normalize text deterministically\")\nparser.add_argument('--input-json', required=True, help='JSON object with one string field: text')\nargs = parser.parse_args()\nvalue = json.loads(args.input_json)\nif not isinstance(value, dict) or set(value) != {'text'} or not isinstance(value['text'], str):\n    parser.error('Expected exactly one string field: text')\nimport os\nimport socket\nassert os.getuid() == 65534\nassert not os.path.exists('/Users')\ntry:\n    with open('/tnf-write-probe', 'w') as f:\n        f.write('unexpected')\nexcept OSError:\n    pass\nelse:\n    raise RuntimeError('root_write_allowed')\ntry:\n    connection = socket.create_connection(('1.1.1.1', 443), timeout=0.5)\nexcept OSError:\n    pass\nelse:\n    connection.close()\n    raise RuntimeError('network_allowed')\nprint('isolated')\n\n# sandbox-suite-revision-1788641558277-20731\n",
+          "arguments_schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text"],
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            }
+          },
+          "tools": []
+        },
+        "evals": {
+          "version": 1,
+          "cases": [
+            {
+              "id": "trim-case",
+              "arguments": {
+                "text": "  Hello WORLD  "
+              },
+              "expected_exit": 0,
+              "expected_stdout": "isolated\n"
+            },
+            {
+              "id": "empty-case",
+              "arguments": {
+                "text": ""
+              },
+              "expected_exit": 0,
+              "expected_stdout": "isolated\n"
+            }
+          ],
+          "triggers": [
+            {
+              "text": "normalize text",
+              "activate": true
+            },
+            {
+              "text": "do not normalize text",
+              "activate": false
+            }
+          ]
+        },
+        "assertions": {
+          "version": 1,
+          "require_help": true,
+          "require_repeatability": true,
+          "network": "none",
+          "max_stdout_bytes": 8192,
+          "case_timeout_seconds": 3
+        }
+      },
+      "steps": ["received", "validated", "linted", "evaluated", "active"],
+      "staticEvidence": {
+        "ok": true,
+        "python": "3.13.7",
+        "checks": ["ast", "pep723", "noninteractive-static-policy"]
+      },
+      "sandboxEvidence": {
+        "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+        "evidence": {
+          "ok": true,
+          "help": true,
+          "repeatability": true,
+          "cases": [
+            {
+              "id": "trim-case",
+              "passed": true,
+              "stdout_sha256": "9b8d77949b6e468746790cc1ada9432ca9984c51533a086544c8d0c01f18cc66"
+            },
+            {
+              "id": "empty-case",
+              "passed": true,
+              "stdout_sha256": "9b8d77949b6e468746790cc1ada9432ca9984c51533a086544c8d0c01f18cc66"
+            }
+          ]
+        }
+      },
+      "policy_sha256": "387bb8b2133cedd2f25fb6866d266974e9ffde80067792772bc5ea81b10243e6",
+      "receipt_sha256": "eb23d417f1debd839a1a56f63959be919ba516c6478f4c51920d6efd50fd5c1b"
+    },
+    {
+      "version": 1,
+      "receipt_id": "65af8898-2e94-455a-90b7-be7db37b5a42",
+      "candidate_sha256": "c94fd46586b174f9e12fa555df25e740ae58611e20c753784737ec08cefd67e8",
+      "status": "quarantined",
+      "skill_name": "normalize-text",
+      "reason": "sandbox_execution_failed:ENOBUFS",
+      "steps": ["received", "validated", "linted", "quarantined"],
+      "policy_sha256": "387bb8b2133cedd2f25fb6866d266974e9ffde80067792772bc5ea81b10243e6",
+      "receipt_sha256": "a67731a50b802856537cf3cfff8e2598a0ed28357a37f0857277478dcc531895"
+    },
+    {
+      "version": 1,
+      "receipt_id": "c2cf72ff-421b-415f-bc23-ce047ab091f6",
+      "candidate_sha256": "3d8845f9e849e1d42099bdd5d23111d533919e9bcb212f8173a85abca796b9dd",
+      "status": "quarantined",
+      "skill_name": "normalize-text",
+      "reason": "assertion_failed:trim-case",
+      "steps": ["received", "validated", "linted", "quarantined"],
+      "policy_sha256": "387bb8b2133cedd2f25fb6866d266974e9ffde80067792772bc5ea81b10243e6",
+      "receipt_sha256": "5cc4f1e59ca9bc190fedeceac234cf6622f4b5b3e52c6d6c1d95a373ff7b9841"
+    },
+    {
+      "version": 1,
+      "receipt_id": "f6efc627-bb1b-4525-85f3-5366da1871a2",
+      "candidate_sha256": "42c2538fc4c13f5882c31e15933ced7568a762a35abf9a2c7cd0c592585fc52f",
+      "status": "active",
+      "skill_name": "normalize-text",
+      "candidate": {
+        "version": 1,
+        "action": "synthesize",
+        "request_id": "normalize-example",
+        "skill_name": "normalize-text",
+        "lineage": [],
+        "triggers": {
+          "positive": ["normalize text"],
+          "negative": ["do not normalize"]
+        },
+        "skill_markdown": "---\nname: normalize-text\ndescription: Normalize text deterministically. Use when normalizing text. Do not use for translation.\n---\n\n# Normalize text\n\nRun scripts/skill.py --help for discovery. Supply --input-json with a text string.\n",
+        "artifact": {
+          "language": "python-pep723",
+          "source": "# /// script\n# requires-python = \">=3.11\"\n# dependencies = []\n# ///\nimport argparse\nimport json\nparser = argparse.ArgumentParser(description=\"Normalize text deterministically\")\nparser.add_argument('--input-json', required=True, help='JSON object with one string field: text')\nargs = parser.parse_args()\nvalue = json.loads(args.input_json)\nif not isinstance(value, dict) or set(value) != {'text'} or not isinstance(value['text'], str):\n    parser.error('Expected exactly one string field: text')\nprint(value['text'].strip().lower())\n\n# sandbox-suite-revision-1788641505304-20731\n",
+          "arguments_schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text"],
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            }
+          },
+          "tools": []
+        },
+        "evals": {
+          "version": 1,
+          "cases": [
+            {
+              "id": "trim-case",
+              "arguments": {
+                "text": "  Hello WORLD  "
+              },
+              "expected_exit": 0,
+              "expected_stdout": "hello world\n"
+            },
+            {
+              "id": "empty-case",
+              "arguments": {
+                "text": ""
+              },
+              "expected_exit": 0,
+              "expected_stdout": "\n"
+            }
+          ],
+          "triggers": [
+            {
+              "text": "normalize text",
+              "activate": true
+            },
+            {
+              "text": "do not normalize text",
+              "activate": false
+            }
+          ]
+        },
+        "assertions": {
+          "version": 1,
+          "require_help": true,
+          "require_repeatability": true,
+          "network": "none",
+          "max_stdout_bytes": 8192,
+          "case_timeout_seconds": 3
+        }
+      },
+      "steps": ["received", "validated", "linted", "evaluated", "active"],
+      "staticEvidence": {
+        "ok": true,
+        "python": "3.13.7",
+        "checks": ["ast", "pep723", "noninteractive-static-policy"]
+      },
+      "sandboxEvidence": {
+        "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+        "evidence": {
+          "ok": true,
+          "help": true,
+          "repeatability": true,
+          "cases": [
+            {
+              "id": "trim-case",
+              "passed": true,
+              "stdout_sha256": "a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447"
+            },
+            {
+              "id": "empty-case",
+              "passed": true,
+              "stdout_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+            }
+          ]
+        }
+      },
+      "policy_sha256": "387bb8b2133cedd2f25fb6866d266974e9ffde80067792772bc5ea81b10243e6",
+      "receipt_sha256": "cdbba8a154094d4328459a9877bc141c7a110fc602ef4a0e8fd7f8812b69fa0a"
+    }
+  ],
+  "remaining_test_containers": 0,
+  "limitations": [
+    "No stack-wide registration integration",
+    "No automatic crash-recovery proof",
+    "No model-to-gate live inference"
+  ]
+}

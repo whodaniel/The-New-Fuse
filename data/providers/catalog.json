@@ -180,7 +180,9 @@
       "modelCount": 202,
       "chatModelCount": 90,
       "verifiedModelCount": 26,
-      "note": "All 202 free endpoints from build.nvidia.com/models registered. 26 verified live via chat probe (2026-08-14). See nvidia-models.json for full catalog."
+      "note": "All 202 free endpoints from build.nvidia.com/models registered. 26 verified live via chat probe (2026-08-14). See nvidia-models.json for full catalog.",
+      "entitlement": "operator-dev-only",
+      "entitlementNote": "NVIDIA Developer Program credentials belong to the TNF operator personally. Dev/local use only - must never be served to other users or resold."
     },
     {
       "id": "deepseek",

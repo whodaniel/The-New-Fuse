@@ -44,6 +44,7 @@ WS_BRIDGE_LAUNCHD_PLIST="$HOME/Library/LaunchAgents/${WS_BRIDGE_LAUNCHD_LABEL}.p
 HARNESS_CONTEXT_ENV="${TNF_HARNESS_CONTEXT_ENV:-$PROJECT_ROOT/.agent/runtime-state/harness-context.env}"
 HARNESS_CONTEXT_RESOLVER="$PROJECT_ROOT/scripts/runtime/resolve-harness-context.cjs"
 AGENT_WRAPPER_LAUNCHER="$PROJECT_ROOT/scripts/runtime/launch-agent-wrapper.sh"
+TNF_TMUX_HELPER="$PROJECT_ROOT/scripts/runtime/tnf-tmux.cjs"
 
 # =============================================================================
 # FUNCTIONS
@@ -92,7 +93,7 @@ terminal_launch_cmd() {
     local wrapper_path="$1"
     shift
     local extras=("$@")
-    local cmd="$AGENT_WRAPPER_LAUNCHER $(printf '%q' "$wrapper_path")"
+    local cmd="cd $(printf '%q' "$PROJECT_ROOT") && $AGENT_WRAPPER_LAUNCHER $(printf '%q' "$wrapper_path")"
     local extra
     for extra in "${extras[@]}"; do
       cmd+=" $(printf '%q' "$extra")"
@@ -104,15 +105,17 @@ print_help() {
     echo "Usage: $0 [options]"
     echo ""
     echo "Options:"
-    echo "  --all        Start default agent wrappers (Gemini, Jules, Pi, Watchdog)"
-    echo "  --claude     Also start Claude wrapper when quota/auth are available"
-    echo "  --gemini     Also start Gemini wrapper"
-    echo "  --jules      Also start Jules wrapper"
-    echo "  --pi         Also start Pi wrapper"
-    echo "  --watchdog   Also start model-watchdog failover consumer"
-    echo "  --stop       Stop all running components"
-    echo "  --status     Show status of all components"
-    echo "  --help       Show this help message"
+    echo "  --all            Start default agent wrappers (Gemini, Jules, Pi, Watchdog)"
+    echo "  --claude         Also start Claude wrapper when quota/auth are available"
+    echo "  --gemini         Also start Gemini wrapper"
+    echo "  --jules          Also start Jules wrapper"
+    echo "  --pi             Also start Pi wrapper"
+    echo "  --watchdog       Also start model-watchdog failover consumer"
+    echo "  --headless       Run headlessly in tmux/background without opening GUI Terminal tabs"
+    echo "  --gui-terminals  Open macOS Terminal.app tabs to attach to tmux sessions"
+    echo "  --stop           Stop all running components"
+    echo "  --status         Show status of all components"
+    echo "  --help           Show this help message"
     echo ""
     echo "Examples:"
     echo "  $0               # Start core (Redis, Bridge, Antigravity)"
@@ -135,6 +138,40 @@ check_ws_bridge_health() {
 is_wrapper_running() {
     local script_name=$1
     pgrep -f "$SCRIPT_DIR/$script_name" > /dev/null 2>&1 || pgrep -f "$script_name" > /dev/null 2>&1
+}
+
+tmux_available() {
+    [[ -f "$TNF_TMUX_HELPER" ]] || return 1
+    node -e "process.exit(require(process.argv[1]).tmuxAvailable() ? 0 : 1)" "$TNF_TMUX_HELPER"
+}
+
+tmux_session_from_json() {
+    node -e "let s='';process.stdin.on('data',d=>s+=d);process.stdin.on('end',()=>{try{const j=JSON.parse(s);process.stdout.write(String(j.session||(j.tmux&&j.tmux.session)||''))}catch{}})"
+}
+
+open_tmux_client() {
+    local session="$1"
+    local sock="${TNF_TMUX_SOCKET:-$HOME/.tnf/tmux/tnf.sock}"
+    [[ "$OSTYPE" == darwin* ]] || return 0
+    [[ "${TNF_TMUX_OPEN_CLIENT:-1}" == "1" ]] || return 0
+    [[ -n "$session" ]] || return 0
+    local cmd escaped
+    cmd="tmux -S $(printf '%q' "$sock") attach -t $(printf '%q' "$session")"
+    escaped=$(printf '%s' "$cmd" | sed 's/\\/\\\\/g; s/"/\\"/g')
+    osascript -e "tell application \"Terminal\" to do script \"$escaped\"" || true
+}
+
+try_tmux_wrap_launch() {
+    local agent_id="$1"
+    shift
+    local wrap_json session
+    wrap_json="$(node "$TNF_TMUX_HELPER" wrap --class agent --agent-id "$agent_id" --cwd "$PROJECT_ROOT" --detach --json -- "$@")" || return 1
+    session="$(printf '%s' "$wrap_json" | tmux_session_from_json)"
+    if [[ -z "$session" ]]; then
+        echo -e "  ${YELLOW}!${NC} tmux wrap returned no session" >&2
+        return 1
+    fi
+    printf '%s' "$session"
 }
 
 command_available() {
@@ -356,9 +393,20 @@ start_antigravity() {
         return 0
     fi
 
-    # Run in a new terminal or background
+    if tmux_available; then
+        local session
+        if session="$(try_tmux_wrap_launch "tnf-antigravity-redis-wrapper" "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" "AGENT_ID=tnf-antigravity-redis-wrapper")"; then
+            if wait_for_wrapper "Antigravity" "antigravity-redis-wrapper.cjs" 20; then
+                echo -e "  ${CYAN}ℹ${NC}  tmux session: $session"
+                open_tmux_client "$session"
+                return 0
+            fi
+        fi
+        echo -e "  ${YELLOW}!${NC} tmux wrap did not stick — falling back"
+    fi
+
+    # macOS GUI fallback: Terminal.app hosts the process only when tmux is absent.
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS - open in new Terminal tab via adaptive launcher
         local launch_cmd
         launch_cmd="$(terminal_launch_cmd "$SCRIPT_DIR/antigravity-redis-wrapper.cjs")"
         osascript -e "tell application \"Terminal\" to do script \"$launch_cmd\"" || true
@@ -369,7 +417,7 @@ start_antigravity() {
     fi
 
     # Linux / headless fallback (wrappers stay up without a TTY).
-    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-1}" \
+    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-0}" \
       nohup "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/antigravity-redis-wrapper.cjs" \
       >"$PROJECT_ROOT/.agent/runtime-logs/antigravity.log" 2>&1 &
     AG_PID=$!
@@ -398,6 +446,18 @@ start_agent_wrapper() {
     local agent_id="tnf-${script%.*}"
     local log_file="$PROJECT_ROOT/.agent/runtime-logs/$(echo "$name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-').log"
 
+    if tmux_available; then
+        local session
+        if session="$(try_tmux_wrap_launch "$agent_id" "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id")"; then
+            if wait_for_wrapper "$name" "$script" 25; then
+                echo -e "  ${CYAN}ℹ${NC}  tmux session: $session"
+                open_tmux_client "$session"
+                return 0
+            fi
+        fi
+        echo -e "  ${YELLOW}!${NC} tmux wrap did not stick — falling back"
+    fi
+
     if [[ "$OSTYPE" == "darwin"* ]]; then
         local launch_cmd
         launch_cmd="$(terminal_launch_cmd "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id")"
@@ -408,7 +468,7 @@ start_agent_wrapper() {
         echo -e "  ${YELLOW}!${NC} Terminal tab launch did not stick — falling back to headless"
     fi
 
-    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-1}" \
+    TNF_RUN_AS_OPERATOR="${TNF_RUN_AS_OPERATOR:-0}" \
       nohup "$AGENT_WRAPPER_LAUNCHER" "$SCRIPT_DIR/$script" "AGENT_ID=$agent_id" \
       >"$log_file" 2>&1 &
     echo $! >> "$PID_FILE"
@@ -508,6 +568,10 @@ show_status() {
         echo -e "  ${YELLOW}○${NC} Model Watchdog - Not running"
     fi
 
+    if tmux_available; then
+        echo -e "  ${CYAN}ℹ${NC}  TNF tmux socket: ${TNF_TMUX_SOCKET:-$HOME/.tnf/tmux/tnf.sock}"
+    fi
+
     echo ""
     echo -e "${CYAN}Endpoints:${NC}"
     echo "  WS Bridge:    ws://localhost:$WS_BRIDGE_PORT/redis-bridge"
@@ -553,6 +617,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         --watchdog)
             START_WATCHDOG=true
+            shift
+            ;;
+        --headless|--no-terminals)
+            export TNF_TMUX_OPEN_CLIENT=0
+            shift
+            ;;
+        --gui-terminals)
+            export TNF_TMUX_OPEN_CLIENT=1
             shift
             ;;
         --stop)

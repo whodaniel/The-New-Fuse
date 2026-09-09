@@ -9,12 +9,10 @@ import { AgentManagerService } from '../services/AgentManagerService.js';
 import { AgentQuotaService, rankAgentsForDelegation } from '../services/AgentQuotaService.js';
 import { AgentStateLedgerService } from '../services/AgentStateLedgerService.js';
 import { EcosystemHydrationService } from '../services/EcosystemHydrationService.js';
-import {
-  ProfileSessionError,
-  ProfileSessionService,
-} from '../services/ProfileSessionService.js';
+import { ProfileSessionError, ProfileSessionService } from '../services/ProfileSessionService.js';
 import type { AgentStateEntry } from '../services/agent-state-types.js';
-import { getOrCreateCommand } from './_registry.js';
+import { openCloudLoginPage } from '../utils/ensure-profile-session.js';
+import { findCommand, getOrCreateCommand } from './_registry.js';
 
 function defaultTnfHome(): string {
   return process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
@@ -40,7 +38,11 @@ function toLedgerAgents(manager: AgentManagerService): AgentStateEntry[] {
 }
 
 export function registerProfileCommands(program: Command, repoRoot: string): void {
-  const profile = getOrCreateCommand(program, 'profile', 'Manage local TNF user profiles and sessions');
+  const profile = getOrCreateCommand(
+    program,
+    'profile',
+    'Manage local TNF user profiles and sessions'
+  );
   const sessions = () => new ProfileSessionService({ tnfHome: defaultTnfHome() });
 
   profile
@@ -64,7 +66,9 @@ export function registerProfileCommands(program: Command, repoRoot: string): voi
         console.log(chalk.bold('\nTNF Profiles\n'));
         for (const row of rows) {
           const mark = row.active ? chalk.green('*') : ' ';
-          const auth = row.authenticated ? chalk.green('authenticated') : chalk.yellow('logged-out');
+          const auth = row.authenticated
+            ? chalk.green('authenticated')
+            : chalk.yellow('logged-out');
           console.log(`  ${mark} ${chalk.cyan(row.name)}  ${auth}`);
         }
         console.log('');
@@ -86,10 +90,14 @@ export function registerProfileCommands(program: Command, repoRoot: string): voi
         }
         console.log(chalk.bold('\nTNF Who Am I\n'));
         console.log(chalk.dim(info.disclaimer));
-        console.log(`  Identity:        ${chalk.cyan(info.identity.profile)} (mode=${info.identity.identityMode || 'n/a'})`);
+        console.log(
+          `  Identity:        ${chalk.cyan(info.identity.profile)} (mode=${info.identity.identityMode || 'n/a'})`
+        );
         console.log(
           `  Authentication:  ${
-            info.authentication.authenticated ? chalk.green('session active') : chalk.yellow('logged out')
+            info.authentication.authenticated
+              ? chalk.green('session active')
+              : chalk.yellow('logged out')
           }`
         );
         console.log(
@@ -155,7 +163,9 @@ export function registerProfileCommands(program: Command, repoRoot: string): voi
             return;
           }
           console.log(chalk.green(`Authenticated profile '${session.profile}'`));
-          console.log(chalk.dim('Note: authentication ≠ authority. Mutation still needs ~/.tnf/authority.'));
+          console.log(
+            chalk.dim('Note: authentication ≠ authority. Mutation still needs ~/.tnf/authority.')
+          );
           console.log(`  session: ${chalk.dim(session.sessionId)}`);
           console.log(`  expires: ${session.expiresAt}`);
         } catch (err) {
@@ -194,11 +204,105 @@ export function registerProfileCommands(program: Command, repoRoot: string): voi
           return;
         }
         console.log(chalk.green(`Active profile: ${name}`));
-        if (!session) console.log(chalk.yellow('No session yet — run tnf profile login'));
+        if (!session) console.log(chalk.yellow('No session yet — run tnf login'));
       } catch (err) {
         fail(err);
       }
     });
+
+  // Top-level `tnf login` / `tnf logout` — used at boot/tui and after logout.
+  // Hermes parity registers a stub logout only when this command is missing.
+  if (!findCommand(program, 'login')) {
+    program
+      .command('login')
+      .description(
+        'Sign in to TNF (cloud profile session; free accounts OK). Alias of: tnf profile login --cloud'
+      )
+      .option('--profile <name>', 'Profile name')
+      .option('--passphrase <secret>', 'Optional local passphrase')
+      .option('--cloud-endpoint <url>', 'Cloud endpoint override')
+      .option('--local', 'Local-only session (skip cloud link)')
+      .option('--json', 'Machine-readable JSON')
+      .action(
+        (opts: {
+          profile?: string;
+          passphrase?: string;
+          cloudEndpoint?: string;
+          local?: boolean;
+          json?: boolean;
+        }) => {
+          try {
+            const cloud = !opts.local;
+            const session = sessions().login({
+              profile: opts.profile,
+              passphrase: opts.passphrase,
+              cloud,
+              cloudEndpoint: opts.cloudEndpoint,
+              identityMode: cloud ? 'cloud' : 'local',
+            });
+            try {
+              new EcosystemHydrationService({
+                tnfHome: defaultTnfHome(),
+                profile: session.profile,
+                repoRoot,
+                requireAuth: true,
+              }).orient();
+            } catch (hydrateErr) {
+              console.error(
+                chalk.yellow(
+                  `Warning: orientation deferred: ${
+                    hydrateErr instanceof Error ? hydrateErr.message : String(hydrateErr)
+                  }`
+                )
+              );
+            }
+            if (opts.json) {
+              console.log(JSON.stringify(session, null, 2));
+              return;
+            }
+            console.log(chalk.green(`Authenticated profile '${session.profile}'`));
+            console.log(
+              chalk.dim('Note: authentication ≠ authority. Mutation still needs ~/.tnf/authority.')
+            );
+            console.log(`  session: ${chalk.dim(session.sessionId)}`);
+            console.log(`  expires: ${session.expiresAt}`);
+            if (session.cloudEndpoint) {
+              openCloudLoginPage(session.cloudEndpoint);
+              console.log(
+                chalk.dim(
+                  '  Complete browser sign-in if prompted — free cloud accounts are supported.'
+                )
+              );
+            }
+          } catch (err) {
+            if (err instanceof ProfileSessionError) fail(err);
+            fail(err);
+          }
+        }
+      );
+  }
+
+  if (!findCommand(program, 'logout')) {
+    program
+      .command('logout')
+      .description(
+        'End the active TNF profile session (next `tnf boot` / `tnf tui` will prompt to sign in)'
+      )
+      .option('--profile <name>', 'Profile name')
+      .action((opts: { profile?: string }) => {
+        try {
+          const ok = sessions().logout(opts.profile);
+          if (ok) {
+            console.log(chalk.green('Logged out'));
+            console.log(chalk.dim('  Next `tnf boot` or `tnf tui` will prompt: tnf login'));
+          } else {
+            console.log(chalk.yellow('No active session'));
+          }
+        } catch (err) {
+          fail(err);
+        }
+      });
+  }
 }
 
 export function registerAgentStateQuotaCommands(program: Command, repoRoot: string): void {
@@ -226,7 +330,9 @@ export function registerAgentStateQuotaCommands(program: Command, repoRoot: stri
         }
         const latest = ledger.readLatest() || ledger.recoverLatestFromHistory();
         if (!latest) {
-          console.log(chalk.yellow('No agent-state observation yet. Run: tnf agent state --refresh'));
+          console.log(
+            chalk.yellow('No agent-state observation yet. Run: tnf agent state --refresh')
+          );
           return;
         }
         if (opts.json) {
@@ -282,10 +388,15 @@ export function registerAgentStateQuotaCommands(program: Command, repoRoot: stri
     .description('Show refreshed per-agent usage quotas for delegation')
     .option('--json', 'Machine-readable JSON')
     .option('--rank', 'Include delegation ranking')
-    .option('--capability <cap>', 'Required capability hint (repeatable)', (val, acc: string[]) => {
-      acc.push(val);
-      return acc;
-    }, [] as string[])
+    .option(
+      '--capability <cap>',
+      'Required capability hint (repeatable)',
+      (val, acc: string[]) => {
+        acc.push(val);
+        return acc;
+      },
+      [] as string[]
+    )
     .action((opts: { json?: boolean; rank?: boolean; capability?: string[] }) => {
       try {
         const sessions = new ProfileSessionService({ tnfHome });
@@ -353,7 +464,9 @@ export function registerEcosystemCommands(program: Command, repoRoot: string): v
 
   ecosystem
     .command('orient')
-    .description('Cheap boot orientation snapshot (providers, health, authority refs, quota summary)')
+    .description(
+      'Cheap boot orientation snapshot (providers, health, authority refs, quota summary)'
+    )
     .option('--json', 'Machine-readable JSON')
     .action((opts: { json?: boolean }) => {
       try {

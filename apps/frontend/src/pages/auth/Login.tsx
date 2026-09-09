@@ -75,7 +75,8 @@ const Login: React.FC = () => {
   }, [nextPath]);
 
   const turnstileSiteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
-  const requireTurnstile = isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE);
+  const requireTurnstile =
+    isTruthy(import.meta.env.VITE_AUTH_REQUIRE_TURNSTILE) && Boolean(turnstileSiteKey);
 
   useEffect(() => {
     // Re-evaluate the error message if the URL changes while the page is mounted
@@ -121,13 +122,13 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      if (requireTurnstile && !cfTurnstileToken) {
-        throw new Error('Please complete Turnstile verification');
-      }
+      const turnstileToken =
+        cfTurnstileToken && cfTurnstileToken !== 'bypass' && cfTurnstileToken !== ' bypass'
+          ? cfTurnstileToken
+          : undefined;
 
       const result = await login(email, password, {
-        cfTurnstileToken:
-          cfTurnstileToken && cfTurnstileToken !== ' bypass' ? cfTurnstileToken : undefined,
+        cfTurnstileToken: turnstileToken,
       });
       if (result) navigate(nextPath.startsWith('/') ? nextPath : '/dashboard', { replace: true });
     } catch (err: unknown) {

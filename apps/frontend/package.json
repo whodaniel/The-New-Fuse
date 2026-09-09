@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "./scripts/start-dev.sh",
-    "build": "node ../../scripts/parsers/mermaid_to_reactflow.mjs && node scripts/build-docs.mjs && vite build --mode production && cp -r functions dist/",
+    "build": "node ../../scripts/parsers/mermaid_to_reactflow.mjs && node scripts/build-docs.mjs && vite build --mode production && node scripts/build-master-graph.mjs && cp -r functions dist/",
     "build:frontend": "npm run build",
     "build:watch": "vite build --watch",
     "build:analyze": "vite build && npx vite-bundle-analyzer dist",
@@ -38,7 +38,8 @@
     "clear-ports": "node scripts/clear-ports.js",
     "clean": "rm -rf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "perf:monitor": "node scripts/performance-monitor.js",
-    "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'"
+    "bundle:report": "pnpm build && echo 'Bundle analysis report generated at dist/bundle-analysis.html'",
+    "test:master-graph": "node --import tsx --test shared/master-graph.test.ts && vitest run src/pages/MasterGraph.test.tsx --coverage.enabled false"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
@@ -55,6 +56,7 @@
     "@tanstack/react-query": "^5.90.19",
     "@the-new-fuse/a2a-core": "workspace:*",
     "@the-new-fuse/a2a-react": "workspace:*",
+    "@the-new-fuse/api-client": "workspace:*",
     "@the-new-fuse/fairtable-components": "workspace:*",
     "@the-new-fuse/fairtable-core": "workspace:*",
     "@the-new-fuse/llm-catalog": "workspace:*",

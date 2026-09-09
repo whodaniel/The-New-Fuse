@@ -161,7 +161,8 @@ node scripts/protocols/check-artifacts-lifecycle.cjs --json | jq '.failures | le
 - Skills:
   - `.agent/skills/tnf-operator-terminal-inviolability/`
   - `.agent/skills/tnf-artifacts-lifecycle/`
-  - `.agent/skills/tnf-self-improvement-loop/`
+  - `~/.agents/skills/tnf-self-improvement-loop/` (session-level `tnf reflect`
+    loop; lives in the home skill root, not this repo)
 - Audit trail:
   - `docs/protocols/CHALLENGE_RATIONALE_LOG.md`
   - `docs/protocols/DIRECTIVE_CONVERSION_LEDGER.md`

@@ -85,7 +85,7 @@ At session start, the agent should:
 For raw AI CLI sessions launched without TNF auto-injection, paste:
 
 ```text
-Execute the Turn Zero Mandate exactly as outlined in ./docs/protocols/TURN_ZERO_MANDATE.md. Read the Living State, Ledger, and Handoff artifacts in ./docs/protocols/, output a summary of your orientation, and await my confirmation before executing any code changes.
+Before planning or acting, run Turn Zero V2 (current Turn Zero) from the repository root: pnpm run tnf:onboard -- --task "<current task>". It runs scripts/protocols/turn-zero-v2-gate.cjs, derives Stage A from docs/core/FRONTLOAD_MANIFEST.md, verifies task routes and host injection, and classifies write-readiness before any mutation. Law: docs/protocols/TURN_ZERO_MANDATE.md.
 ```
 
 ## Autonomous Commits and Pushes
@@ -116,6 +116,29 @@ This authorization was granted by operator directive on 2026-08-09. Prior
 session evidence: the operator explicitly requested protocol changes to allow
 all agents to commit and push autonomously, after repeated friction with the
 manual confirmation gate blocking progress on routine (non-authority) changes.
+
+### Sweep Discipline (added 2026-09-01, operator-approved)
+
+Autonomous commits stay safe only with two more constraints, learned from the
+2026-09-01 incidents in which routine-sweep commits (`bf04b72a2`, `e2271e7c3`,
+`dce732ccc`) zeroed and half-broke `packages/tnf-cli` sources by sweeping
+unrelated in-progress work:
+
+6. **Routine sweep commits never stage source code.** A routine/maintenance
+   commit stages only the data/docs/report paths it deliberately wrote, by
+   explicit path list. It never uses `git add -A` or `git commit -a`, and it
+   must not stage anything under `packages/**/src`, `scripts/`, `apps/**`,
+   `.husky/`, or any `*.ts`/`*.cjs`/`*.sh` that the sweep did not itself author.
+7. **Behavioral changes ride task branches.** Any change that alters source
+   behavior goes on a dedicated task branch with its own scoped receipt, never
+   into a periodic sweep. If the tree the sweep encounters is inconsistent
+   (failing type-check, empty source files), the sweep stops and reports — it
+   does not commit its way past.
+
+These constraints ride in the heartbeat prompt template
+(`scripts/runtime/terminal-heartbeat-pulse.cjs`) that woken sessions receive,
+and are enforced at the mechanical layer by
+`scripts/security/zero-file-guard.cjs`.
 
 ## Build Before You Merge
 

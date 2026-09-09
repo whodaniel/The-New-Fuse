@@ -17,7 +17,13 @@ import type {
   PanelTab,
   StreamingState,
 } from '../../shared/types';
-import { isControlPlaneRelayMessage } from '../../shared/utils';
+import {
+  isExtensionContextInvalidated,
+  isExtensionRuntimeAlive,
+  isTransientRuntimeDisconnect,
+  runtimeErrorMessage,
+} from '../../shared/extension-context';
+import { isControlPlaneRelayMessage, isTnfSaaSChatHost } from '../../shared/utils';
 
 const PANEL_MIN_WIDTH = 300;
 const PANEL_MIN_HEIGHT = 200;
@@ -211,12 +217,13 @@ export class EnhancedFloatingPanel {
    * This ensures the panel gets the correct state when created
    */
   private requestConnectionState(): void {
-    chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
-      if (chrome.runtime.lastError) {
-        console.warn('[FuseConnect] GET_STATE unavailable:', chrome.runtime.lastError.message);
+    this.safeSendMessage({ type: 'GET_STATE' }, (response) => {
+      if (!response || response.success === false) {
+        if (response?.transient) {
+          console.warn('[FuseConnect] GET_STATE unavailable:', response.error);
+        }
         return;
       }
-      if (!response) return;
       this.connectionStatus = response.connectionStatus || 'disconnected';
       this.agents = response.agents || [];
       this.channels = response.channels || [];
@@ -1907,6 +1914,12 @@ export class EnhancedFloatingPanel {
     const input = this.container?.querySelector('[data-input="message"]') as HTMLTextAreaElement;
     if (!input || !input.value.trim()) return;
 
+    if (!this.isContextValid || !isExtensionRuntimeAlive()) {
+      this.invalidateExtensionContext();
+      this.showToast('Extension reloaded — refresh this page to send', 'error');
+      return;
+    }
+
     const content = input.value.trim();
     input.value = '';
 
@@ -1916,19 +1929,33 @@ export class EnhancedFloatingPanel {
     };
 
     // 1. Send via relay to agents (Broadcast)
-    this.safeSendMessage({
-      type: 'BROADCAST_MESSAGE',
-      content,
-      channel: this.currentChannel,
-      metadata,
-    });
-
-    // 2. Inject into page chat (Submit to Page)
-    window.dispatchEvent(
-      new CustomEvent('fuse:inject-message', {
-        detail: { content, metadata },
-      })
+    this.safeSendMessage(
+      {
+        type: 'BROADCAST_MESSAGE',
+        content,
+        channel: this.currentChannel,
+        metadata,
+      },
+      (response) => {
+        if (response?.contextInvalidated || (response?.success === false && !response?.transient)) {
+          input.value = content;
+          input.focus();
+        }
+        if (response?.contextInvalidated) {
+          this.showToast('Extension reloaded — refresh this page to send', 'error');
+        }
+      }
     );
+
+    // 2. Inject into host-model composers (Gemini, ChatGPT, ...). Skip TNF SaaS
+    // chat — that surface needs a recipient agent and is not a model input.
+    if (!isTnfSaaSChatHost()) {
+      window.dispatchEvent(
+        new CustomEvent('fuse:inject-message', {
+          detail: { content, metadata },
+        })
+      );
+    }
 
     // 3. Add to local messages
     this.messages.push({
@@ -2274,43 +2301,65 @@ export class EnhancedFloatingPanel {
    * Safely send a message to Chrome runtime, handling context invalidation
    */
   private safeSendMessage(message: any, callback?: (response: any) => void): void {
-    if (!this.isContextValid) {
-      console.warn('[FuseConnect] Extension context is invalid, cannot send message');
-      this.showContextInvalidatedWarning();
+    if (!this.isContextValid || !isExtensionRuntimeAlive()) {
+      this.invalidateExtensionContext();
+      callback?.({
+        success: false,
+        contextInvalidated: true,
+        error: 'Extension context invalidated',
+      });
       return;
     }
 
-    try {
-      chrome.runtime.sendMessage(message, (response) => {
-        // Check for runtime.lastError and distinguish fatal reloads from MV3 listener misses.
-        if (chrome.runtime.lastError) {
-          const errorMessage = chrome.runtime.lastError.message || '';
-          if (errorMessage.includes('Extension context invalidated')) {
-            console.error('[FuseConnect] Extension context invalidated:', errorMessage);
-            this.isContextValid = false;
-            this.showContextInvalidatedWarning();
+    const send = (attempt: number): void => {
+      try {
+        chrome.runtime.sendMessage(message, (response) => {
+          const errorMessage = chrome.runtime.lastError?.message || '';
+          if (!errorMessage) {
+            callback?.(response);
             return;
           }
-          if (errorMessage.includes('Receiving end does not exist')) {
+          if (isExtensionContextInvalidated(errorMessage) || !isExtensionRuntimeAlive()) {
+            this.invalidateExtensionContext();
+            callback?.({ success: false, contextInvalidated: true, error: errorMessage });
+            return;
+          }
+          if (isTransientRuntimeDisconnect(errorMessage) && attempt < 1) {
+            window.setTimeout(() => send(attempt + 1), 400);
+            return;
+          }
+          if (isTransientRuntimeDisconnect(errorMessage)) {
             console.warn(
               '[FuseConnect] Background listener unavailable; will retry state:',
               errorMessage
             );
-            window.setTimeout(() => this.requestConnectionState(), 500);
+            if (message?.type !== 'GET_STATE') {
+              window.setTimeout(() => this.requestConnectionState(), 500);
+            }
             callback?.({ success: false, transient: true, error: errorMessage });
             return;
           }
           console.warn('[FuseConnect] Chrome runtime error:', errorMessage);
+          callback?.(response ?? { success: false, error: errorMessage });
+        });
+      } catch (error) {
+        const errorMessage = runtimeErrorMessage(error);
+        if (isExtensionContextInvalidated(errorMessage) || !isExtensionRuntimeAlive()) {
+          this.invalidateExtensionContext();
+          callback?.({ success: false, contextInvalidated: true, error: errorMessage });
+          return;
         }
-        if (callback) {
-          callback(response);
-        }
-      });
-    } catch (error) {
-      console.error('[FuseConnect] Failed to send message:', error);
-      this.isContextValid = false;
-      this.showContextInvalidatedWarning();
-    }
+        console.warn('[FuseConnect] Failed to send message:', error);
+        callback?.({ success: false, error: errorMessage });
+      }
+    };
+
+    send(0);
+  }
+
+  private invalidateExtensionContext(): void {
+    this.isContextValid = false;
+    this.showContextInvalidatedWarning();
   }
 
   /**

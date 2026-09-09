@@ -1,10 +1,12 @@
 name: Repo Boundary Gate
 
 on:
-  pull_request:
-    branches: ["**"]
-  push:
-    branches: ["main"]
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: ["**"]
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: ["main"]
   workflow_dispatch:
 
 permissions:

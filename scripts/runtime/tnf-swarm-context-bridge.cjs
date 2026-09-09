@@ -5,7 +5,7 @@ const fsp = require('node:fs/promises');
 const os = require('node:os');
 const path = require('node:path');
 const { promisify } = require('util');
-const { execFile } = require('child_process');
+const { execFile, execFileSync } = require('child_process');
 
 const execFileAsync = promisify(execFile);
 
@@ -228,6 +228,41 @@ function computeContextCoherence(heartbeat, handoff) {
   return { score, level: score >= 80 ? 'high' : score >= 50 ? 'medium' : 'low', factors };
 }
 
+/**
+ * Worktree registry for the heartbeat's worktree-routing rule: agents with a
+ * dedicated worktree (.tnf/worktrees/, .claude/worktrees/) must work there,
+ * not in the shared checkout. Rendered from `git worktree list --porcelain`;
+ * fail-open to a placeholder so context generation never breaks on git.
+ */
+function formatWorktreeSummary() {
+  try {
+    const out = execFileSync('git', ['worktree', 'list', '--porcelain'], {
+      cwd: ROOT_DIR, encoding: 'utf8', timeout: 10000, stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    const entries = [];
+    let cur = null;
+    for (const line of out.split('\n')) {
+      if (line.startsWith('worktree ')) {
+        if (cur) entries.push(cur);
+        cur = { path: line.slice(9) };
+      } else if (cur && line.startsWith('HEAD ')) cur.head = line.slice(5).slice(0, 9);
+      else if (cur && line.startsWith('branch ')) cur.branch = line.slice(7).replace('refs/heads/', '');
+      else if (cur && line.startsWith('locked')) cur.locked = true;
+      else if (line === '') { if (cur) { entries.push(cur); cur = null; } }
+    }
+    if (cur) entries.push(cur);
+    if (!entries.length) return '_No worktrees provisioned (shared checkout only)_';
+    const rows = entries.map((e) => {
+      const agentPrivate = /\/(\.tnf|\.claude)\/worktrees\//.test(e.path);
+      const role = agentPrivate ? 'agent-private' : e.locked ? 'locked' : 'auxiliary';
+      return `| ${e.path.replace(os.homedir(), '~')} | ${e.branch || '(detached)'} | ${e.head || ''} | ${role} |`;
+    });
+    return ['| Worktree | Branch | HEAD | Role |', '|---|---|---|---|', ...rows].join('\n');
+  } catch {
+    return '_Worktree listing unavailable_';
+  }
+}
+
 function buildSwarmContext(heartbeat, livingState, handoff) {
   const directives = extractActiveDirectives(livingState);
   const currentDirective = extractCurrentDirective(livingState);
@@ -235,6 +270,7 @@ function buildSwarmContext(heartbeat, livingState, handoff) {
   const coordinationIssues = detectCoordinationIssues(heartbeat);
   const coherence = computeContextCoherence(heartbeat, handoff);
   const terminalSummary = formatTerminalSummary(heartbeat);
+  const worktreeSummary = formatWorktreeSummary();
 
   const now = nowIso();
   const heartbeatAge = heartbeat
@@ -259,6 +295,12 @@ function buildSwarmContext(heartbeat, livingState, handoff) {
     `## Active Steps (${directives.length})`,
     ``,
     ...directives.map((d, i) => `${i + 1}. ${d}`),
+    ``,
+    `---`,
+    ``,
+    `## Agent Worktrees`,
+    ``,
+    worktreeSummary,
     ``,
     `---`,
     ``,

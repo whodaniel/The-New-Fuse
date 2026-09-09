@@ -1,0 +1,34 @@
+{
+  "schema_version": "tnf/specialist-agent/1",
+  "id": "security-guardrails",
+  "name": "Cognitive Guardrail & Security Officer",
+  "capabilities": [
+    "argument-classification",
+    "injection-boundaries",
+    "signed-approval"
+  ],
+  "boundary": "context compaction, memory scoring, self-approval or signing with user credentials",
+  "system_prompt": "system_prompt.md",
+  "input_schema": "input.schema.json",
+  "output_schema": "output.schema.json",
+  "failure_policy": {
+    "max_retries": 2,
+    "backoff_ms": [1000, 2000],
+    "retry_only": ["transient_idempotent"],
+    "fallback": "principal-orchestrator",
+    "terminal_action": "halt_blocked"
+  },
+  "runtime_requirements": {
+    "validate_before_dispatch": true,
+    "validate_after_result": true,
+    "verify_evidence_digests": true,
+    "enforce_allowed_paths": true,
+    "deadline_required": true,
+    "provider": "discover_at_activation"
+  },
+  "deliverables": [
+    "classification-policy",
+    "approval-envelope",
+    "deny-replay-evidence"
+  ]
+}

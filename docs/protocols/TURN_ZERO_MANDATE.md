@@ -4,17 +4,41 @@
 
 **Status:** ACTIVE  
 **Protocol ID:** `TNF_TURN_ZERO_CANONICAL`  
+**Current protocol name:** Turn Zero V2  
+**Alias law:** In TNF, **“Turn Zero” means Turn Zero V2**. There is no separate
+current Turn Zero. Historical V1 rituals (manual “await confirmation” paste
+lists) are retired; do not revive them as a competing entry path.  
 **Canonical development repository:** `whodaniel/tnf-monorepo`
 
 ## Purpose
 
-Turn Zero establishes the minimum verified authority, repository identity,
-classification, current context, and capability staffing required to take the
-**next safe action**.
+Turn Zero V2 (current Turn Zero) establishes the minimum verified authority,
+repository identity, classification, current context, and capability staffing
+required to take the **next safe action**.
 
 It is not a ritual to load the entire framework before responding. In
 interactive work, responsiveness comes first; mutation readiness is gated
 separately.
+
+### Foundational scope (anti-confusion)
+
+Turn Zero V2 is **foundational, product-neutral TNF protocol logic**. It is not
+a feature of video processing, a lane name, a worktree, or any other task
+domain.
+
+- Canonical law: this file in the active checkout of `whodaniel/tnf-monorepo`.
+- Canonical executable (repo-relative):
+  `scripts/protocols/turn-zero-v2-gate.cjs`.
+- Prefer running it from the canonical development root on `main` (or the branch
+  you are deliberately mutating). Operator path:
+  `pnpm run tnf:onboard -- --task "<current task>"`.
+- Copies of the gate that appear under lane/feature worktrees (for example
+  `~/.tnf/worktrees/lane4-video-extraction/...`) are **checkout shadows**, not
+  alternate authorities. Do not cite a worktree path as “the” Turn Zero V2
+  implementation.
+- Conditional Stage routes in `docs/core/FRONTLOAD_MANIFEST.md` (including the
+  video-intelligence route) are task hydration only. They do not redefine Turn
+  Zero.
 
 ## Authority
 

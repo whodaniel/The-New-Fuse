@@ -12,6 +12,7 @@ import {
 } from 'chart.js';
 import React, { useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
+import { DynamicKnowledgeGraph } from './dynamic-knowledge-graph';
 import { Tabs } from './ui/design-system';
 
 // Components placeholders (assuming they exist or need to be mocked/imported)
@@ -26,11 +27,6 @@ const PerformanceMetrics = () => (
 );
 const SystemMetrics = () => (
   <div className="p-4 bg-green-50 text-green-800 rounded">System Metrics Placeholder</div>
-);
-const DynamicKnowledgeGraph = () => (
-  <div className="p-4 bg-purple-50 text-purple-800 rounded">
-    Dynamic Knowledge Graph Placeholder
-  </div>
 );
 const PredictiveTaskAllocator = () => (
   <div className="p-4 bg-orange-50 text-orange-800 rounded">

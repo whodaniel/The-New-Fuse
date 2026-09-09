@@ -4,6 +4,44 @@ import * as os from 'os';
 import * as path from 'path';
 import { loadProviderConfig, type ProviderConfig, type ProviderDef } from './provider-config.js';
 
+/**
+ * Single source of truth for the persisted default-model file written by
+ * `tnf models --select` (ModelsService.setDefaultModel). Resolution order:
+ * explicit env override (used by tests and callers that manage their own
+ * config root, mirroring TNF_PROVIDER_CONFIG_PATH), then the global
+ * convention path next to providers.json.
+ */
+export function defaultModelPath(): string {
+  const override = process.env.TNF_DEFAULT_MODEL_PATH;
+  if (override && override.trim()) return override.trim();
+  return path.join(os.homedir(), '.config', 'tnf', 'model.default.json');
+}
+
+/**
+ * Read the operator's persisted default model (`tnf models --select`).
+ *
+ * Returns null when the file is missing, malformed, or incomplete — callers
+ * treat that as "no explicit operator choice" and fall back to their own
+ * resolution order. Tolerant of extra fields (`source`, `id`, string or
+ * numeric `updatedAt`) so older writers keep loading. Never throws.
+ */
+export function readPersistedDefaultModel(): { provider: string; model: string } | null {
+  try {
+    const filePath = defaultModelPath();
+    if (!fs.existsSync(filePath)) return null;
+    const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8')) as {
+      provider?: unknown;
+      model?: unknown;
+    };
+    const provider = typeof parsed.provider === 'string' ? parsed.provider.trim() : '';
+    const model = typeof parsed.model === 'string' ? parsed.model.trim() : '';
+    if (provider && model) return { provider, model };
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export interface ModelInfo {
   id: string;
   name: string;
@@ -150,7 +188,7 @@ export class ModelsService {
 
   constructor(cachePath?: string) {
     this.modelsCachePath = cachePath || path.join(os.homedir(), '.cache', 'tnf', 'models.json');
-    this.defaultModelPath = path.join(os.homedir(), '.config', 'tnf', 'model.default.json');
+    this.defaultModelPath = defaultModelPath();
     this.providerConfig = loadProviderConfig();
     this.cacheExpiry = this.providerConfig.tolerances.cacheExpiryMs;
   }
@@ -395,18 +433,8 @@ export class ModelsService {
   }
 
   async getDefaultModel(): Promise<{ provider: string; model: string }> {
-    try {
-      if (fs.existsSync(this.defaultModelPath)) {
-        const parsed = JSON.parse(fs.readFileSync(this.defaultModelPath, 'utf8')) as {
-          provider?: string;
-          model?: string;
-        };
-        if (parsed.provider && parsed.model)
-          return { provider: parsed.provider, model: parsed.model };
-      }
-    } catch {
-      // Fall through to environment defaults.
-    }
+    const persisted = readPersistedDefaultModel();
+    if (persisted) return persisted;
 
     const envModel = process.env.TNF_LLM_MODEL || process.env.OPENAI_MODEL || '';
     if (envModel.includes(':')) {

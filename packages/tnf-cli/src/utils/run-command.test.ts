@@ -10,7 +10,7 @@
  * Run: pnpm --filter @the-new-fuse/tnf-cli test
  */
 import { execSync } from 'node:child_process';
-import { CommandTimeoutError, spawnWithTimeout } from './run-command.js';
+import { CommandExitError, CommandTimeoutError, spawnWithTimeout } from './run-command.js';
 
 let pass = 0;
 let fail = 0;
@@ -42,6 +42,23 @@ async function main(): Promise<void> {
   } catch (err: any) {
     check('exit 3 rejects with its code', /exited with code 3/.test(err.message), err.message);
     check('exit 3 is not classed as a timeout', !(err instanceof CommandTimeoutError));
+  }
+
+  const captured = await spawnWithTimeout(process.execPath, ['-e',
+    'process.stdout.write(JSON.stringify({ok:true}))'], {
+    cwd: '/tmp', captureStdout: true,
+  });
+  check('successful stdout verdict returned', captured.stdoutTail === '{"ok":true}');
+  try {
+    await spawnWithTimeout(process.execPath, ['-e',
+      'process.stdout.write(JSON.stringify({ok:false})); process.stderr.write("denied"); process.exitCode=3'], {
+      cwd: '/tmp', captureStdout: true, captureStderr: true,
+    });
+    check('failed verdict rejects', false);
+  } catch (err: any) {
+    check('failure has structured exit error', err instanceof CommandExitError);
+    check('failure preserves exit code and stdout', err.exitCode === 3 && err.stdoutTail === '{"ok":false}');
+    check('failure preserves stderr', err.stderrTail === 'denied' && err.message.includes('denied'));
   }
 
   // The fix itself: a child that never exits is bounded.

@@ -1,28 +1,30 @@
 name: OpenAPI Drift Gate
 
 on:
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - "openapi.yaml"
-      - "scripts/deployment/openapi.yaml"
-      - "scripts/openapi/**"
-      - "apps/api/src/**/*.controller.ts"
-      - "apps/api/src/**/dto/**/*.ts"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/openapi-drift-gate.yml"
-  push:
-    branches: [main, develop]
-    paths:
-      - "openapi.yaml"
-      - "scripts/deployment/openapi.yaml"
-      - "scripts/openapi/**"
-      - "apps/api/src/**/*.controller.ts"
-      - "apps/api/src/**/dto/**/*.ts"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/openapi-drift-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   branches: [main, develop]
+  #   paths:
+  #     - "openapi.yaml"
+  #     - "scripts/deployment/openapi.yaml"
+  #     - "scripts/openapi/**"
+  #     - "apps/api/src/**/*.controller.ts"
+  #     - "apps/api/src/**/dto/**/*.ts"
+  #     - "package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/openapi-drift-gate.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main, develop]
+  #   paths:
+  #     - "openapi.yaml"
+  #     - "scripts/deployment/openapi.yaml"
+  #     - "scripts/openapi/**"
+  #     - "apps/api/src/**/*.controller.ts"
+  #     - "apps/api/src/**/dto/**/*.ts"
+  #     - "package.json"
+  #     - "pnpm-lock.yaml"
+  #     - ".github/workflows/openapi-drift-gate.yml"
   workflow_dispatch:
 
 jobs:

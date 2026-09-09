@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "action": "synthesize",
+  "request_id": "normalize-example",
+  "skill_name": "normalize-text",
+  "lineage": [],
+  "triggers": {
+    "positive": ["normalize text"],
+    "negative": ["do not normalize"]
+  },
+  "skill_markdown": "---\nname: normalize-text\ndescription: Normalize text deterministically. Use when normalizing text. Do not use for translation.\n---\n\n# Normalize text\n\nRun scripts/skill.py --help for discovery. Supply --input-json with a text string.\n",
+  "artifact": {
+    "language": "python-pep723",
+    "source": "# /// script\n# requires-python = \">=3.11\"\n# dependencies = []\n# ///\nimport argparse\nimport json\nparser = argparse.ArgumentParser(description=\"Normalize text deterministically\")\nparser.add_argument('--input-json', required=True, help='JSON object with one string field: text')\nargs = parser.parse_args()\nvalue = json.loads(args.input_json)\nif not isinstance(value, dict) or set(value) != {'text'} or not isinstance(value['text'], str):\n    parser.error('Expected exactly one string field: text')\nprint(value['text'].strip().lower())\n",
+    "arguments_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "tools": []
+  },
+  "evals": {
+    "version": 1,
+    "cases": [
+      {
+        "id": "trim-case",
+        "arguments": {
+          "text": "  Hello WORLD  "
+        },
+        "expected_exit": 0,
+        "expected_stdout": "hello world\n"
+      },
+      {
+        "id": "empty-case",
+        "arguments": {
+          "text": ""
+        },
+        "expected_exit": 0,
+        "expected_stdout": "\n"
+      }
+    ],
+    "triggers": [
+      {
+        "text": "normalize text",
+        "activate": true
+      },
+      {
+        "text": "do not normalize text",
+        "activate": false
+      }
+    ]
+  },
+  "assertions": {
+    "version": 1,
+    "require_help": true,
+    "require_repeatability": true,
+    "network": "none",
+    "max_stdout_bytes": 8192,
+    "case_timeout_seconds": 3
+  }
+}

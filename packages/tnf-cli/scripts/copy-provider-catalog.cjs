@@ -14,3 +14,11 @@ for (const file of files) {
 }
 
 console.log(`Bundled ${files.length} provider catalog files in dist/catalog`);
+
+// The critic agent remains a single source asset; distribute it with the CLI.
+const criticAssetDir = path.resolve(__dirname, '../dist/data');
+fs.mkdirSync(criticAssetDir, { recursive: true });
+fs.copyFileSync(
+  path.resolve(__dirname, '../../../.agent/agents/critic-agent.md'),
+  path.join(criticAssetDir, 'critic-agent.md')
+);

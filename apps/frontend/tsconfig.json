@@ -32,7 +32,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "allowJs": false,
     "sourceMap": false, // Ensure TS doesn't try to generate source maps
     "inlineSourceMap": false // Ensure TS doesn't try to inline source maps

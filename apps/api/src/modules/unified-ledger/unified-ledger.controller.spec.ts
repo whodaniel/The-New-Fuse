@@ -5,6 +5,7 @@ import { UnifiedLedgerController } from './unified-ledger.controller';
 
 describe('UnifiedLedgerController timeline auth scoping', () => {
   const ledger = {
+    currentScope: jest.fn(),
     listRecords: jest.fn(),
     getRecord: jest.fn(),
     createRecord: jest.fn(),
@@ -19,6 +20,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     updateTimelineEvent: jest.fn(),
     deleteTimelineEvent: jest.fn(),
     bootstrapPersonalTimeline: jest.fn(),
+    linkLibraryNarratives: jest.fn(),
     importGithubNarrativeTimeline: jest.fn(),
     getGithubNarrativeGraph: jest.fn(),
   } as any;
@@ -56,6 +58,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
 
     expect(result).toEqual([{ id: 'evt_1' }]);
     expect(ledger.listTimelineEvents).toHaveBeenCalledWith({
+      ...{ tenantId: 'user:user-1', workspaceId: 'personal' },
       userId: 'owner-1',
       viewerUserId: 'user-1',
       recordId: 'record-1',
@@ -81,6 +84,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     );
     expect(result).toEqual([{ id: 'rec-1' }]);
     expect(ledger.listRecords).toHaveBeenCalledWith({
+      ...{ tenantId: 'user:owner-1', workspaceId: 'personal' },
       owner: 'owner-1',
       kind: 'task',
       status: 'submitted',
@@ -100,6 +104,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     );
     expect(created).toEqual({ id: 'rec-created' });
     expect(ledger.createRecord).toHaveBeenCalledWith({
+      ...{ tenantId: 'user:owner-2', workspaceId: 'personal' },
       title: 'T',
       description: 'D',
       owner: 'owner-2',
@@ -113,8 +118,13 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     expect(patched).toEqual({ id: 'rec-updated' });
     expect(ledger.updateRecord).toHaveBeenCalledWith(
       'rec-1',
-      { title: 'updated', owner: 'owner-2' },
-      'owner-2'
+      {
+        ...{ tenantId: 'user:owner-2', workspaceId: 'personal' },
+        title: 'updated',
+        owner: 'owner-2',
+      },
+      'owner-2',
+      { tenantId: 'user:owner-2', workspaceId: 'personal' }
     );
   });
 
@@ -122,7 +132,10 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     ledger.getTimelineEvent.mockResolvedValue({ id: 'evt_2' });
     const result = await controller.timelineEvent({ sub: 'user-sub' }, 'evt_2');
     expect(result).toEqual({ id: 'evt_2' });
-    expect(ledger.getTimelineEvent).toHaveBeenCalledWith('evt_2', 'user-sub');
+    expect(ledger.getTimelineEvent).toHaveBeenCalledWith('evt_2', 'user-sub', {
+      tenantId: 'user:user-sub',
+      workspaceId: 'personal',
+    });
   });
 
   it('rejects timeline access without authenticated user id', async () => {
@@ -146,6 +159,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
 
     expect(result).toEqual({ id: 'evt_3' });
     expect(ledger.createTimelineEvent).toHaveBeenCalledWith({
+      ...{ tenantId: 'user:auth-user', workspaceId: 'personal' },
       userId: 'auth-user',
       eventType: 'historical_event',
       payload: { title: 'T1' },
@@ -161,17 +175,25 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     });
 
     expect(result).toEqual({ id: 'evt_4' });
-    expect(ledger.updateTimelineEvent).toHaveBeenCalledWith('evt_4', {
-      userId: 'auth-user',
-      payload: { title: 'Updated' },
-    });
+    expect(ledger.updateTimelineEvent).toHaveBeenCalledWith(
+      'evt_4',
+      {
+        ...{ tenantId: 'user:auth-user', workspaceId: 'personal' },
+        userId: 'auth-user',
+        payload: { title: 'Updated' },
+      },
+      { tenantId: 'user:auth-user', workspaceId: 'personal' }
+    );
   });
 
   it('passes authenticated user to deleteTimelineEvent', async () => {
     ledger.deleteTimelineEvent.mockResolvedValue(true);
     const result = await controller.deleteTimelineEvent({ id: 'auth-user' }, 'evt_5');
     expect(result).toBe(true);
-    expect(ledger.deleteTimelineEvent).toHaveBeenCalledWith('evt_5', 'auth-user');
+    expect(ledger.deleteTimelineEvent).toHaveBeenCalledWith('evt_5', 'auth-user', {
+      tenantId: 'user:auth-user',
+      workspaceId: 'personal',
+    });
   });
 
   it('bootstraps timeline only for authenticated current user', async () => {
@@ -236,6 +258,32 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     expect(ledger.bootstrapPersonalTimeline).not.toHaveBeenCalled();
   });
 
+  it('links library narratives using authenticated user scope', async () => {
+    ledger.linkLibraryNarratives.mockResolvedValue({
+      linked: 1,
+      skipped: 0,
+      results: [{ storyKey: 'nk_1', eventId: 'evt_x', status: 'created' }],
+    });
+
+    const result = await controller.linkLibraryNarratives(
+      { id: 'user-lib', email: 'goldberg@thenewfuse.com' },
+      {
+        ownerAccountId: 'goldberg@thenewfuse.com',
+        items: [{ kind: 'factoid', title: 'Test factoid', storyKey: 'nk_1' }],
+      }
+    );
+
+    expect(result.linked).toBe(1);
+    expect(ledger.linkLibraryNarratives).toHaveBeenCalledWith(
+      'user-lib',
+      [{ kind: 'factoid', title: 'Test factoid', storyKey: 'nk_1' }],
+      {
+        email: 'goldberg@thenewfuse.com',
+        ownerAccountId: 'goldberg@thenewfuse.com',
+      }
+    );
+  });
+
   it('imports GitHub narrative timeline using authenticated user scope', async () => {
     ledger.importGithubNarrativeTimeline.mockResolvedValue({
       message: 'Imported 4 events',
@@ -279,6 +327,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
 
     expect(result.edgeCount).toBe(5);
     expect(ledger.getGithubNarrativeGraph).toHaveBeenCalledWith({
+      ...{ tenantId: 'user:viewer-1', workspaceId: 'personal' },
       userId: 'owner-graph',
       viewerUserId: 'viewer-1',
       timelineTrack: 'tnf_platform_evolution',
@@ -334,6 +383,7 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
 
     expect(result).toEqual({ id: 'rec-member-1' });
     expect(ledger.createRecord).toHaveBeenCalledWith({
+      ...{ tenantId: 'user:member-1' },
       title: 'Allowed',
       description: 'Scoped',
       workspaceId: 'ws-2',
@@ -379,33 +429,21 @@ describe('UnifiedLedgerController timeline auth scoping', () => {
     expect(ledger.updateRecord).not.toHaveBeenCalled();
   });
 
-  it('derives workspace from existing record for writes when workspaceId is omitted', async () => {
-    ledger.getRecord.mockResolvedValueOnce({
-      id: 'rec-owned-1',
-      owner: 'owner-55',
-      workspaceId: 'ws-derived-1',
-    });
-    db.workspaces.findByIdWithOwner.mockResolvedValueOnce({
-      id: 'ws-derived-1',
-      ownerId: 'owner-55',
-    });
+  it('keeps omitted workspace in personal scope without a cross-partition lookup', async () => {
     ledger.updateRecord.mockResolvedValueOnce({ id: 'rec-owned-1' });
-
-    const result = await controller.patch({ id: 'owner-55' }, 'rec-owned-1', {
-      title: 'Derived workspace write',
-    });
-
-    expect(result).toEqual({ id: 'rec-owned-1' });
-    expect(db.workspaces.findByIdWithOwner).toHaveBeenCalledWith('ws-derived-1');
+    await controller.patch({ id: 'owner-55' }, 'rec-owned-1', { title: 'Personal write' });
+    expect(ledger.getRecord).not.toHaveBeenCalled();
+    expect(db.workspaces.findByIdWithOwner).not.toHaveBeenCalled();
     expect(ledger.updateRecord).toHaveBeenCalledWith(
       'rec-owned-1',
       {
-        title: 'Derived workspace write',
+        title: 'Personal write',
         owner: 'owner-55',
-        workspaceId: 'ws-derived-1',
+        tenantId: 'user:owner-55',
+        workspaceId: 'personal',
       },
       'owner-55',
-      { workspaceId: 'ws-derived-1' }
+      { tenantId: 'user:owner-55', workspaceId: 'personal' }
     );
   });
 });

@@ -33,6 +33,10 @@ const GraphDemo = lazy(() =>
   import('./pages/graph-demo').then((module) => ({ default: module.GraphDemo }))
 );
 const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
+const DurableTasksPage = lazy(() => import('./pages/durable-tasks/DurableTasksPage'));
+const DurableRunsPage = lazy(() => import('./pages/durable-tasks/RunsPage'));
+const DurableRunDetailPage = lazy(() => import('./pages/durable-tasks/RunDetailPage'));
+const DurableSchedulesPage = lazy(() => import('./pages/durable-tasks/SchedulesPage'));
 const AgencyDashboard = lazy(() => import('./pages/Agency/AgencyDashboard'));
 const AgencyOnboarding = lazy(() => import('./pages/Agency/AgencyOnboarding'));
 const MCPHub = lazy(() => import('./pages/mcp/MCPHub'));
@@ -138,6 +142,8 @@ const BackupRestore = lazy(() => import('./pages/Admin/BackupRestore'));
 const HarnessCredentials = lazy(() => import('./pages/Admin/HarnessCredentials'));
 const SuperAdminControlPanel = lazy(() => import('./pages/Admin/SuperAdminControlPanel'));
 const NexusVisualizer = lazy(() => import('./pages/SynapticNexus'));
+const GoogleEcosystemHub = lazy(() => import('./pages/GoogleEcosystemHub'));
+const DynamicUISynthesizer = lazy(() => import('./pages/DynamicUISynthesizer'));
 
 // Unified / scheduler surfaces
 const ScheduleBuilderPage = lazy(() =>
@@ -146,6 +152,7 @@ const ScheduleBuilderPage = lazy(() =>
 
 // Auth components
 const AuthIndexPage = lazy(() => import('./pages/auth'));
+const LogoutPage = lazy(() => import('./pages/auth/Logout'));
 const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPassword'));
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
 const SSOPage = lazy(() => import('./pages/auth/SSO'));
@@ -161,6 +168,7 @@ const BlogPage = lazy(() => import('./pages/Blog'));
 const ConnectExtensionPage = lazy(() => import('./pages/ConnectExtension'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Features = lazy(() => import('./pages/Features'));
+const MasterGraphPage = lazy(() => import('./pages/MasterGraph'));
 const VisualizationsPage = lazy(() => import('./pages/Visualizations'));
 const VisualizationSurfaceViewerPage = lazy(() => import('./pages/VisualizationSurfaceViewer'));
 const TerminalGraphPage = lazy(() => import('./pages/TerminalGraph'));
@@ -425,6 +433,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
       '/blog',
       '/marketplace',
       '/visualizations',
+      '/visualizations/master-graph',
       '/visualizations/surface',
       '/visualizations/terminals',
       '/visualizations/concordance',
@@ -450,7 +459,9 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
     location.pathname.startsWith('/nexus') ||
     location.pathname.startsWith('/debug/orphans');
 
-  // Use PremiumLayout for authenticated routes, except those with their own layout
+  // PremiumLayout accepts children (and falls back to Outlet). AppShell only
+  // renders <Outlet />, so using it as the default dropped page content when
+  // ComprehensiveRouter passes <Routes> as children — shell-only chrome.
   let Layout: React.ComponentType<any> = PremiumLayout;
   if (
     isPublicRoute &&
@@ -526,6 +537,24 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                   </RequireMemberAccess>
                 }
               />
+              <Route
+                path="/google-hub"
+                element={
+                  <RequireMemberAccess>
+                    <GoogleEcosystemHub />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route path="/dashboard/google-hub" element={<Navigate to="/google-hub" replace />} />
+              <Route
+                path="/dynamic-ui"
+                element={
+                  <RequireMemberAccess>
+                    <DynamicUISynthesizer />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route path="/dashboard/dynamic-ui" element={<Navigate to="/dynamic-ui" replace />} />
               <Route
                 path="/dashboard/launchpad"
                 element={
@@ -982,6 +1011,38 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 element={
                   <RequireMemberAccess>
                     <WorkflowExecutionPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/durable-tasks"
+                element={
+                  <RequireMemberAccess>
+                    <DurableTasksPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/runs"
+                element={
+                  <RequireMemberAccess>
+                    <DurableRunsPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/runs/:runId"
+                element={
+                  <RequireMemberAccess>
+                    <DurableRunDetailPage />
+                  </RequireMemberAccess>
+                }
+              />
+              <Route
+                path="/schedules"
+                element={
+                  <RequireMemberAccess>
+                    <DurableSchedulesPage />
                   </RequireMemberAccess>
                 }
               />
@@ -1483,6 +1544,8 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/auth" element={<AuthIndexPage />} />
               <Route path="/auth/login" element={<LoginPage />} />
               <Route path="/auth/register" element={<RegisterPage />} />
+              <Route path="/auth/logout" element={<LogoutPage />} />
+              <Route path="/logout" element={<LogoutPage />} />
               <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
               <Route path="/auth/sso" element={<SSOPage />} />
@@ -1551,6 +1614,7 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
                 }
               />
               <Route path="/visualizations" element={<VisualizationsPage />} />
+              <Route path="/visualizations/master-graph" element={<MasterGraphPage />} />
               <Route path="/visualizations/concordance" element={<ConcordanceViewerPage />} />
               <Route path="/visualizations/surface" element={<VisualizationSurfaceViewerPage />} />
               <Route path="/visualizations/terminals" element={<TerminalGraphPage />} />

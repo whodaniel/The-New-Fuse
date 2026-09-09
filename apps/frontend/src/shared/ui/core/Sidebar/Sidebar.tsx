@@ -60,6 +60,7 @@ export function Sidebar({
             size="icon"
             onClick={() => onExpandedChange(!expanded)}
             className="w-full justify-center"
+            aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
           >
             {expanded ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </Button>

@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { TerminalsController } from './terminals.controller';
 
 describe('TerminalsController', () => {
@@ -7,8 +7,9 @@ describe('TerminalsController', () => {
       getTerminalGraph: jest.fn().mockResolvedValue({ available: true }),
     } as any);
 
-  it('allows redacted graph for regular user', async () => {
+  it('forces tenantId from the JWT when the query omits it (regular user)', async () => {
     const controller = buildController();
+    const service = (controller as any).terminalsService;
     const result = await controller.getTerminalGraph(
       {
         includeCommands: false,
@@ -18,6 +19,7 @@ describe('TerminalsController', () => {
       {
         user: {
           id: 'user-1',
+          tenantId: 'tenant-1',
           role: 'user',
           roles: ['user'],
           permissions: [],
@@ -26,15 +28,43 @@ describe('TerminalsController', () => {
     );
 
     expect(result).toEqual({ available: true });
+    expect(service.getTerminalGraph).toHaveBeenCalledWith(
+      { tenantId: 'tenant-1', includeCommands: false, includeProcessNodes: true, limit: 100 },
+      { viewerUserId: 'user-1' }
+    );
   });
 
-  it('blocks includeCommands for non-admin users', async () => {
+  it('rejects tenantId hints that mismatch the authenticated tenant for regular users', async () => {
     const controller = buildController();
 
     await expect(
       controller.getTerminalGraph(
         {
-          includeCommands: true,
+          tenantId: 'other-tenant',
+          includeCommands: false,
+          includeProcessNodes: true,
+          limit: 100,
+        },
+        {
+          user: {
+            id: 'user-1',
+            tenantId: 'tenant-1',
+            role: 'user',
+            roles: ['user'],
+            permissions: [],
+          },
+        } as any
+      )
+    ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('rejects regular users whose JWT has no tenantId (fail closed)', async () => {
+    const controller = buildController();
+
+    await expect(
+      controller.getTerminalGraph(
+        {
+          includeCommands: false,
           includeProcessNodes: true,
           limit: 100,
         },
@@ -50,10 +80,50 @@ describe('TerminalsController', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
-  it('allows includeCommands for admin users', async () => {
+  it('rejects requests without an authenticated user id', async () => {
     const controller = buildController();
+
+    await expect(
+      controller.getTerminalGraph(
+        {
+          includeCommands: false,
+          includeProcessNodes: true,
+          limit: 100,
+        },
+        { user: { tenantId: 'tenant-1', role: 'user', roles: ['user'] } } as any
+      )
+    ).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('blocks includeCommands for non-admin users', async () => {
+    const controller = buildController();
+
+    await expect(
+      controller.getTerminalGraph(
+        {
+          includeCommands: true,
+          includeProcessNodes: true,
+          limit: 100,
+        },
+        {
+          user: {
+            id: 'user-1',
+            tenantId: 'tenant-1',
+            role: 'user',
+            roles: ['user'],
+            permissions: [],
+          },
+        } as any
+      )
+    ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('allows includeCommands and tenant hints for admin users', async () => {
+    const controller = buildController();
+    const service = (controller as any).terminalsService;
     const result = await controller.getTerminalGraph(
       {
+        tenantId: 'tenant-2',
         includeCommands: true,
         includeProcessNodes: true,
         limit: 100,
@@ -69,6 +139,9 @@ describe('TerminalsController', () => {
     );
 
     expect(result).toEqual({ available: true });
+    expect(service.getTerminalGraph).toHaveBeenCalledWith(
+      { tenantId: 'tenant-2', includeCommands: true, includeProcessNodes: true, limit: 100 },
+      { viewerUserId: 'admin-1' }
+    );
   });
 });
-

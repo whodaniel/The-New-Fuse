@@ -43,6 +43,20 @@ where agents refine **Scoped Grids** within the global Merkle Tree.
 5.  **Actualization Filter:** Converts the verified factoid into a
     **Directive**.
 
+6.  **Modality Enrichment Filter (LAST, post-value):** Gaps detected in the raw
+    transcript (visual references, audio cues, external artifacts) are **not**
+    resolved during ingestion. They are tagged `blocked: modality-gap` on their
+    parent factoid and survive only if that factoid passes filters 1–5 and
+    scores into the action queue (core-TNF value or user-project value). For
+    queue-bound items only, the missing modality is then filled (frame/audio
+    extraction -> vision/OCR description) as the **final enrichment step**.
+    Filled content re-enters this Gauntlet at Dedupe/Conflict + Density/Utility
+    for a **post-fill re-gate** before insertion into the task/action queue —
+    fill can downgrade (redundant -> drop) or upgrade an item. Frames/audio are
+    ephemeral: describe, persist text into the factoid, delete. Exception: keep
+    a frame only if explicitly judged to hold long-term value untranslatable to
+    text/code.
+
 _Core Architecture:_ The filters are not code; they are **Compiled Protocols**
 found in `.md` files like `AGENTS.md` and `SOUL.md`, which the **Harness** uses
 to direct the MoE Engine.

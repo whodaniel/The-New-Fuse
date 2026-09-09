@@ -38,7 +38,7 @@ File: `packages/relay-core/src/broker-agent.ts`
    - `apps/frontend/src/pages/Admin/ComprehensiveAdminDashboard.tsx`
    - shows stale/fresh counters and stale-context alert banner.
 2. CloudRuntime rollout script updates:
-   - `scripts/cloud_runtime/set-federation-gate-mode.sh`
+   - `scripts/cloud-run/set-federation-gate-mode.sh`
    - sets and verifies new freshness env vars.
 3. Runbook and bridge updates:
    - `docs/protocols/twip-operator-runbook.md`

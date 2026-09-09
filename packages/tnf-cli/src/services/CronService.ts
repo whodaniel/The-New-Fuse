@@ -1,6 +1,13 @@
 import * as fs from 'fs';
-import * as os from 'os';
 import * as path from 'path';
+import {
+  accountOwnedStamp,
+  mergeRecordsById,
+  resolveAccountOwnedRoot,
+  stampRecord,
+  TNF_HOME,
+  tryResolveAccountOwnedRoot,
+} from './AccountOwnedPath.js';
 
 export interface CronJob {
   id: string;
@@ -16,30 +23,60 @@ export interface CronJob {
   runCount: number;
   failCount: number;
   tags?: string[];
+  /** Owning authenticated TNF account (cloud identity key). */
+  ownerAccountId?: string;
+  /** Stable per-user id (profile_id) owning this job. */
+  ownerUserId?: string;
 }
 
 export class CronService {
-  private readonly jobsPath: string;
+  constructor() {}
 
-  constructor() {
-    this.jobsPath = path.join(os.homedir(), '.tnf', 'cron-jobs.json');
+  /** Legacy flat ~/.tnf/cron-jobs.json — read fallback for pre-binding data. */
+  private legacyJobsPath(): string {
+    return path.join(TNF_HOME(), 'cron-jobs.json');
+  }
+
+  /**
+   * Account-nested write file ~/.tnf/cron/<ownerUserId>/cron-jobs.json.
+   * Fail closed: throws when no TNF account binding is available.
+   */
+  private jobsFileForWrite(): string {
+    const owned = resolveAccountOwnedRoot('cron');
+    fs.mkdirSync(owned.root, { recursive: true, mode: 0o700 });
+    return path.join(owned.root, 'cron-jobs.json');
+  }
+
+  private jobsFilesForRead(): string[] {
+    const ownedRoot = tryResolveAccountOwnedRoot('cron')?.root;
+    const ownedFile = ownedRoot ? path.join(ownedRoot, 'cron-jobs.json') : null;
+    const legacyFile = this.legacyJobsPath();
+    return ownedFile && ownedFile !== legacyFile ? [ownedFile, legacyFile] : [legacyFile];
   }
 
   private readJobs(): CronJob[] {
-    if (!fs.existsSync(this.jobsPath)) {
-      return this.getDefaultJobs();
+    const lists: CronJob[][] = [];
+    for (const jobsPath of this.jobsFilesForRead()) {
+      if (!fs.existsSync(jobsPath)) continue;
+      try {
+        lists.push(JSON.parse(fs.readFileSync(jobsPath, 'utf8')) as CronJob[]);
+      } catch {
+        /* fall through to next candidate */
+      }
     }
-
-    try {
-      const data = fs.readFileSync(this.jobsPath, 'utf8');
-      return JSON.parse(data);
-    } catch {
-      return this.getDefaultJobs();
-    }
+    if (lists.length === 0) return this.getDefaultJobs();
+    // Owned rows win on id collision; legacy rows stay visible until adopted.
+    return mergeRecordsById(lists);
   }
 
   private writeJobs(jobs: CronJob[]): void {
-    fs.writeFileSync(this.jobsPath, JSON.stringify(jobs, null, 2));
+    const owned = resolveAccountOwnedRoot('cron');
+    const stamp = accountOwnedStamp(owned);
+    const stamped = jobs.map((j) => stampRecord(j, stamp));
+    fs.mkdirSync(owned.root, { recursive: true, mode: 0o700 });
+    fs.writeFileSync(path.join(owned.root, 'cron-jobs.json'), JSON.stringify(stamped, null, 2), {
+      mode: 0o600,
+    });
   }
 
   async list(): Promise<CronJob[]> {

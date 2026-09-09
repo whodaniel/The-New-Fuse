@@ -64,3 +64,65 @@ export function countTrailingFailures(events: FullAutoRunEventLike[]): number {
   }
   return streak;
 }
+
+export type FullAutoQualityGateVerdict = 'passed' | 'failed' | 'unverified' | 'skipped';
+
+export class QualityGateError extends Error {
+  constructor(
+    readonly verdict: FullAutoQualityGateVerdict,
+    readonly reason: string
+  ) {
+    super(`Strict status gate ${verdict}: ${reason}`);
+    this.name = 'QualityGateError';
+  }
+}
+
+/** Require an explicit child verdict; crashes and malformed output never pass. */
+export function classifyStrictStatusGate(input: {
+  exitCode: number | null;
+  stdout: string;
+  timedOut?: boolean;
+  spawnError?: string;
+}): { verdict: FullAutoQualityGateVerdict; reason?: string } {
+  if (input.timedOut) return { verdict: 'unverified', reason: 'Strict status gate timed out' };
+  if (input.spawnError) return { verdict: 'unverified', reason: input.spawnError };
+  let payload: unknown;
+  try {
+    payload = JSON.parse(input.stdout.trim());
+  } catch {
+    return { verdict: 'unverified', reason: 'Strict status gate returned invalid JSON' };
+  }
+  if (!payload || typeof payload !== 'object' || !('ok' in payload) || typeof payload.ok !== 'boolean') {
+    return { verdict: 'unverified', reason: 'Strict status gate returned no boolean verdict' };
+  }
+  if (input.exitCode === null) return { verdict: 'unverified', reason: 'Strict status gate did not exit normally' };
+  if (!payload.ok) return { verdict: 'failed', reason: input.stdout.trim() };
+  if (input.exitCode !== 0) return { verdict: 'unverified', reason: `Passing verdict with exit code ${input.exitCode}` };
+  return { verdict: 'passed' };
+}
+
+/** Recovery must retain its quarantine until a complete, strictly gated pass. */
+export function resolveFullAutoCompletion(
+  previous: { mode?: string; quarantinedAt?: string; quarantineReason?: string; completedCycles?: number; failedCycles?: number },
+  events: FullAutoRunEventLike[],
+  event: FullAutoRunEventLike & { qualityGate?: FullAutoQualityGateVerdict; finishedAt: string }
+): { mode: 'idle' | 'quarantined'; completedCycles: number; failedCycles: number;
+     quarantinedAt?: string; quarantineReason?: string; recoveredAt?: string } {
+  const history = [...events, event];
+  const logged = tallyFullAutoRuns(events);
+  // Retention may remove older events; do not erase durable lifetime totals.
+  const counts = {
+    completedCycles: Math.max(logged.completedCycles, previous.completedCycles || 0) + (event.ok ? 1 : 0),
+    failedCycles: Math.max(logged.failedCycles, previous.failedCycles || 0) + (event.ok ? 0 : 1),
+  };
+  const strictPass = event.ok && event.qualityGate === 'passed';
+  if (previous.mode === 'quarantined' && !strictPass) {
+    return { ...counts, mode: 'quarantined', quarantinedAt: previous.quarantinedAt,
+      quarantineReason: previous.quarantineReason };
+  }
+  const streak = countTrailingFailures(history);
+  if (streak >= FULL_AUTO_FAIL_STREAK) return { ...counts, mode: 'quarantined',
+    quarantinedAt: event.finishedAt, quarantineReason: `${streak} consecutive failed cycles (>= ${FULL_AUTO_FAIL_STREAK})` };
+  return { ...counts, mode: 'idle',
+    ...(previous.mode === 'quarantined' && strictPass ? { recoveredAt: event.finishedAt } : {}) };
+}

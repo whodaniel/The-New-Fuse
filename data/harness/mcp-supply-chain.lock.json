@@ -23,10 +23,6 @@
       "entry": "apps/mcp-servers/devops-bridge/src/index.ts",
       "sha256": "61a8ae01879d4f624e821d905d3852fa52cfdc10680a1a79a6d648bae63d2a3f"
     },
-    "data/mcp_config.json:jules": {
-      "entry": "packages/jules-skill/src/mcp-server.ts",
-      "sha256": "099b02b378777cd904c052092c5f939b50f32d6eb6e86758fc351b2f064aec74"
-    },
     "data/harness/mcp.memory.server.json:tnf-memory-layer": {
       "entry": "scripts/harness/memory-mcp-server.cjs",
       "sha256": "293cb0e1daa2a576ebefcc0eaee50235188c9e8eb5fd03115f20da7174a2b3c4"
@@ -51,10 +47,6 @@
       "entry": "apps/mcp-servers/devops-bridge/src/index.ts",
       "sha256": "61a8ae01879d4f624e821d905d3852fa52cfdc10680a1a79a6d648bae63d2a3f"
     },
-    "tools/config-files/mcp_config.json:jules": {
-      "entry": "packages/jules-skill/src/mcp-server.ts",
-      "sha256": "099b02b378777cd904c052092c5f939b50f32d6eb6e86758fc351b2f064aec74"
-    },
     "tools/config-files/enhanced_mcp_config.json:tnf-complete-api-wrapper": {
       "entry": "src/mcp/complete-api-mcp-server.ts",
       "sha256": "23034880628a166041001daf7ae54d4153bb897fd9c443c32e40685c8e1e4f0f"
@@ -74,10 +66,6 @@
     "tools/config-files/enhanced_mcp_config.json:devops-bridge": {
       "entry": "apps/mcp-servers/devops-bridge/src/index.ts",
       "sha256": "61a8ae01879d4f624e821d905d3852fa52cfdc10680a1a79a6d648bae63d2a3f"
-    },
-    "tools/config-files/enhanced_mcp_config.json:jules": {
-      "entry": "packages/jules-skill/src/mcp-server.ts",
-      "sha256": "099b02b378777cd904c052092c5f939b50f32d6eb6e86758fc351b2f064aec74"
     }
   }
 }

@@ -4,6 +4,17 @@ import * as http from 'http';
 import * as https from 'https';
 import * as os from 'os';
 import * as path from 'path';
+import {
+  accountScopedRoot,
+  resolveAccountBinding,
+  tryAccountScopedPath,
+} from './AccountBindingService.js';
+
+/** Ownership stamp applied to subscription records written to account-scoped storage. */
+interface OwnerStamp {
+  ownerUserId: string;
+  ownerAccountId: string;
+}
 
 export interface WebhookSubscription {
   id: string;
@@ -20,6 +31,9 @@ export interface WebhookSubscription {
   headers?: Record<string, string>;
   retryCount: number;
   timeout?: number;
+  /** Owning TNF account — stamped on write for account-scoped storage. */
+  ownerUserId?: string;
+  ownerAccountId?: string;
 }
 
 export interface WebhookEvent {
@@ -31,27 +45,63 @@ export interface WebhookEvent {
 }
 
 export class WebhookService {
+  /** Primary storage file: caller-provided verbatim, or account-scoped. */
   private readonly webhooksPath: string;
+  /** Legacy flat file (~/.tnf/webhooks.json), used only as a read fallback. */
+  private readonly legacyWebhooksPath: string | null;
 
-  constructor() {
-    this.webhooksPath = path.join(os.homedir(), '.tnf', 'webhooks.json');
+  constructor(webhooksPath?: string) {
+    const legacyPath = path.join(os.homedir(), '.tnf', 'webhooks.json');
+    if (webhooksPath && webhooksPath.trim()) {
+      // Caller-managed path (tests, explicit overrides) is used verbatim and
+      // stays outside account scoping — the caller owns the path decision.
+      this.webhooksPath = webhooksPath;
+      this.legacyWebhooksPath = null;
+    } else {
+      // Webhook subscriptions carry signing secrets, so they are personal
+      // data owned by the authenticated TNF account: scope storage under
+      // ~/.tnf/accounts/<ownerUserId>/. Unbound machines keep reading the
+      // legacy flat file; writes fail closed.
+      this.webhooksPath = tryAccountScopedPath('webhooks.json') ?? legacyPath;
+      this.legacyWebhooksPath = legacyPath;
+    }
   }
 
   private readWebhooks(): WebhookSubscription[] {
-    if (!fs.existsSync(this.webhooksPath)) {
-      return this.getDefaultWebhooks();
+    const candidates = [this.webhooksPath];
+    if (this.legacyWebhooksPath && this.legacyWebhooksPath !== this.webhooksPath) {
+      candidates.push(this.legacyWebhooksPath);
     }
-
-    try {
-      const data = fs.readFileSync(this.webhooksPath, 'utf8');
-      return JSON.parse(data);
-    } catch {
-      return this.getDefaultWebhooks();
+    for (const candidate of candidates) {
+      if (!fs.existsSync(candidate)) continue;
+      try {
+        const data = fs.readFileSync(candidate, 'utf8');
+        return JSON.parse(data);
+      } catch {
+        // Malformed file — try the next candidate before defaults
+      }
     }
+    return this.getDefaultWebhooks();
   }
 
   private writeWebhooks(webhooks: WebhookSubscription[]): void {
-    fs.writeFileSync(this.webhooksPath, JSON.stringify(webhooks, null, 2));
+    // Fail closed on writes: without an authenticated account there is no
+    // owner to attribute webhook signing secrets to, so refuse instead of
+    // falling back to the legacy machine-wide flat file.
+    let target = this.webhooksPath;
+    let owner: OwnerStamp | null = null;
+    if (this.legacyWebhooksPath !== null) {
+      try {
+        const binding = resolveAccountBinding();
+        target = path.join(accountScopedRoot(), 'webhooks.json');
+        owner = { ownerUserId: binding.ownerUserId, ownerAccountId: binding.tnfAccountId };
+      } catch (err) {
+        throw new Error(`Cannot save webhooks: ${(err as Error).message}`);
+      }
+    }
+    fs.mkdirSync(path.dirname(target), { recursive: true, mode: 0o700 });
+    const stamped = owner ? webhooks.map((w) => ({ ...w, ...owner })) : webhooks;
+    fs.writeFileSync(target, JSON.stringify(stamped, null, 2), { mode: 0o600 });
   }
 
   async list(): Promise<WebhookSubscription[]> {

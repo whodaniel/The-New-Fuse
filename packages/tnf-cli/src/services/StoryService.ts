@@ -36,7 +36,9 @@ export interface StoryTimelineEvent {
 
 export class StoryService {
   private supabase: any;
-  private readonly defaultOwnerPrincipalId: string;
+  private defaultOwnerPrincipalId: string;
+  /** Set when owner resolution failed — surfaced in fail-closed errors. */
+  private ownerResolutionError: string | null = null;
   private readonly authMode: 'service-role' | 'anon';
 
   constructor() {
@@ -54,9 +56,29 @@ export class StoryService {
     }
 
     this.authMode = supabaseKey === serviceRoleKey && !!serviceRoleKey ? 'service-role' : 'anon';
-    this.defaultOwnerPrincipalId = this.resolveOwnerPrincipalId(
-      process.env.STORY_OWNER_PRINCIPAL_ID || process.env.TNF_OWNER_PRINCIPAL_ID || 'daniel'
-    );
+    // Fail closed: explicit env, then the authenticated TNF account binding.
+    // Never fall back to a hardcoded local principal — unbound writers must get
+    // an error with bind/login guidance, not silent 'daniel' ownership.
+    const explicitOwner = (
+      process.env.STORY_OWNER_PRINCIPAL_ID ||
+      process.env.TNF_OWNER_PRINCIPAL_ID ||
+      process.env.TNF_OWNER_USER_ID ||
+      ''
+    ).trim();
+    if (explicitOwner) {
+      this.defaultOwnerPrincipalId = explicitOwner;
+    } else {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { resolveAccountBinding } = require('./AccountBindingService.js') as {
+          resolveAccountBinding: () => { ownerUserId: string };
+        };
+        this.defaultOwnerPrincipalId = resolveAccountBinding().ownerUserId;
+      } catch (err) {
+        this.defaultOwnerPrincipalId = '';
+        this.ownerResolutionError = err instanceof Error ? err.message : String(err);
+      }
+    }
 
     this.supabase = createClient(supabaseUrl, supabaseKey, {
       auth: {
@@ -299,7 +321,9 @@ export class StoryService {
     const result = {
       url: supabaseUrl,
       authMode: this.authMode,
-      owner: this.defaultOwnerPrincipalId,
+      owner:
+        this.defaultOwnerPrincipalId ||
+        '(unbound — owner-scoped writes fail closed; run `tnf library bind`)',
       story_sessions: { ok: false, message: 'Checking...' },
       timeline_events: { ok: false, message: 'Checking...' },
     };
@@ -378,6 +402,53 @@ export class StoryService {
       .single();
 
     if (error) throw this.wrapSupabaseError('capture story timeline event', error);
+
+    // Best-effort: also wire capture into account-scoped unified-ledger timeline
+    try {
+      const apiBase = (
+        process.env.TNF_API_BASE ||
+        process.env.TNF_LOCAL_API ||
+        'http://127.0.0.1:3002/api'
+      ).replace(/\/$/, '');
+      const token = (process.env.TNF_JWT || process.env.TNF_TOKEN || '').trim();
+      if (token) {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { resolveAccountBinding } = require('./AccountBindingService.js') as {
+          resolveAccountBinding: () => { ownerUserId: string; tnfAccountId: string };
+        };
+        const binding = resolveAccountBinding();
+        await fetch(`${apiBase}/unified-ledger/timeline/library/link`, {
+          method: 'POST',
+          headers: {
+            authorization: `Bearer ${token}`,
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            ownerAccountId: binding.tnfAccountId,
+            items: [
+              {
+                kind: 'story',
+                title: `Story Insight: ${params.shelfCode}`,
+                description: `Q: ${params.questionText}\n\nA: ${params.answerText}`,
+                storyKey: `story-capture-${params.sessionId}-${params.questionId}`,
+                libraryRefs: [
+                  `session:${params.sessionId}`,
+                  `question:${params.questionId}`,
+                  `shelf:${params.shelfCode}`,
+                ],
+                tags: ['story-architect', 'cli-capture', params.shelfCode],
+                source: 'story-architect-cli',
+                confidence: 'strong',
+                timelineTrack: 'personal_knowledge',
+              },
+            ],
+          }),
+        });
+      }
+    } catch {
+      /* ledger bridge is optional */
+    }
+
     return data;
   }
 
@@ -400,7 +471,51 @@ export class StoryService {
     if (typeof ownerPrincipalId === 'string' && ownerPrincipalId.trim().length > 0) {
       return ownerPrincipalId.trim();
     }
-    return this.defaultOwnerPrincipalId;
+    // Re-check env each call (env may be exported after construction, e.g. by
+    // `tnf library bind` writing ~/.tnf.local.env hints).
+    const envOwner = (
+      process.env.STORY_OWNER_PRINCIPAL_ID ||
+      process.env.TNF_OWNER_PRINCIPAL_ID ||
+      process.env.TNF_OWNER_USER_ID ||
+      ''
+    ).trim();
+    if (envOwner) {
+      // Env-derived owners are returned WITHOUT caching: env is dynamic and a
+      // later AccountBinding must be able to lift the fail-closed state.
+      this.ownerResolutionError = null;
+      return envOwner;
+    }
+    if (this.defaultOwnerPrincipalId) return this.defaultOwnerPrincipalId;
+    // Re-attempt binding in case the account was bound after construction.
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { resolveAccountBinding } = require('./AccountBindingService.js') as {
+        resolveAccountBinding: () => { ownerUserId: string; tnfAccountId: string };
+      };
+      const binding = resolveAccountBinding();
+      if (binding.ownerUserId) {
+        this.defaultOwnerPrincipalId = binding.ownerUserId;
+        this.ownerResolutionError = null;
+        return binding.ownerUserId;
+      }
+    } catch (err) {
+      this.ownerResolutionError = err instanceof Error ? err.message : String(err);
+    }
+    throw this.failClosedOwnerError();
+  }
+
+  /** Fail-closed guidance for unbound writers — never fall back to a local principal. */
+  private failClosedOwnerError(): Error {
+    const guidance =
+      'No authenticated TNF account is bound for story ownership; refusing to fall back to a ' +
+      'local principal (fail closed). Fix one of: ' +
+      '(1) run `tnf library bind` (or `tnf timeline bind`) to bind this machine to your TNF account; ' +
+      '(2) set STORY_OWNER_PRINCIPAL_ID or TNF_OWNER_USER_ID to the bound ownerUserId; ' +
+      '(3) log in on app.thenewfuse.com, then re-run bind. ' +
+      '(4) pass an explicit --owner principal for this single command.';
+    return this.ownerResolutionError
+      ? new Error(`${guidance} Account binding failed: ${this.ownerResolutionError}`)
+      : new Error(guidance);
   }
 
   private wrapSupabaseError(action: string, error: any): Error {

@@ -42,30 +42,31 @@ const AppContent: React.FC = () => {
 export function App() {
   // Performance monitoring in development
   React.useEffect(() => {
+    // DEV-gated boot banner. Was `if (DEV || PROD)` which is always true —
+    // these 8 console.* calls fired in production too. Gate on DEV only.
+    if (!import.meta.env.DEV) return;
     console.log('[App] App mounting...');
-    if (import.meta.env.DEV || import.meta.env.PROD) {
-      console.log('🚀 Performance-optimized The New Fuse App starting...');
-      console.log('📊 Bundle analysis: Run "pnpm build:analyze" to view detailed bundle analysis');
-      console.log('🎯 Performance monitor: Press Ctrl+Shift+P to toggle performance monitor');
+    console.log('🚀 Performance-optimized The New Fuse App starting...');
+    console.log('📊 Bundle analysis: Run "pnpm build:analyze" to view detailed bundle analysis');
+    console.log('🎯 Performance monitor: Press Ctrl+Shift+P to toggle performance monitor');
 
-      // Log initial performance metrics
-      setTimeout(() => {
-        console.log('📈 Initial Performance Report:');
-        console.log(
-          '- Memory usage:',
-          (performance as any).memory?.usedJSHeapSize
-            ? `${((performance as any).memory.usedJSHeapSize / 1024 / 1024).toFixed(1)}MB`
-            : 'N/A'
-        );
-        console.log(
-          '- Navigation timing:',
-          (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)
-            ?.loadEventEnd
-            ? `${((performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming).loadEventEnd / 1000).toFixed(2)}s`
-            : 'N/A'
-        );
-      }, 2000);
-    }
+    // Log initial performance metrics
+    setTimeout(() => {
+      console.log('📈 Initial Performance Report:');
+      console.log(
+        '- Memory usage:',
+        (performance as any).memory?.usedJSHeapSize
+          ? `${((performance as any).memory.usedJSHeapSize / 1024 / 1024).toFixed(1)}MB`
+          : 'N/A'
+      );
+      console.log(
+        '- Navigation timing:',
+        (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)
+          ?.loadEventEnd
+          ? `${((performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming).loadEventEnd / 1000).toFixed(2)}s`
+          : 'N/A'
+      );
+    }, 2000);
   }, []);
 
   return (

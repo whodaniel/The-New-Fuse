@@ -314,6 +314,13 @@
     const API_URL = window.location.origin + '/api';
     let allReports = [];
 
+    function escapeHTML(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
     async function loadReports() {
       try {
         // Check authentication
@@ -365,15 +372,15 @@
 
         return `
           <div class="report-card" onclick="openReport(${report.id})">
-            <div class="report-title">${report.video_title || 'Untitled Video'}</div>
+            <div class="report-title">${escapeHTML(report.video_title) || 'Untitled Video'}</div>
             <div class="report-meta">
               <span>📅 ${new Date(report.created_at).toLocaleDateString()}</span>
               <span>📊 ${report.word_count || 0} words</span>
             </div>
-            <div class="report-excerpt">${excerpt}</div>
+            <div class="report-excerpt">${escapeHTML(excerpt)}</div>
             ${tags.length > 0 ? `
               <div class="report-tags">
-                ${tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                ${tags.slice(0, 3).map(tag => `<span class="tag">${escapeHTML(tag)}</span>`).join('')}
               </div>
             ` : ''}
           </div>

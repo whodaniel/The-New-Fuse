@@ -1,0 +1,83 @@
+# Google Cloud Build configuration for TNF Monorepo CI/CD
+# Runs automated testing, typechecking, and protocol validation on Google Cloud infrastructure.
+# Replaces GitHub Actions runner billing with GCP's 120 free build-minutes/day.
+
+substitutions:
+  _PNPM_VERSION: "10.22.0"
+
+steps:
+  # Step 1: Install dependencies and compile workspace packages
+  - name: "node:20-bookworm"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        set -e
+        echo "⚙️ Activating pnpm ${_PNPM_VERSION}..."
+        corepack enable
+        corepack prepare pnpm@${_PNPM_VERSION} --activate
+
+        echo "📥 Installing dependencies..."
+        pnpm install --prefer-offline --no-frozen-lockfile
+
+        echo "📦 Building workspace dependencies..."
+        pnpm run build:packages
+    id: "install-and-build-packages"
+
+  # Step 2: Typecheck critical surfaces
+  - name: "node:20-bookworm"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        set -e
+        corepack enable
+        corepack prepare pnpm@${_PNPM_VERSION} --activate
+
+        echo "🔍 Typechecking API server..."
+        pnpm --filter @the-new-fuse/api-server exec tsc --noEmit -p tsconfig.json
+
+        echo "🔍 Typechecking Frontend App..."
+        pnpm --filter @the-new-fuse/frontend-app exec tsc --noEmit -p tsconfig.json
+    id: "typecheck"
+    waitFor: ["install-and-build-packages"]
+
+  # Step 3: Run Core & Relay unit tests
+  - name: "node:20-bookworm"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        set -e
+        corepack enable
+        corepack prepare pnpm@${_PNPM_VERSION} --activate
+
+        echo "🧪 Running Relay Core tests..."
+        pnpm --filter @the-new-fuse/relay-core test
+
+        echo "🧪 Running TNF CLI tests..."
+        pnpm --filter @the-new-fuse/tnf-cli test
+    id: "unit-tests"
+    waitFor: ["install-and-build-packages"]
+
+  # Step 4: Validate Protocol Schemas and Security Gates
+  - name: "node:20-bookworm"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        set -e
+        echo "🛡️ Validating protocol schemas..."
+        node scripts/validate-protocol-schemas.cjs
+
+        echo "🔒 Running Privacy & PII Guard..."
+        node scripts/security/privacy-guard.cjs --mode=pre-push
+        node scripts/security/docs-pii-guard.cjs --mode=pre-push
+    id: "protocol-and-security-gates"
+    waitFor: ["install-and-build-packages"]
+
+options:
+  machineType: "E2_HIGHCPU_8"
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: "1200s"

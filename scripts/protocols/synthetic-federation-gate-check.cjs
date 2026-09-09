@@ -1,7 +1,18 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { resolveGateToken } = require('../lib/tnf-gate-token.cjs');
+
 const DEFAULT_ENDPOINT =
   process.env.TNF_GATE_POLICY_ENDPOINT || 'https://tnf-sharedstate.bizsynth.workers.dev';
+
+// Token resolution lives in scripts/lib/tnf-gate-token.cjs so the checker,
+// the attestation gate and the authorize flow cannot drift apart.
+function resolveDefaultToken() {
+  return resolveGateToken().token;
+}
 
 function printUsage() {
   console.log(
@@ -26,7 +37,7 @@ function printUsage() {
 function parseArgs(argv) {
   const args = {
     endpoint: DEFAULT_ENDPOINT,
-    token: process.env.TNF_GATE_POLICY_TOKEN || '',
+    token: resolveDefaultToken(),
     tenant: 'tnf-local',
     json: false,
   };
@@ -174,15 +185,8 @@ async function main() {
   };
 
   const startedAt = new Date().toISOString();
-  let valid, invalid;
-
-  if (!args.token) {
-    valid = { status: 200, ok: true, body: { decision: 'allow', note: 'local_fallback_no_token' } };
-    invalid = { status: 422, ok: true, body: { decision: 'deny', reasons: ['CHANNEL_MEMBERSHIP_GATE_MISSING'] } };
-  } else {
-    valid = await evaluate(args.endpoint, args.token, validRequest);
-    invalid = await evaluate(args.endpoint, args.token, invalidRequest);
-  }
+  const valid = await evaluate(args.endpoint, args.token, validRequest);
+  const invalid = await evaluate(args.endpoint, args.token, invalidRequest);
 
   assertResult('valid_request', valid, true);
   assertResult('invalid_request', invalid, false);

@@ -43,6 +43,16 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     path: '/ai-portal/pfp-prompts',
     description: 'Prompt editing catalog connected to portrait generation',
   },
+  {
+    name: 'Google & Spark Hub',
+    path: '/google-hub',
+    description: 'Google Tasks, Gemini Spark Task Ingestion, and AI Studio Prompt Laboratory',
+  },
+  {
+    name: 'Dynamic UI Synthesizer',
+    path: '/dynamic-ui',
+    description: 'On-demand AG-UI generative micro-surface execution and event streaming engine',
+  },
   { name: 'AI Agent Portal Index', path: '/ai-agent-portal', description: 'Agent Portal Index' },
   { name: 'Chat', path: '/chat', description: 'Basic Chat Interface' },
   { name: 'Chat Page', path: '/chat-page', description: 'Dedicated Chat Page' },
@@ -114,6 +124,18 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   { name: 'Task Detail', path: '/tasks/:id', description: 'Task Details' },
   { name: 'Edit Task', path: '/tasks/:id/edit', description: 'Edit Task' },
   { name: 'Tasks Page', path: '/tasks-page', description: 'Dedicated Tasks Page' },
+  {
+    name: 'Durable Tasks',
+    path: '/durable-tasks',
+    description: 'Cloud DurableTask definitions (TNF compute plane)',
+  },
+  { name: 'Durable Runs', path: '/runs', description: 'Cloud DurableTask run history' },
+  { name: 'Durable Run Detail', path: '/runs/:runId', description: 'Single DurableTask run' },
+  {
+    name: 'Durable Schedules',
+    path: '/schedules',
+    description: 'Interval schedules for DurableTasks',
+  },
   { name: 'Timeline', path: '/timeline', description: 'Operational Timeline' },
   { name: 'Goals', path: '/goals', description: 'Strategic Goals' },
   { name: 'Plans', path: '/plans', description: 'Execution Plans' },
@@ -267,7 +289,12 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     description: 'Advanced Component Demo',
   },
   { name: 'Timeline Demo', path: '/timeline-demo', description: 'Timeline Component' },
-  { name: 'Graph Demo', path: '/graph-demo', description: 'Graph Visualization' },
+  {
+    name: 'Master Graph',
+    path: '/visualizations/master-graph',
+    description: 'Architecture and runtime graph',
+  },
+  { name: 'Graph Explorer', path: '/graph-demo', description: 'Master graph legacy alias' },
   { name: 'Frontend Showcase', path: '/frontend-showcase', description: 'Frontend Demo' },
   { name: 'Layout Example', path: '/layout-example', description: 'Layout Demo' },
   { name: 'Simple Test', path: '/simple-test', description: 'Simple Testing Interface' },
@@ -676,7 +703,8 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
   {
     name: 'Personal Intelligence Hub',
     path: '/platform',
-    description: 'Google Gemini / Antigravity personal intelligence concordance hub',
+    description:
+      'Provider-neutral personal intelligence hub — multi-source ingest modules (Drive, notes, local, CLI, optional Google AI bridge)',
   },
   {
     name: 'Resources Skills',
@@ -792,6 +820,37 @@ const RAW_PAGES_CATALOG: PageInfo[] = [
     name: 'Workspace Projects',
     path: '/workspace/projects',
     description: 'Workspace projects route',
+  },
+  // Router pages missing from the catalog (navigation-route audit gap fix)
+  {
+    name: 'OpenClaw Security',
+    path: '/admin/openclaw-security',
+    description: 'Harness credentials and security controls',
+  },
+  {
+    name: 'Admin Database API',
+    path: '/api/admin/database',
+    description: 'Database administration API console',
+  },
+  {
+    name: 'Admin Features API',
+    path: '/api/admin/features',
+    description: 'Feature flag administration API console',
+  },
+  {
+    name: 'Dashboard Overview',
+    path: '/dashboard/overview',
+    description: 'Dashboard overview route',
+  },
+  {
+    name: 'Dashboard Audit',
+    path: '/dashboard/audit',
+    description: 'Dashboard audit route',
+  },
+  {
+    name: 'Terminal Mirror',
+    path: '/terminals/mirror',
+    description: 'Terminal mirror route',
   },
 ];
 

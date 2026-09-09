@@ -5,11 +5,11 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
-import "@openzeppelin/contracts/interfaces/IERC4907.sol";
+import "./shared/IERC4907.sol";
 
 /**
  * @title AgentNFTFactory
@@ -36,11 +36,11 @@ contract AgentNFTFactory is
     IERC2981,
     IERC4907
 {
-    using Counters for Counters.Counter;
+
 
     // ============ State Variables ============
     
-    Counters.Counter private _tokenIdCounter;
+    uint256 private _tokenIdCounter;
     
     // Role definitions
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -150,8 +150,8 @@ contract AgentNFTFactory is
         require(bytes(agentId).length > 0, "AgentNFTFactory: Agent ID cannot be empty");
         require(agentIdToTokenId[agentId] == 0, "AgentNFTFactory: Agent ID already exists");
 
-        _tokenIdCounter.increment();
-        uint256 tokenId = _tokenIdCounter.current();
+        unchecked { ++_tokenIdCounter; }
+        uint256 tokenId = _tokenIdCounter;
 
         // Store agent metadata
         agentMetadata[tokenId] = AgentMetadata({
@@ -186,7 +186,7 @@ contract AgentNFTFactory is
         external 
         onlyRole(ORACLE_ROLE) 
     {
-        require(_exists(tokenId), "AgentNFTFactory: Token does not exist");
+        require(_ownerOf(tokenId) != address(0), "AgentNFTFactory: Token does not exist");
         require(tbaAddress != address(0), "AgentNFTFactory: Invalid TBA address");
 
         agentMetadata[tokenId].tbaAddress = tbaAddress;
@@ -204,7 +204,7 @@ contract AgentNFTFactory is
         external 
         onlyRole(ORACLE_ROLE) 
     {
-        require(_exists(tokenId), "AgentNFTFactory: Token does not exist");
+        require(_ownerOf(tokenId) != address(0), "AgentNFTFactory: Token does not exist");
         
         _setTokenURI(tokenId, newMetadataURI);
         agentMetadata[tokenId].lastUpdate = block.timestamp;
@@ -226,7 +226,7 @@ contract AgentNFTFactory is
         external 
         onlyRole(ORACLE_ROLE) 
     {
-        require(_exists(tokenId), "AgentNFTFactory: Token does not exist");
+        require(_ownerOf(tokenId) != address(0), "AgentNFTFactory: Token does not exist");
         
         agentMetadata[tokenId].isActive = isActive;
         agentMetadata[tokenId].lastUpdate = block.timestamp;
@@ -243,7 +243,7 @@ contract AgentNFTFactory is
      * @param expires UNIX timestamp when the user expires
      */
     function setUser(uint256 tokenId, address user, uint64 expires) public virtual override {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "AgentNFTFactory: transfer caller is not owner nor approved");
+        require(_isAuthorized(_ownerOf(tokenId), _msgSender(), tokenId), "AgentNFTFactory: transfer caller is not owner nor approved");
         UserInfo storage info = _users[tokenId];
         info.user = user;
         info.expires = expires;
@@ -268,7 +268,7 @@ contract AgentNFTFactory is
      * @param tokenId The NFT to get the user expires for
      * @return The user expires for this NFT
      */
-    function userExpires(uint256 tokenId) public view virtual override returns(uint256) {
+    function userExpires(uint256 tokenId) public view virtual override returns(uint64) {
         return _users[tokenId].expires;
     }
 
@@ -287,7 +287,7 @@ contract AgentNFTFactory is
         override
         returns (address receiver, uint256 royaltyAmount)
     {
-        require(_exists(tokenId), "AgentNFTFactory: Token does not exist");
+        require(_ownerOf(tokenId) != address(0), "AgentNFTFactory: Token does not exist");
         
         receiver = royaltyRecipient;
         royaltyAmount = (salePrice * royaltyPercentage) / 10000;
@@ -321,7 +321,7 @@ contract AgentNFTFactory is
         view 
         returns (AgentMetadata memory metadata) 
     {
-        require(_exists(tokenId), "AgentNFTFactory: Token does not exist");
+        require(_ownerOf(tokenId) != address(0), "AgentNFTFactory: Token does not exist");
         return agentMetadata[tokenId];
     }
 
@@ -343,7 +343,7 @@ contract AgentNFTFactory is
      * @return The current token count
      */
     function getCurrentTokenId() external view returns (uint256) {
-        return _tokenIdCounter.current();
+        return _tokenIdCounter;
     }
 
     /**
@@ -352,7 +352,7 @@ contract AgentNFTFactory is
      * @return True if agent is active
      */
     function isAgentActive(uint256 tokenId) external view returns (bool) {
-        require(_exists(tokenId), "AgentNFTFactory: Token does not exist");
+        require(_ownerOf(tokenId) != address(0), "AgentNFTFactory: Token does not exist");
         return agentMetadata[tokenId].isActive;
     }
 
@@ -374,28 +374,32 @@ contract AgentNFTFactory is
 
     // ============ Override Functions ============
     
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
+    function _update(address to, uint256 tokenId, address auth)
         internal
         whenNotPaused
-        override
+        override(ERC721)
+        returns (address)
     {
-        super._beforeTokenTransfer(from, to, tokenId, batchSize);
-        
-        // Clear rental info on transfer
+        address from = super._update(to, tokenId, auth);
+
+        // Clear rental info on transfer (not mint, not burn)
         if (from != address(0) && to != address(0)) {
             delete _users[tokenId];
             emit UpdateUserInfo(tokenId, address(0), 0);
         }
-    }
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-        super._burn(tokenId);
-        
-        // Clean up metadata
-        string memory agentId = agentMetadata[tokenId].agentId;
-        delete agentMetadata[tokenId];
-        delete agentIdToTokenId[agentId];
-        delete _users[tokenId];
+        // Burn: fold the legacy _burn override cleanup into _update
+        // (OZ v5 removed the overridable _burn hook; ERC721URIStorage no
+        // longer declares it. tokenURI() reverts for nonexistent tokens, so
+        // stale _tokenURIs entries are unreachable and need no deletion.)
+        if (from != address(0) && to == address(0)) {
+            delete _users[tokenId];
+            string memory agentId = agentMetadata[tokenId].agentId;
+            delete agentMetadata[tokenId];
+            delete agentIdToTokenId[agentId];
+        }
+
+        return from;
     }
 
     function tokenURI(uint256 tokenId)

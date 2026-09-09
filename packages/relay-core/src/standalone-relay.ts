@@ -16,8 +16,6 @@
  *   Channels:  http://localhost:3000/channels
  */
 
-import { randomUUID } from 'crypto';
-
 import { EventEmitter } from 'events';
 import http from 'http';
 import type { Duplex } from 'stream';
@@ -41,6 +39,10 @@ import {
   normalizeAgentLifecycleStatus,
   type TnfAgentLifecycleStatus,
 } from './contracts/lifecycle.js';
+import {
+  buildStallRecoveryFederationMetadata,
+  deterministicIdNumber,
+} from './contracts/recovery-federation.js';
 import {
   ConversationPhase,
   ConversationStateMachine,
@@ -553,7 +555,16 @@ export class TNFRelayServer extends EventEmitter {
 
       case '/channels':
         res.writeHead(200);
-        res.end(JSON.stringify(Array.from(this.channels.values())));
+        // Emit a live snapshot of channel state. Channel objects (including
+        // their `members` array) are mutable on the server, so we serialize
+        // a fresh copy each call. The `lastUpdated` timestamp lets callers
+        // detect when their cached view is stale without diffing the payload.
+        res.end(
+          JSON.stringify({
+            lastUpdated: Date.now(),
+            channels: Array.from(this.channels.values()),
+          })
+        );
         break;
 
       case '/status':
@@ -884,7 +895,18 @@ export class TNFRelayServer extends EventEmitter {
             return;
           }
           const message: ProtocolMessage = JSON.parse(raw);
+          // `finalizeAgentRegistration` may have bound an agentId on this WS
+          // asynchronously (Redis publish + master-clock round-trip), so the
+          // closure-local `agentId` can lag behind the WeakMap. Fall back to
+          // the WeakMap so CHANNEL_JOIN, MESSAGE_SEND, etc. resolve the right
+          // sender even when the client doesn't repeat `source:` on every frame.
+          if (!agentId) {
+            agentId = this.socketAgentIds.get(ws) || null;
+          }
           agentId = this.handleMessage(ws, message, agentId);
+          if (agentId) {
+            this.socketAgentIds.set(ws, agentId);
+          }
         } catch (e) {
           console.error('[Relay] Invalid message:', (e as Error).message);
           this.send(ws, { type: 'ERROR', payload: { message: 'Invalid JSON' } });
@@ -1237,6 +1259,28 @@ export class TNFRelayServer extends EventEmitter {
           const denied = this.denyPrivateChannelAccess(ws, agentId, channelId, 'join');
           if (denied) break;
           this.syncAgentChannelMembership(agentId, channelId);
+          // Echo a CHANNEL_JOINED ack so the joining client can confirm
+          // membership without a separate CHANNEL_LIST round-trip. Clients that
+          // timed out waiting for this ack used to fire-and-pray, then run
+          // CHANNEL_LIST anyway to verify — which works but doubles the
+          // round-trips per join. Sending the ack here is the documented
+          // behavior clients expect.
+          const joinedChannel = this.channels.get(this.resolveChannel(channelId)?.id || channelId);
+          if (joinedChannel) {
+            this.send(ws, {
+              type: 'CHANNEL_JOINED',
+              payload: {
+                channel: joinedChannel,
+                channelId: joinedChannel.id,
+                agentId,
+              },
+            });
+          }
+        } else if (!channelId) {
+          this.send(ws, {
+            type: 'ERROR',
+            payload: { message: 'CHANNEL_JOIN requires payload.channelId', code: 'BAD_REQUEST' },
+          });
         }
         break;
       }
@@ -2786,6 +2830,16 @@ export class TNFRelayServer extends EventEmitter {
       return;
     }
 
+    const canonicalEntityId = 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001';
+    const idNumber = deterministicIdNumber('stall-detector');
+    // Recovery starts a fresh lineage node. Channel names belong in scope;
+    // the canonical MCID schema requires a UUID correlation id.
+    const { mcid } = buildStallRecoveryFederationMetadata({
+      channelId,
+      relaySessionId: this.sessionId,
+    });
+    const federation = { canonicalEntityId, idNumber, mcid };
+
     const recoveryMsg = {
       id: `recovery-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type: 'system',
@@ -2798,17 +2852,10 @@ export class TNFRelayServer extends EventEmitter {
       // canonicalEntityId + idNumber + mcid lineage so quorum decisions and
       // federation gates do not sever lineage on a stall-recovery hop.
       // See docs/agent_prompts/methodology/methodology.md
-      canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
-      idNumber: 'ID#:STALL_RECOVERY',
-      federation: {
-        mcid: 'tnf/mcid/0.1',
-        // causation_id is null because a recovery is a fresh node, not a
-        // continuation of any prior frame; correlation_id is the channel.
-        trace_id: randomUUID(),
-        correlation_id: channelId,
-        causation_id: null,
-        gate_decisions: ['TENANT_SCOPE_GATE', 'CHANNEL_MEMBERSHIP_GATE'],
-      },
+      canonicalEntityId,
+      idNumber,
+      mcid,
+      federation,
       metadata: attachAuditTrace(
         {
           ...metadata,
@@ -2816,8 +2863,10 @@ export class TNFRelayServer extends EventEmitter {
           isRecoveryAttempt: true,
           // Methodology §5.1/A — class=DIRECTIVE for relay-system recovery
           intentClass: 'RELAY',
-          canonicalEntityId: 'TNF:LOCAL:SYSTEM:RELAY:STALL_DETECTOR:001',
-          idNumber: 'ID#:STALL_RECOVERY',
+          canonicalEntityId,
+          idNumber,
+          mcid,
+          federation,
         },
         {
           source: 'standalone-relay',

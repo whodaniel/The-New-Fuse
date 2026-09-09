@@ -1,0 +1,129 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "39b8baf2-22c3-4be9-9508-b9a1a61f3048",
+  "created_at": "2026-09-07T01:16:36.131Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "tnf/worktree/workspace-cleanup-20260906",
+  "head_sha": "4cd41ee309a20d93b309fff11a6903527da8b147",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "project_ids": [],
+  "work_summary": [
+    "Codified mandatory cleanup for all TNF agents after commit push merge verification; removed completed consolidation worktree and 16 scratch files while preserving audit receipts"
+  ],
+  "changed_paths": [
+    "docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md",
+    "docs/protocols/workspace-checkouts.md",
+    "docs/protocols/reports/SESSION_HANDOFF_WORKSPACE_CLEANUP_20260906.json",
+    "docs/protocols/reports/SESSION_HANDOFF_WORKSPACE_CLEANUP_20260906.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "Markdown formatting and git diff --check passed. Completed consolidation worktree removed after clean-status and merged-tree equivalence verification; 16 task scratch files removed. Shared handoff files remain under another agent lease; this is the scoped receipt."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order \u2014 but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
+    ]
+  },
+  "next_actions": [
+    "Push and merge the workspace cleanup protocol change",
+    "Verify the remote merge then retire and remove this owned worktree",
+    "Keep audit receipts outside removed workspaces; preserve other agents work"
+  ],
+  "artifacts": {
+    "commits": ["4cd41ee309a20d93b309fff11a6903527da8b147"],
+    "deployment_urls": [],
+    "database_migrations": []
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "session_harness": "codex",
+  "task_id": "workspace-cleanup-20260906",
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "rationale": "Existing ownership and isolation rules extended to run completion"
+    },
+    "skills": {
+      "considered": true,
+      "rationale": "Existing workspace protocol is the shared authority"
+    },
+    "gaps": {
+      "considered": true,
+      "open": [
+        {
+          "summary": "Merge this documentation change then remove its own clean completed worktree"
+        }
+      ]
+    },
+    "self_audit": {
+      "checks": [
+        {
+          "id": "work-summary-not-stale",
+          "ok": true,
+          "detail": "1 item(s), distinct from the previous handoff"
+        },
+        {
+          "id": "classification-complete",
+          "ok": true,
+          "detail": "all four fields set"
+        },
+        {
+          "id": "reflection-answered",
+          "ok": true,
+          "detail": "lessons.considered=true skills.considered=true"
+        },
+        {
+          "id": "gaps-considered",
+          "ok": true,
+          "detail": "1 open gap(s) recorded"
+        },
+        {
+          "id": "next-actions-not-all-inherited",
+          "ok": true,
+          "detail": "3 action(s), 2 inherited from the previous handoff"
+        },
+        {
+          "id": "changed-paths-recorded",
+          "ok": true,
+          "detail": "2 recorded, 4 dirty in the working tree"
+        }
+      ],
+      "findings": 0
+    }
+  }
+}

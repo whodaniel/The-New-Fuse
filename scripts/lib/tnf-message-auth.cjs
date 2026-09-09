@@ -108,10 +108,43 @@ function canonicalize(value) {
  *
  * @returns {{ ok: boolean, secret?: string, reason?: string }}
  */
+/**
+ * Operator-provisioned bus secret, written by `tnf authority init`.
+ *
+ * The environment was the only source until 2026-09-03, and nothing set it:
+ * `launch-agent-wrapper.sh` exports `A2A_SECRET_KEY=${A2A_SECRET_KEY:-}` — empty
+ * — so every publisher fell through to the legacy placeholder and the bus ran
+ * with no authentication at all (12,464 auth failures and zero successes in a
+ * 20k-event audit sample). Requiring each launcher to export a secret is exactly
+ * the step that never happened.
+ *
+ * The file lives beside the role registry under `~/.tnf/authority/` (0700) at
+ * mode 0600, so it is operator-owned in the same sense `roles.json` is. The
+ * environment still wins when set, so a cloud deployment can inject its own.
+ */
+const A2A_SECRET_FILE =
+  process.env.TNF_A2A_SECRET_FILE ||
+  path.join(process.env.TNF_AUTHORITY_DIR || path.join(os.homedir(), '.tnf', 'authority'), 'a2a-secret');
+
+function readSecretFile() {
+  try {
+    const raw = fs.readFileSync(A2A_SECRET_FILE, 'utf8').trim();
+    return raw || null;
+  } catch {
+    return null;
+  }
+}
+
 function resolveSecret() {
-  const secret = process.env.A2A_SECRET_KEY;
+  const secret =
+    process.env.A2A_SECRET_KEY !== undefined && process.env.A2A_SECRET_KEY !== null
+      ? process.env.A2A_SECRET_KEY
+      : readSecretFile();
   if (secret === undefined || secret === null) {
-    return { ok: false, reason: 'A2A_SECRET_KEY is not set' };
+    return {
+      ok: false,
+      reason: `A2A_SECRET_KEY is not set and no operator secret at ${A2A_SECRET_FILE} (run: tnf authority init)`,
+    };
   }
   if (FORBIDDEN_SECRETS.has(secret)) {
     return { ok: false, reason: `A2A_SECRET_KEY is a placeholder value (${JSON.stringify(secret)})` };
@@ -511,6 +544,7 @@ function isSignedEnvelope(value) {
 }
 
 module.exports = {
+  A2A_SECRET_FILE,
   signEnvelope,
   verifyEnvelope,
   verifyAndAudit,

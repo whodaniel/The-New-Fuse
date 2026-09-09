@@ -1,0 +1,9 @@
+# tsc emits declarations/JS next to sources when this package is built as a
+# project reference from a consumer whose rootDir differs. Those are build
+# output, never source.
+dist/
+*.tsbuildinfo
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts
+src/**/*.d.ts.map

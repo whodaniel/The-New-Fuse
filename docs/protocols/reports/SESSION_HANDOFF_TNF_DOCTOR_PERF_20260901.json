@@ -1,0 +1,72 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "7f2c1d94-9c3a-4b6e-bb41-3a5e0c2f9d17",
+  "created_at": "2026-09-01T09:20:00Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
+  "head_sha": "b4d8a70e1421a7528d32e8db816c5942f38d1e95",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node", "pnpm", "terminal"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-DOCTOR-PERF"],
+  "work_summary": [
+    "Profiled tnf doctor at 108s cold / ~34s typical: launcher ran pnpm exec tsx on the 22k-line cli.ts every invocation (~13s warm, ~50s cold), tsc --build incremental never refreshed dist mtimes, and tnf-doctor.cjs ran independent probes serially.",
+    "Repo launcher tnf now prefers node packages/tnf-cli/dist/cli.js when dist passes mtime freshness (newest of packages/tnf-cli/src/** and data/providers/catalog.json vs dist), silently rebuilds once when stale, falls back to tsx, and honors TNF_CLI_USE_TSX=1.",
+    "packages/tnf-cli build now stamps dist/cli.js after tsc --build so incremental no-op builds still register dist as fresh.",
+    "scripts/tnf-doctor.cjs starts the gcloud/wrangler/gh auth checks and the WhatsApp bridge probe concurrently at the top of main, parallelizes port probes and live-API health fetches, enforces a 30s hard timeout per shell check, and drops the dead sync helpers."
+  ],
+  "changed_paths": [
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_DOCTOR_PERF_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_TNF_DOCTOR_PERF_20260901.md",
+    "packages/tnf-cli/package.json",
+    "scripts/tnf-doctor.cjs",
+    "tnf"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "tnf --version 13-58s -> 4.1s (direct dist: 3.1s). tnf doctor end-to-end 108s cold -> 6.5-8s, result PASS, panels unchanged. node scripts/tnf-doctor.cjs 22.5s -> 3.0s; node --check and prettier clean. --skip-live-checks strict FAIL on missing DATABASE_URL verified pre-existing."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Run tnf doctor from a cold shell and confirm single-digit seconds.",
+      "Investigate the launchd panel failures (com.thenewfuse.api-local, com.tnf.master-reconciliation) as a separate service-state issue."
+    ]
+  },
+  "next_actions": [
+    "Commit the launcher/build/doctor changes through the normal TNF gates.",
+    "Reinstall via scripts/install-tnf-cli.sh --from-local --skip-onboard and smoke-test tnf doctor from PATH.",
+    "Do not push without a separate explicit publication instruction."
+  ]
+}

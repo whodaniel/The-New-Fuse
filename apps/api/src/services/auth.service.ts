@@ -262,6 +262,109 @@ export class AuthService {
     return this.generateTokens(user);
   }
 
+  /**
+   * Build the Google OAuth 2.0 authorization URL the browser should be redirected to.
+   * `state` is an opaque CSRF token the caller generates and verifies on callback.
+   */
+  getGoogleAuthorizationUrl(state: string): string {
+    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
+    if (!clientId) {
+      throw new UnauthorizedException('Google sign-in is not configured');
+    }
+    const redirectUri = this.getGoogleCallbackUrl();
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: 'openid email profile',
+      state,
+      access_type: 'online',
+      prompt: 'select_account',
+    });
+    return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  }
+
+  private getGoogleCallbackUrl(): string {
+    return (
+      this.configService.get<string>('GOOGLE_CALLBACK_URL') ||
+      `${this.configService.get<string>('API_URL') || 'https://api.thenewfuse.com/api'}/auth/google/callback`
+    );
+  }
+
+  /**
+   * Exchange an OAuth 2.0 authorization `code` for tokens, fetch the Google profile,
+   * and find-or-create the local user account, exactly like login()/register() do.
+   */
+  async googleCallback(code: string): Promise<AuthResponse> {
+    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
+    const clientSecret = this.configService.get<string>('GOOGLE_CLIENT_SECRET');
+    if (!clientId || !clientSecret) {
+      throw new UnauthorizedException('Google sign-in is not configured');
+    }
+
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: this.getGoogleCallbackUrl(),
+        grant_type: 'authorization_code',
+      }),
+    });
+    if (!tokenResponse.ok) {
+      this.logger.warn(`Google token exchange failed: ${await tokenResponse.text()}`);
+      throw new UnauthorizedException('Google sign-in failed');
+    }
+    const { access_token: googleAccessToken } = (await tokenResponse.json()) as {
+      access_token?: string;
+    };
+    if (!googleAccessToken) {
+      throw new UnauthorizedException('Google sign-in failed');
+    }
+
+    const profileResponse = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
+      headers: { Authorization: `Bearer ${googleAccessToken}` },
+    });
+    if (!profileResponse.ok) {
+      throw new UnauthorizedException('Google sign-in failed');
+    }
+    const profile = (await profileResponse.json()) as {
+      email?: string;
+      email_verified?: boolean;
+      name?: string;
+      given_name?: string;
+    };
+    if (!profile.email) {
+      throw new UnauthorizedException(
+        'No email returned by Google. Please make your email public in your Google account.'
+      );
+    }
+
+    let user = await this.db.users.findByEmail(profile.email);
+    if (!user) {
+      const username = await this.generateUniqueUsername({
+        email: profile.email,
+        name: profile.name,
+      } as RegisterDto);
+      user = await this.db.users.create({
+        email: profile.email,
+        username,
+        name: profile.name || profile.given_name || profile.email.split('@')[0],
+        hashedPassword: '',
+        role: this.isMasterSuperAdmin(profile.email) ? 'SUPER_ADMIN' : 'USER',
+        roles: this.isMasterSuperAdmin(profile.email) ? ['SUPER_ADMIN', 'ADMIN', 'USER'] : ['USER'],
+        isActive: true,
+        emailVerified: true,
+      } as any);
+    } else if (!user.isActive) {
+      throw new UnauthorizedException('Account is inactive');
+    }
+
+    return this.generateTokens(user);
+  }
+
   private isMasterSuperAdmin(email: string): boolean {
     const fromMaster = this.configService.get<string>('MASTER_SUPER_ADMIN_EMAILS');
     const fromOwner = this.configService.get<string>('HOSTMARIA_OWNER_EMAILS');

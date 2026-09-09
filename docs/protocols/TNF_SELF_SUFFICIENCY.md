@@ -47,3 +47,16 @@ If tier 4 is unreachable, TNF logs absence and proceeds (it does not boot-fail).
 - `tnf doctor` must gate CI on absence of any `external.*` hard dependency.
 - New feature PRs that introduce hard external deps require a
   `self-sufficiency.md` note in the diff.
+
+<!--
+challenge_rationale (2026-09-06): Retired scripts/tnf-self-sufficiency-gate.sh
+(posture recorder). It had zero call sites since introduction, ran once
+(2026-06-19), had no consumer for its output file, and hardcoded tier1/tier2
+"ok" and tier4 "warn" without probing — a guard reporting posture it never
+measured (tnf-honest-guard-review Q1/Q3/Q4). This doc's two Enforcement
+Targets above remain OPEN (neither is implemented in tnf entrypoint or tnf
+doctor); the retirement does not close them. Whoever implements them should
+probe tiers honestly with discriminated outcomes, not resurrect the retired
+recorder. Evidence: docs/protocols/reports/SELF-IMPROVEMENT-COMPONENT-TRIAGE-2026-09-06.md
+doc_hash: sha256:3ca6e9816ff92c4f83136cb8c3eaebd96de55cc646ba3aa8ab72a22a01a5e2d9
+-->

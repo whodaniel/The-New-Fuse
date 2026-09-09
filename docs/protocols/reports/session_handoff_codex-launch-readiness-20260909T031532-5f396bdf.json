@@ -1,0 +1,116 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "5f396bdf-3875-417e-949c-f9c6b34e0924",
+  "created_at": "2026-09-09T03:15:32.688Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "fix/public-launch-readiness-20260909",
+  "head_sha": "1678b76e80234ca69b175e5481189f402717eec8",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Merge current main into Express request contract fix; preserve both agent ledger entries. Incoming lifecycle files match main without edits."
+  ],
+  "changed_paths": [
+    ".agent/skills/tnf-codex-harness/SKILL.md",
+    "data/harness/agent-resource-fabric.json",
+    "docs/operations/CODEX_TNF_HARNESS.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/handoffs/2026/2e5866b0-06dd-4d73-b164-48acf6fd8ca2.json",
+    "docs/protocols/reports/handoffs/2026/a1440e6d-8daf-4d76-802a-e1946bc1d1df.json",
+    "docs/protocols/reports/handoffs/2026/c8be5f41-a1c4-47ac-b269-a2d82a943fd4.json",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T025251-c8be5f41.json",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T025251-c8be5f41.md",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T025708-2e5866b0.json",
+    "docs/protocols/reports/session_handoff_codex-tnf-lifecycle-20260909T025708-2e5866b0.md",
+    "docs/protocols/workspace-leases.json",
+    "scripts/agents/provision-full-auto-network.cjs",
+    "scripts/harness/codex-lifecycle-probe.cjs",
+    "scripts/harness/codex-lifecycle.cjs",
+    "scripts/harness/codex-lifecycle.test.cjs",
+    "scripts/harness/handoff-registry.cjs",
+    "scripts/harness/verify-harness-completeness.cjs",
+    "scripts/protocols/emit-session-handoff.cjs",
+    "scripts/turn-end-v2.cjs",
+    ".github/workflows/build.yml",
+    "apps/api/src/types/express.d.ts",
+    "docs/launch-readiness/PUBLIC_LAUNCH_2026-09-09.md",
+    "tests/api/express-request-contract.typecheck.ts",
+    "docs/protocols/reports/session_handoff_codex-launch-readiness-20260909T031532-5f396bdf.json",
+    "docs/protocols/reports/session_handoff_codex-launch-readiness-20260909T031532-5f396bdf.md",
+    "docs/protocols/reports/handoffs/2026/5f396bdf-3875-417e-949c-f9c6b34e0924.json"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Auto-verify 2026-09-09T03:15:35.313Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+  },
+  "continuation": {
+    "owner": "codex-launch-readiness",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": [
+    "Merge PR353",
+    "Block browser profile publication",
+    "Correct PR352 runtime and RLS findings"
+  ],
+  "reflection": {
+    "lessons": {
+      "considered": false
+    },
+    "skills": {
+      "considered": false
+    },
+    "gaps": {
+      "considered": false
+    }
+  },
+  "freshness_receipts": [],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": "merge",
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": ["1678b76e80234ca69b175e5481189f402717eec8"]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "checkout_id": "co_mttfpsyf_2336ce6f",
+  "task_id": "public-launch-readiness",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": [],
+  "record_hash": "a1e01aac283502bbefa0f1393d92af46e6879079131110928659986750177a8f"
+}

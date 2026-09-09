@@ -16,13 +16,14 @@ This runbook covers the two active Telegram-enabled ZeroClaw instances:
 
 1. Treat Telegram bot tokens as compromised after exposure; rotate immediately.
 2. After variable changes on `picoclaw-tester-v2`, force a Dockerfile deploy, or
-   CloudRuntime may revert to the service's default `alpine:latest` source image.
+   CloudRuntime may revert to the service's default `alpine:latest` source
+   image.
 3. Validate with `/health` and `/api/status` before testing in Telegram.
 
 ## Quick Health Check
 
 ```bash
-bash scripts/cloud_runtime/check-zeroclaw-instances.sh
+bash scripts/cloud-run/check-zeroclaw-instances.sh
 ```
 
 ## Deploy Without Drift

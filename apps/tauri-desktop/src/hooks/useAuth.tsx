@@ -29,10 +29,36 @@ const syncApiToken = async () => {
     data: { session },
   } = await supabase.auth.getSession();
   if (session?.access_token) {
-    apiService.setToken(session.access_token);
+    // The backend does not accept raw Supabase tokens — every guarded route
+    // verifies against this app's own JWT_SECRET. Exchange first (POST
+    // /api/auth/supabase) for a platform token, or every API call will 401
+    // even though Supabase considers the user signed in.
+    try {
+      const exchanged = await apiService.exchangeSupabaseToken(session.access_token);
+      if (exchanged?.accessToken) {
+        apiService.setToken(exchanged.accessToken);
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to exchange Supabase token for platform token:', err);
+    }
+    apiService.clearToken();
   } else {
     apiService.clearToken();
   }
+};
+
+// Registered on apiService so a 401 caused by the platform token's 15-minute
+// expiry (Supabase sessions live much longer) can re-exchange without forcing
+// a full re-login.
+const refreshPlatformToken = async (): Promise<string | null> => {
+  if (!isSupabaseConfigured) return null;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session?.access_token) return null;
+  const exchanged = await apiService.exchangeSupabaseToken(session.access_token);
+  return exchanged?.accessToken ?? null;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -55,6 +81,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       return;
     }
+
+    apiService.setTokenRefresher(refreshPlatformToken);
 
     let cancelled = false;
     const timeout = window.setTimeout(() => {
@@ -97,6 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       cancelled = true;
       window.clearTimeout(timeout);
       subscription.unsubscribe();
+      apiService.setTokenRefresher(null);
     };
   }, []);
 

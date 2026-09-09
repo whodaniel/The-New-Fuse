@@ -45,10 +45,35 @@ tnf_fleet_read_mode() {
 }
 
 # Returns 0 (true, shell success) if the fleet is fully paused.
+#
+# With no argument this is the original blunt gate, unchanged. Pass "high" to
+# ask for priority admission through a LOAD-INDUCED pause — that path
+# delegates to tnf-fleet-mode.cjs's fleetAdmission() rather than reimplementing
+# the rule here, because two copies of an admission decision drift and the
+# quiet half is always the one still letting work through. If node or the
+# module is unavailable, this falls back to the blunt gate (fail safe: paused).
 tnf_fleet_paused() {
+  local priority="${1:-normal}"
   local mode
   mode="$(tnf_fleet_read_mode)"
-  [[ "${mode}" == "paused" ]]
+  if [[ "${mode}" != "paused" ]]; then
+    return 1
+  fi
+  if [[ "${priority}" != "high" ]]; then
+    return 0
+  fi
+
+  local lib_dir admit
+  lib_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  admit="$(node -e "
+    try {
+      const m = require(process.argv[1] + '/tnf-fleet-mode.cjs');
+      process.stdout.write(m.fleetAdmission({ priority: 'high' }).admit ? 'admit' : 'deny');
+    } catch (e) {
+      process.stdout.write('deny');
+    }
+  " "${lib_dir}" 2>/dev/null)"
+  [[ "${admit}" != "admit" ]]
 }
 
 # Returns 0 (true) if injection-class operations are paused

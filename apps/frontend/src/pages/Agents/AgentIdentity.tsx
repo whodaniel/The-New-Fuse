@@ -42,7 +42,7 @@ export const AgentIdentityPage: React.FC = () => {
           throw new Error('Agent id is missing');
         }
 
-        const agent = await agentService.getAgent(id);
+        const agent = await agentService.getAgentById(id);
         setIdentity({
           id: agent.id,
           name: agent.name,

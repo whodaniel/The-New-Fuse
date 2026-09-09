@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import AuthContext, { User } from '../AuthContext';
 import { API_BASE, API_ENDPOINTS } from '../config/api';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
@@ -7,8 +7,8 @@ import {
   getAccessToken,
   persistAuthPayload,
   persistTokens,
+  silentRefreshAccessToken,
   stashDeepLinkNext,
-  validateAuthSession,
 } from '../services/authSession';
 import { bootstrapUserSessionFactors } from '../services/userSessionFactors';
 
@@ -16,17 +16,8 @@ import { bootstrapUserSessionFactors } from '../services/userSessionFactors';
 // Constants
 // ---------------------------------------------------------------------------
 
-const REQUEST_TIMEOUT_MS = 15_000;
-
-export class AuthTransientError extends Error {
-  readonly status: number;
-
-  constructor(message: string, status: number) {
-    super(message);
-    this.name = 'AuthTransientError';
-    this.status = status;
-  }
-}
+import { AuthTransientError, authRequest, withAuthDeadline } from '../services/authRequest';
+export { AuthTransientError } from '../services/authRequest';
 
 // ---------------------------------------------------------------------------
 // Token helpers
@@ -40,16 +31,7 @@ const clearAuthToken = () => clearTokens();
 // Fetch with timeout – never waits longer than REQUEST_TIMEOUT_MS
 // ---------------------------------------------------------------------------
 
-async function apiFetch(url: string, init: RequestInit = {}): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  try {
-    const res = await fetch(url, { ...init, signal: controller.signal });
-    return res;
-  } finally {
-    clearTimeout(timer);
-  }
-}
+const apiFetch = authRequest;
 
 // ---------------------------------------------------------------------------
 // Payload normalisation
@@ -112,6 +94,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSlowLoading, setIsSlowLoading] = useState(false);
+  const [sessionUnavailable, setSessionUnavailable] = useState(false);
+  const [bootstrapAttempt, setBootstrapAttempt] = useState(0);
+  const retrySession = useCallback(() => setBootstrapAttempt((attempt) => attempt + 1), []);
 
   // Spine personalization factors as soon as identity is known (AI Assist / flywheels).
   useEffect(() => {
@@ -132,87 +117,102 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           'X-Requested-With': 'XMLHttpRequest',
         },
       });
-      if (!res.ok) {
-        if (res.status === 429) {
-          throw new AuthTransientError(
-            'Too many authentication requests. Please wait a moment and try again.',
-            429
-          );
-        }
-        console.warn(`[Auth] fetchMe returned ${res.status}`);
-        return null;
-      }
+      if (res.status === 401) return null;
+      if (!res.ok)
+        throw new AuthTransientError(
+          `Session verification unavailable (${res.status})`,
+          res.status
+        );
       const raw = await res.json();
       const data = raw?.data ?? raw;
       const rawUser = data?.user ?? data;
       if (!rawUser?.id && !rawUser?.sub) {
-        console.warn('[Auth] fetchMe – response has no user id');
-        return null;
+        throw new AuthTransientError('Session verification returned an invalid response');
       }
       console.log('[Auth] fetchMe – user validated');
       return toUser(rawUser);
     } catch (err: any) {
-      console.warn('[Auth] fetchMe failed:', err.name === 'AbortError' ? 'TIMEOUT' : err.message);
-      return null;
+      throw err instanceof AuthTransientError
+        ? err
+        : new AuthTransientError('Unable to verify your session. Please retry.');
     }
   }, []);
+
+  const inFlightExchangeRef = useRef<Map<string, Promise<{ user: User; token: string } | null>>>(
+    new Map()
+  );
 
   /** POST a Supabase access_token to the backend to get an app token */
   const exchangeSupabaseToken = useCallback(
     async (supabaseAccessToken: string): Promise<{ user: User; token: string } | null> => {
-      console.log('[Auth] exchangeSupabaseToken – exchanging with backend');
-      try {
-        const res = await apiFetch(API_ENDPOINTS.AUTH.SUPABASE_EXCHANGE, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ accessToken: supabaseAccessToken }),
-        });
-        const rawPayload = await res.json();
-        const payload = unwrap(rawPayload);
+      if (!supabaseAccessToken) return null;
 
-        if (!res.ok) {
-          if (res.status === 429) {
-            throw new AuthTransientError(
-              'Too many authentication requests. Please wait a moment and try again.',
-              429
-            );
-          }
-          const msg =
-            extractError(payload) ?? extractError(rawPayload as any) ?? `HTTP ${res.status}`;
-          console.warn('[Auth] exchangeSupabaseToken failed:', msg);
-          return null;
-        }
-
-        const appToken = extractToken(payload);
-        if (!appToken) {
-          console.warn('[Auth] exchangeSupabaseToken – no token in response');
-          return null;
-        }
-
-        setAuthToken(appToken);
-        persistAuthPayload(payload as Record<string, unknown>);
-
-        if (payload.user) {
-          const u = toUser(payload.user);
-          console.log('[Auth] exchangeSupabaseToken – success (user in payload)');
-          return { user: u, token: appToken };
-        }
-
-        const u = await fetchMe(appToken);
-        if (u) {
-          console.log('[Auth] exchangeSupabaseToken – success (fetched user)');
-          return { user: u, token: appToken };
-        }
-
-        console.warn('[Auth] exchangeSupabaseToken – got token but fetchMe failed');
-        return null;
-      } catch (err: any) {
-        console.warn(
-          '[Auth] exchangeSupabaseToken error:',
-          err.name === 'AbortError' ? 'TIMEOUT' : err.message
-        );
-        return null;
+      const existingPromise = inFlightExchangeRef.current.get(supabaseAccessToken);
+      if (existingPromise) {
+        return existingPromise;
       }
+
+      const promise = (async () => {
+        console.log('[Auth] exchangeSupabaseToken – exchanging with backend');
+        try {
+          const res = await apiFetch(API_ENDPOINTS.AUTH.SUPABASE_EXCHANGE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accessToken: supabaseAccessToken }),
+          });
+          const rawPayload = await res.json();
+          const payload = unwrap(rawPayload);
+
+          if (!res.ok) {
+            if (res.status === 429) {
+              throw new AuthTransientError(
+                'Too many authentication requests. Please wait a moment and try again.',
+                429
+              );
+            }
+            const msg =
+              extractError(payload) ?? extractError(rawPayload as any) ?? `HTTP ${res.status}`;
+            console.warn('[Auth] exchangeSupabaseToken failed:', msg);
+            // If explicit 401, check if Supabase token is truly rejected
+            if (res.status === 401) {
+              return null;
+            }
+            throw new AuthTransientError(msg, res.status);
+          }
+
+          const appToken = extractToken(payload);
+          if (!appToken) {
+            throw new AuthTransientError('Session exchange returned an invalid response');
+          }
+
+          setAuthToken(appToken);
+          persistAuthPayload(payload as Record<string, unknown>);
+
+          if (payload.user) {
+            const u = toUser(payload.user);
+            console.log('[Auth] exchangeSupabaseToken – success (user in payload)');
+            return { user: u, token: appToken };
+          }
+
+          const u = await fetchMe(appToken);
+          if (u) {
+            console.log('[Auth] exchangeSupabaseToken – success (fetched user)');
+            return { user: u, token: appToken };
+          }
+
+          console.warn('[Auth] exchangeSupabaseToken – got token but fetchMe failed');
+          return null;
+        } catch (err: any) {
+          throw err instanceof AuthTransientError
+            ? err
+            : new AuthTransientError('Unable to exchange your session. Please retry.');
+        } finally {
+          inFlightExchangeRef.current.delete(supabaseAccessToken);
+        }
+      })();
+
+      inFlightExchangeRef.current.set(supabaseAccessToken, promise);
+      return promise;
     },
     [fetchMe]
   );
@@ -298,13 +298,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
 
           if (signInErr) {
-            // If Supabase itself has a config issue, fall through to direct API
-            const msg = signInErr.message?.toLowerCase() ?? '';
-            if (msg.includes('invalid api key') || msg.includes('failed to fetch')) {
-              console.warn('[Auth] Supabase unavailable, falling back to direct API');
-            } else {
-              throw new Error(signInErr.message || 'Failed to login');
-            }
+            console.warn(
+              `[Auth] Supabase sign-in failed (${signInErr.message}), falling back to direct API`
+            );
           } else {
             const accessToken = data?.session?.access_token;
             if (!accessToken) throw new Error('Supabase did not return an access token');
@@ -314,7 +310,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setUser(result.user);
               return { method: 'supabase' as const, user: result.user };
             }
-            throw new Error('Supabase token exchange failed');
+
+            console.warn('[Auth] Supabase token exchange failed, falling back to direct API');
           }
         }
 
@@ -434,6 +431,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
+          // App logout leaves Google's session active; always let users choose an account.
+          queryParams: { prompt: 'select_account' },
         },
       });
 
@@ -570,12 +569,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      if (!accessToken) throw new Error('No session after OAuth callback');
-
       const result = await exchangeSupabaseToken(accessToken);
-      if (!result) throw new Error('Token exchange failed after OAuth');
-      setUser(result.user);
-      return { method: 'sso' as const, user: result.user };
+      if (result) {
+        setUser(result.user);
+        return { method: 'sso' as const, user: result.user };
+      }
+
+      throw new Error('Token exchange failed after OAuth');
     },
     [exchangeSupabaseToken]
   );
@@ -583,7 +583,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     setIsLoading(true);
     clearAuthToken();
+    setSessionUnavailable(false);
     setUser(null);
+    if (typeof window !== 'undefined') {
+      try {
+        sessionStorage.removeItem('__tnf_require_auth_redirect__');
+        sessionStorage.removeItem('__tnf_login_redirect_count__');
+        sessionStorage.removeItem('tnf.auth.session.v1');
+      } catch {
+        /* ignore */
+      }
+    }
     if (supabase) {
       try {
         await supabase.auth.signOut();
@@ -601,116 +611,73 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
 
-    // Safety timeout to prevent infinite spinner
     const slowLoadingTimer = setTimeout(() => {
-      if (isLoading && !cancelled) {
-        console.warn('[Auth] Bootstrap is taking a long time...');
-        setIsSlowLoading(true);
-      }
+      if (!cancelled) setIsSlowLoading(true);
     }, 5000);
 
-    const forceStopLoadingTimer = setTimeout(() => {
-      if (isLoading && !cancelled) {
-        console.error('[Auth] Bootstrap timed out after 15 seconds. Forcing isLoading to false.');
-        setIsLoading(false);
-      }
-    }, 15000);
-
     const bootstrap = async () => {
-      console.log('[Auth] ▶ Bootstrap starting');
       setIsLoading(true);
-
+      setIsSlowLoading(false);
+      setSessionUnavailable(false);
+      setError(null);
       try {
-        // 1. Check for a stored app token
         const storedToken = getAuthToken();
         if (storedToken) {
-          console.log('[Auth] Found stored token, validating…');
-          try {
-            const u = await fetchMe(storedToken);
+          let validated = await fetchMe(storedToken);
+          if (cancelled) return;
+          if (!validated) {
+            const refreshed = await silentRefreshAccessToken();
             if (cancelled) return;
-            if (u?.id) {
-              console.log('[Auth] ✓ Stored token is valid');
-              setUser(u);
-              setIsLoading(false);
-              return;
-            }
-            console.log('[Auth] ✗ Stored token is invalid, clearing');
-            clearAuthToken();
-          } catch (err) {
-            if (cancelled) return;
-            if (err instanceof AuthTransientError) {
-              console.warn('[Auth] Token validation rate-limited — keeping stored session');
-              setError(err.message);
-              setIsLoading(false);
-              return;
-            }
-            throw err;
+            if (refreshed) validated = await fetchMe(refreshed);
           }
+          if (cancelled) return;
+          if (validated) {
+            setUser(validated);
+            return;
+          }
+          clearAuthToken(); // fetchMe returns null only for a confirmed 401.
         }
-
-        // 2. Check for a Supabase session
         if (hasSupabaseConfig && supabase) {
-          console.log('[Auth] Checking Supabase session…');
-          try {
-            const { data, error: sessErr } = await supabase.auth.getSession();
-            if (!sessErr && data?.session?.access_token) {
-              console.log('[Auth] Supabase session found, exchanging…');
-              const result = await exchangeSupabaseToken(data.session.access_token);
-              if (cancelled) return;
-              if (result) {
-                console.log('[Auth] ✓ Supabase session exchange succeeded');
-                setUser(result.user);
-                setIsLoading(false);
-                return;
-              }
-              console.log(
-                '[Auth] ✗ Supabase exchange failed — signing out stale session to prevent redirect loop'
-              );
-              try {
-                await supabase.auth.signOut();
-              } catch {
-                /* ignore */
-              }
-              clearAuthToken();
-            } else {
-              console.log('[Auth] No active Supabase session');
-            }
-          } catch (err: any) {
-            if (err instanceof AuthTransientError) {
-              console.warn('[Auth] Supabase exchange rate-limited — keeping session for retry');
-              setError(err.message);
-              if (!cancelled) setIsLoading(false);
+          const { data, error: sessionError } = await withAuthDeadline(() =>
+            supabase!.auth.getSession()
+          );
+          if (cancelled) return;
+          if (sessionError)
+            throw new AuthTransientError('Unable to read your session. Please retry.');
+          if (data.session?.access_token) {
+            const result = await exchangeSupabaseToken(data.session.access_token);
+            if (cancelled) return;
+            if (result) {
+              setUser(result.user);
               return;
             }
-            console.warn('[Auth] Supabase session check failed:', err.message);
+            // Preserve the provider session, but do not mount TNF queries until exchange succeeds.
+            throw new AuthTransientError(
+              'Your session could not be connected to TNF. Please retry or sign in again.'
+            );
           }
         }
-
-        // 3. Not authenticated
-        if (!cancelled) {
-          console.log('[Auth] ✓ Bootstrap complete – no active session');
-          setUser(null);
-          void validateAuthSession();
-        }
+        if (!cancelled) setUser(null);
       } catch (err) {
-        console.error('[Auth] Bootstrap error:', err);
+        if (!cancelled) {
+          setSessionUnavailable(true);
+          setError(
+            err instanceof Error ? err.message : 'Unable to verify your session. Please retry.'
+          );
+        }
       } finally {
         if (!cancelled) {
           setIsLoading(false);
           clearTimeout(slowLoadingTimer);
-          clearTimeout(forceStopLoadingTimer);
-          void validateAuthSession();
         }
       }
     };
-
-    bootstrap();
+    void bootstrap();
     return () => {
       cancelled = true;
       clearTimeout(slowLoadingTimer);
-      clearTimeout(forceStopLoadingTimer);
     };
-  }, [fetchMe, exchangeSupabaseToken]);
+  }, [fetchMe, exchangeSupabaseToken, bootstrapAttempt]);
 
   // -----------------------------------------------------------------------
   // Provide context
@@ -722,6 +689,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: !!user,
       isLoading,
       isSlowLoading,
+      sessionUnavailable,
+      retrySession,
       login,
       register,
       signInWithGoogle,
@@ -737,6 +706,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       isLoading,
       isSlowLoading,
+      sessionUnavailable,
+      retrySession,
       login,
       register,
       signInWithGoogle,

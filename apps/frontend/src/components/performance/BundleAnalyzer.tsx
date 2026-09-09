@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { performanceMonitor } from '../utils/performanceMonitor';
 
 interface BundleInfo {
@@ -98,7 +98,7 @@ const BundleAnalyzer: React.FC = () => {
 
     try {
       // Get current performance data
-      const performanceData = performanceMonitor.generateReport();
+      performanceMonitor.generateReport();
       const bundleData = getBundleData();
 
       // Calculate totals
@@ -107,17 +107,17 @@ const BundleAnalyzer: React.FC = () => {
 
       // Find heaviest and fastest/slowest loading
       const heaviestChunks = [...bundleData].sort((a, b) => b.size - a.size).slice(0, 3);
-      const loadingTimes = bundleData.map((b) => b.loadTime).filter((t) => t > 0);
+      const loadingTimes = bundleData.map((b) => b.loadingTime).filter((t) => t > 0);
       const averageLoadTime =
         loadingTimes.length > 0
           ? loadingTimes.reduce((sum, time) => sum + time, 0) / loadingTimes.length
           : 0;
       const slowestLoading = bundleData.reduce(
-        (prev, current) => (prev.loadTime > current.loadTime ? prev : current),
+        (prev, current) => (prev.loadingTime > current.loadingTime ? prev : current),
         bundleData[0]
       );
       const fastestLoading = bundleData.reduce(
-        (prev, current) => (prev.loadTime < current.loadTime ? prev : current),
+        (prev, current) => (prev.loadingTime < current.loadingTime ? prev : current),
         bundleData[0]
       );
 
@@ -176,7 +176,7 @@ const BundleAnalyzer: React.FC = () => {
   };
 
   // Filter and sort chunks
-  const getFilteredAndSortedChunks = () => {
+  const filteredAndSortedChunks = useMemo(() => {
     if (!analysis) return [];
 
     let chunks = analysis.chunks;
@@ -197,7 +197,7 @@ const BundleAnalyzer: React.FC = () => {
           return 0;
       }
     });
-  };
+  }, [analysis, filterType, sortBy]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -368,7 +368,7 @@ const BundleAnalyzer: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-transparent divide-y divide-border/50">
-              {getFilteredAndSortedChunks().map((chunk, index) => (
+              {filteredAndSortedChunks.map((chunk, index) => (
                 <tr key={index} className={index % 2 === 0 ? 'bg-transparent' : 'bg-transparent'}>
                   <td className="px-3 py-2 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{chunk.name}</div>

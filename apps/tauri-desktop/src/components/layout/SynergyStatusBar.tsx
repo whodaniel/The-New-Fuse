@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { LIBRARY_KWS_BASE_URL, STORY_ARCHITECT_RELAY_URL } from '../../config/virtualLibrary';
 import { useOperatorSynergy } from '../../hooks/useOperatorSynergy';
 import { useVoiceBridge } from '../../hooks/useVoiceBridge';
+import { relayAuthHint } from '../../lib/relayAuthHint';
 import {
   describePopulation,
   selectAgentPopulations,
@@ -80,7 +81,11 @@ export const SynergyStatusBar: React.FC = () => {
         : 'Start library voice stack on Virtual Library',
     },
     { label: 'Relay', ok: state.relayConnected },
-    { label: 'Federation', ok: state.relayRegistered },
+    {
+      label: 'Federation',
+      ok: state.relayRegistered,
+      hint: relayAuthHint(state) || undefined,
+    },
     { label: 'Extension', ok: state.extensionConnected },
     { label: 'API', ok: state.apiOnline },
   ];

@@ -1,10 +1,21 @@
 # Deployment Checklist
 
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
 Use this checklist for every production deployment.
 
 ## Pre-Deployment (T-24 hours)
 
 ### Code Preparation
+
 - [ ] All feature branches merged to `main`
 - [ ] Code review completed and approved
 - [ ] All tests passing locally
@@ -12,17 +23,20 @@ Use this checklist for every production deployment.
 - [ ] Documentation updated
 
 ### Testing
+
 - [ ] Unit tests pass: `pnpm test`
 - [ ] Integration tests pass
 - [ ] E2E tests pass (if applicable)
 - [ ] Manual testing in staging completed
 
 ### Database
+
 - [ ] Database migrations reviewed
 - [ ] Migration tested in staging
 - [ ] Rollback plan documented
 
 ### Configuration
+
 - [ ] Environment variables reviewed
 - [ ] Secrets rotated (if needed)
 - [ ] Feature flags configured
@@ -30,27 +44,32 @@ Use this checklist for every production deployment.
 ## During Deployment
 
 ### Start
+
 - [ ] Run: `./scripts/deployment/deploy-automated.sh`
 - [ ] Monitor deployment logs
 
 ### Verify
+
 - [ ] Run: `./scripts/deployment/smoke-tests.sh`
 - [ ] All services running: `cloud_runtime status`
 
 ## Post-Deployment
 
 ### Immediate (T+0)
+
 - [ ] Test critical user flows
 - [ ] Monitor error rates
 - [ ] Team notified
 
 ### Extended (T+1 hour)
+
 - [ ] Performance metrics normal
 - [ ] No user-reported issues
 
 ## Deployment-Ready Components
 
 ### Chrome Extension
+
 - [ ] Build output exists in `chrome-extension/dist/`
 - [ ] Package command validated:
   ```bash
@@ -59,32 +78,38 @@ Use this checklist for every production deployment.
   ```
 
 ### Main Application
+
 - [ ] Main app build artifacts are ready
 - [ ] Local start validated: `yarn start`
 - [ ] Docker start validated: `docker-compose up -d`
 
 ### MCP Server
+
 - [ ] Built server artifact exists: `dist/mcp/server.js`
 - [ ] Deployment target path documented
 
 ### VS Code Extension
+
 - [ ] `.vsix` package is present
 - [ ] Marketplace upload step confirmed
 
 ## Quick Deploy Commands
 
 ### Chrome Extension Package
+
 ```bash
 cd chrome-extension
 zip -r ../the-new-fuse-chrome-extension-$(date +%Y%m%d).zip dist/
 ```
 
 ### Production Build
+
 ```bash
 yarn build:all
 ```
 
 ### MCP Server Deploy
+
 ```bash
 cp dist/mcp/server.js /path/to/deployment/
 ```

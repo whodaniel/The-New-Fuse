@@ -239,6 +239,7 @@ export default function AgentTemplatesBrowser() {
               size="icon"
               variant="ghost"
               className="h-9 w-9"
+              ariaLabel="Favorite template"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onAction(template, 'favorite');
@@ -250,6 +251,7 @@ export default function AgentTemplatesBrowser() {
               size="icon"
               variant="ghost"
               className="h-9 w-9"
+              ariaLabel="Share template"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onAction(template, 'share');

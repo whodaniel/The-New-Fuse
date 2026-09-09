@@ -87,7 +87,7 @@ Verify with `tnf traits list --json` (platform present) and
    flatSkillRoots + detectOriginLabel): `~/.<id>/skills` →
    `{ llm: '<id>', scope: 'global' }`.
 2. Add the target to `scripts/agents/reconcile-agent-banks.cjs` targetMap:
-   `<id>: [path.join(home, '.<id>', 'skills', 'imported-claude-agents')]`.
+   `<id>: [path.join(home, '.<id>', 'skills_inactive', 'imported-claude-agents')]`.
 3. Add the frontload surface to `scripts/install-agent-frontload.cjs` TARGETS.
 4. Symlink the ubiquity skill family (`~/.agents/skills/*-slash-commands`,
    skill-management, tnf-universal-slash-commands,
@@ -101,7 +101,8 @@ Verify with `tnf traits list --json` (platform present) and
 node scripts/check-agent-registration.cjs          # "All agents are registered"
 tnf traits list --json | grep <id>                  # platform present
 ls ~/.<id>/skills/ | grep -c slash-commands         # >= 9 (family present)
-ls ~/.<id>/skills/imported-claude-agents/ | wc -l   # ~138 wrappers
+ls ~/.<id>/skills_inactive/imported-claude-agents/ | wc -l # specialist wrappers available on demand
+node scripts/skills/universal-skill-disclosure-guard.cjs --check
 node scripts/protocols/validate-turn-zero-authority.cjs
 node scripts/harness/verify-harness-completeness.cjs
 ```

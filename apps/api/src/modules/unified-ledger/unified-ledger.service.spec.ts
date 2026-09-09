@@ -67,6 +67,69 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
 
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
+  });
+
+  it('links library narratives/factoids into owner timeline idempotently', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-lib-link-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    const first = await service.linkLibraryNarratives(
+      'owner-lib',
+      [
+        {
+          kind: 'factoid',
+          title: 'TNF began as a control plane',
+          description: 'Platform ownership lives on the authenticated account.',
+          storyKey: 'nk_factoid_control_plane',
+          libraryRefs: ['shelf:000'],
+          tags: ['library', 'factoid'],
+        },
+        {
+          kind: 'narrative',
+          title: 'Story Forge captures feed the timeline',
+          storyKey: 'nk_narrative_story_forge',
+        },
+      ],
+      { ownerAccountId: 'goldberg@thenewfuse.com' }
+    );
+
+    expect(first.linked).toBe(2);
+    expect(first.skipped).toBe(0);
+
+    const second = await service.linkLibraryNarratives(
+      'owner-lib',
+      [
+        {
+          kind: 'factoid',
+          title: 'TNF began as a control plane',
+          storyKey: 'nk_factoid_control_plane',
+        },
+      ],
+      { ownerAccountId: 'goldberg@thenewfuse.com' }
+    );
+    expect(second.linked).toBe(0);
+    expect(second.skipped).toBe(1);
+    expect(second.results[0]?.status).toBe('exists');
+
+    const events = await service.listTimelineEvents({ userId: 'owner-lib' });
+    const linked = events.filter(
+      (e) => (e.payload as Record<string, unknown>).source === 'library-timeline-bridge'
+    );
+    expect(linked.length).toBe(2);
+    expect((linked[0].payload as Record<string, unknown>).ownerAccountId).toBe(
+      'goldberg@thenewfuse.com'
+    );
+
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 
   it('enforces user ownership for timeline list/update/delete', async () => {
@@ -121,11 +184,12 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     const ownDelete = await service.deleteTimelineEvent(created.id, 'user-a');
     expect(ownDelete).toBe(true);
 
-    const afterDelete = await service.getTimelineEvent(created.id);
+    const afterDelete = await service.getTimelineEvent(created.id, 'user-a');
     expect(afterDelete).toBeNull();
 
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 
   it('allows delegated agent users to read owner timeline when explicitly authorized', async () => {
@@ -166,6 +230,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     delete process.env.TIMELINE_PRIVATE_AGENT_USER_IDS;
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 
   it('allows delegated workspace members to read owner timeline without global env allowlist', async () => {
@@ -217,6 +282,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     delete process.env.TIMELINE_PRIVATE_AGENT_USER_IDS;
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 
   it('enforces owner scoping for goals and plans linkage operations', async () => {
@@ -313,6 +379,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
 
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 
   it('bootstraps private personal timeline segments idempotently per user', async () => {
@@ -362,22 +429,33 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
     expect(danielEvents.length).toBe(first.totalCount);
     expect(otherEvents.length).toBe(otherUser.totalCount);
 
+    // Multi-tenant hardening: email/name claims no longer unlock the private
+    // owner profile (TIMELINE_PRIVATE_OWNER_USER_ID / auth only).
+    const privateAnchor = first.events.find((event) => {
+      const payload = event.payload as Record<string, unknown>;
+      return payload.title === 'Personal Origin Anchor (Private)';
+    });
+    expect(privateAnchor).toBeUndefined();
+
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 
-  it('applies Daniel-specific timeline bootstrap when email claim is missing but name matches', async () => {
+  it('fails closed on private timeline bootstrap without TIMELINE_PRIVATE_OWNER_USER_ID mapping', async () => {
     const tmpStorePath = path.join(
       '/tmp',
       `tnf-unified-ledger-bootstrap-name-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
     );
     process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+    delete process.env.TIMELINE_PRIVATE_OWNER_USER_ID;
 
     const service = new UnifiedLedgerService();
     await service.onModuleInit();
 
     const result = await service.bootstrapPersonalTimeline('user-daniel-name-only', {
       name: 'Daniel Who',
+      email: 'owner@example.com',
     });
 
     const birthEvent = result.events.find((event) => {
@@ -385,12 +463,42 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
       return payload.title === 'Personal Origin Anchor (Private)';
     });
 
+    // Generic blueprint still applies, but the private owner profile is denied.
     expect(result.createdCount).toBeGreaterThan(1);
-    expect(birthEvent).toBeDefined();
+    expect(birthEvent).toBeUndefined();
     expect(result.events.every((event) => event.userId === 'user-daniel-name-only')).toBe(true);
 
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
+  });
+
+  it('unlocks the private owner profile only via TIMELINE_PRIVATE_OWNER_USER_ID', async () => {
+    const tmpStorePath = path.join(
+      '/tmp',
+      `tnf-unified-ledger-bootstrap-owner-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`
+    );
+    process.env.UNIFIED_LEDGER_STORE_PATH = tmpStorePath;
+    process.env.TIMELINE_PRIVATE_OWNER_USER_ID = 'user-owner-mapped';
+
+    const service = new UnifiedLedgerService();
+    await service.onModuleInit();
+
+    const result = await service.bootstrapPersonalTimeline('user-owner-mapped', {
+      name: 'Anyone Else',
+    });
+
+    const birthEvent = result.events.find((event) => {
+      const payload = event.payload as Record<string, unknown>;
+      return payload.title === 'Personal Origin Anchor (Private)';
+    });
+    expect(birthEvent).toBeDefined();
+    expect(result.events.every((event) => event.userId === 'user-owner-mapped')).toBe(true);
+
+    delete process.env.TIMELINE_PRIVATE_OWNER_USER_ID;
+    delete process.env.UNIFIED_LEDGER_STORE_PATH;
+    await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 
   it('imports GitHub narrative events idempotently for owner-scoped timeline tracks', async () => {
@@ -420,7 +528,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
               date: '2025-04-11',
               title: 'Fuse core repo begins',
               track: 'tnf-core',
-              evidence: { type: 'repo_created', repo: 'whodaniel/The-New-Fuse' },
+              evidence: { type: 'repo_created', repo: 'whodaniel/fuse-core' },
             },
           ],
         },
@@ -428,7 +536,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
       narrative_connections: [
         {
           from: 'whodaniel/The-New-Fuse',
-          to: 'whodaniel/The-New-Fuse',
+          to: 'whodaniel/fuse-core',
           connection_type: 'architectural_refinement',
         },
       ],
@@ -479,6 +587,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
 
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 
   it('builds github narrative graph from imported owner-scoped events', async () => {
@@ -508,7 +617,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
               date: '2025-04-11',
               title: 'Fuse core repo begins',
               track: 'tnf-core',
-              evidence: { type: 'repo_created', repo: 'whodaniel/The-New-Fuse' },
+              evidence: { type: 'repo_created', repo: 'whodaniel/fuse-core' },
             },
           ],
         },
@@ -516,7 +625,7 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
       narrative_connections: [
         {
           from: 'whodaniel/The-New-Fuse',
-          to: 'whodaniel/The-New-Fuse',
+          to: 'whodaniel/fuse-core',
           connection_type: 'architectural_refinement',
           rationale: 'lineage',
         },
@@ -545,5 +654,6 @@ describe('UnifiedLedgerService personal timeline ownership', () => {
 
     delete process.env.UNIFIED_LEDGER_STORE_PATH;
     await fs.rm(tmpStorePath, { force: true });
+    await fs.rm(`${tmpStorePath}.tenants`, { recursive: true, force: true });
   });
 });

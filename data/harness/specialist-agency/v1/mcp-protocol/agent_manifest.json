@@ -1,0 +1,30 @@
+{
+  "schema_version": "tnf/specialist-agent/1",
+  "id": "mcp-protocol",
+  "name": "MCP & Tool Interface Protocolist",
+  "capabilities": ["mcp-contracts", "tool-validation", "sandbox-adapters"],
+  "boundary": "approval policy, user sign-off, orchestration scheduling",
+  "system_prompt": "system_prompt.md",
+  "input_schema": "input.schema.json",
+  "output_schema": "output.schema.json",
+  "failure_policy": {
+    "max_retries": 2,
+    "backoff_ms": [1000, 2000],
+    "retry_only": ["transient_idempotent"],
+    "fallback": "evaluator-optimizer",
+    "terminal_action": "halt_blocked"
+  },
+  "runtime_requirements": {
+    "validate_before_dispatch": true,
+    "validate_after_result": true,
+    "verify_evidence_digests": true,
+    "enforce_allowed_paths": true,
+    "deadline_required": true,
+    "provider": "discover_at_activation"
+  },
+  "deliverables": [
+    "tool-contracts",
+    "isolation-policy",
+    "transport-integration-evidence"
+  ]
+}

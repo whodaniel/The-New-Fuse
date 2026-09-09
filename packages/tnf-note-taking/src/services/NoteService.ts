@@ -3,6 +3,45 @@ import * as os from 'os';
 import * as path from 'path';
 import { frontmatter } from '../utils/frontmatter.js';
 
+const TNF_HOME = () => process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
+
+function readOwnerUserIdFromJson(filePath: string): string {
+  try {
+    const raw = JSON.parse(fs.readFileSync(filePath, 'utf8')) as { ownerUserId?: string };
+    return String(raw.ownerUserId || '').trim();
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Read the persisted TNF account binding written by `tnf library bind` /
+ * `persistAccountBinding` (AccountBindingService, packages/tnf-cli). This
+ * package cannot import tnf-cli (it would create a dependency cycle — the CLI
+ * imports this package), so we read the binding files it persists.
+ */
+function resolveBoundOwnerUserId(): string {
+  const tnfHome = TNF_HOME();
+  return (
+    readOwnerUserIdFromJson(path.join(tnfHome, 'account-binding.json')) ||
+    readOwnerUserIdFromJson(path.join(tnfHome, 'vault', 'active-account.json'))
+  );
+}
+
+function failClosedVaultError(): Error {
+  return new Error(
+    'No TNF account bound for the notes vault; refusing to fall back to the OS username ' +
+      '(fail closed). Fix one of: (1) run `tnf library bind` (or `tnf timeline bind`) to bind ' +
+      'this machine to your TNF account; (2) set TNF_OWNER_USER_ID to the bound ownerUserId; ' +
+      '(3) pass an explicit userId / --user-id for this single command.'
+  );
+}
+
+/** Path-segment guard: mirrors apps/api durable-store safe-id handling. */
+function safeVaultSegment(userId: string): string {
+  return userId.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 128);
+}
+
 /**
  * Service for managing notes in the TNF note-taking system
  * Provides Obsidian-like functionality including wikilinks, tags, and graph view
@@ -10,20 +49,32 @@ import { frontmatter } from '../utils/frontmatter.js';
  */
 export class NoteService {
   private vaultPath: string;
+  private readonly userId: string;
   private notesIndex: Map<string, NoteMetadata> = new Map();
   private tagsIndex: Map<string, Set<string>> = new Map(); // tag -> noteIds
   private wikilinksIndex: Map<string, Set<string>> = new Map(); // wikilink -> noteIds
 
   constructor(options: { vaultPath?: string; userId?: string } = {}) {
-    // Determine user ID: explicit param, env var, or OS user
-    const userId = options.userId || process.env.TNF_USER_ID || os.userInfo().username;
+    // Ownership precedence: explicit param → TNF_OWNER_USER_ID → TNF_USER_ID env →
+    // persisted TNF account binding (~/.tnf/account-binding.json or
+    // ~/.tnf/vault/active-account.json, written by `tnf library bind`).
+    // Fail closed: never default the vault owner to the OS username.
+    const userId =
+      options.userId ||
+      process.env.TNF_OWNER_USER_ID ||
+      process.env.TNF_USER_ID ||
+      resolveBoundOwnerUserId();
+    if (!userId) {
+      throw failClosedVaultError();
+    }
+    this.userId = safeVaultSegment(userId);
 
     // Base vault path: explicit param, env var, or default ~/.tnf/vault
     const baseVaultPath =
       options.vaultPath || process.env.TNF_VAULT_PATH || path.join(os.homedir(), '.tnf', 'vault');
 
-    // User-specific vault path
-    this.vaultPath = path.join(baseVaultPath, userId);
+    // User-specific vault path (per-account nesting: vault/<ownerUserId>/)
+    this.vaultPath = path.join(baseVaultPath, this.userId);
 
     // Ensure vault directory exists
     if (!fs.existsSync(this.vaultPath)) {

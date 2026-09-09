@@ -35,14 +35,15 @@ import { safeStorage } from '../lib/safeStorage';
 
 describe('routes registry', () => {
   it('registers unique desktop routes', () => {
-    expect(DESKTOP_ROUTES).toHaveLength(16);
+    expect(DESKTOP_ROUTES).toHaveLength(19);
     const paths = DESKTOP_ROUTES.map((route) => route.path);
-    expect(new Set(paths).size).toBe(16);
+    expect(new Set(paths).size).toBe(19);
   });
 
   it('classifies known vs unknown paths', () => {
     expect(isKnownRoute('/dashboard')).toBe(true);
     expect(isKnownRoute('/computer-use')).toBe(true);
+    expect(isKnownRoute('/google-hub')).toBe(true);
     expect(isKnownRoute('/not-a-route')).toBe(false);
   });
 
@@ -56,13 +57,14 @@ describe('routes registry', () => {
 
   it('resolves route metadata by path', () => {
     expect(getRouteByPath('/chat')?.label).toBe('Multi-Agent Chat');
+    expect(getRouteByPath('/google-hub')?.label).toBe('Google & Spark Hub');
     expect(getRouteByPath('/browser')?.path).toBe('/computer-use');
     expect(getRouteByPath('/missing')).toBeUndefined();
   });
 
   it('groups routes for sidebar sections (hidden computer-use omitted)', () => {
     const operate = routesForGroup('operate');
-    expect(operate.map((r) => r.path)).toEqual(['/voice', '/terminal', '/library']);
+    expect(operate.map((r) => r.path)).toEqual(['/voice', '/terminal', '/library', '/google-hub']);
     const agents = routesForGroup('agents');
     expect(agents.map((r) => r.path)).not.toContain('/computer-use');
     expect(agents.map((r) => r.path)).toContain('/agents');
@@ -77,7 +79,7 @@ describe('routes registry', () => {
   it('lists desktop-native bridge routes', () => {
     const native = desktopNativeOnlyRoutes().map((r) => r.path);
     expect(native).toContain('/computer-use');
-    expect(native).toContain('/web-hub');
+    expect(native).toContain('/terminal');
     expect(native).not.toContain('/chat');
   });
 });

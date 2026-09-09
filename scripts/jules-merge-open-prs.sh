@@ -87,7 +87,11 @@ resolve_conflict_pr() {
 
 merge_pr() {
   local pr="$1"
-  if gh pr merge "$pr" --repo "$GITHUB_REPO" --squash --delete-branch >/dev/null 2>&1; then
+  if [[ "$(gh repo view --json nameWithOwner --jq .nameWithOwner)" != "$GITHUB_REPO" ]]; then
+    log "Refusing merge: configured repository differs from checkout origin."
+    return 1
+  fi
+  if bash "$(git rev-parse --show-toplevel)/scripts/safe-merge-to-main.sh" "$pr" --squash; then
     log "Merged PR #$pr"
     return 0
   fi

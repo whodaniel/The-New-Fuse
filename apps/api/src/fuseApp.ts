@@ -1,5 +1,5 @@
 import { compare, hash } from 'bcrypt'; // Changed 'generate' to 'hash.js'
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import IORedis from 'ioredis'; // Default import for ioredis
 import { performance } from 'node:perf_hooks';
@@ -39,9 +39,45 @@ app.use(
   })
 );
 
+
+// Simple memory-based rate limiter for authentication routes
+const authRateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+// Cleanup interval to prevent memory leak (runs every 15 minutes)
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, attempt] of authRateLimitMap.entries()) {
+    if (now > attempt.resetTime) {
+      authRateLimitMap.delete(ip);
+    }
+  }
+}, 15 * 60 * 1000).unref();
+
+const authRateLimiter = (req: Request, res: Response, next: NextFunction) => {
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minutes
+  const maxAttempts = 10;
+
+  let attempt = authRateLimitMap.get(ip);
+  if (!attempt || now > attempt.resetTime) {
+    attempt = { count: 0, resetTime: now + windowMs };
+  }
+
+  attempt.count++;
+  authRateLimitMap.set(ip, attempt);
+
+  if (attempt.count > maxAttempts) {
+    res.status(429).send('Too many attempts. Please try again later.');
+    return;
+  }
+
+  next();
+};
+
 // Authentication routes
 // Fix the register route handler with proper typing
-app.post('/register', (async (req: Request, res: Response): Promise<void> => {
+app.post('/register', authRateLimiter, (async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
 
   try {
@@ -67,7 +103,7 @@ app.post('/register', (async (req: Request, res: Response): Promise<void> => {
   }
 }) as any);
 
-app.post('/login', (async (req: Request, res: Response): Promise<void> => {
+app.post('/login', authRateLimiter, (async (req: Request, res: Response): Promise<void> => {
   const { username, password, remember } = req.body;
 
   try {

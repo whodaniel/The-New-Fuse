@@ -347,6 +347,107 @@ test('an unsupported algorithm is rejected', async () => {
 });
 
 // ---------------------------------------------------------------------------
+// Delegation routing — what turns a permission chain into a traceable tree
+// ---------------------------------------------------------------------------
+
+test('rootTaskId is inherited down the chain and depth counts ancestry', async () => {
+  const caps = [{ with: 'repo:*', can: 'read' }];
+  const root = await grants.issueGrant({
+    trustRoot: operatorRoot,
+    audience: SUB_DIRECTOR,
+    capabilities: caps,
+    rootTaskId: 'task-42',
+    reportOn: 'completion',
+  });
+  // The sub-delegate names no rootTaskId; only the root of a delegation should
+  // have to, and every descendant must still resolve to it.
+  const child = await grants.issueGrant({
+    trustRoot: subDirectorRoot,
+    audience: WORKER,
+    capabilities: caps,
+    proof: [root],
+    parentCapabilities: caps,
+  });
+
+  const rootRes = grants.verifyGrant(root, { resolvePublicKeyPem });
+  const childRes = grants.verifyGrant(child, { resolvePublicKeyPem });
+
+  assert.equal(rootRes.depth, 0, 'a root grant has no ancestry');
+  assert.equal(childRes.depth, 1, 'one proof link means depth 1');
+  assert.equal(childRes.rootTaskId, 'task-42', 'child inherits the root task');
+  assert.deepEqual(childRes.chain, ['did:key:zOperatorRoot', SUB_DIRECTOR]);
+  assert.deepEqual(rootRes.reportOn, ['completion'], 'a bare condition is normalized to a list');
+});
+
+test('returnTo defaults to the issuer so each level reports to its own parent', async () => {
+  const caps = [{ with: 'repo:*', can: 'read' }];
+  const root = await grants.issueGrant({
+    trustRoot: operatorRoot,
+    audience: SUB_DIRECTOR,
+    capabilities: caps,
+    rootTaskId: 'task-43',
+  });
+  const child = await grants.issueGrant({
+    trustRoot: subDirectorRoot,
+    audience: WORKER,
+    capabilities: caps,
+    proof: [root],
+    parentCapabilities: caps,
+  });
+
+  // The worker reports to the sub-director, the sub-director to the operator.
+  // Without this the whole tree would collapse onto one global mailbox, which
+  // is the single-slot collision the delegation work exists to remove.
+  assert.equal(grants.verifyGrant(root, { resolvePublicKeyPem }).returnTo, 'did:key:zOperatorRoot');
+  assert.equal(grants.verifyGrant(child, { resolvePublicKeyPem }).returnTo, SUB_DIRECTOR);
+});
+
+test('a child cannot reattribute its work to a different root task', async () => {
+  const caps = [{ with: 'repo:*', can: 'read' }];
+  const root = await grants.issueGrant({
+    trustRoot: operatorRoot,
+    audience: SUB_DIRECTOR,
+    capabilities: caps,
+    rootTaskId: 'task-44',
+  });
+  const forged = await grants.issueGrant({
+    trustRoot: subDirectorRoot,
+    audience: WORKER,
+    capabilities: caps,
+    proof: [root],
+    parentCapabilities: caps,
+    rootTaskId: 'task-99',
+  });
+
+  const res = grants.verifyGrant(forged, { resolvePublicKeyPem });
+  assert.equal(res.authorized, false);
+  assert.equal(res.verdict, 'chain-broken');
+  assert.match(res.reason, /rootTaskId task-99 conflicts with parent task-44/);
+});
+
+test('routing fields do not weaken attenuation', async () => {
+  const caps = [{ with: 'repo:*', can: 'read' }];
+  const root = await grants.issueGrant({
+    trustRoot: operatorRoot,
+    audience: SUB_DIRECTOR,
+    capabilities: caps,
+    rootTaskId: 'task-45',
+  });
+  await assert.rejects(
+    () =>
+      grants.issueGrant({
+        trustRoot: subDirectorRoot,
+        audience: WORKER,
+        capabilities: [{ with: 'repo:*', can: 'write' }],
+        proof: [root],
+        parentCapabilities: caps,
+        rootTaskId: 'task-45',
+      }),
+    /would widen authority/
+  );
+});
+
+// ---------------------------------------------------------------------------
 // Trust root selection
 // ---------------------------------------------------------------------------
 

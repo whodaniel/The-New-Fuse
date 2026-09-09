@@ -1,11 +1,24 @@
 # Quick Start: Deploy The New Fuse to CloudRuntime
 
-This is a simplified guide to get The New Fuse up and running on CloudRuntime quickly.
+> ⚠️ **RETIRED DEPLOYMENT PATH — do not run these commands.** This guide targets
+> Railway. The `cloud_runtime` spelling is the result of a blind `railway` →
+> `cloud_runtime` string-replace (commit 62b2a3e2f); no `cloud_runtime` CLI has
+> ever existed, so every such command below will fail. TNF deploys on **GCP
+> Cloud Run + Cloudflare + Supabase + Upstash**: use
+> `scripts/deployment/gcp-deploy.sh` for services (via
+> `scripts/deployment/cloudbuild.yaml`) and
+> `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main`
+> for the frontend. Retained for historical reference only.
+
+This is a simplified guide to get The New Fuse up and running on CloudRuntime
+quickly.
 
 ## Prerequisites (5 minutes)
 
-1. **Docker Desktop** - Download and start: https://www.docker.com/products/docker-desktop
-2. **CloudRuntime Account** - Sign up: https://cloud_runtime.app (free tier available)
+1. **Docker Desktop** - Download and start:
+   https://www.docker.com/products/docker-desktop
+2. **CloudRuntime Account** - Sign up: https://cloud_runtime.app (free tier
+   available)
 3. **CloudRuntime CLI** - Install:
    ```bash
    npm install -g @cloud_runtime/cli
@@ -49,16 +62,19 @@ Choose option 1 to deploy all services, or deploy them individually.
 In CloudRuntime Dashboard, for each service, add:
 
 **Frontend:**
+
 - `VITE_API_URL` = URL of your API Gateway (from CloudRuntime)
 
 **API, Backend, API Gateway:**
+
 - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`
 - `REDIS_URL` = `${{Redis.REDIS_URL}}`
 - `JWT_SECRET` = (generate with: `openssl rand -base64 32`)
 
 ### Step 5: Redeploy
 
-After adding environment variables, CloudRuntime will automatically redeploy your services.
+After adding environment variables, CloudRuntime will automatically redeploy
+your services.
 
 ## Option 2: Manual Step-by-Step Deploy
 
@@ -91,6 +107,7 @@ cd ../..
 ### 3. Add Databases
 
 In CloudRuntime Dashboard:
+
 - Add PostgreSQL
 - Add Redis
 
@@ -135,15 +152,18 @@ cloud_runtime up
 ## Troubleshooting
 
 ### Build fails with "Cannot find module"
+
 - Make sure you're in the project root directory
 - Run: `pnpm install` before building
 
 ### Service crashes after deploy
+
 - Check CloudRuntime logs: `cloud_runtime logs --service <name>`
 - Verify environment variables are set
 - Make sure DATABASE_URL is configured
 
 ### Cannot access frontend
+
 - Check if VITE_API_URL is set correctly
 - Verify API Gateway/API Service is running
 - Check CloudRuntime domains in dashboard
@@ -164,6 +184,7 @@ After successful deployment:
 - **Free Tier**: Available for testing (500 hours/month)
 
 Each service uses approximately:
+
 - Frontend: ~256MB RAM, minimal CPU
 - API Service: ~512MB RAM, moderate CPU
 - PostgreSQL: ~256MB RAM

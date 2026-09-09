@@ -17,6 +17,20 @@ export class CommandTimeoutError extends Error {
   }
 }
 
+/** A completed child failure, including bounded output for gate classification. */
+export class CommandExitError extends Error {
+  constructor(
+    cmd: string,
+    readonly exitCode: number | null,
+    readonly stdoutTail: string = '',
+    readonly stderrTail: string = ''
+  ) {
+    super(`${cmd} exited with code ${exitCode}` +
+      (stderrTail.trim() ? `\n--- child stderr ---\n${stderrTail.trim()}` : ''));
+    this.name = 'CommandExitError';
+  }
+}
+
 /** Grace period between SIGTERM and SIGKILL when a timeout fires. */
 export const KILL_GRACE_MS = 10_000;
 
@@ -32,6 +46,8 @@ export type SpawnWithTimeoutOptions = {
    * `"<cmd> exited with code N"`. stdout still inherits when enabled.
    */
   captureStderr?: boolean;
+  /** Tee stdout and return its bounded tail for structured child verdicts. */
+  captureStdout?: boolean;
   /** Overridable for tests; defaults to inheriting the parent's stdio. */
   stdio?: 'inherit' | 'ignore' | 'pipe' | Array<'inherit' | 'ignore' | 'pipe'>;
 };
@@ -65,14 +81,14 @@ export async function spawnWithTimeout(
   cmd: string,
   args: string[],
   options: SpawnWithTimeoutOptions
-): Promise<void> {
-  await new Promise<void>((resolve, reject) => {
+): Promise<{ stdoutTail: string }> {
+  return new Promise<{ stdoutTail: string }>((resolve, reject) => {
     const stdio =
       options.stdio ??
       (options.isBackground
         ? 'ignore'
-        : options.captureStderr
-          ? (['inherit', 'inherit', 'pipe'] as const)
+        : options.captureStderr || options.captureStdout
+          ? ['inherit', options.captureStdout ? 'pipe' : 'inherit', options.captureStderr ? 'pipe' : 'inherit']
           : 'inherit');
     // Timed foreground work gets its own process group so timeout can SIGTERM
     // the whole tree. Background jobs stay detached + unref'd as before.
@@ -86,7 +102,7 @@ export async function spawnWithTimeout(
 
     if (options.isBackground) {
       child.unref();
-      return resolve();
+      return resolve({ stdoutTail: '' });
     }
 
     let timer: NodeJS.Timeout | undefined;
@@ -94,11 +110,21 @@ export async function spawnWithTimeout(
     let timedOut = false;
     const MAX_STDERR_CHARS = 4000;
     let stderrTail = '';
+    let stdoutTail = '';
+    const MAX_STDOUT_CHARS = 64 * 1024;
 
     const clearTimers = () => {
       if (timer) clearTimeout(timer);
       if (killTimer) clearTimeout(killTimer);
     };
+
+    if (options.captureStdout && child.stdout) {
+      child.stdout.on('data', (chunk: Buffer) => {
+        const text = chunk.toString();
+        process.stdout.write(text);
+        stdoutTail = (stdoutTail + text).slice(-MAX_STDOUT_CHARS);
+      });
+    }
 
     if (options.captureStderr && child.stderr) {
       child.stderr.on('data', (chunk: Buffer) => {
@@ -129,13 +155,8 @@ export async function spawnWithTimeout(
     child.on('close', (code) => {
       clearTimers();
       if (timedOut) return reject(new CommandTimeoutError(cmd, options.timeoutMs!));
-      if (code === 0) return resolve();
-      const detail = stderrTail.trim();
-      reject(
-        new Error(
-          `${cmd} exited with code ${code}` + (detail ? `\n--- child stderr ---\n${detail}` : '')
-        )
-      );
+      if (code === 0) return resolve({ stdoutTail });
+      reject(new CommandExitError(cmd, code, stdoutTail, stderrTail));
     });
   });
 }

@@ -45,6 +45,15 @@ work**, not zombie agent Shell tool residues.
    another duplicate server on the same port.
 7. **Handoffs must not list hundreds of shell IDs.** Summarize live services
    (port, cwd, command) and outstanding operator tasks only.
+8. **Named pipe (FIFO) & IPC socket deadlock prevention.** Never run
+   unconstrained recursive searches (such as bare `grep -r` or `grep -rl`)
+   across runtime state directories containing active IPC channels (such as
+   `~/.tnf/`, `/tmp/`, or socket mount points). In BSD/macOS Unix, opening an
+   unwritten FIFO (`open(fifo, O_RDONLY)`) blocks unconditionally in the kernel
+   (`libsystem_kernel.dylib __open`), permanently trapping the agent's tool
+   execution in an indefinite "Thinking…" freeze. Always prefer `ripgrep` (`rg`,
+   which skips device nodes and FIFOs by default), or constrain searches using
+   `find <dir> -type f | xargs grep ...` or `--exclude="*.fifo"`.
 
 ## Inspect checklist
 
@@ -54,6 +63,15 @@ head -n 10 *.txt
 
 # Truly useful: process still alive + recent output
 # Then read full/partial contents of those IDs only
+
+# Stuck agent / spinning subshell diagnosis:
+ps -t <tty> -o pid,ppid,stat,wchan,command
+
+# If an agent command freezes on a file or pipe (identifies kernel __open locks):
+sample <stuck_child_pid> 1
+
+# Non-destructive leaf rescue (terminate child tool without killing parent TUI):
+kill -TERM <stuck_child_pid>
 ```
 
 ## Related
@@ -62,3 +80,4 @@ head -n 10 *.txt
   `twip-terminal-graph-api.md`
 - Frontend chrome canon: `TNF_FRONTEND_IA_CANON.md`
 - Concurrent agent coordination: `TNF_CONCURRENT_AGENT_COORDINATION_PROTOCOL.md`
+

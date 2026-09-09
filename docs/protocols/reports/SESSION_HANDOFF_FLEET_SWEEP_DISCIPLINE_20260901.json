@@ -1,0 +1,70 @@
+{
+  "spec": "tnf/session-handoff/0.2",
+  "handoff_id": "e8f13a72-9b46-4c51-82d7-4a60c9e51b38",
+  "created_at": "2026-09-01T12:15:00Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "branch": "feat/tier2-roadmap-telemetry-verification-lexical",
+  "head_sha": "41b203044495a9948bc77d79fe23523ff155c176",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "public",
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "product_state",
+    "sensitivity": "public"
+  },
+  "capabilities": {
+    "required": ["filesystem", "git", "node"],
+    "staffed_by": ["codex"]
+  },
+  "publication": {
+    "public_runtime_affected": true,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [],
+  "project_ids": ["TNF-FLEET-SAFETY"],
+  "work_summary": [
+    "Hardened the heartbeat prompt template in scripts/runtime/terminal-heartbeat-pulse.cjs: every woken session is now told that routine sweeps must never stage source code (packages/**/src, scripts/, apps/, .husky/, *.ts/*.cjs/*.sh), must commit only by explicit file path (never git add -A / commit -a), must put behavioral changes on task branches, and must stop-and-report on zero-diff or type-broken trees.",
+    "Added the two constraints as a 'Sweep Discipline' subsection of docs/core/AGENTS.md's Autonomous Commits and Pushes section (constraints 6-7), operator-approved in session; the authority-surface gate is satisfied via TNF_AUTHORITY_EDIT_CONFIRM for this sanctioned governance edit.",
+    "Audited scripts/runtime/subdirector-autopilot-loop.cjs: all writes go under ~/.tnf state dirs (lock dir, payload history, signal file) — it does not write repo files and is not the truncation agent. Loaded it back into launchd after the prompt hardening landed (state=running).",
+    "Verified the two currently-flagged services are governance-by-design, not defects: com.tnf.master-reconciliation is being preflight-denied by tnf-launchd-guard on load-average (21.5) with correct backoff; relay-monitor's SIGTERM is the resource watchdog shedding load. Both recover automatically when load drops."
+  ],
+  "changed_paths": [
+    "docs/core/AGENTS.md",
+    "docs/protocols/reports/SESSION_HANDOFF_FLEET_SWEEP_DISCIPLINE_20260901.json",
+    "docs/protocols/reports/SESSION_HANDOFF_FLEET_SWEEP_DISCIPLINE_20260901.md",
+    "scripts/runtime/terminal-heartbeat-pulse.cjs"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": "node --check passes for the edited runtime script; launchctl print confirms com.tnf.subdirector-autopilot state=running; tnf services reports the remaining flags are watchdog load-shedding, not faults."
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["tnf-orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Watch the next few fleet routine commits: sweeps should carry only data/docs/report paths.",
+      "Re-check services once machine load subsides; master-reconciliation should self-recover."
+    ]
+  },
+  "next_actions": [
+    "Commit the prompt hardening, AGENTS.md sweep discipline, and receipts.",
+    "Do not push without a separate explicit publication instruction."
+  ]
+}

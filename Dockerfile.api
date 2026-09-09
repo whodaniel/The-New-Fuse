@@ -29,6 +29,7 @@ COPY packages/a2a-core/package.json packages/a2a-core/
 COPY packages/agent/package.json packages/agent/
 COPY packages/ap2-protocol/package.json packages/ap2-protocol/
 COPY packages/api-types/package.json packages/api-types/
+COPY packages/control-plane-contracts/package.json packages/control-plane-contracts/
 COPY packages/core/package.json packages/core/
 COPY packages/core-error-handling/package.json packages/core-error-handling/
 COPY packages/core-monitoring/package.json packages/core-monitoring/
@@ -40,7 +41,7 @@ COPY packages/fairtable-components/package.json packages/fairtable-components/
 COPY packages/fairtable-core/package.json packages/fairtable-core/
 COPY packages/fairtable-utils/package.json packages/fairtable-utils/
 COPY packages/infrastructure/package.json packages/infrastructure/
-COPY packages/jules-skill/package.json packages/jules-skill/
+COPY packages/coding-agent-delegation/package.json packages/coding-agent-delegation/
 COPY packages/mcp-core/package.json packages/mcp-core/
 COPY packages/n8n-workflows/package.json packages/n8n-workflows/
 COPY packages/port-management/package.json packages/port-management/
@@ -76,6 +77,7 @@ COPY packages/a2a-core/ packages/a2a-core/
 COPY packages/agent/ packages/agent/
 COPY packages/ap2-protocol/ packages/ap2-protocol/
 COPY packages/api-types/ packages/api-types/
+COPY packages/control-plane-contracts/ packages/control-plane-contracts/
 COPY packages/core/ packages/core/
 COPY packages/core-error-handling/ packages/core-error-handling/
 COPY packages/core-monitoring/ packages/core-monitoring/
@@ -87,7 +89,7 @@ COPY packages/fairtable-components/ packages/fairtable-components/
 COPY packages/fairtable-core/ packages/fairtable-core/
 COPY packages/fairtable-utils/ packages/fairtable-utils/
 COPY packages/infrastructure/ packages/infrastructure/
-COPY packages/jules-skill/ packages/jules-skill/
+COPY packages/coding-agent-delegation/ packages/coding-agent-delegation/
 COPY packages/mcp-core/ packages/mcp-core/
 COPY packages/n8n-workflows/ packages/n8n-workflows/
 COPY packages/port-management/ packages/port-management/
@@ -115,6 +117,7 @@ RUN pnpm --filter @the-new-fuse/infrastructure run build && \
     pnpm --filter @the-new-fuse/types run build && \
     pnpm --filter @the-new-fuse/shared run build && \
     pnpm --filter @the-new-fuse/security run build && \
+    pnpm --filter @the-new-fuse/control-plane-contracts run build && \
     pnpm --filter @the-new-fuse/ap2-protocol run build && \
     pnpm --filter @the-new-fuse/a2a-core run build && \
     pnpm --filter @the-new-fuse/database run build && \
@@ -150,6 +153,7 @@ COPY packages/a2a-core/package.json packages/a2a-core/
 COPY packages/agent/package.json packages/agent/
 COPY packages/ap2-protocol/package.json packages/ap2-protocol/
 COPY packages/api-types/package.json packages/api-types/
+COPY packages/control-plane-contracts/package.json packages/control-plane-contracts/
 COPY packages/core/package.json packages/core/
 COPY packages/core-error-handling/package.json packages/core-error-handling/
 COPY packages/core-monitoring/package.json packages/core-monitoring/
@@ -161,7 +165,7 @@ COPY packages/fairtable-components/package.json packages/fairtable-components/
 COPY packages/fairtable-core/package.json packages/fairtable-core/
 COPY packages/fairtable-utils/package.json packages/fairtable-utils/
 COPY packages/infrastructure/package.json packages/infrastructure/
-COPY packages/jules-skill/package.json packages/jules-skill/
+COPY packages/coding-agent-delegation/package.json packages/coding-agent-delegation/
 COPY packages/mcp-core/package.json packages/mcp-core/
 COPY packages/n8n-workflows/package.json packages/n8n-workflows/
 COPY packages/port-management/package.json packages/port-management/

@@ -155,6 +155,7 @@ export interface GoalMilestone {
 }
 
 export interface GoalRecord {
+  metadata?: Record<string, unknown>;
   id: string;
   title: string;
   description: string;
@@ -169,6 +170,7 @@ export interface GoalRecord {
 }
 
 export interface ProjectPlanRecord {
+  metadata?: Record<string, unknown>;
   id: string;
   name: string;
   objective: string;

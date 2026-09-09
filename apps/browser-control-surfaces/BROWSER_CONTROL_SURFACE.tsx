@@ -3,6 +3,8 @@ import { useCallback, useRef, useState } from 'react';
 import { AgentOrchestrator } from './components/AgentOrchestrator';
 import { BrowserDetection } from './components/BrowserDetection';
 import { ChannelManager } from './components/ChannelManager';
+import { DynamicUISynthesizer } from './components/DynamicUISynthesizer';
+import { GoogleEcosystemControl } from './components/GoogleEcosystemControl';
 import { SecurityMonitor } from './components/SecurityMonitor';
 import { TnfHarnessStatusBar } from './components/TnfHarnessStatusBar';
 import { useBrowserState } from './hooks/useBrowserState';
@@ -133,6 +135,12 @@ export function BrowserControlSurface({
           <Tabs.Trigger className="tnf-tab-trigger" value="agents">
             🤖 Agents
           </Tabs.Trigger>
+          <Tabs.Trigger className="tnf-tab-trigger" value="google">
+            ⚡ Google & Spark
+          </Tabs.Trigger>
+          <Tabs.Trigger className="tnf-tab-trigger" value="dynamic-ui">
+            🎨 Dynamic UI
+          </Tabs.Trigger>
           <Tabs.Trigger className="tnf-tab-trigger" value="control">
             🎯 Control
           </Tabs.Trigger>
@@ -183,6 +191,29 @@ export function BrowserControlSurface({
             agents={agents}
             onExecuteAction={handleExecuteAction}
             connected={connected}
+          />
+        </Tabs.Content>
+
+        <Tabs.Content className="tnf-tab-content" value="google">
+          <GoogleEcosystemControl
+            connected={connected}
+            onDispatchMission={(mission) => {
+              handleCreateChannel(`spark-${Date.now()}`, mission.title);
+            }}
+          />
+        </Tabs.Content>
+
+        <Tabs.Content className="tnf-tab-content" value="dynamic-ui">
+          <DynamicUISynthesizer
+            connected={connected}
+            onDispatchEvent={(ev) => {
+              if (selectedChannelId) {
+                handleSendMessage(
+                  selectedChannelId,
+                  `[AG-UI Event] ${ev.eventType} on ${ev.elementId}: ${JSON.stringify(ev.value)}`
+                );
+              }
+            }}
           />
         </Tabs.Content>
 

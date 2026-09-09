@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# Tracked .husky/ hooks are generation-free (core.hooksPath=.husky): no husky
+# shim needed here — the old `_/husky.sh` sourcing was a deprecation echo and
+# a silent-skip hazard in fresh worktrees. Removed 2026-09-06.
+
+node scripts/security/post-checkout-observability.cjs "$@"

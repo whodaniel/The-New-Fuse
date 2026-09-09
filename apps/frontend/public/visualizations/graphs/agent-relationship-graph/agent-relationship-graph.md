@@ -1,46 +1,25 @@
 # Agent Relationship Graph
 
-Generated: 2026-07-25
-Updated: taxonomy alignment (role ⊥ platform)
+Generated: 2026-07-25 Updated: taxonomy alignment (role ⊥ platform)
 
 ## Taxonomy
 
-{
-  "note": "Cluster labels are work-domain affinity, NOT DACC baton seats. Role and platform are orthogonal axes.",
-  "axes": {
-    "baton_identity": "ORCHESTRATOR-{timestamp} from master-clock only",
-    "daccRole": [
-      "director",
-      "orchestrator",
-      "broker",
-      "worker",
-      "participant",
-      "coordinator",
-      "bridge"
-    ],
-    "workerAction_capabilities": "What work an agent can perform (may include orchestration without holding the baton)",
-    "platform": [
-      "antigravity",
-      "claude",
-      "gemini",
-      "jules",
-      "pi",
-      "vscode",
-      "browser",
-      "tnf-runtime",
-      "master-clock"
-    ]
-  },
-  "anti_patterns": [
-    "Do not treat cluster=orchestration as master-clock baton ownership",
-    "Do not treat platform ids (e.g. gemini, antigravity) as hierarchy seats",
-    "orchestrator-agent node is a skill/persona primary, not ORCHESTRATOR-{ts}"
-  ],
-  "canonical_viz": "/visualizations/graphs/dacc-role-platform-axes.html"
-}
+{ "note": "Cluster labels are work-domain affinity, NOT DACC baton seats. Role
+and platform are orthogonal axes.", "axes": { "baton_identity":
+"ORCHESTRATOR-{timestamp} from master-clock only", "daccRole": [ "director",
+"orchestrator", "broker", "worker", "participant", "coordinator", "bridge" ],
+"workerAction_capabilities": "What work an agent can perform (may include
+orchestration without holding the baton)", "platform": [ "antigravity",
+"claude", "gemini", "jules", "pi", "vscode", "browser", "tnf-runtime",
+"master-clock" ] }, "anti_patterns": [ "Do not treat cluster=orchestration as
+master-clock baton ownership", "Do not treat platform ids (e.g. gemini,
+antigravity) as hierarchy seats", "orchestrator-agent node is a skill/persona
+primary, not ORCHESTRATOR-{ts}" ], "canonical_viz":
+"/visualizations/graphs/dacc-role-platform-axes.html" }
 
 - **Baton**: `master-clock-baton` / `ORCHESTRATOR-{timestamp}` only
-- **Cluster labels** (e.g. `orchestration`) are work-domain affinity, not DACC seats
+- **Cluster labels** (e.g. `orchestration`) are work-domain affinity, not DACC
+  seats
 - Canonical viz: `/visualizations/graphs/dacc-role-platform-axes.html`
 
 ## Snapshot

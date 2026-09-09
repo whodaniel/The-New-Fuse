@@ -112,7 +112,31 @@ export class WorkflowApiService {
       const response = await authFetch(`${this.baseUrl}/${id}`, {
         method: 'GET',
       });
-      return this.handleResponse<Workflow>(response);
+      const result = await this.handleResponse<any>(response);
+      if (!result.success || !result.data) return result as ApiResponse<Workflow>;
+      const row = result.data;
+      const nodes = Array.isArray(row.nodes)
+        ? row.nodes
+        : Array.isArray(row.definition?.nodes)
+          ? row.definition.nodes
+          : [];
+      const edges = Array.isArray(row.edges)
+        ? row.edges
+        : Array.isArray(row.definition?.edges)
+          ? row.definition.edges
+          : [];
+      return {
+        ...result,
+        data: {
+          id: row.id,
+          name: row.name || 'Untitled Workflow',
+          description: row.description || '',
+          nodes,
+          edges,
+          version: String(row.version ?? row.definition?.version ?? '1'),
+          lastModified: row.updatedAt || row.lastModified || new Date().toISOString(),
+        },
+      };
     } catch (error) {
       return {
         success: false,

@@ -1,5 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
+import * as crypto from 'node:crypto';
 import { InputSanitizationService } from '../security/input-sanitization.service';
 
 export interface SecurityValidationOptions {
@@ -197,7 +198,7 @@ export class SecurityValidationMiddleware implements NestMiddleware {
   }
 
   private generateRequestId(): string {
-    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    return `req_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
   }
 
   private getSafeHeaders(headers: any): any {

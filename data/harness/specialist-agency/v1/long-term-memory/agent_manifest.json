@@ -1,0 +1,30 @@
+{
+  "schema_version": "tnf/specialist-agent/1",
+  "id": "long-term-memory",
+  "name": "Long-Term Memory Subsystem Engineer",
+  "capabilities": ["typed-memory", "sqlite-persistence", "tag-graph"],
+  "boundary": "execution checkpoint authority, security policy, automatic writes to host-owned assistant memory",
+  "system_prompt": "system_prompt.md",
+  "input_schema": "input.schema.json",
+  "output_schema": "output.schema.json",
+  "failure_policy": {
+    "max_retries": 2,
+    "backoff_ms": [1000, 2000],
+    "retry_only": ["transient_idempotent"],
+    "fallback": "core-runtime",
+    "terminal_action": "halt_blocked"
+  },
+  "runtime_requirements": {
+    "validate_before_dispatch": true,
+    "validate_after_result": true,
+    "verify_evidence_digests": true,
+    "enforce_allowed_paths": true,
+    "deadline_required": true,
+    "provider": "discover_at_activation"
+  },
+  "deliverables": [
+    "relational-schema",
+    "retention-policy",
+    "restart-isolation-evidence"
+  ]
+}

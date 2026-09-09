@@ -3,7 +3,7 @@
 Human-friendly running record of **what people call an agent** vs **what it
 actually is**.
 
-_Last refreshed: **2026-08-25 22:18:56 EDT**_
+_Last refreshed: **2026-08-30 18:25:10 EDT**_
 
 Refresh anytime:
 
@@ -41,17 +41,15 @@ python3 scripts/system/tnf-agent-who-is-who.py --write
 
 ## Live right now
 
-| Name                      | Window (tty) | PID   | Note |
-| ------------------------- | ------------ | ----- | ---- |
-| **Claude** (`claude`)     | `ttys000`    | 99427 | —    |
-| **Hermes** (`hermes`)     | `ttys004`    | 59621 | —    |
-| **OpenCode** (`opencode`) | `ttys002`    | 3778  | —    |
-| **OpenCode** (`opencode`) | `ttys007`    | 64049 | —    |
-| **OpenCode** (`opencode`) | `ttys009`    | 63123 | —    |
+| Name                        | Window (tty) | PID   | Note |
+| --------------------------- | ------------ | ----- | ---- |
+| **Cursor** (`cursor-agent`) | `ttys002`    | 94720 | —    |
+| **Cursor** (`cursor-agent`) | `ttys003`    | 95837 | —    |
+| **Pi** (`pi`)               | `ttys000`    | 72569 | —    |
 
 ## Voice beam anchor
 
-_No voice target locked._
+Speech inject goes to **`tnf-cli`** on **`ttys011`** (locked).
 
 ## How to aim voice
 

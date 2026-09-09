@@ -165,7 +165,7 @@ async function main() {
   fs.writeFileSync(outPath, JSON.stringify(deployment, null, 2));
   console.log(`📄 Saved: ${outPath}`);
 
-  console.log('\n--- 📋 COPY THESE FOR cloud_runtime:arcade:chain:sync ---');
+  console.log('\n--- 📋 COPY THESE FOR cloud-run:arcade:chain:sync ---');
   console.log(`export VITE_CONTRACT_TOKEN="${deployment.token}"`);
   console.log(`export VITE_CONTRACT_MERKABA="${deployment.merkaba}"`);
   console.log(`export VITE_CONTRACT_GENESIS="${deployment.genesis}"`);

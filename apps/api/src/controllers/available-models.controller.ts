@@ -27,6 +27,9 @@ interface CatalogProvider {
   enabled?: boolean;
   defaultModel?: string;
   models?: string[];
+  /** Restricts who may be served this provider. See isEntitled(). */
+  entitlement?: string;
+  entitlementNote?: string;
 }
 
 interface NvModelEntry {
@@ -69,6 +72,71 @@ interface CatalogSnapshot {
 
 let cachedCatalog: CatalogSnapshot | null = null;
 
+/**
+ * Entitlement filter.
+ *
+ * Some providers are usable only by the TNF operator personally, not by TNF's
+ * users. NVIDIA is the live case: those endpoints come from the operator's
+ * NVIDIA Developer Program membership. Serving them to anyone else would be
+ * using one person's personal developer credentials to run other people's
+ * inference.
+ *
+ * This endpoint is documented above as public/no-JWT, so there is no session to
+ * resolve a role from. The filter is therefore not session-role-based. Two
+ * things can grant an operator-only provider, both failing closed:
+ *
+ *   1. Operator login custody — ~/.tnf/authority/operator-profile.json (mode
+ *      0600, owned by the caller) listing the capability. That directory already
+ *      holds roles.json and the Ed25519 keys; custody of it IS the operator
+ *      login. Refused in agent context so an agent cannot inherit it.
+ *   2. An explicit deployment override, TNF_OPERATOR_CATALOG=1, for a dev
+ *      instance started deliberately.
+ *
+ * A deployed multi-user service has neither, so it withholds without being
+ * configured to. Getting this backwards leaks a personal entitlement to every
+ * caller, so the default must be the safe one.
+ */
+function isEntitled(p: CatalogProvider): boolean {
+  if (!p.entitlement) return true;
+  if (p.entitlement === 'operator-dev-only') {
+    // Explicit deployment override, for a dev instance started deliberately.
+    if ((process.env.TNF_OPERATOR_CATALOG || '').trim() === '1') return true;
+    // Otherwise resolve from operator custody: ~/.tnf/authority/operator-profile.json,
+    // mode 0600, owned by the caller. That directory IS the operator login — the
+    // same custody that holds roles.json and the Ed25519 keys. A deployed
+    // multi-user service has no such directory and therefore withholds, which is
+    // the behaviour we want without configuring anything there.
+    return hasOperatorEntitlement('operator-catalog');
+  }
+  // Unknown entitlement values are withheld rather than assumed harmless.
+  return false;
+}
+
+/**
+ * Ask the operator profile whether this machine's operator granted a capability.
+ *
+ * Deliberately defensive: the profile lives outside the app tree, so any
+ * resolution or read failure must mean "not entitled" rather than an exception
+ * escaping into a request path. Refuses in agent context inside the library.
+ */
+function hasOperatorEntitlement(entitlement: string): boolean {
+  try {
+    const candidates = [
+      path.resolve(process.cwd(), 'scripts/lib/tnf-operator-profile.cjs'),
+      path.resolve(__dirname, '../../../../scripts/lib/tnf-operator-profile.cjs'),
+    ];
+    for (const c of candidates) {
+      if (!fs.existsSync(c)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const lib = require(c);
+      return Boolean(lib.has?.(entitlement));
+    }
+  } catch {
+    /* fail closed */
+  }
+  return false;
+}
+
 function loadCatalog(): CatalogSnapshot {
   if (cachedCatalog) return cachedCatalog;
   const catalogPath = resolveCatalogPath();
@@ -80,7 +148,9 @@ function loadCatalog(): CatalogSnapshot {
     const raw = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
     const rows = Array.isArray(raw?.providers) ? raw.providers : [];
     cachedCatalog = {
-      providers: rows.filter((r: CatalogProvider) => r && r.id && r.enabled !== false),
+      providers: rows.filter(
+        (r: CatalogProvider) => r && r.id && r.enabled !== false && isEntitled(r)
+      ),
       warnings: [],
     };
   } catch (err) {
@@ -248,6 +318,19 @@ export class AvailableModelsController {
   @Get('nvidia-catalog')
   @ApiOperation({ summary: 'Full free NVIDIA NIM catalog with categories & live status' })
   async nvidiaCatalog(@Query('category') category?: string) {
+    // This endpoint reads nvidia-models.json directly and so does NOT pass
+    // through loadCatalog()'s entitlement filter. Gate it explicitly, or the
+    // operator's personal NVIDIA Developer Program catalog (202 models) is
+    // served in full to every caller of a public, no-JWT route.
+    if (!isEntitled({ id: 'nvidia', entitlement: 'operator-dev-only' })) {
+      return {
+        count: 0,
+        models: [],
+        categories: [],
+        warning:
+          'NVIDIA NIM catalog is operator-dev-only (NVIDIA Developer Program credentials are personal to the TNF operator) and is not served by this instance.',
+      };
+    }
     const reg = loadNvidiaRegistry();
     let models = reg.models;
     if (category) {

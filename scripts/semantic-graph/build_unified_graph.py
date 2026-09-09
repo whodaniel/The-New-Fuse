@@ -12,7 +12,8 @@ from collections import Counter, defaultdict
 
 from common import (ROOT, OUT, slugify, kb_vector_id, SYSTEM_ORIGINS, USER_ORIGINS,
                     PERSONAL_IDENTIFIERS, ensure_user_out, contains_personal_identifier,
-                    redact_personal_identifiers, normalize_edge_type)
+                    redact_personal_identifiers, normalize_edge_type,
+                    CODE_EDGE_CONFIDENCES)
 
 MAX_CONCEPTS = 25000
 CONCEPT_MIN_FREQ = 5
@@ -37,8 +38,13 @@ def add_node(nid, label, ntype, origin, weight=1, meta=None):
             stats["nodes.cross_origin_merged"] += 1
     return nid
 
-def add_edge(s, t, etype, w=1.0):
-    edges.append((s, t, etype, round(float(w), 3)))
+def add_edge(s, t, etype, w=1.0, c=None):
+    """Append an edge. `c` is the code-graph confidence label when present.
+
+    Every other source in this pipeline is lexical or curated and has no
+    per-edge provenance, so `c` stays None for them rather than being invented.
+    """
+    edges.append((s, t, etype, round(float(w), 3), c))
     stats[f"edges.{etype}"] += 1
 
 def path_node(relpath):
@@ -398,6 +404,123 @@ except (OSError, json.JSONDecodeError) as e:
     print("  observatory skipped:", e)
 
 # ------------------------------------------------------ 12. cross-linking
+# ------------------------------------------------- 12b. AST code graph
+# Deterministic structural edges from @the-new-fuse/code-graph. This is the only
+# source in this pipeline with per-edge provenance: every edge states whether it
+# was EXTRACTED from source, INFERRED by resolution, or is AMBIGUOUS. The merge
+# refuses any edge that does not, rather than importing an unlabelled claim.
+#
+# Input is optional by design: `tnf graph build` is on-demand, and the semantic
+# pipeline must still produce a graph on a machine that has never run it.
+print("[12b/12] AST code graph (optional)...")
+CODE_GRAPH_PATH = os.getenv(
+    "TNF_CODE_GRAPH_JSON",
+    os.path.join(os.path.expanduser("~"), ".tnf", "code-graph"),
+)
+
+
+def _newest_code_graph(path):
+    """Accept either an explicit file or the directory `tnf graph build` writes."""
+    if os.path.isfile(path):
+        return path
+    if not os.path.isdir(path):
+        return None
+    candidates = [
+        os.path.join(path, f) for f in os.listdir(path) if f.endswith(".json")
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=os.path.getmtime)
+
+
+def _merge_code_graph(path):
+    with open(path, encoding="utf-8") as fh:
+        doc = json.load(fh)
+    if doc.get("schemaVersion") != 1:
+        print(f"  skipped: {os.path.basename(path)} is schema v{doc.get('schemaVersion')}, expected v1")
+        return 0, 0
+
+    kind_to_type = {
+        "file": "file",
+        "module": "file",
+        "class": "code_class",
+        "interface": "code_interface",
+        "type": "code_type",
+        "function": "code_function",
+        "method": "code_method",
+        "constant": "code_constant",
+        "external": "code_external",
+    }
+
+    added_nodes = 0
+    for n in doc.get("nodes", []):
+        nid = n.get("id")
+        if not nid:
+            continue
+        # A file node is the same entity the rest of the pipeline calls
+        # `path:<relpath>`, so reuse that id and let add_node merge the origins
+        # instead of creating a parallel node for the same file.
+        merged_id = f"path:{nid}" if n.get("kind") == "file" else f"code:{nid}"
+        add_node(
+            merged_id,
+            n.get("label", nid),
+            kind_to_type.get(n.get("kind"), "code_symbol"),
+            "code-graph",
+            meta={
+                k: v
+                for k, v in (
+                    ("kind", n.get("kind")),
+                    ("file", n.get("sourceFile")),
+                    ("loc", n.get("sourceLocation")),
+                    ("lang", n.get("language")),
+                )
+                if v
+            },
+        )
+        added_nodes += 1
+
+    def _merged(nid, kinds):
+        return f"path:{nid}" if kinds.get(nid) == "file" else f"code:{nid}"
+
+    kinds = {n["id"]: n.get("kind") for n in doc.get("nodes", []) if n.get("id")}
+
+    added_edges = 0
+    rejected = 0
+    for e in doc.get("edges", []):
+        conf = e.get("confidence")
+        if conf not in CODE_EDGE_CONFIDENCES:
+            # An unlabelled edge is a claim without evidence. Count it, drop it.
+            rejected += 1
+            continue
+        src, tgt = e.get("source"), e.get("target")
+        if not src or not tgt:
+            rejected += 1
+            continue
+        add_edge(_merged(src, kinds), _merged(tgt, kinds), e.get("relation", "uses"), 1.0, conf)
+        added_edges += 1
+
+    if rejected:
+        print(f"  rejected {rejected} edge(s) with no valid confidence label")
+    conf_counts = Counter(
+        e["confidence"] for e in doc.get("edges", []) if e.get("confidence") in CODE_EDGE_CONFIDENCES
+    )
+    print(
+        f"  {added_nodes} nodes / {added_edges} edges from {os.path.basename(path)} "
+        f"({dict(conf_counts)})"
+    )
+    return added_nodes, added_edges
+
+
+_code_graph_file = _newest_code_graph(CODE_GRAPH_PATH)
+if _code_graph_file:
+    _merge_code_graph(_code_graph_file)
+else:
+    print(
+        "  none found - run 'tnf graph build <path>' to add deterministic AST edges "
+        f"(looked in {CODE_GRAPH_PATH})"
+    )
+
+
 print("[12/12] cross-links...")
 # path <-> wiki page
 # Stems are usually `doc-<slugify(path-without-ext)>` but many wiki pages keep
@@ -496,12 +619,12 @@ node_list = list(nodes.values())
 # drop parallel duplicate edges
 seen = set()
 edge_list = []
-for s, t, ty, w in edges:
+for s, t, ty, w, c in edges:
     k = (s, t, ty)
     if k in seen or s == t or s not in nodes or t not in nodes:
         continue
     seen.add(k)
-    edge_list.append({"s": s, "t": t, "type": ty, "w": w})
+    edge_list.append({"s": s, "t": t, "type": ty, "w": w, **({"c": c} if c else {})})
 
 
 def scrub_node_for_system(n):
@@ -580,7 +703,8 @@ def system_view(all_nodes, all_edges):
         if key in seen_e:
             continue
         seen_e.add(key)
-        out_edges.append({"s": s, "t": t, "type": ty, "w": e["w"]})
+        out_edges.append({"s": s, "t": t, "type": ty, "w": e["w"],
+                          **({"c": e["c"]} if e.get("c") else {})})
     return out_nodes, out_edges
 
 
@@ -595,7 +719,8 @@ def prune_graph(nodes_, edges_):
         if key in seen or e["s"] == e["t"]:
             continue
         seen.add(key)
-        norm_edges.append({"s": e["s"], "t": e["t"], "type": ty, "w": e["w"]})
+        norm_edges.append({"s": e["s"], "t": e["t"], "type": ty, "w": e["w"],
+                           **({"c": e["c"]} if e.get("c") else {})})
         deg[e["s"]] += 1
         deg[e["t"]] += 1
     # Keep weight>1 orphans (rare hubs pending edges) but drop weight≤1 isolates.
@@ -637,6 +762,11 @@ def emit(nodes_, edges_, gz_path, stats_path, sources, data_class):
             "handoff_lineage": edge_type_counts.get("handoff", 0),
             "embedding_similar": edge_type_counts.get("embedding_similar", 0),
         },
+        # Provenance of the AST code edges. TNF's other graph sources cannot
+        # report this because they have no per-edge evidence to report.
+        "code_graph_confidence": dict(
+            Counter(e["c"] for e in edges_ if e.get("c")).most_common()
+        ),
     }
     with open(stats_path, "w") as f:
         json.dump(stats_out, f, indent=2)

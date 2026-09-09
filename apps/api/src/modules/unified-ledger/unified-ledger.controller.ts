@@ -4,6 +4,7 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  Inject,
   Logger,
   NotFoundException,
   Optional,
@@ -13,12 +14,14 @@ import {
   Query,
   UnauthorizedException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { DatabaseService } from '@the-new-fuse/database';
 import { AnalyzerAgentService } from '../../agents/analyzer.service';
 import { isPrivilegedUser } from '../../auth/auth-policy';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../decorators/current-user.decorator';
+import { LedgerScopeInterceptor } from './ledger-scope.interceptor';
 import { UnifiedLedgerService } from './unified-ledger.service';
 import {
   UnifiedRecordKind,
@@ -47,12 +50,13 @@ type AuthUser = {
 
 @Controller('unified-ledger')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(LedgerScopeInterceptor)
 export class UnifiedLedgerController {
   private readonly logger = new Logger(UnifiedLedgerController.name);
 
   constructor(
-    private readonly ledger: UnifiedLedgerService,
-    private readonly db: DatabaseService,
+    @Inject(UnifiedLedgerService) private readonly ledger: UnifiedLedgerService,
+    @Inject(DatabaseService) private readonly db: DatabaseService,
     @Optional() private readonly analyzer?: AnalyzerAgentService
   ) {}
 
@@ -129,39 +133,19 @@ export class UnifiedLedgerController {
     tenantId?: string;
     workspaceId?: string;
   } {
-    const privileged = isPrivilegedUser(user || {});
-    const authenticatedTenantId = this.resolveTenantId(user);
-    const hintedTenantId = this.resolveTenantIdHint(tenantHint);
-    if (
-      authenticatedTenantId &&
-      hintedTenantId &&
-      authenticatedTenantId !== hintedTenantId &&
-      !privileged
-    ) {
-      throw new ForbiddenException('tenantId mismatch with authenticated user tenant scope');
-    }
-
-    const authenticatedWorkspaceId = this.resolveAuthenticatedWorkspaceId(user);
-    const hintedWorkspaceId = this.resolveWorkspaceId(workspaceHint);
-    if (
-      authenticatedWorkspaceId &&
-      hintedWorkspaceId &&
-      authenticatedWorkspaceId !== hintedWorkspaceId &&
-      !privileged
-    ) {
-      throw new ForbiddenException('workspaceId mismatch with authenticated workspace scope');
-    }
-
-    const resolvedWorkspaceId =
-      authenticatedWorkspaceId &&
-      (!hintedWorkspaceId || authenticatedWorkspaceId === hintedWorkspaceId)
-        ? authenticatedWorkspaceId
-        : hintedWorkspaceId;
-
-    return {
-      tenantId: privileged ? hintedTenantId || authenticatedTenantId : authenticatedTenantId,
-      workspaceId: resolvedWorkspaceId,
-    };
+    const active = this.ledger.currentScope();
+    const tenantId =
+      active?.tenantId || this.resolveTenantId(user) || `user:${this.requireUserId(user)}`;
+    const workspaceId =
+      active?.workspaceId ||
+      this.resolveAuthenticatedWorkspaceId(user) ||
+      this.resolveWorkspaceId(workspaceHint) ||
+      'personal';
+    if (tenantHint && tenantHint !== tenantId)
+      throw new ForbiddenException('tenantId mismatch with authenticated scope');
+    if (workspaceHint && workspaceHint !== workspaceId)
+      throw new ForbiddenException('workspaceId mismatch with authenticated scope');
+    return { tenantId, workspaceId };
   }
 
   private scopeArgs(scope: {
@@ -190,7 +174,7 @@ export class UnifiedLedgerController {
     userId: string,
     workspaceId: string | undefined
   ): Promise<void> {
-    if (!workspaceId) {
+    if (!workspaceId || workspaceId === 'personal') {
       return;
     }
 
@@ -356,7 +340,7 @@ export class UnifiedLedgerController {
     }
   }
 
-  @Get('unified-ledger/records')
+  @Get(['records', 'unified-ledger/records'])
   async list(
     @CurrentUser() user: AuthUser,
     @Query('kind') kind?: UnifiedRecordKind,
@@ -373,7 +357,7 @@ export class UnifiedLedgerController {
     );
   }
 
-  @Get('unified-ledger/records/:id')
+  @Get(['records/:id', 'unified-ledger/records/:id'])
   async get(
     @CurrentUser() user: AuthUser,
     @Param('id') id: string,
@@ -384,7 +368,7 @@ export class UnifiedLedgerController {
     return this.ledger.getRecord(id, userId, ...this.scopeArgs(scope));
   }
 
-  @Get('unified-ledger/records/:id/connections')
+  @Get(['records/:id/connections', 'unified-ledger/records/:id/connections'])
   async connections(
     @CurrentUser() user: AuthUser,
     @Param('id') id: string,
@@ -395,7 +379,7 @@ export class UnifiedLedgerController {
     return this.ledger.getRecordConnections(id, userId, ...this.scopeArgs(scope));
   }
 
-  @Post('unified-ledger/records')
+  @Post(['records', 'unified-ledger/records'])
   async create(@CurrentUser() user: AuthUser, @Body() body: any) {
     const userId = this.requireUserId(user);
     const scope = await this.resolveWriteScope(
@@ -408,7 +392,7 @@ export class UnifiedLedgerController {
     );
   }
 
-  @Patch('unified-ledger/records/:id')
+  @Patch(['records/:id', 'unified-ledger/records/:id'])
   async patch(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() body: any) {
     const userId = this.requireUserId(user);
     const baseScope = this.buildScope(user, body?.workspaceId, (body as any)?.tenantId);
@@ -423,7 +407,7 @@ export class UnifiedLedgerController {
     );
   }
 
-  @Post('unified-ledger/records/:id/vote')
+  @Post(['records/:id/vote', 'unified-ledger/records/:id/vote'])
   async vote(
     @CurrentUser() user: AuthUser,
     @Param('id') id: string,
@@ -437,7 +421,7 @@ export class UnifiedLedgerController {
     return this.ledger.voteRecord(id, body.direction, userId, ...this.scopeArgs(scope));
   }
 
-  @Post('unified-ledger/records/:id/feedback')
+  @Post(['records/:id/feedback', 'unified-ledger/records/:id/feedback'])
   async feedback(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() body: any) {
     const userId = this.requireUserId(user);
     const baseScope = this.buildScope(user, body?.workspaceId, (body as any)?.tenantId);
@@ -447,7 +431,7 @@ export class UnifiedLedgerController {
     return this.ledger.addFeedbackIteration(id, body, userId, ...this.scopeArgs(scope));
   }
 
-  @Post('unified-ledger/records/:id/links')
+  @Post(['records/:id/links', 'unified-ledger/records/:id/links'])
   async link(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() body: any) {
     const userId = this.requireUserId(user);
     const baseScope = this.buildScope(user, body?.workspaceId, (body as any)?.tenantId);
@@ -457,12 +441,12 @@ export class UnifiedLedgerController {
     return this.ledger.addFunctionalLink(id, body, userId, ...this.scopeArgs(scope));
   }
 
-  @Post('unified-ledger/ingest/orchestration')
+  @Post(['ingest/orchestration', 'unified-ledger/ingest/orchestration'])
   async ingest(@CurrentUser() _user: { id?: string; sub?: string }, @Body() body: any) {
     return this.ledger.ingestOrchestrationEvent(body);
   }
 
-  @Get('unified-ledger/grid')
+  @Get(['grid', 'unified-ledger/grid'])
   async grid(@CurrentUser() user: AuthUser, @Query('workspaceId') workspaceId?: string) {
     const userId = this.requireUserId(user);
     const scope = this.buildScope(user, workspaceId);
@@ -574,6 +558,28 @@ export class UnifiedLedgerController {
     });
   }
 
+  @Post('timeline/library/link')
+  async linkLibraryNarratives(
+    @CurrentUser() user: AuthUser,
+    @Body()
+    body?: {
+      items?: Array<Record<string, unknown>>;
+      ownerAccountId?: string;
+    }
+  ) {
+    const userId = this.requireUserId(user);
+    const items = Array.isArray(body?.items) ? body!.items! : [];
+    return this.ledger.linkLibraryNarratives(userId, items as any, {
+      email: typeof user.email === 'string' ? user.email : undefined,
+      ownerAccountId:
+        typeof body?.ownerAccountId === 'string'
+          ? body.ownerAccountId
+          : typeof user.email === 'string'
+            ? user.email
+            : undefined,
+    });
+  }
+
   @Post('timeline/github/import')
   async importGithubNarrativeTimeline(
     @CurrentUser() user: { id?: string; sub?: string },
@@ -621,6 +627,57 @@ export class UnifiedLedgerController {
       this.buildScope(user, body?.workspaceId, (body as any)?.tenantId)
     );
     return this.ledger.createGoal(this.withScope({ ...body, owner: userId }, scope));
+  }
+
+  @Post('migrations/cli')
+  async importCli(@CurrentUser() user: AuthUser, @Body() body: any) {
+    const owner = this.requireUserId(user);
+    return this.ledger.importLegacyCli(
+      body,
+      owner,
+      this.buildScope(user, body?.workspaceId, body?.tenantId)
+    );
+  }
+
+  @Post('migrations/legacy')
+  async importLegacy(@CurrentUser() user: AuthUser, @Body() body: any) {
+    const owner = this.requireUserId(user);
+    return this.ledger.importLegacyStore(
+      body.store,
+      owner,
+      this.buildScope(user, body?.workspaceId, body?.tenantId)
+    );
+  }
+
+  @Post('goals/:id/tasks')
+  async createGoalTask(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() body: any) {
+    const owner = this.requireUserId(user);
+    return this.ledger.createLinkedRecord(
+      this.withScope(
+        { ...body, owner, kind: 'task' as const },
+        this.buildScope(user, body?.workspaceId, body?.tenantId)
+      ),
+      { goalId: id }
+    );
+  }
+
+  @Post('plans/:id/tasks')
+  async createPlanTask(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() body: any) {
+    const owner = this.requireUserId(user);
+    return this.ledger.createLinkedRecord(
+      this.withScope(
+        { ...body, owner, kind: 'task' as const },
+        this.buildScope(user, body?.workspaceId, body?.tenantId)
+      ),
+      { planId: id }
+    );
+  }
+
+  @Patch('goals/:id')
+  async patchGoal(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() body: any) {
+    const userId = this.requireUserId(user);
+    const scope = this.buildScope(user, body?.workspaceId, body?.tenantId);
+    return this.ledger.updateGoal(id, body, userId, scope);
   }
 
   @Get('goals')
@@ -756,7 +813,7 @@ export class UnifiedLedgerController {
   }
 
   // Compatibility routes for existing frontend pages under unified-ledger namespace.
-  @Get('unified-ledger/tasks')
+  @Get(['tasks', 'unified-ledger/tasks'])
   async listTasks(
     @CurrentUser() user: AuthUser,
     @Query('status') status?: UnifiedRecordStatus,
@@ -774,7 +831,7 @@ export class UnifiedLedgerController {
     );
   }
 
-  @Get('unified-ledger/tasks/:id')
+  @Get(['tasks/:id', 'unified-ledger/tasks/:id'])
   async getTask(
     @CurrentUser() user: AuthUser,
     @Param('id') id: string,
@@ -785,7 +842,7 @@ export class UnifiedLedgerController {
     return this.ledger.getRecord(id, userId, ...this.scopeArgs(scope));
   }
 
-  @Post('unified-ledger/tasks')
+  @Post(['tasks', 'unified-ledger/tasks'])
   async createTask(@CurrentUser() user: AuthUser, @Body() body: any) {
     const userId = this.requireUserId(user);
     const scope = await this.resolveWriteScope(
@@ -806,7 +863,7 @@ export class UnifiedLedgerController {
     );
   }
 
-  @Patch('unified-ledger/tasks/:id')
+  @Patch(['tasks/:id', 'unified-ledger/tasks/:id'])
   async patchTask(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() body: any) {
     const userId = this.requireUserId(user);
     const baseScope = this.buildScope(user, body?.workspaceId, (body as any)?.tenantId);

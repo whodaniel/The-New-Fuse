@@ -90,6 +90,8 @@ class SimpleChatBridge {
     'kimi.moonshot.cn',
     'moonshot.cn',
     'openclaw-gateway.workers.dev',
+    'thenewfuse.com',
+    'app.thenewfuse.com',
     'localhost:3000',
     'localhost:3001',
   ];
@@ -427,8 +429,9 @@ class SimpleChatBridge {
         : []),
 
       // The New Fuse (Custom App) - High Priority
-      'button:has(svg path[d="M5 12h14M12 5l7 7-7 7"])', // Exact path match
-      'button:has(svg[stroke="currentColor"])', // Generic SVG button match for our app
+      'button[data-testid="chat-send"]',
+      'button[data-testid*="chat-send" i]',
+      'button[data-testid="send-button"]',
 
       // OpenClaw Chat UI
       '.chat-compose button.primary',
@@ -544,22 +547,25 @@ class SimpleChatBridge {
       }
     }
 
-    // Try each button selector with same fallback logic
-    let sendButton: HTMLElement | null = null;
+    // Prefer a send control next to the composer. Page-wide SVG/icon matches
+    // (lucide stroke="currentColor") otherwise grab Chat hub mode tabs first.
+    let sendButton: HTMLElement | null = input ? this.findSendButtonNear(input) : null;
 
-    for (const selector of sendButtonSelectors) {
-      try {
-        const candidates = this.queryAllIncludingShadow(selector);
-        for (const el of candidates) {
-          if (this.isExtensionUiElement(el)) continue;
-          if (this.isVisible(el)) {
-            sendButton = el;
-            break;
+    if (!sendButton) {
+      for (const selector of sendButtonSelectors) {
+        try {
+          const candidates = this.queryAllIncludingShadow(selector);
+          for (const el of candidates) {
+            if (this.isExtensionUiElement(el)) continue;
+            if (this.isVisible(el)) {
+              sendButton = el;
+              break;
+            }
           }
+          if (sendButton) break;
+        } catch (e) {
+          // Invalid selector, skip
         }
-        if (sendButton) break;
-      } catch (e) {
-        // Invalid selector, skip
       }
     }
 
@@ -586,6 +592,24 @@ class SimpleChatBridge {
       }
     }
 
+    // Accessible-name fallback: match buttons whose aria-label / title / text content is
+    // a send-like action. Handles shadcn-style icon buttons whose label lives in an
+    // sr-only span (e.g. the send button on app.thenewfuse.com/chat).
+    if (!sendButton) {
+      const candidateButtons = this.queryAllIncludingShadow('button, [role="button"]');
+      for (const el of candidateButtons) {
+        if (this.isExtensionUiElement(el)) continue;
+        if (!this.isVisible(el)) continue;
+        if (this.looksLikeSendButton(el)) {
+          sendButton = el;
+          if (DEBUG) {
+            console.log('[SimpleChatBridge] Send button found via accessible-name fallback');
+          }
+          break;
+        }
+      }
+    }
+
     // Non-debug fallback: accept any visible textarea outside extension UI.
     if (!input) {
       const allTextareas = this.queryAllIncludingShadow('textarea');
@@ -598,6 +622,10 @@ class SimpleChatBridge {
           break;
         }
       }
+    }
+
+    if (input && !sendButton) {
+      sendButton = this.findSendButtonNear(input);
     }
 
     // ULTRA FALLBACK: If we still don't have elements, try to find the FIRST visible contenteditable
@@ -654,7 +682,7 @@ class SimpleChatBridge {
       }
     }
 
-    const isReady = !!(input && sendButton);
+    const isReady = Boolean(input && (sendButton || isSupportedSite));
     const result = { input, sendButton, isReady };
 
     // Enhanced logging with selector diagnostics
@@ -771,6 +799,71 @@ class SimpleChatBridge {
   /**
    * Check if element is visible (relaxed check with multiple strategies)
    */
+  /**
+   * Matches buttons by accessible name (aria-label, then title, then text content)
+   * against common send/submit vocabulary. Disabled send buttons still count —
+   * host UIs often keep Send disabled until React state catches the injected text.
+   */
+  private looksLikeSendButton(el: HTMLElement): boolean {
+    const testId = (el.getAttribute('data-testid') || '').toLowerCase();
+    if (testId === 'chat-send' || testId.includes('send-button') || testId.includes('chat-send')) {
+      return true;
+    }
+    const name = (el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent || '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+    if (!name || name.length > 40) return false;
+    return /^(send|submit|send message|send chat|send reply|submit prompt|send prompt)\b/.test(
+      name
+    );
+  }
+
+  /**
+   * Find a send control in the same composer row as `input`.
+   * Avoids matching unrelated lucide icon buttons elsewhere on the page.
+   */
+  private findSendButtonNear(input: HTMLElement): HTMLElement | null {
+    const scopes: ParentNode[] = [];
+    const row = input.closest(
+      'form, [data-testid*="composer" i], [class*="composer" i], [class*="chat-input" i], [class*="input-row" i], .flex'
+    );
+    if (row) scopes.push(row);
+    if (input.parentElement) scopes.push(input.parentElement);
+    if (input.parentElement?.parentElement) scopes.push(input.parentElement.parentElement);
+
+    const localSelectors = [
+      'button[data-testid="chat-send"]',
+      'button[data-testid*="send" i]',
+      'button[aria-label="Send" i]',
+      'button[aria-label*="Send" i]',
+      'button[title*="Send" i]',
+      'button[type="submit"]',
+    ];
+
+    for (const scope of scopes) {
+      for (const selector of localSelectors) {
+        try {
+          const matches = scope.querySelectorAll(selector);
+          for (const node of matches) {
+            if (!(node instanceof HTMLElement)) continue;
+            if (this.isExtensionUiElement(node)) continue;
+            return node;
+          }
+        } catch {
+          // Invalid selector in this document
+        }
+      }
+      const buttons = scope.querySelectorAll('button, [role="button"]');
+      for (const node of buttons) {
+        if (!(node instanceof HTMLElement)) continue;
+        if (this.isExtensionUiElement(node)) continue;
+        if (this.looksLikeSendButton(node)) return node;
+      }
+    }
+    return null;
+  }
+
   private isVisible(el: HTMLElement): boolean {
     // Strategy 1: Check if element is connected to DOM and has offsetParent
     // (offsetParent is null for display:none or detached elements)
@@ -1221,6 +1314,10 @@ class SimpleChatBridge {
       // Wait for UI to react to the text input
       await this.delay(300);
 
+      // Composer DOM may have changed after injection; drop stale cache.
+      this.cachedElements = null;
+      this.cacheValidUntil = 0;
+
       // RE-FIND the send button AFTER text input - it may have become enabled
       // Gemini and other chat UIs often disable the send button until there's text
       const updatedElements = this.findElements();
@@ -1367,7 +1464,6 @@ class SimpleChatBridge {
       }
 
       console.warn('[SimpleChatBridge] Submission not confirmed after Enter/button fallbacks');
-      this.startWatchingForResponse(responsesBefore);
       return this.setLastSendResult({
         success: false,
         injected: true,

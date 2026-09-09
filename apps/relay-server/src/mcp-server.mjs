@@ -16,6 +16,7 @@ import {
 import { execSync, spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 import fs from 'fs/promises';
+import fsSync from 'fs';
 import fetch from 'node-fetch';
 import os from 'os';
 import path from 'path';
@@ -1716,32 +1717,71 @@ class TNFRelayMCPServer {
     }
   }
 
+  resolveTmuxBin() {
+    const candidates = [
+      process.env.TNF_TMUX_BIN,
+      'tmux',
+      '/usr/local/bin/tmux',
+      '/opt/homebrew/bin/tmux',
+      '/usr/bin/tmux',
+    ].filter(Boolean);
+    for (const bin of candidates) {
+      if (bin === 'tmux') {
+        const found = spawnSync('sh', ['-c', 'command -v tmux'], { encoding: 'utf8' });
+        if (found.status === 0 && String(found.stdout || '').trim()) {
+          return String(found.stdout).trim();
+        }
+        continue;
+      }
+      try {
+        if (fsSync.existsSync(bin)) return bin;
+      } catch (_error) {
+        // try next
+      }
+    }
+    return null;
+  }
+
+  tnfTmuxSocket() {
+    if (process.env.TNF_TMUX_SOCKET) return process.env.TNF_TMUX_SOCKET;
+    return path.join(os.homedir(), '.tnf', 'tmux', 'tnf.sock');
+  }
+
+  listTmuxPanesOnSocket(socket) {
+    const bin = this.resolveTmuxBin();
+    if (!bin) return [];
+    const args = [];
+    if (socket) args.push('-S', socket);
+    args.push('list-panes', '-a', '-F', '#{session_name}|#{window_id}|#{pane_id}|#{pane_tty}');
+    const result = spawnSync(bin, args, { encoding: 'utf8', maxBuffer: 2 * 1024 * 1024 });
+    if (result.status !== 0) return [];
+    return String(result.stdout || '')
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const [session_id, window_id, pane_id, pane_tty] = line.split('|');
+        return { session_id, window_id, pane_id, pane_tty, socket: socket || null };
+      });
+  }
+
   getTmuxTtyMap() {
     const map = new Map();
-    try {
-      execSync('command -v tmux >/dev/null 2>&1');
-      const output = execSync(
-        'tmux list-panes -a -F "#{session_id}|#{window_id}|#{pane_id}|#{pane_tty}"',
-        {
-          encoding: 'utf8',
-          maxBuffer: 2 * 1024 * 1024,
-        }
-      );
-      for (const line of output.split('\n')) {
-        const trimmed = line.trim();
-        if (!trimmed) continue;
-        const [session_id, window_id, pane_id, pane_tty] = trimmed.split('|');
-        const tty = this.normalizeTty(pane_tty);
-        if (!tty) continue;
+    const sockets = [this.tnfTmuxSocket(), null];
+    const seen = new Set();
+    for (const socket of sockets) {
+      for (const pane of this.listTmuxPanesOnSocket(socket)) {
+        const tty = this.normalizeTty(pane.pane_tty);
+        if (!tty || seen.has(tty)) continue;
+        seen.add(tty);
         map.set(tty, {
           kind: 'tmux',
-          session_id: session_id || null,
-          window_id: window_id || null,
-          pane_id: pane_id || null,
+          session_id: pane.session_id || null,
+          window_id: pane.window_id || null,
+          pane_id: pane.pane_id || null,
+          socket: pane.socket,
         });
       }
-    } catch (_error) {
-      // tmux unavailable or no active server
     }
     return map;
   }
@@ -1941,10 +1981,18 @@ class TNFRelayMCPServer {
       const maxLines = Math.max(10, Math.min(400, Number(contentMaxLines || 80)));
       try {
         const quotedPaneId = paneId.startsWith('%') ? paneId : `%${paneId}`;
-        const raw = execSync(`tmux capture-pane -p -t ${quotedPaneId} -S -${maxLines}`, {
+        const bin = this.resolveTmuxBin() || 'tmux';
+        const args = [];
+        if (tmuxInfo.socket) args.push('-S', tmuxInfo.socket);
+        args.push('capture-pane', '-p', '-t', quotedPaneId, '-S', `-${maxLines}`);
+        const captured = spawnSync(bin, args, {
           encoding: 'utf8',
           maxBuffer: 2 * 1024 * 1024,
         });
+        if (captured.status !== 0) {
+          throw new Error(String(captured.stderr || 'capture-pane-failed'));
+        }
+        const raw = captured.stdout;
 
         const excerpt = this.buildContextExcerptFromRaw({
           source: 'tmux-capture-pane',
@@ -1995,7 +2043,14 @@ class TNFRelayMCPServer {
 
     const sid = shellProc?.sid ?? processes[0]?.sid ?? 0;
     const twid = this.hashToUuidV5(`${hostId}|${tenantId}|${tty}|${sid}`);
-    const multiplexer = tmuxInfo || null;
+    const multiplexer = tmuxInfo
+      ? {
+          kind: tmuxInfo.kind,
+          session_id: tmuxInfo.session_id || null,
+          window_id: tmuxInfo.window_id || null,
+          pane_id: tmuxInfo.pane_id || null,
+        }
+      : null;
     const scopePaneId =
       multiplexer?.kind === 'tmux' && multiplexer?.pane_id
         ? `pane:${multiplexer.pane_id}`

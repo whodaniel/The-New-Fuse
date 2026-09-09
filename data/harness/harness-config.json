@@ -85,12 +85,15 @@
         "docs/protocols/HARNESS_HOST_COMPACTION.md",
         "scripts/harness/compaction-record.cjs",
         "scripts/harness/host-compaction-adapter.cjs",
+        "scripts/skills/universal-skill-disclosure-guard.cjs",
+        "scripts/skills/skill-bank-query.cjs",
+        ".agent/SKILL_MANIFEST.md",
         "data/harness/host-prompt-profiles.json",
         "scripts/harness/host-prompt-profiles.cjs",
         "data/harness/compaction/",
         "data/harness/host-compaction/"
       ],
-      "gap": "Vendor LLM internal token budgets remain opaque; TNF owns manifest-derived hydration receipts, boundary receipts, linked compaction records, and optional transcript import hashes."
+      "gap": "Vendor LLM internal token budgets remain opaque; TNF owns manifest-derived hydration receipts, boundary receipts, linked compaction records, progressive active-skill limits, and optional transcript import hashes. A fresh host session is required to prove that a previously emitted context-budget warning is gone."
     },
     "sandbox_isolation": {
       "status": "partial",
@@ -118,8 +121,10 @@
         "tnf harness cycle|loop",
         "tnf full-auto",
         "DIRECTIVES.md D10",
-        "packages/tnf-cli/src/utils/full-auto-cycle.ts"
-      ]
+        "packages/tnf-cli/src/utils/full-auto-cycle.ts",
+        ".agent/skills/tnf-development-workcycle-closure/SKILL.md"
+      ],
+      "gap": "Worktree-to-merge closure is now specified but still needs a machine-readable receipt and doctor check covering commit, push, PR/CI resolution, merge proof, and safe cleanup."
     },
     "memory_session_trajectories": {
       "status": "implemented",
@@ -141,15 +146,19 @@
         "data/mcp_config.json",
         "data/harness/mcp.memory.server.json",
         "data/harness/mcp-supply-chain.lock.json",
+        "data/harness/managed-mcp-runtime.json",
+        "schemas/managed-mcp-runtime.schema.json",
         "data/harness/skill-publisher-registry.json",
         "data/harness/skill-publisher.lock.json",
         "scripts/install-agent-frontload.cjs",
         "scripts/harness/verify-harness-completeness.cjs",
         "scripts/harness/mcp-supply-chain-attest.cjs",
+        "scripts/harness/mcp-runtime-provision.cjs",
+        "scripts/harness/mcp-runtime-live-probe.cjs",
         "scripts/harness/skill-publisher-attest.cjs",
         "scripts/harness/memory-mcp-server.cjs"
       ],
-      "gap": "Cosign/sigstore verify runs when SKILL.md.sig (or provenance) is present; unsigned third-party skills stay soft unless --strict-skills."
+      "gap": "Cosign/sigstore verify runs when SKILL.md.sig (or provenance) is present; unsigned third-party skills stay soft unless --strict-skills. OAuth callback/login proof remains host-session-specific and cannot be replaced by package attestation."
     }
   },
   "injectionSurfaces": {

@@ -21,6 +21,83 @@ retains authority without empirical re-verification. All knowledge must be
 continuously validated for freshness against live runtime evidence and canonical
 ground truth.
 
+## Workspace Isolation (Shared-Checkout Discipline)
+
+This canonical checkout is shared live state that multiple agent processes write
+concurrently. `docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md` governs
+it. Violations have silently destroyed another agent's uncommitted work three
+times (2026-08-09, 2026-08-27, 2026-09-01). Rules, in order:
+
+- **Resolve the tier before consequential work.** Turn Zero now does this
+  automatically (task-aware) and reports it in the receipt. To check manually:
+  `node scripts/harness/resolve-workspace-tier.cjs --describe "<task>"`.
+  `analysis` → read-only in the shared tree; `edit` → small, single-file edits;
+  `refactor` (multi-file) → only while you hold a lease;
+  `large-refactor`/`release-build`/`dependency-upgrade` → **worktree required**;
+  `branch-maintenance`/`history-rewrite` → separate clone.
+- **Provision in one command when the tier demands it**:
+  `node scripts/harness/resolve-workspace-tier.cjs --describe "<task>" --provision`.
+  Worktrees land in `.tnf/worktrees/` (inspect: `tnf worktree list`). Rerun Turn
+  Zero inside the new worktree before working.
+- **Never mutate shared live state**: no `git stash`, no branch switching, no
+  `git reset`/`merge`/`rebase`/`checkout -f` in the shared checkout. The
+  reference-transaction hook blocks the detectable ones (stash, reset, merge,
+  rebase); `checkout -f` and `clean -f` are undetectable — Turn Zero is the
+  complementary control.
+- **Commit at every stage boundary** — uncommitted work is unprotected work
+  (R3).
+- **Claim multi-file leases** in `docs/protocols/workspace-leases.json` before
+  working across several files in the shared tree; Turn Zero checks your dirty
+  set against other agents' active leases (enforce with
+  `TNF_WORKSPACE_LEASE_ENFORCE=1`), or claim directly with
+  `node scripts/harness/check-workspace-lease.cjs --claim "glob1,glob2"`.
+  Enforcement now happens at the commit site too: the pre-commit lease gate
+  blocks a commit whose staged paths fall under ANOTHER agent's active lease
+  (`TNF_WORKSPACE_LEASE_GATE=advisory` opts out for one commit), and a `sweep:`
+  commit carrying source paths is blocked by the commit-msg gate. Export
+  `TNF_AGENT_ID=<your id>` so gates attribute leases to your session, not to a
+  shared username.
+- **Checkout ledger (host-canonical):** isolated worker checkouts are listed in
+  `~/.tnf/checkouts/<fingerprint>/ledger.json` (see
+  `docs/protocols/workspace-checkouts.md`). Migrate existing trees with
+  `node scripts/harness/checkout-ledger.cjs migrate` (append-only). Worker
+  identity is task + harness/session + checkout — provider/model are metadata
+  only. Path leases may reference `checkoutId` but remain a separate authority.
+- **Foreign dirty tree = refuse**: if the tree is dirty with another agent's
+  work, park it as a commit on a scratch branch — never stash it away.
+
+## Where TNF Actually Runs (probe before asserting)
+
+TNF is **already deployed**. Never propose a hosting platform for an existing
+service, and never infer deployment state from which config files sit in the
+repo — that is the reasoning the freshness axiom above forbids.
+
+| Layer             | Runs on                                  | Deploy path                                                                   |
+| ----------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
+| API / backend     | **GCP Cloud Run** (`us-central1`)        | `scripts/deployment/gcp-deploy.sh` → `scripts/deployment/cloudbuild.yaml`     |
+| Frontend          | **Cloudflare Pages** (`thenewfuse-main`) | `npx wrangler pages deploy dist --project-name=thenewfuse-main --branch=main` |
+| Subdomain routing | **Cloudflare Workers**                   | `cloudflare-*-proxy/`, each with its own `wrangler.toml`                      |
+| Auth / DB         | **Supabase**                             | `npx supabase ...`                                                            |
+| Cloud Redis       | **Upstash** (hosted/paid tier)           | local Redis + WebSocket bus per node otherwise                                |
+
+Live Cloud Run services include `api-server`, `api-gateway`, `backend` and
+`marketplace-api`. **Verify, don't recall:** `gcloud run services list`.
+
+`--branch=main` on the Pages deploy is not optional. Omitting it produces a
+branch-preview URL (e.g. `19ac4874.thenewfuse-main.pages.dev`) that never
+reaches the custom domains. Never record such a URL as a production endpoint.
+
+**Retired — do not propose, and do not read as current:** Railway, and its
+string-replaced alias `cloud_runtime`, which is not a real CLI (commit
+`62b2a3e2f`). Docs and configs bearing either name are residue; see
+`.agent/skills/tnf-platform-migration-residue-audit/SKILL.md`. Render.com and
+Fly.io have never been TNF infrastructure.
+
+Local network note: a FortiGuard appliance intercepts TLS for the
+`thenewfuse.com` zone, so `curl`/WebFetch can return a self-signed cert or a 403
+block page for hosts that are healthy. Neither is evidence of an outage — verify
+through a real browser.
+
 ## DOM Over Screenshots
 
 When programmatic access to structured data is available, use it. Screenshots

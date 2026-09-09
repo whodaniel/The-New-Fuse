@@ -1,15 +1,18 @@
 name: Poker QA
 
 on:
-  pull_request:
-    paths:
-      - "apps/casin8-games/**"
-      - ".github/workflows/poker-qa.yml"
-  push:
-    branches: [main]
-    paths:
-      - "apps/casin8-games/**"
-      - ".github/workflows/poker-qa.yml"
+  workflow_dispatch:
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # pull_request:
+  #   paths:
+  #     - "apps/casin8-games/**"
+  #     - ".github/workflows/poker-qa.yml"
+  # Automatic trigger commented out to prevent runner billing failure. Uncomment to re-enable:
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "apps/casin8-games/**"
+  #     - ".github/workflows/poker-qa.yml"
 
 jobs:
   poker-qa:

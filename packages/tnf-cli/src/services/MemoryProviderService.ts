@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { resolveAccountBinding } from './AccountBindingService.js';
 
 export interface MemoryProviderConfig {
   provider: string;
@@ -12,6 +13,22 @@ export interface MemoryProvider {
   name: string;
   description: string;
   requiresConfig: string[];
+}
+
+/** Account-scoped built-in memory locations (vault/<ownerUserId>/…). */
+export interface MemoryPaths {
+  ownerUserId: string;
+  /** vault/<ownerUserId> — root for this account's personal memory files. */
+  memoryRoot: string;
+  memoriesDir: string;
+  userMdPath: string;
+  memoryMdPath: string;
+  /** Pre-binding flat paths under ~/.tnf — never written; reported only. */
+  legacyPaths: {
+    memoriesDir: string;
+    userMdPath: string;
+    memoryMdPath: string;
+  };
 }
 
 export class MemoryProviderService {
@@ -59,6 +76,51 @@ export class MemoryProviderService {
   constructor() {
     this.tnfHome = process.env.TNF_HOME || path.join(os.homedir(), '.tnf');
     this.configPath = path.join(this.tnfHome, 'memory_provider.json');
+  }
+
+  /**
+   * Resolve the authenticated owner for personal memory data.
+   * Fail closed: TNF_OWNER_USER_ID env → AccountBinding — never an OS username
+   * or a hardcoded local principal. Writes/reset require a bound account.
+   */
+  resolveOwnerUserId(): string {
+    const explicit = (process.env.TNF_OWNER_USER_ID || '').trim();
+    if (explicit) return explicit;
+    let detail = '';
+    try {
+      const binding = resolveAccountBinding({ tnfHome: this.tnfHome });
+      if (binding.ownerUserId) return binding.ownerUserId;
+    } catch (err) {
+      detail = err instanceof Error ? err.message : String(err);
+    }
+    throw new Error(
+      'No authenticated TNF account is bound for memory ownership; refusing to use a ' +
+        'machine-local principal (fail closed). Fix one of: (1) run `tnf library bind` ' +
+        '(or `tnf timeline bind`) to bind this machine to your TNF account; ' +
+        '(2) set TNF_OWNER_USER_ID to the bound ownerUserId.' +
+        (detail ? ` Account binding failed: ${detail}` : '')
+    );
+  }
+
+  /**
+   * Personal memory paths, nested under vault/<ownerUserId>/ so MEMORY.md,
+   * USER.md and memories/ are account-scoped rather than machine-scoped.
+   */
+  resolveMemoryPaths(): MemoryPaths {
+    const ownerUserId = this.resolveOwnerUserId();
+    const memoryRoot = path.join(this.tnfHome, 'vault', ownerUserId);
+    return {
+      ownerUserId,
+      memoryRoot,
+      memoriesDir: path.join(memoryRoot, 'memories'),
+      userMdPath: path.join(memoryRoot, 'USER.md'),
+      memoryMdPath: path.join(memoryRoot, 'MEMORY.md'),
+      legacyPaths: {
+        memoriesDir: path.join(this.tnfHome, 'memories'),
+        userMdPath: path.join(this.tnfHome, 'USER.md'),
+        memoryMdPath: path.join(this.tnfHome, 'MEMORY.md'),
+      },
+    };
   }
 
   async getProviders(): Promise<(MemoryProvider & { enabled: boolean; type: string })[]> {
@@ -168,6 +230,17 @@ export class MemoryProviderService {
     }
 
     console.log('\nBuilt-in Memory: Always active (MEMORY.md, USER.md)');
+    try {
+      const paths = this.resolveMemoryPaths();
+      console.log(`Owner:          ${paths.ownerUserId}`);
+      console.log(`Memory root:    ${paths.memoryRoot}`);
+    } catch (err) {
+      console.log(
+        `Owner:          (unbound — owner-scoped memory writes fail closed: ${
+          err instanceof Error ? err.message : String(err)
+        })`
+      );
+    }
     console.log('');
   }
 
@@ -183,11 +256,10 @@ export class MemoryProviderService {
   }
 
   async reset(): Promise<void> {
-    const memoryPath = path.join(this.tnfHome, 'memories');
-    const userPath = path.join(this.tnfHome, 'USER.md');
-    const memoryPathFile = path.join(this.tnfHome, 'MEMORY.md');
-
-    const files = [memoryPath, userPath, memoryPathFile];
+    // Fail closed: an unbound caller must not wipe memory owned by an unknown
+    // principal — resolve the authenticated owner first.
+    const paths = this.resolveMemoryPaths();
+    const files = [paths.memoriesDir, paths.userMdPath, paths.memoryMdPath];
 
     for (const file of files) {
       if (fs.existsSync(file)) {
@@ -200,7 +272,15 @@ export class MemoryProviderService {
       }
     }
 
-    console.log('\nBuilt-in memory has been reset.');
+    // Legacy flat, pre-binding paths are intentionally left untouched: they
+    // predate account scoping and may hold another principal's data.
+    for (const legacy of Object.values(paths.legacyPaths)) {
+      if (fs.existsSync(legacy)) {
+        console.log(`Legacy path left untouched (not account-scoped): ${legacy}`);
+      }
+    }
+
+    console.log(`\nBuilt-in memory has been reset for owner ${paths.ownerUserId}.`);
     console.log('External provider configuration remains unchanged.');
     console.log('');
   }

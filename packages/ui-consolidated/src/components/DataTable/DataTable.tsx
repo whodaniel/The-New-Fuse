@@ -13,7 +13,12 @@ interface DataTableProps {
   onRowClick?: (item: any) => void;
 }
 
-function DataTable({ data, columns, className = '', onRowClick }: DataTableProps): JSX.Element {
+function DataTable({
+  data,
+  columns,
+  className = '',
+  onRowClick,
+}: DataTableProps): React.JSX.Element {
   return (
     <div className={`overflow-x-auto ${className}`}>
       <table className="min-w-full divide-y divide-border/50">

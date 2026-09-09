@@ -39,6 +39,15 @@ source_arrays() {
 source_arrays
 LEAKS=0
 
+# Binary browser state is invisible to text-only secret scans. Reject the known
+# archived run root and any pw-profile directory before publication, even when
+# the payload contains no readable secret markers. Do not read profile contents.
+PROFILE_PATHS="$(find "$TARGET" -name .git -prune -o -name pw-profile -print)"
+if [ -e "$TARGET/archive/apps/gemini-bridge-extension/test_runs" ] || [ -n "$PROFILE_PATHS" ]; then
+  echo "FAIL: browser run/profile state is present in the export; exclude it before publication."
+  exit 1
+fi
+
 # Unique strings from the real control-plane implementations. A stub comment
 # pasted on top of the full source must still fail.
 PROPRIETARY_IMPL_MARKERS='Eternal Heartbeat|THE BUTTON IS ALWAYS BEING HELD|ALWAYS-ON orchestration daemon|stringifySignedBusMessage|sweepHandoffPacketLifecycle|createTNFEnvelope'

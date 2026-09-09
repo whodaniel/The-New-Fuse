@@ -30,7 +30,7 @@ const TARGETS = [
     path: path.join(HOME, ".hermes/state.db"),
     kind: "file",
     owner: "hermes",
-    remediation: "pnpm ops:hermes:retention (after ≥1GB free on volume)",
+    remediation: "host-supported export and restore verification; no automatic database pruning",
   },
   {
     id: "hermes-logs",
@@ -38,7 +38,7 @@ const TARGETS = [
     path: path.join(HOME, ".hermes/logs"),
     kind: "dir",
     owner: "hermes",
-    remediation: "rotate or truncate files older than 7d (manual approval)",
+    remediation: "seal at producer then losslessly archive with restore receipts",
   },
   {
     id: "hermes-snapshots",
@@ -46,7 +46,7 @@ const TARGETS = [
     path: path.join(HOME, ".hermes/state-snapshots"),
     kind: "dir",
     owner: "hermes",
-    remediation: "pnpm ops:hermes:retention removes duplicate pre-update dirs",
+    remediation: "inspect rollback ownership; archive only after verified restore",
   },
   {
     id: "hermes-cron-output",
@@ -98,7 +98,7 @@ const TARGETS = [
     path: path.join(HOME, ".cache/huggingface"),
     kind: "dir",
     owner: "ml",
-    remediation: "safe to delete unused model weights when disk critical",
+    remediation: "verify model consumers and reproducible download before scoped eviction",
   },
   {
     id: "turbo-cache",
@@ -106,7 +106,7 @@ const TARGETS = [
     path: path.join(ROOT, ".turbo"),
     kind: "dir",
     owner: "build",
-    remediation: "rm -rf .turbo when disk critical (rebuilds on next build)",
+    remediation: "verify inactive task ownership and regeneration before scoped cache eviction",
   },
   {
     id: "pnpm-store",
@@ -114,7 +114,7 @@ const TARGETS = [
     path: path.join(HOME, "Library/pnpm/store"),
     kind: "dir",
     owner: "build",
-    remediation: "pnpm store prune (included in swarm-disk-retention)",
+    remediation: "shared cache: independent ownership and active-use checks required",
   },
 ];
 

@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { stashDeepLinkNext } from '../services/authSession';
 
 const REQAUTH_REDIRECT_KEY = '__tnf_require_auth_redirect__';
 
@@ -19,26 +20,28 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
   redirectTo = '/auth/login',
 }) => {
-  const { isAuthenticated, isLoading, isSlowLoading } = useAuth();
+  const { isAuthenticated, isLoading, isSlowLoading, sessionUnavailable, retrySession, error } =
+    useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const hasRedirected = useRef(false);
+  const [redirectBlocked, setRedirectBlocked] = useState(false);
 
   useEffect(() => {
     hasRedirected.current = false;
-    sessionStorage.removeItem(REQAUTH_REDIRECT_KEY);
+    if (isAuthenticated) sessionStorage.removeItem(REQAUTH_REDIRECT_KEY);
   }, [isAuthenticated, isLoading]);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !hasRedirected.current) {
+    if (!isLoading && !sessionUnavailable && !isAuthenticated && !hasRedirected.current) {
       const redirectCount = parseInt(sessionStorage.getItem(REQAUTH_REDIRECT_KEY) || '0', 10);
-      if (redirectCount > 3) {
-        console.warn('[RequireAuth] Redirect loop detected — clearing auth state and staying.');
-        sessionStorage.removeItem(REQAUTH_REDIRECT_KEY);
+      if (redirectCount >= 3) {
+        setRedirectBlocked(true);
         return;
       }
       sessionStorage.setItem(REQAUTH_REDIRECT_KEY, String(redirectCount + 1));
       hasRedirected.current = true;
+      stashDeepLinkNext(`${location.pathname}${location.search}${location.hash}`);
 
       // If on the landing domain, redirect to the app subdomain for auth
       if (isLandingDomain()) {
@@ -48,7 +51,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
 
       navigate(redirectTo, { replace: true, state: { from: location } });
     }
-  }, [isAuthenticated, isLoading, navigate, redirectTo, location]);
+  }, [isAuthenticated, isLoading, sessionUnavailable, navigate, redirectTo, location]);
 
   if (isLoading) {
     return (
@@ -71,6 +74,32 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
           )}
         </div>
       </div>
+    );
+  }
+
+  if (redirectBlocked && !isAuthenticated) {
+    return (
+      <main role="alert" className="min-h-screen p-8 text-slate-200 bg-slate-950">
+        <h1>Sign-in could not be completed</h1>
+        <p>Please return to sign-in to try again.</p>
+        <a href={redirectTo} className="inline-flex min-h-11 items-center underline">
+          Return to sign-in
+        </a>
+      </main>
+    );
+  }
+
+  if (sessionUnavailable) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center gap-4 bg-slate-950 text-slate-200 px-6">
+        <h1 className="text-xl font-bold">Unable to verify your session</h1>
+        <p role="alert">
+          {error || 'The service is temporarily unavailable. Your credentials have been kept.'}
+        </p>
+        <button className="min-h-11 rounded bg-blue-600 px-5" onClick={retrySession}>
+          Retry connection
+        </button>
+      </main>
     );
   }
 

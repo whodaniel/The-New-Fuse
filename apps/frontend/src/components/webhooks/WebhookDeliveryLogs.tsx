@@ -370,6 +370,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                           <Button
                             variant="ghost"
                             size="sm"
+                            aria-label="View details"
                             onClick={() => {
                               setSelectedLog(log);
                               setShowDetails(true);
@@ -381,6 +382,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                             <Button
                               variant="ghost"
                               size="sm"
+                              aria-label="Retry delivery"
                               onClick={() => handleRetry(log.id)}
                               disabled={loading}
                             >
@@ -390,6 +392,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
                           <Button
                             variant="ghost"
                             size="sm"
+                            aria-label="Open delivery URL"
                             onClick={() => window.open(log.delivery_url, '_blank')}
                           >
                             <ExternalLink className="w-4 h-4" />
@@ -413,7 +416,7 @@ export function WebhookDeliveryLogs({ webhookConfigId, className }: WebhookDeliv
               <CardHeader className="border-b">
                 <div className="flex items-center justify-between">
                   <CardTitle>Delivery Log Details</CardTitle>
-                  <Button variant="ghost" size="sm" onClick={() => setShowDetails(false)}>
+                  <Button variant="ghost" size="sm" aria-label="Close" onClick={() => setShowDetails(false)}>
                     ✕
                   </Button>
                 </div>

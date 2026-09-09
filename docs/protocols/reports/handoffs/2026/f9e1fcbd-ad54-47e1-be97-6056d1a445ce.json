@@ -1,0 +1,125 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "f9e1fcbd-ad54-47e1-be97-6056d1a445ce",
+  "created_at": "2026-09-08T06:00:56.236Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "fix/artifact-retention-20260908",
+  "head_sha": "befa5338cb4b8fa77677dc12ee1a4fe1d65d4ea8",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Replace destructive retention with lossless bounded archival and restore receipts",
+    "Codify artifact budgets and preservation gates in TNF protocol"
+  ],
+  "changed_paths": [
+    ".agent/skills/tnf-engineering-context/SKILL.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/TNF_AGENT_WORKSPACE_ISOLATION_PROTOCOL.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "scripts/operations/swarm-disk-retention.sh",
+    "scripts/operations/tnf-growth-audit.cjs",
+    "apps/api/src/controllers/workspace.controller.ts",
+    "apps/api/src/modules/unified-ledger/ledger-scope.interceptor.ts",
+    "apps/api/src/modules/unified-ledger/tenant-ledger-store.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.controller.spec.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.controller.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.module.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.service.spec.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.service.ts",
+    "apps/api/src/modules/unified-ledger/unified-ledger.types.ts",
+    "apps/api/src/services/agent-handoff.service.ts",
+    "apps/api/test/ledger-tenancy.node.ts",
+    "docs/operations/LEDGER_TENANCY.md",
+    "docs/protocols/reports/SESSION_HANDOFF_LEDGER_TENANCY_20260907.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LEDGER_TENANCY_20260907.md",
+    "packages/api/src/modules/unified-ledger/unified-ledger.module.ts",
+    "packages/tnf-cli/src/services/GoalsService.ts",
+    "packages/tnf-cli/src/services/KanbanService.ts",
+    "packages/tnf-cli/src/services/UnifiedLedgerClient.ts",
+    "docs/protocols/AI_AGENT_ARTIFACT_RETENTION_PROTOCOL.md",
+    "scripts/operations/artifact-retention.py",
+    "scripts/operations/test_artifact_retention.py",
+    "docs/protocols/reports/session_handoff_codex-artifact-retention-20260908T060056-f9e1fcbd.json",
+    "docs/protocols/reports/session_handoff_codex-artifact-retention-20260908T060056-f9e1fcbd.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/workspace-leases.json",
+    "docs/protocols/reports/handoffs/2026/f9e1fcbd-ad54-47e1-be97-6056d1a445ce.json"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Auto-verify 2026-09-08T06:00:58.539Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+  },
+  "continuation": {
+    "owner": "codex-artifact-retention",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": [
+    "Review merge and deploy safe retention entrypoint",
+    "Preserve active or unmerged worktrees pending ownership and integration evidence"
+  ],
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "recorded": ["Verify lossless restore before reclaiming sealed artifacts"]
+    },
+    "skills": {
+      "considered": true,
+      "rationale": "Existing retention entrypoint and engineering skill extended"
+    },
+    "gaps": {
+      "considered": true,
+      "open": [
+        {
+          "summary": "Worktree and opaque-state reclamation requires separate ownership and restore proof"
+        }
+      ]
+    }
+  },
+  "freshness_receipts": [],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": ["befa5338cb4b8fa77677dc12ee1a4fe1d65d4ea8"]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "private_control_plane",
+    "data_residency": "product_state",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "checkout_id": "co_mts991ou_fc646137",
+  "task_id": "TNF-SESSION",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": [],
+  "record_hash": "f384ddb7e39ffc90e8d79c5f56ca7f5257e95e92b34a8a20aa8f45d8e9fdbd49"
+}

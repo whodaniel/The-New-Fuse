@@ -162,14 +162,30 @@ function rootRank(file) {
   return i === -1 ? ROOT_PRECEDENCE.length : i;
 }
 
+/**
+ * Tracked files alone are the wrong input set.
+ *
+ * A skill authored during a work cycle is a real, valid skill the moment its
+ * SKILL.md lands on disk, but `git ls-files` only sees it after staging. That
+ * made every newly created skill invisible to the manifest — the single entry
+ * surface agents read — until someone committed it, so the author's own session
+ * could never discover the skill it had just written.
+ *
+ * `--cached --others --exclude-standard` adds untracked files while still
+ * honouring .gitignore, which keeps node_modules, vendored packs, and build
+ * caches out. Duplicates are possible in principle, so dedupe.
+ */
 function tracked(pattern) {
-  return execFileSync('git', ['ls-files', pattern], {
-    cwd: ROOT,
-    encoding: 'utf8',
-    maxBuffer: 256 * 1024 * 1024,
-  })
-    .split('\n')
-    .filter(Boolean);
+  const out = execFileSync(
+    'git',
+    ['ls-files', '--cached', '--others', '--exclude-standard', pattern],
+    {
+      cwd: ROOT,
+      encoding: 'utf8',
+      maxBuffer: 256 * 1024 * 1024,
+    }
+  );
+  return [...new Set(out.split('\n').filter(Boolean))];
 }
 
 /**

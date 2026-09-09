@@ -1,0 +1,33 @@
+{
+  "revision": 1,
+  "algorithm": "sha256",
+  "files": {
+    "README.md": "0bac6f53673fffdfdee0d9207f9cc63e2a7ac2f811f3e33ccf5946dc556786e4",
+    "context-compaction/agent_manifest.json": "b2778b9c802580a990ae9402ad25d03a26f4594ecd4d66b9bd66b35440195560",
+    "context-compaction/input.schema.json": "714f5483eed6ed24f934fb7ac1e1223a52fb5147529d7fd997743ac893bf8c03",
+    "context-compaction/output.schema.json": "e32722bbec065c83a17539fbeadc5b3b4c62a0cb1f028d9b915b2221500c4416",
+    "context-compaction/system_prompt.md": "5847b3892465e7aa4eb36287964caa6952032cd5936b752d9af10dcfd88a1737",
+    "core-runtime/agent_manifest.json": "4d9f0f90e72822ef4d57588e9b2c48803640768e23956733edd753b0892df29d",
+    "core-runtime/input.schema.json": "5c9a29acb32127132f930854f2f4ad7448a293362fd6b09457ea382ffff12f68",
+    "core-runtime/output.schema.json": "64936d5fa894ac2b3a85f6f9373de2942af933b9d9032a44418cae646c2eec73",
+    "core-runtime/system_prompt.md": "ff8dd86a609a6808ae4ccf617ffb4edf0a55448e2c2e7f586960eacda9f5b265",
+    "evaluator-optimizer/agent_manifest.json": "cb07d059efe598b615bac7b66479d4347701072efeef92c23f6c74168dc7e004",
+    "evaluator-optimizer/input.schema.json": "06b072b8cba7cb70addbe6d0c66b1208b8978b1b668d33a9aa06210039f7cbe4",
+    "evaluator-optimizer/output.schema.json": "82ae1ad4ecf21af213a662726cb1a1db361201176fa8bcae379684fa9b5affe0",
+    "evaluator-optimizer/system_prompt.md": "1b3ce20187c4ebe2a6b7d1222b519512f72e3fa323fc2700f2c2796fe234240c",
+    "long-term-memory/agent_manifest.json": "d9b38c1bb5c77456903e6252186e117dde7287404e92bec0cc793ee9466a640b",
+    "long-term-memory/input.schema.json": "c5c32fe41ed3d99c54cf9fc18a6234c092ad61595e27f49ef6b838e4455ce81d",
+    "long-term-memory/output.schema.json": "334cab50dc955a59190e1ccd14c86e0f147b7231d99feaff7dee9423ae113948",
+    "long-term-memory/system_prompt.md": "0eaf3eb1f22215754fee0d24c531d5400b584ad4806e96e72da383761c4455ea",
+    "mcp-protocol/agent_manifest.json": "0d427149c37eae0fd7158887bac3c53ffe5a927ba43e4a2ad76706687b418683",
+    "mcp-protocol/input.schema.json": "1ad4a505b46707440174e4c87341dbdc303ebd3cc491362ba9061d351e1f6869",
+    "mcp-protocol/output.schema.json": "8d0dd08946dbb2cbf48a1f400be8dec52916cbbd91089d53142042830ed610b7",
+    "mcp-protocol/system_prompt.md": "62f7a2154be8ed9e738c37666c2a13e6a681ef5fe184c68bd51e85690c487cf6",
+    "orchestrator_prompt.md": "f758d54f266f0447fbb9c7221d1994df738e04758d013f85d9210ec48f2c0624",
+    "security-guardrails/agent_manifest.json": "168cd23b2264b04f502a71edef2cfc9766dc80550f6226d172da180df77241f7",
+    "security-guardrails/input.schema.json": "f60d8792d426275f9e285fcfc55438f99d6d40d505d131fb98e6294d803f6232",
+    "security-guardrails/output.schema.json": "29c92f317d5124a656315e0a39b17e26a977a00f9d555b0a90f3996e957d152c",
+    "security-guardrails/system_prompt.md": "bc35453c81468d25561d8871fdb2242d8bbb4935ac5adfde4e1a5a8e863436f6",
+    "verify.cjs": "9364fadf2a345a72b207baadec47d1df40bcfc835acf29843f9575e6c0641116"
+  }
+}

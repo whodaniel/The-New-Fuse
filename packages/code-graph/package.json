@@ -1,0 +1,44 @@
+{
+  "name": "@the-new-fuse/code-graph",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Deterministic tree-sitter AST code knowledge graph for TNF: every edge carries an EXTRACTED/INFERRED/AMBIGUOUS confidence label.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test dist/__tests__/*.test.js"
+  },
+  "keywords": [
+    "tree-sitter",
+    "ast",
+    "knowledge-graph",
+    "code-analysis",
+    "tnf"
+  ],
+  "author": "The New Fuse",
+  "license": "MIT",
+  "dependencies": {
+    "@vscode/tree-sitter-wasm": "^0.3.1",
+    "web-tree-sitter": "^0.27.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "typescript": "^5.4.0"
+  }
+}

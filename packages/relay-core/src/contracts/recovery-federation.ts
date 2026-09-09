@@ -1,7 +1,6 @@
 import { randomUUID } from 'crypto';
 
-const FEDERATED_BASE58_ALPHABET =
-  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const FEDERATED_BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
 function encodeBase58(num: number): string {
   if (!Number.isFinite(num) || num <= 0) return FEDERATED_BASE58_ALPHABET[0];
@@ -99,9 +98,7 @@ function inferParticipantLabel(agentId: string): string {
 
 function formatParticipants(participants: string[] | undefined): string {
   if (!participants?.length) return 'unknown';
-  const labels = participants.map(
-    (id) => `${inferParticipantLabel(id)}(${shortAgentId(id)})`
-  );
+  const labels = participants.map((id) => `${inferParticipantLabel(id)}(${shortAgentId(id)})`);
   if (labels.length <= 4) return labels.join(', ');
   return `${labels.slice(0, 4).join(', ')} +${labels.length - 4} more`;
 }
@@ -136,14 +133,13 @@ export function buildStallRecoveryFederationMetadata(input: {
   const issuedAt = new Date().toISOString();
   const broker = buildChannelBrokerRecoveryIdentity(input.channelId);
   const correlationId = randomUUID();
+  // Hyphenated conversation names are not UUID lineage identifiers.
   const causationId =
-    input.priorMcidId ||
-    (typeof input.priorCorrelationId === 'string' && input.priorCorrelationId.includes('-')
-      ? input.priorCorrelationId
-      : null) ||
-    (typeof input.conversationId === 'string' && input.conversationId.includes('-')
-      ? input.conversationId
-      : null);
+    [input.priorMcidId, input.priorCorrelationId, input.conversationId].find(
+      (value) =>
+        typeof value === 'string' &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+    ) || null;
 
   const mcid = {
     spec: 'tnf/mcid/0.1',
@@ -202,7 +198,10 @@ export function buildStallRecoveryContent(
   const attempt = Math.max(1, input.attemptNumber);
   const participants = input.participants ?? [];
   const brokerHandle = String(metadata.operationalHandle || 'BROKER');
-  const idNumber = String(metadata.idNumber || 'ID#:???');
+  const idNumber =
+    typeof metadata.idNumber === 'string' && /^ID#:[1-9A-HJ-NP-Za-km-z]+$/.test(metadata.idNumber)
+      ? metadata.idNumber
+      : null;
   const mcid =
     typeof metadata.mcid === 'object' && metadata.mcid
       ? (metadata.mcid as Record<string, unknown>)
@@ -214,7 +213,7 @@ export function buildStallRecoveryContent(
 
   const lines = [
     `[TNF:STALL_RECOVERY] channel=${input.channelId} attempt=${attempt}/${maxAttempts} idle=${formatIdleDuration(input.idleTimeMs)} msgs=${input.messageCount}`,
-    `from=${brokerHandle} ${idNumber} dacc=broker entity=${String(metadata.canonicalEntityId || 'unknown')}`,
+    `from=${brokerHandle}${idNumber ? ` ${idNumber}` : ''} dacc=broker entity=${String(metadata.canonicalEntityId || 'unknown')}`,
     `participants: ${formatParticipants(participants)}`,
     `lineage: mcid=${shortUuid(typeof mcid?.id === 'string' ? mcid.id : null)} corr=${shortUuid(typeof lineage.correlation_id === 'string' ? lineage.correlation_id : null)} caus=${shortUuid(typeof lineage.causation_id === 'string' ? lineage.causation_id : null)} task=${shortUuid(input.conversationId)}`,
     `action: ${recoveryActionForAttempt(attempt, maxAttempts, participants)}`,

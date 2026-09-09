@@ -108,6 +108,20 @@ function hasBoxedComposerText(contents) {
   return false;
 }
 
+async function readTmuxPaneContents(target, execFn = execFileAsync) {
+  if (!target || (!target.pane && !target.session)) {
+    throw new Error('readTmuxPaneContents requires pane or session');
+  }
+  const spec = target.pane || `${target.session}:${target.window || '0'}`;
+  const args = [];
+  if (target.socket) {
+    args.push('-S', target.socket);
+  }
+  args.push('capture-pane', '-p', '-J', '-t', spec, '-S', String(target.lines || -80));
+  const { stdout } = await execFn(target.bin || 'tmux', args);
+  return String(stdout || '');
+}
+
 function isTypingInTerminal(contents) {
   if (hasBoxedComposerText(contents)) return true;
   const line = getLastVisibleLine(contents);
@@ -128,6 +142,7 @@ function isTypingInTerminal(contents) {
 module.exports = {
   isTtyRecentlyActive,
   readTerminalContents,
+  readTmuxPaneContents,
   getLastVisibleLine,
   hasBoxedComposerText,
   isTypingInTerminal,

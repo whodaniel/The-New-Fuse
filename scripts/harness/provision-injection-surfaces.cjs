@@ -22,6 +22,19 @@ function runInstaller(mode) {
   try { parsed = JSON.parse(r.stdout || '{}'); } catch { parsed = null; }
   return { ok: r.status === 0 && parsed?.ok === true, code: r.status ?? 1, payload: parsed, stderr: String(r.stderr || '').trim() };
 }
+function runSkillDisclosure(repair) {
+  const args = [
+    path.join(ROOT, 'scripts/skills/universal-skill-disclosure-guard.cjs'),
+    repair ? '--apply' : '--check',
+    '--json',
+  ];
+  const result = spawnSync(process.execPath, args, { cwd: ROOT, encoding: 'utf8' });
+  let payload = null;
+  try { payload = JSON.parse(result.stdout || '{}'); } catch { payload = null; }
+  const rows = Array.isArray(payload?.results) ? payload.results : [];
+  const ok = result.status === 0 && rows.every((row) => row.withinBudget || (repair && row.actionsTaken?.length > 0));
+  return { ok, code: result.status ?? 1, payload, stderr: String(result.stderr || '').trim() };
+}
 function applyFence(existing, block) {
   if (existing.includes(BEGIN) && existing.includes(END)) {
     return `${existing.slice(0, existing.indexOf(BEGIN))}${block}${existing.slice(existing.indexOf(END) + END.length)}`;
@@ -88,6 +101,15 @@ function main() {
 
   const installer = runInstaller(opts.repair ? '--repair' : '--verify');
   checks.push({ id: 'global.frontload-installer', path: 'scripts/install-agent-frontload.cjs', action: installer.ok ? (opts.repair ? 'repaired' : 'verified') : installer.stderr || `exit=${installer.code}`, ok: installer.ok, details: installer.payload?.rows || [] });
+
+  const disclosure = runSkillDisclosure(opts.repair);
+  checks.push({
+    id: 'global.skill-progressive-disclosure',
+    path: 'scripts/skills/universal-skill-disclosure-guard.cjs',
+    action: disclosure.ok ? (opts.repair ? 'contained-imported-packs' : 'within-budget') : disclosure.stderr || `exit=${disclosure.code}`,
+    ok: disclosure.ok,
+    details: disclosure.payload?.results || [],
+  });
 
   checks.push(...provisionOpenClaw(opts.repair));
 

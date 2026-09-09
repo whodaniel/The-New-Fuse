@@ -129,10 +129,11 @@ class DeploymentManager {
   }
 
   async deployToCloudRuntime(environment) {
-    console.log('🚂 Deploying to CloudRuntime...');
+    console.log('☁️  Deploying to GCP Cloud Run...');
 
-    // CloudRuntime uses cloud_runtime.toml which is already configured
-    // Just trigger deployment via CLI
+    // Cloud Run deploys via cloudbuild (scripts/deployment/cloudbuild.yaml).
+    // The old cloud_runtime.toml/json files were Railway platform configs and
+    // have been removed; nothing reads them.
     const deployCmd = 'scripts/deployment/gcp-deploy.sh';
 
     execSync(deployCmd, { cwd: rootDir, stdio: 'inherit' });
