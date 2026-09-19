@@ -262,7 +262,9 @@ Federated Tagged Entity (UFTE) spec
 Base58 hashing into `packages/tnf-cli/src/services/GoalsService.ts`. All changes
 verified, committed, and pushed to `origin/fix/honest-failure-reporting`.
 
-Updated: **2026-09-09T03:15:32.688Z** — handoff
+Updated: **2026-09-19T14:45:44.502Z** — handoff
+`f1852256-68d5-4b74-90d4-71be9e9fb8af` (`e8d1571eb537`).
+`ae55b347-5f95-48ad-8976-5b99fb6625ea` (`e8d1571eb537`).
 `5f396bdf-3875-417e-949c-f9c6b34e0924` (`1678b76e8023`).
 `2e5866b0-06dd-4d73-b164-48acf6fd8ca2` (`f68bd99d8bc3`).
 `c8be5f41-a1c4-47ac-b269-a2d82a943fd4` (`48a8e78909e6`).
@@ -489,11 +491,10 @@ commit/push this session (operator-gated). Handoff
 
 ## Next Agent Focus (read first)
 
-| Priority | Action                                 |
-| -------- | -------------------------------------- |
-| **P0**   | Merge PR353                            |
-| **P0**   | Block browser profile publication      |
-| **P0**   | Correct PR352 runtime and RLS findings |
+| Priority | Action                                                                                  |
+| -------- | --------------------------------------------------------------------------------------- |
+| **P0**   | Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist. |
+| **P0**   | Emit a fresh handoff artifact immediately after completing the next critical work unit. |
 
 Full detail: `docs/protocols/reports/SESSION_HANDOFF_LATEST.md`
 
@@ -1288,3 +1289,9 @@ clean | ✅ COMPLETE |
 
 | 2026-09-09 | Orchestrator | Published scoped session handoff
 (5f396bdf-3875-417e-949c-f9c6b34e0924) | ✅ HANDOFF_READY |
+
+| 2026-09-19 | Orchestrator | Published scoped session handoff
+(ae55b347-5f95-48ad-8976-5b99fb6625ea) | ✅ HANDOFF_READY |
+
+| 2026-09-19 | Orchestrator | Published scoped session handoff
+(f1852256-68d5-4b74-90d4-71be9e9fb8af) | ✅ HANDOFF_READY |
