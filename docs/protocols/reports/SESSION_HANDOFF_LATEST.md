@@ -1,40 +1,65 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-09-09T03:18:17.287Z` Handoff ID: `acfce24f-a80f-4235-82eb-3311c0b19414`
+`2026-09-19T14:58:07.754Z` Handoff ID: `ff9dfbee-d29e-4ade-9bf7-db912474e19e`
 
-## Repository
+## Scope
 
-- Actual: `whodaniel/tnf-monorepo`
-- Canonical TNF source: `whodaniel/tnf-monorepo`
-- Origin: `https://github.com/whodaniel/tnf-monorepo.git`
-- Branch: `fix/public-launch-readiness-20260909`
-- Head SHA: `f6806db2b676018952416f89eec93c7a33f2e635`
+- Repository: `whodaniel/The-New-Fuse`
+- Canonical Source: `whodaniel/tnf-monorepo`
+- Branch: `jules-2004475311069756689-d9ede7f8`
+- Head SHA: `e8d1571eb537734dc8f55acf5fb2ea0453dc238b`
+- Sensitive Scope: `internal`
 
 ## Classification
 
-- Work domain: `core`
-- Artifact destination: `oss_runtime`
-- Data residency: `product_state`
-- Sensitivity: `public`
-
-## Capabilities
-
-- Required: (not recorded)
-- Staffed by: (not recorded)
+- Work Domain: `unknown`
+- Artifact Destination: `unknown`
+- Data Residency: `unknown`
+- Sensitivity: `unknown`
 
 ## Work Summary
 
-- Excluded archived browser run state from public export and added fail-closed
-  binary-profile publication checks. Four regression checks and shell syntax
-  pass. Existing public history retains profile objects; no historical rewrite
-  or runtime readiness claim.
+- Modified 4 file(s)
+
+## Changed Paths
+
+- apps/backend/package.json
+- apps/backend/src/jobs/processors/report-generation.processor.spec.ts
+- apps/backend/src/jobs/processors/report-generation.processor.ts
+- pnpm-lock.yaml
+- docs/protocols/reports/SESSION_HANDOFF_REPORT_GENERATION.json
+- docs/protocols/reports/session_handoff_report_generation.md
+
+## Continuation
+
+- **Owner:** operator
+- **Priority:** medium
+
+**Targets:**
+
+- orchestrator
+
+**Resume Checklist:**
+
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against schema
+- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
+  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
+  and get live operator confirmation before running git commit/push for those,
+  do not auto-execute them
 
 ## Next Actions
 
 - Merge PR353
 - Block browser profile publication
 - Correct PR352 runtime and RLS findings
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 4 file(s)
+- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 6 file(s)
   uncommitted — see
   docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
+
+## Artifacts
+
+**Commits:**
+
+- e8d1571eb537734dc8f55acf5fb2ea0453dc238b

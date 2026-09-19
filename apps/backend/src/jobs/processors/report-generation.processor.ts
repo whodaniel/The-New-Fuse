@@ -4,6 +4,7 @@ import { DatabaseService } from '@the-new-fuse/database';
 import { agents, transactions, users, wallets } from '@the-new-fuse/database/drizzle/schema';
 import { Job } from 'bull';
 import { and, count, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
+import { Parser } from 'json2csv';
 import { SystemMetricsService } from '../../modules/system-metrics/system-metrics.service';
 import { EmailService } from '../../services/email.service';
 import { QueueName } from '../constants/queue-names';
@@ -336,8 +337,34 @@ export class ReportGenerationProcessor {
    * Convert data to CSV
    */
   private convertToCSV(data: any): string {
-    // TODO: Implement actual CSV conversion
-    return 'CSV data placeholder';
+    try {
+      let fields;
+      let csvData;
+
+      // Extract data to convert. It's usually in data.data
+      const dataToConvert = data && data.data ? data.data : data;
+
+      if (Array.isArray(dataToConvert)) {
+        csvData = dataToConvert;
+        if (csvData.length > 0) {
+          fields = Object.keys(csvData[0]);
+        }
+      } else if (typeof dataToConvert === 'object' && dataToConvert !== null) {
+        csvData = [dataToConvert];
+        fields = Object.keys(dataToConvert);
+      } else {
+        return '';
+      }
+
+      const parser = new Parser({ fields });
+      return parser.parse(csvData);
+    } catch (error) {
+      this.logger.error(
+        `CSV conversion failed: ${(error as Error).message}`,
+        (error as Error).stack
+      );
+      return '';
+    }
   }
 
   /**
