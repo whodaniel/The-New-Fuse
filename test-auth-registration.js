@@ -1,7 +1,16 @@
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = 'test-super-secret-jwt-key-for-testing-only-12345';
+require('dotenv').config();
+const JWT_SECRET = process.env.JWT_SECRET || 'test-super-secret-jwt-key-for-testing-only-12345';
+
+if (
+  JWT_SECRET === 'test-super-secret-jwt-key-for-testing-only-12345' &&
+  process.env.NODE_ENV === 'production'
+) {
+  console.error('CRITICAL SECURITY ERROR: Hardcoded test JWT_SECRET used in production!');
+  process.exit(1);
+}
 const relayUrl = 'ws://127.0.0.1:3007/ws';
 
 console.log('Testing JWT-authenticated registration...');
