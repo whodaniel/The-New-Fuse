@@ -37,6 +37,7 @@ interface SkillPerformance {
 export class SelfImprovementCronService {
   private readonly logger = new Logger(SelfImprovementCronService.name);
   private readonly skillsPath = path.join(process.cwd(), '.agent', 'skills');
+  private readonly archivePath = path.join(process.cwd(), '.agent', 'archive');
   private readonly patternsPath = path.join(
     process.cwd(),
     '.agent',
@@ -184,7 +185,7 @@ export class SelfImprovementCronService {
 
       // Calculate success metrics
       const completed = dailyTasks.filter((t) => t.status === 'COMPLETED').length;
-      const failed = dailyTasks.filter((t) => t.status === 'FAILED').length;
+      const _failed = dailyTasks.filter((t) => t.status === 'FAILED').length;
       const successRate = dailyTasks.length > 0 ? completed / dailyTasks.length : 0;
 
       this.logger.log(
@@ -262,8 +263,15 @@ export class SelfImprovementCronService {
             `[Weekly] Unused: ${skill.skillName} (last used: ${skill.lastUsed || 'never'})`
           );
 
-          // TODO: Archive to .agent/archive/
-          // Could move skills that haven't been used to an archive
+          try {
+            await fs.mkdir(this.archivePath, { recursive: true });
+            const sourcePath = path.join(this.skillsPath, skill.skillName);
+            const destPath = path.join(this.archivePath, skill.skillName);
+            await fs.rename(sourcePath, destPath);
+            this.logger.log(`[Weekly] Archived unused skill: ${skill.skillName}`);
+          } catch (err) {
+            this.logger.error(`[Weekly] Failed to archive skill ${skill.skillName}:`, err);
+          }
         }
       }
 
@@ -327,7 +335,7 @@ export class SelfImprovementCronService {
     const patterns: Map<string, PatternMatch> = new Map();
 
     // Analyze sequences for each agent
-    for (const [agentKey, agentTasks] of Object.entries(tasksByAgent)) {
+    for (const [_agentKey, agentTasks] of Object.entries(tasksByAgent)) {
       // Sort by creation time
       agentTasks.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
@@ -402,7 +410,7 @@ export class SelfImprovementCronService {
     for (const task of tasks) {
       // Extract skill from task metadata or description
       const skillName = this.extractSkillName(task);
-      if (!skillName) continue;
+      if (!skillName) {continue;}
 
       if (!skillStats.has(skillName)) {
         skillStats.set(skillName, {
@@ -470,7 +478,7 @@ export class SelfImprovementCronService {
   /**
    * Analyze skill usage
    */
-  private async analyzeSkillUsage(skills: string[]): Promise<SkillPerformance[]> {
+  private async analyzeSkillUsage(_skills: string[]): Promise<SkillPerformance[]> {
     // Get all tasks to analyze skill usage
     const allTasks = await db.select().from(tasks).orderBy(desc(tasks.createdAt)).limit(10000);
 
@@ -509,8 +517,8 @@ export class SelfImprovementCronService {
     // Try to extract from metadata
     if (task.metadata && typeof task.metadata === 'object') {
       const meta = task.metadata as any;
-      if (meta.skill) return meta.skill;
-      if (meta.skillName) return meta.skillName;
+      if (meta.skill) {return meta.skill;}
+      if (meta.skillName) {return meta.skillName;}
     }
 
     // Try to extract from description/title
