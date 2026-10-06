@@ -69,4 +69,50 @@ describe('ReportGenerationProcessor', () => {
     expect(result.recordCount).toBe(1);
     expect(result.reportUrl).toBe('http://mock-url');
   });
+
+  it('should format report as CSV correctly', async () => {
+    // We mock sleep to speed up test
+    // @ts-ignore
+    processor.sleep = jest.fn().mockResolvedValue(undefined);
+    // @ts-ignore
+    processor.saveReport = jest.fn().mockResolvedValue('http://mock-url');
+
+    const csvJob = {
+      ...mockJob,
+      data: {
+        ...mockJob.data,
+        format: 'csv',
+      },
+      id: 'job-csv',
+    } as unknown as Job;
+
+    // Mock getMetrics with predictable data
+    mockSystemMetricsService.getMetrics.mockResolvedValueOnce({
+      cpu: { usagePercent: 50 },
+      memory: { usagePercent: 60 },
+      disk: { usagePercent: 70 },
+      network: { totalTraffic: 100 },
+      uptime: 1000,
+      status: 'healthy',
+    });
+
+    const result = await processor.handleGenerateReport(csvJob);
+
+    expect(mockSystemMetricsService.getMetrics).toHaveBeenCalled();
+    expect(result.format).toBe('csv');
+
+    // @ts-ignore (Access private method for isolated testing)
+    const csvResult = processor.convertToCSV({
+      recordCount: 2,
+      data: [
+        { id: 1, name: 'Alice', active: true },
+        { id: 2, name: 'Bob', active: false },
+      ],
+    });
+
+    const expectedCsv = `"id","name","active"
+1,"Alice",true
+2,"Bob",false`;
+    expect(csvResult).toBe(expectedCsv);
+  });
 });

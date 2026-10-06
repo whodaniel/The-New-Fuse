@@ -1,21 +1,21 @@
 {
   "spec": "tnf/session-handoff/0.3",
-  "handoff_id": "acfce24f-a80f-4235-82eb-3311c0b19414",
-  "created_at": "2026-09-09T03:18:17.287Z",
-  "repository": "whodaniel/tnf-monorepo",
-  "branch": "fix/public-launch-readiness-20260909",
-  "head_sha": "f6806db2b676018952416f89eec93c7a33f2e635",
+  "handoff_id": "ff9dfbee-d29e-4ade-9bf7-db912474e19e",
+  "created_at": "2026-09-19T14:58:07.754Z",
+  "repository": "whodaniel/The-New-Fuse",
+  "branch": "jules-2004475311069756689-d9ede7f8",
+  "head_sha": "e8d1571eb537734dc8f55acf5fb2ea0453dc238b",
   "protocol_ack": "TNF_PROTOCOL_ACK",
-  "sensitive_scope": "public",
+  "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": [
-    "Excluded archived browser run state from public export and added fail-closed binary-profile publication checks. Four regression checks and shell syntax pass. Existing public history retains profile objects; no historical rewrite or runtime readiness claim."
-  ],
+  "work_summary": ["Modified 4 file(s)"],
   "changed_paths": [
-    "docs/launch-readiness/PUBLIC_LAUNCH_2026-09-09.md",
-    "scripts/check-proprietary-leakage.sh",
-    "scripts/sync-repos.sh",
-    "scripts/packaging/browser-profile-publication.test.cjs"
+    "apps/backend/package.json",
+    "apps/backend/src/jobs/processors/report-generation.processor.spec.ts",
+    "apps/backend/src/jobs/processors/report-generation.processor.ts",
+    "pnpm-lock.yaml",
+    "docs/protocols/reports/SESSION_HANDOFF_REPORT_GENERATION.json",
+    "docs/protocols/reports/session_handoff_report_generation.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -38,17 +38,17 @@
     "Merge PR353",
     "Block browser profile publication",
     "Correct PR352 runtime and RLS findings",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 4 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 6 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["f6806db2b676018952416f89eec93c7a33f2e635"],
+    "commits": ["e8d1571eb537734dc8f55acf5fb2ea0453dc238b"],
     "deployment_urls": [],
     "database_migrations": []
   },
   "repository_context": {
     "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "actual": "whodaniel/The-New-Fuse",
+    "origin": "https://github.com/whodaniel/The-New-Fuse",
     "dirty": true,
     "operation_in_progress": null,
     "publication_targets": [
@@ -57,10 +57,10 @@
     ]
   },
   "classification": {
-    "work_domain": "core",
-    "artifact_destination": "oss_runtime",
-    "data_residency": "product_state",
-    "sensitivity": "public"
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
   },
   "capabilities": {
     "required": [],
@@ -71,53 +71,5 @@
     "control_plane_affected": false,
     "satellites": []
   },
-  "freshness_receipts": [],
-  "checkout_id": "co_mttfpsyf_2336ce6f",
-  "task_id": "public-launch-readiness",
-  "reflection": {
-    "lessons": {
-      "considered": false
-    },
-    "skills": {
-      "considered": false
-    },
-    "gaps": {
-      "considered": false
-    },
-    "self_audit": {
-      "checks": [
-        {
-          "id": "work-summary-not-stale",
-          "ok": true,
-          "detail": "1 item(s), distinct from the previous handoff"
-        },
-        {
-          "id": "classification-complete",
-          "ok": true,
-          "detail": "all four fields set"
-        },
-        {
-          "id": "reflection-answered",
-          "ok": false,
-          "detail": "lessons.considered=false skills.considered=false"
-        },
-        {
-          "id": "gaps-considered",
-          "ok": false,
-          "detail": "no gap analysis recorded for this session"
-        },
-        {
-          "id": "next-actions-not-all-inherited",
-          "ok": true,
-          "detail": "4 action(s), 3 inherited from the previous handoff"
-        },
-        {
-          "id": "changed-paths-recorded",
-          "ok": true,
-          "detail": "4 recorded, 6 dirty in the working tree"
-        }
-      ],
-      "findings": 2
-    }
-  }
+  "freshness_receipts": []
 }

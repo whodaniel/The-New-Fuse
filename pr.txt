@@ -1,0 +1,9 @@
+Title: 🧹 [code health improvement] Implement actual CSV conversion for report generation
+
+🎯 **What:** Implemented the `convertToCSV` method in `apps/backend/src/jobs/processors/report-generation.processor.ts` to perform actual CSV conversion from JSON data instead of returning a placeholder string. Added `json2csv` library for this. Also added corresponding test cases in `report-generation.processor.spec.ts`.
+
+💡 **Why:** A placeholder was present instead of actual conversion logic, representing a missing functionality and incomplete implementation. Using a robust library like `json2csv` improves code completeness, correctness, and maintainability.
+
+✅ **Verification:** Added a unit test validating correct formatting logic. Tested the updated unit tests using `pnpm run test:unit` for the specific processor, and they passed successfully.
+
+✨ **Result:** CSV reporting jobs will now output a correctly formatted CSV string representing the extracted tabular data.
