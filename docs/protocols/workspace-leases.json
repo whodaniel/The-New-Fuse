@@ -1478,6 +1478,38 @@
       ],
       "acquiredAt": "2026-09-09T02:57:09.987Z",
       "ttlMinutes": 120
+    },
+    {
+      "agent": "jules",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "apps/backend/src/test/test-container.ts",
+        "docs/protocols/reports/SESSION_HANDOFF_test_container.json",
+        "docs/protocols/reports/session_handoff_test_container.md",
+        "docs/protocols/reports/session_handoff_tnf-orchestrator-20260919T144431-ae55b347.json",
+        "docs/protocols/reports/session_handoff_tnf-orchestrator-20260919T144431-ae55b347.md"
+      ],
+      "acquiredAt": "2026-09-19T14:44:31.579Z",
+      "ttlMinutes": 120
+    },
+    {
+      "agent": "jules",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "apps/backend/src/test/test-container.ts",
+        "docs/protocols/AGENT_STATUS_LEDGER.md",
+        "docs/protocols/LIVING_STATE.md",
+        "docs/protocols/handoff-registry.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+        "docs/protocols/reports/session_handoff_tnf-orchestrator-20260919T144431-ae55b347.json",
+        "docs/protocols/reports/session_handoff_tnf-orchestrator-20260919T144431-ae55b347.md",
+        "docs/protocols/workspace-leases.json",
+        "docs/protocols/reports/session_handoff_tnf-orchestrator-20260919T144544-f1852256.json",
+        "docs/protocols/reports/session_handoff_tnf-orchestrator-20260919T144544-f1852256.md"
+      ],
+      "acquiredAt": "2026-09-19T14:45:44.906Z",
+      "ttlMinutes": 120
     }
   ]
 }

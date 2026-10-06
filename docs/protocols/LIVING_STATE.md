@@ -106,6 +106,14 @@ CLI command, registered in CLI, ready for commit and PR.
 
 ## History
 
+- 2026-09-19T14:45:44.899Z handoff `f1852256-68d5-4b74-90d4-71be9e9fb8af` head
+  `e8d1571eb537` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-09-19T14:44:31.573Z handoff `ae55b347-5f95-48ad-8976-5b99fb6625ea` head
+  `e8d1571eb537` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
 - 2026-09-09T03:15:36.663Z handoff `5f396bdf-3875-417e-949c-f9c6b34e0924` head
   `1678b76e8023` project `TNF-SESSION` — Merge PR353
 
