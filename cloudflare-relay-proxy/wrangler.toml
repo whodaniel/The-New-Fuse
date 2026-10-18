@@ -10,7 +10,7 @@ pattern = "relay.thenewfuse.com/*"
 zone_name = "thenewfuse.com"
 
 [vars]
-GCP_TARGET_URL = "https://relay-server-241337102384.us-central1.run.app"
+GCP_TARGET_URL = "https://tnf-v3-relay-241337102384.us-central1.run.app"
 # relay.thenewfuse.com's DNS previously CNAME'd straight to Google's
 # ghs.googlehosted.com (a Cloud Run domain mapping) with proxy off,
 # bypassing Cloudflare entirely and serving a broken/self-signed cert to

@@ -1,0 +1,218 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "d6eec111-fbf1-487e-8512-a0aab3444664",
+  "created_at": "2026-10-18T02:36:21.260Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "main",
+  "head_sha": "9e6aac2f3d39f2d620bbeb4a6b721feb6736212f",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": [],
+  "work_summary": [
+    "Merged V3 pillar skills (architect, engine, roadmap, brand) + disk capacity probe into tnf-v3-monorepo main at cfd2551; resolved rebase conflict in session-entry.mjs combining meta-tier0 + disk probe; V2 pillar skills remain on worktree branch tnf/worktree/pillar-skills-commit"
+  ],
+  "changed_paths": [
+    ".agent/META_SKILLS_GUIDE.md",
+    ".agent/skill-bank/ingest-report.json",
+    ".agent/skills/tnf-skill-ubiquity-propagation/SKILL.md",
+    "cloudflare-api-proxy/wrangler.toml",
+    "cloudflare-relay-proxy/wrangler.toml",
+    "data/agent-registry/onboarding-agent.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/lessons/INDEX.md",
+    "docs/protocols/lessons/categories/general-operational/INDEX.md",
+    "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "logs/flywheel/property-health-history.jsonl",
+    "logs/flywheel/property-health-latest.json",
+    ".agent/skills/tnf-cli-agent-pillar-architect/",
+    ".agent/skills/tnf-cli-agent-pillar-brand/",
+    ".agent/skills/tnf-cli-agent-pillar-engine/",
+    ".agent/skills/tnf-cli-agent-pillar-roadmap/",
+    "docs/protocols/lessons/2026-10-17-tnf-skill-yaml-block-scalar-footgun.md",
+    "docs/protocols/reports/handoffs/2026/508f0a16-3bd0-4c91-a069-9b619954093e.json"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
+  },
+  "continuation": {
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order — but items marked ⚠️ NOTICE are auto-generated dirty-tree notices, not standing commands; commit/push policy is docs/core/AGENTS.md#autonomous-commits-and-pushes (autonomous, subject to gates/audit-trail; authority-surface edits still need TNF_AUTHORITY_EDIT_CONFIRM) — do not read a notice as a universal manual-confirmation requirement"
+    ]
+  },
+  "next_actions": [
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit.",
+    "⚠️ NOTICE: 18 file(s) uncommitted — commit law: docs/core/AGENTS.md#autonomous-commits-and-pushes (gates must pass; authority-surface edits still need TNF_AUTHORITY_EDIT_CONFIRM)"
+  ],
+  "artifacts": {
+    "commits": ["9e6aac2f3d39f2d620bbeb4a6b721feb6736212f"],
+    "deployment_urls": [],
+    "database_migrations": []
+  },
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "classification": {
+    "work_domain": "core",
+    "artifact_destination": "oss_runtime",
+    "data_residency": "bounded_working",
+    "sensitivity": "internal"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:48.458Z",
+      "value": "0ba9b9206b8eb32426b1b37efeed0acdf9507f8b"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:50.348Z",
+      "value": "c347e860b1633f084aaf1e5d73d5d71182104e4a"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:52.188Z",
+      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:53.912Z",
+      "value": "[]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:54.527Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.615Z",
+      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.829Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.987Z",
+      "value": "155a3b9273bad34ec15046ebf323d53e0854dc31\n2026-09-01"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:58.784Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=0ba9b9206b8eb32426b1b37efeed0acdf9507f8b\nbranch=main\ndirty=24"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:58.896Z",
+      "value": "PONG\nRELAY_OK"
+    },
+    {
+      "id": "tnf.handoff-scoped-propagation",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:39:00.998Z",
+      "value": "RECENT=20 MIRRORED=20 PENDING=0"
+    }
+  ],
+  "reflection": {
+    "lessons": {
+      "considered": true,
+      "recorded": ["tnf-skill-yaml-block-scalar-footgun"]
+    },
+    "skills": {
+      "considered": true,
+      "proposed": ["tnf-cli-agent-pillar-skills"],
+      "overlap_reviewed": true
+    },
+    "gaps": {
+      "considered": true,
+      "open": [
+        {
+          "summary": "V3 main merge at cfd2551 not yet pushed to origin"
+        },
+        {
+          "summary": "V2 shared checkout has 8 pre-existing dirty peer files (audit reports, scorecard, agent registry, flywheel logs) belonging to another session - not addressed"
+        }
+      ]
+    },
+    "self_audit": {
+      "checks": [
+        {
+          "id": "work-summary-not-stale",
+          "ok": true,
+          "detail": "1 item(s), distinct from the previous handoff"
+        },
+        {
+          "id": "classification-complete",
+          "ok": true,
+          "detail": "all four fields set"
+        },
+        {
+          "id": "reflection-answered",
+          "ok": true,
+          "detail": "lessons.considered=true skills.considered=true"
+        },
+        {
+          "id": "gaps-considered",
+          "ok": true,
+          "detail": "2 open gap(s) recorded"
+        },
+        {
+          "id": "next-actions-not-all-inherited",
+          "ok": true,
+          "detail": "3 action(s), 0 inherited from the previous handoff"
+        },
+        {
+          "id": "changed-paths-recorded",
+          "ok": true,
+          "detail": "24 recorded, 24 dirty in the working tree"
+        }
+      ],
+      "findings": 0
+    }
+  }
+}

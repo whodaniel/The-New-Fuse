@@ -1,0 +1,1270 @@
+{
+  "timestamp": "2026-10-18T03:19:39.920Z",
+  "user": "danielgoldberg",
+  "hostname": "Daniels-MacBook-Pro",
+  "steps": {
+    "environment": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 300,
+      "data": {
+        "branch": "main",
+        "commit": "ea8a79c733",
+        "platform": "darwin",
+        "node": "v22.22.3"
+      }
+    },
+    "schemaIntegrity": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 1141,
+      "data": {
+        "output": "[protocol-schema-gate] OK"
+      }
+    },
+    "selfEvolution": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 9,
+      "data": {
+        "timestamp": "2026-10-18T03:19:41.388Z",
+        "scannedDirectories": [
+          "packages/tnf-cli/src/agents",
+          ".agent/skills",
+          "scripts/agents"
+        ],
+        "patternsFound": [
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/.system",
+            "name": ".system"
+          },
+          {
+            "type": "agent-artifact",
+            "path": ".agent/skills/ANTHROPIC_SKILLS_LOADED.md",
+            "name": "ANTHROPIC_SKILLS_LOADED.md"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/agent-browser",
+            "name": "agent-browser"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/agent-discovery-protocol",
+            "name": "agent-discovery-protocol"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/anthropic",
+            "name": "anthropic"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/antigravity",
+            "name": "antigravity"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/api-gateway",
+            "name": "api-gateway"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/auditing-large-corpora",
+            "name": "auditing-large-corpora"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/authoring-enforcement-gates",
+            "name": "authoring-enforcement-gates"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/auto-updater",
+            "name": "auto-updater"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/automation-workflows",
+            "name": "automation-workflows"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/baidu-search",
+            "name": "baidu-search"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/blogwatcher",
+            "name": "blogwatcher"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/brave-search",
+            "name": "brave-search"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/browser-automation",
+            "name": "browser-automation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/browser-session-auth-bridge",
+            "name": "browser-session-auth-bridge"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/business-law-specialist-agent",
+            "name": "business-law-specialist-agent"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/byterover",
+            "name": "byterover"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/chatgpt-apps",
+            "name": "chatgpt-apps"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/chrome-devtools",
+            "name": "chrome-devtools"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/clawddocs",
+            "name": "clawddocs"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/clawhub-skill-scout",
+            "name": "clawhub-skill-scout"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/cloudflare-deploy",
+            "name": "cloudflare-deploy"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/common",
+            "name": "common"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/context-frontloader",
+            "name": "context-frontloader"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/continuous-improvement",
+            "name": "continuous-improvement"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/crawl4ai",
+            "name": "crawl4ai"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/cursor-watch-learn-operator",
+            "name": "cursor-watch-learn-operator"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/data",
+            "name": "data"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/design-md",
+            "name": "design-md"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/develop-web-game",
+            "name": "develop-web-game"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/doc",
+            "name": "doc"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/dogfood",
+            "name": "dogfood"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/dual-swarm-isolation",
+            "name": "dual-swarm-isolation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/elite-longterm-memory",
+            "name": "elite-longterm-memory"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/engineering",
+            "name": "engineering"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/enhance-prompt",
+            "name": "enhance-prompt"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/env-manager",
+            "name": "env-manager"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/feedback-integration",
+            "name": "feedback-integration"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/figma",
+            "name": "figma"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/figma-implement-design",
+            "name": "figma-implement-design"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/find-skills",
+            "name": "find-skills"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/framework-consciousness",
+            "name": "framework-consciousness"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/free-ride",
+            "name": "free-ride"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/frontend-design",
+            "name": "frontend-design"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/fuse-connect-chat-injection-qa",
+            "name": "fuse-connect-chat-injection-qa"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/gh-address-comments",
+            "name": "gh-address-comments"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/gh-fix-ci",
+            "name": "gh-fix-ci"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/github",
+            "name": "github"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/gmail",
+            "name": "gmail"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/gog",
+            "name": "gog"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/himalaya",
+            "name": "himalaya"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/humanize-ai-text",
+            "name": "humanize-ai-text"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/humanizer",
+            "name": "humanizer"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/identifier-namespace-design",
+            "name": "identifier-namespace-design"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/imagegen",
+            "name": "imagegen"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/imported-claude-agents",
+            "name": "imported-claude-agents"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/jupyter-notebook",
+            "name": "jupyter-notebook"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/keychain-login-autotype",
+            "name": "keychain-login-autotype"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/library-of-living-knowledge",
+            "name": "library-of-living-knowledge"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/limitation-challenge-schema-loop",
+            "name": "limitation-challenge-schema-loop"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/linear",
+            "name": "linear"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/lnbits-with-qrcode",
+            "name": "lnbits-with-qrcode"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/long-range-business-plan-architect",
+            "name": "long-range-business-plan-architect"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/master-of-taxonomies",
+            "name": "master-of-taxonomies"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/mcporter",
+            "name": "mcporter"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/meta",
+            "name": "meta"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/meta-skill",
+            "name": "meta-skill"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/model-usage",
+            "name": "model-usage"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/multimodal-feature-extraction",
+            "name": "multimodal-feature-extraction"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/nano-banana-pro",
+            "name": "nano-banana-pro"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/nano-pdf",
+            "name": "nano-pdf"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/netlify-deploy",
+            "name": "netlify-deploy"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/news-scouting",
+            "name": "news-scouting"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/notation-reconciliation-auditor",
+            "name": "notation-reconciliation-auditor"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/notion",
+            "name": "notion"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/notion-knowledge-capture",
+            "name": "notion-knowledge-capture"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/notion-meeting-intelligence",
+            "name": "notion-meeting-intelligence"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/notion-research-documentation",
+            "name": "notion-research-documentation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/notion-spec-to-implementation",
+            "name": "notion-spec-to-implementation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/obsidian",
+            "name": "obsidian"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openai-docs",
+            "name": "openai-docs"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openai-whisper",
+            "name": "openai-whisper"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-assistant-setup",
+            "name": "openclaw-assistant-setup"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-oauth-rotation",
+            "name": "openclaw-oauth-rotation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-onboarding-wizard",
+            "name": "openclaw-onboarding-wizard"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-protocol",
+            "name": "openclaw-protocol"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-provider-rollout",
+            "name": "openclaw-provider-rollout"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-sherpa",
+            "name": "openclaw-sherpa"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-sherpa-service",
+            "name": "openclaw-sherpa-service"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-universal-knowledge",
+            "name": "openclaw-universal-knowledge"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-wizard-cli-automation",
+            "name": "openclaw-wizard-cli-automation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/openclaw-wizard-cli-reference",
+            "name": "openclaw-wizard-cli-reference"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/ops",
+            "name": "ops"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/orchestrator",
+            "name": "orchestrator"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/pdf",
+            "name": "pdf"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/personal-archaeology-orchestration",
+            "name": "personal-archaeology-orchestration"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/personal-historical-archaeology",
+            "name": "personal-historical-archaeology"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/planning-with-files",
+            "name": "planning-with-files"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/playwright",
+            "name": "playwright"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/proactive-agent",
+            "name": "proactive-agent"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/protecting-uncommitted-work",
+            "name": "protecting-uncommitted-work"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/react-components",
+            "name": "react-components"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/reconciling-layered-specs",
+            "name": "reconciling-layered-specs"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/remotion",
+            "name": "remotion"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/render-deploy",
+            "name": "render-deploy"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/report-lifecycle",
+            "name": "report-lifecycle"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/review-bugbot",
+            "name": "review-bugbot"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/review-security",
+            "name": "review-security"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/screenshot",
+            "name": "screenshot"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/security",
+            "name": "security"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/security-best-practices",
+            "name": "security-best-practices"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/security-ownership-map",
+            "name": "security-ownership-map"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/security-threat-model",
+            "name": "security-threat-model"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/self-improving-agent",
+            "name": "self-improving-agent"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/sentry",
+            "name": "sentry"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/shadcn-ui",
+            "name": "shadcn-ui"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/skill-builder",
+            "name": "skill-builder"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/skill-catalog",
+            "name": "skill-catalog"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/skill-creator",
+            "name": "skill-creator"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/skill-management",
+            "name": "skill-management"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/slack",
+            "name": "slack"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/sonoscli",
+            "name": "sonoscli"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/sora",
+            "name": "sora"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/speech",
+            "name": "speech"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/spreadsheet",
+            "name": "spreadsheet"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/sspdf",
+            "name": "sspdf"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/sspdf-theme-generator",
+            "name": "sspdf-theme-generator"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/stitch-direct",
+            "name": "stitch-direct"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/stitch-loop",
+            "name": "stitch-loop"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/stock-analysis",
+            "name": "stock-analysis"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/summarize",
+            "name": "summarize"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tavily-search",
+            "name": "tavily-search"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-agent-availability-announce",
+            "name": "tnf-agent-availability-announce"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-agent-deadlock-rescue",
+            "name": "tnf-agent-deadlock-rescue"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-agent-resource-convergence",
+            "name": "tnf-agent-resource-convergence"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-artifacts-lifecycle",
+            "name": "tnf-artifacts-lifecycle"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-autonomy-safety-audit",
+            "name": "tnf-autonomy-safety-audit"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-capability-grants",
+            "name": "tnf-capability-grants"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cli-agent-interoperability",
+            "name": "tnf-cli-agent-interoperability"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cli-agent-onboarding",
+            "name": "tnf-cli-agent-onboarding"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cli-agent-pillar-architect",
+            "name": "tnf-cli-agent-pillar-architect"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cli-agent-pillar-brand",
+            "name": "tnf-cli-agent-pillar-brand"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cli-agent-pillar-engine",
+            "name": "tnf-cli-agent-pillar-engine"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cli-agent-pillar-roadmap",
+            "name": "tnf-cli-agent-pillar-roadmap"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cli-parity-upgrade",
+            "name": "tnf-cli-parity-upgrade"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cli-sdk-interoperability",
+            "name": "tnf-cli-sdk-interoperability"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-code-graph",
+            "name": "tnf-code-graph"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-codex-harness",
+            "name": "tnf-codex-harness"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-command-surface-gate",
+            "name": "tnf-command-surface-gate"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-communication-channels",
+            "name": "tnf-communication-channels"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-cursor-harness-protocol",
+            "name": "tnf-cursor-harness-protocol"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-development-workcycle-closure",
+            "name": "tnf-development-workcycle-closure"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-directives",
+            "name": "tnf-directives"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-docs-census",
+            "name": "tnf-docs-census"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-enforcement-change-safety",
+            "name": "tnf-enforcement-change-safety"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-engineering-context",
+            "name": "tnf-engineering-context"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-federated-ws-channel-control",
+            "name": "tnf-federated-ws-channel-control"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-fleet-delegation-governor",
+            "name": "tnf-fleet-delegation-governor"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-focus-modularization",
+            "name": "tnf-focus-modularization"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-framework-overview",
+            "name": "tnf-framework-overview"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-frontend-deploy",
+            "name": "tnf-frontend-deploy"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-full-auto-network-autopilot",
+            "name": "tnf-full-auto-network-autopilot"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-gemini-sidebar-tandem",
+            "name": "tnf-gemini-sidebar-tandem"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-goal-distillation",
+            "name": "tnf-goal-distillation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-google-antigravity-sync",
+            "name": "tnf-google-antigravity-sync"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-growth-audit",
+            "name": "tnf-growth-audit"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-harness-completeness",
+            "name": "tnf-harness-completeness"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-harness-context-harvest",
+            "name": "tnf-harness-context-harvest"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-harness-integrity-auditor",
+            "name": "tnf-harness-integrity-auditor"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-harness-master-loop",
+            "name": "tnf-harness-master-loop"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-harness-protocol",
+            "name": "tnf-harness-protocol"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-headless-elevation-broker",
+            "name": "tnf-headless-elevation-broker"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-health-check",
+            "name": "tnf-health-check"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-honest-guard-review",
+            "name": "tnf-honest-guard-review"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-host-lifecycle-guardian",
+            "name": "tnf-host-lifecycle-guardian"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-iphone-vision-bridge",
+            "name": "tnf-iphone-vision-bridge"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-lean-worktrees",
+            "name": "tnf-lean-worktrees"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-learning-capture",
+            "name": "tnf-learning-capture"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-live-fleet-cohesion",
+            "name": "tnf-live-fleet-cohesion"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-local-runtime-stability",
+            "name": "tnf-local-runtime-stability"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-managed-mcp-runtime",
+            "name": "tnf-managed-mcp-runtime"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-multi-agent-state-governor",
+            "name": "tnf-multi-agent-state-governor"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-operator-terminal-inviolability",
+            "name": "tnf-operator-terminal-inviolability"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-parody-assimilate-cycle",
+            "name": "tnf-parody-assimilate-cycle"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-platform-migration-residue-audit",
+            "name": "tnf-platform-migration-residue-audit"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-post-restart-continuation",
+            "name": "tnf-post-restart-continuation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-pre-restart-containment",
+            "name": "tnf-pre-restart-containment"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-proactive-goal-wizard",
+            "name": "tnf-proactive-goal-wizard"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-product-lane-reset",
+            "name": "tnf-product-lane-reset"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-relayed-paste-verification",
+            "name": "tnf-relayed-paste-verification"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-resource-watchdog-operations",
+            "name": "tnf-resource-watchdog-operations"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-secret-entry",
+            "name": "tnf-secret-entry"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-self-evolution-protocol",
+            "name": "tnf-self-evolution-protocol"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-skill-disclosure-chain",
+            "name": "tnf-skill-disclosure-chain"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-skill-ubiquity-propagation",
+            "name": "tnf-skill-ubiquity-propagation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-source-concordance",
+            "name": "tnf-source-concordance"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-source-library-refresh",
+            "name": "tnf-source-library-refresh"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-supabase-agent-connection",
+            "name": "tnf-supabase-agent-connection"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-timeline-debug",
+            "name": "tnf-timeline-debug"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-ufte-federated-tag-governor",
+            "name": "tnf-ufte-federated-tag-governor"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-verified-a2a-delivery",
+            "name": "tnf-verified-a2a-delivery"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-video-intelligence-completion",
+            "name": "tnf-video-intelligence-completion"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/tnf-worktree-reclamation",
+            "name": "tnf-worktree-reclamation"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/transcribe",
+            "name": "transcribe"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/vercel-deploy",
+            "name": "vercel-deploy"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/verifying-command-success",
+            "name": "verifying-command-success"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/video-frames",
+            "name": "video-frames"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/weather",
+            "name": "weather"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/web-game-deterministic-loop",
+            "name": "web-game-deterministic-loop"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/webpilot",
+            "name": "webpilot"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/yeet",
+            "name": "yeet"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/youtube-api-skill",
+            "name": "youtube-api-skill"
+          },
+          {
+            "type": "agent-skill",
+            "path": ".agent/skills/youtube-watcher",
+            "name": "youtube-watcher"
+          },
+          {
+            "type": "agent-skill",
+            "path": "scripts/agents/__pycache__",
+            "name": "__pycache__"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/announce-availability.cjs",
+            "name": "announce-availability.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/onboard-cli-platform.cjs",
+            "name": "onboard-cli-platform.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/package-agent-bank-catalog.cjs",
+            "name": "package-agent-bank-catalog.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/provision-full-auto-network.cjs",
+            "name": "provision-full-auto-network.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/reconcile-agent-banks.cjs",
+            "name": "reconcile-agent-banks.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/soul-contract.cjs",
+            "name": "soul-contract.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/soul-contract.test.cjs",
+            "name": "soul-contract.test.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/subdirector-presence-heartbeat.cjs",
+            "name": "subdirector-presence-heartbeat.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/tnf-agent-census.cjs",
+            "name": "tnf-agent-census.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/tnf-agent-census.test.cjs",
+            "name": "tnf-agent-census.test.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/tnf-directive-verify-cycle.cjs",
+            "name": "tnf-directive-verify-cycle.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/tnf-whole-codebase-verify.cjs",
+            "name": "tnf-whole-codebase-verify.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/webdev-a11y-skill.cjs",
+            "name": "webdev-a11y-skill.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/webdev-api-skill.cjs",
+            "name": "webdev-api-skill.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/webdev-devops-skill.cjs",
+            "name": "webdev-devops-skill.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/webdev-frontend-skill.cjs",
+            "name": "webdev-frontend-skill.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/webdev-performance-skill.cjs",
+            "name": "webdev-performance-skill.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/webdev-security-skill.cjs",
+            "name": "webdev-security-skill.cjs"
+          },
+          {
+            "type": "agent-artifact",
+            "path": "scripts/agents/webdev-swarm-orchestrator.cjs",
+            "name": "webdev-swarm-orchestrator.cjs"
+          }
+        ],
+        "skillsComposed": 213,
+        "protocolsRefined": 152
+      }
+    },
+    "codebaseLineage": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 10888,
+      "data": {
+        "output": "{\n  \"timestamp\": \"2026-10-18T03:19:42.241Z\",\n  \"trackedAbstractions\": [\n    {\n      \"name\": \"Turn Zero Mandate\",\n      \"path\": \"docs/protocols/TURN_ZERO_MANDATE.md\",\n      \"lastCommit\": {\n        \"hash\": \"32fbbcef\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Thu Sep 17 17:03:58 2026 -0400\",\n        \"subject\": \"fix(frontend): stop auth redirect loop and cut stub surfaces\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"Living State\",\n      \"path\": \"docs/protocols/LIVING_STATE.md\",\n      \"lastCommit\": {\n        \"hash\": \"ea8a79c7\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Sat Oct 17 22:46:06 2026 -0400\",\n        \"subject\": \"chore: turn-end handoff f9aaee49\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"Agent Status Ledger\",\n      \"path\": \"docs/protocols/AGENT_STATUS_LEDGER.md\",\n      \"lastCommit\": {\n        \"hash\": \"ea8a79c7\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Sat Oct 17 22:46:06 2026 -0400\",\n        \"subject\": \"chore: turn-end handoff f9aaee49\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"Frontload Manifest\",\n      \"path\": \"docs/core/FRONTLOAD_MANIFEST.md\",\n      \"lastCommit\": {\n        \"hash\": \"c7ad1052\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Mon Sep 21 01:52:22 2026 -0400\",\n        \"subject\": \"feat(channels): elevate Communication Channels as Stage C categorical set\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"Session Handoff Protocol\",\n      \"path\": \"docs/protocols/reports/SESSION_HANDOFF_LATEST.json\",\n      \"lastCommit\": {\n        \"hash\": \"ea8a79c7\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Sat Oct 17 22:46:06 2026 -0400\",\n        \"subject\": \"chore: turn-end handoff f9aaee49\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"TNF CLI\",\n      \"path\": \"packages/tnf-cli/src/cli.ts\",\n      \"lastCommit\": {\n        \"hash\": \"521c08c0\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Thu Oct 8 13:52:12 2026 -0400\",\n        \"subject\": \"feat(harness): admit every local launch through host capacity (#759)\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"Master Reconciliation Runner\",\n      \"path\": \"scripts/protocols/tnf-master-reconciliation-runner.cjs\",\n      \"lastCommit\": {\n        \"hash\": \"32fbbcef\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Thu Sep 17 17:03:58 2026 -0400\",\n        \"subject\": \"fix(frontend): stop auth redirect loop and cut stub surfaces\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"Self-Evolution Flywheel\",\n      \"path\": \"scripts/protocols/tnf-self-evolution-flywheel.cjs\",\n      \"lastCommit\": {\n        \"hash\": \"32fbbcef\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Thu Sep 17 17:03:58 2026 -0400\",\n        \"subject\": \"fix(frontend): stop auth redirect loop and cut stub surfaces\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"Assimilation Scan\",\n      \"path\": \"scripts/harness/assimilation-scan.cjs\",\n      \"lastCommit\": {\n        \"hash\": \"dab0ac88\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Mon Oct 5 17:04:12 2026 -0400\",\n        \"subject\": \"feat: land parked work from the shared checkout and one agent lane (#695)\"\n      },\n      \"exists\": true\n    },\n    {\n      \"name\": \"Agent Availability Announce\",\n      \"path\": \"docs/protocols/AGENT_AVAILABILITY_ANNOUNCE.md\",\n      \"lastCommit\": {\n        \"hash\": \"32fbbcef\",\n        \"author\": \"Daniel Who?\",\n        \"date\": \"Thu Sep 17 17:03:58 2026 -0400\",\n        \"subject\": \"fix(frontend): stop auth redirect loop and cut stub surfaces\"\n      },\n      \"exists\": true\n    }\n  ],\n  \"driftEvents\": [],\n  \"convergenceScore\": 100\n}"
+      }
+    },
+    "processHealth": {
+      "ok": false,
+      "verdict": "findings",
+      "findings": 20,
+      "durationMs": 898,
+      "data": {
+        "findings": 20,
+        "healthy": 12,
+        "detail": [
+          "never-ran: tenant-continuous-qa-loop",
+          "never-ran: tenant-daily-priority-plan",
+          "stale: tenant-hourly-attribution-audit",
+          "stale: tenant-knowledge-scout-sprint",
+          "never-ran: tenant-nightly-maintenance",
+          "stale: tenant-orchestrator-pulse",
+          "stale: tenant-personal-archaeology-master-loop",
+          "stale: tenant-self-improvement-loop",
+          "stale: tenant-terminal-awareness-default",
+          "never-ran: tnf-agent-registry-reap",
+          "stale: tnf-auto-git-push",
+          "stale: tnf-growth-blocker-audit",
+          "stale: tnf-llm-arena-intel-collector",
+          "stale: tnf-llm-verified-fleet-cycle",
+          "stale: tnf-memory-freshness-sweep",
+          "never-ran: tnf-model-default-steward",
+          "stale: tnf-self-improvement-scorecard",
+          "stale: tnf-self-improvement-scorecard-light",
+          "stale: tnf-swarm-role-call-and-scheduling",
+          "stale: tnf-terminal-awareness-reminder"
+        ]
+      }
+    },
+    "goalReconciliation": {
+      "ok": true,
+      "verdict": "clean",
+      "durationMs": 1,
+      "data": {
+        "goalsConfigFile": false
+      }
+    }
+  },
+  "passed": false,
+  "totalDurationMs": 13263,
+  "summary": {
+    "clean": 5,
+    "findings": 1,
+    "unresolved": 0,
+    "errored": 0,
+    "totalFindings": 20
+  }
+}

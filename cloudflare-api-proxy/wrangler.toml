@@ -9,12 +9,14 @@ workers_dev = true
 pattern = "api.thenewfuse.com/*"
 zone_name = "thenewfuse.com"
 
-[[routes]]
-pattern = "api-gateway.thenewfuse.com/*"
-zone_name = "thenewfuse.com"
+# Removed 2026-09-18: api-gateway.thenewfuse.com/* was a route with no DNS record
+# behind it, so it could never fire. The api-gateway Cloud Run service is still
+# reached directly at its run.app URL; only the unreachable hostname route is gone.
+# If this subdomain is ever wanted, it needs a CNAME to thenewfuse-main.pages.dev
+# (Proxied) added first — see cloudflare-marketplace-proxy/wrangler.toml.
 
 [vars]
-GCP_API_URL = "https://api-server-241337102384.us-central1.run.app"
-CORS_ALLOWED_ORIGINS = "https://app.thenewfuse.com,https://thenewfuse.com,https://www.thenewfuse.com,https://production.thenewfuse-main.pages.dev"
+GCP_API_URL = "https://tnf-v3-api-241337102384.us-central1.run.app"
+CORS_ALLOWED_ORIGINS = "https://app.thenewfuse.com,https://thenewfuse.com,https://www.thenewfuse.com,https://production.thenewfuse-main.pages.dev,https://poker.ai-arcade.xyz"
 # Public API traffic is proxied to the core API server. The worker preserves
 # /api/* routes and normalizes legacy /api/v1/* or /v1/* callers to /api/*.

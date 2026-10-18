@@ -1,65 +1,41 @@
 # SESSION_HANDOFF_LATEST
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-09-19T14:58:07.754Z` Handoff ID: `ff9dfbee-d29e-4ade-9bf7-db912474e19e`
+`2026-10-18T02:42:35.694Z` Handoff ID: `f9aaee49-8552-4cf2-9afc-776adcf9d52b`
 
-## Scope
+## Repository
 
-- Repository: `whodaniel/The-New-Fuse`
-- Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `jules-2004475311069756689-d9ede7f8`
-- Head SHA: `e8d1571eb537734dc8f55acf5fb2ea0453dc238b`
-- Sensitive Scope: `internal`
+- Actual: `whodaniel/tnf-monorepo`
+- Canonical TNF source: `whodaniel/tnf-monorepo`
+- Origin: `https://github.com/whodaniel/tnf-monorepo.git`
+- Branch: `main`
+- Head SHA: `9e6aac2f3d39f2d620bbeb4a6b721feb6736212f`
 
 ## Classification
 
-- Work Domain: `unknown`
-- Artifact Destination: `unknown`
-- Data Residency: `unknown`
-- Sensitivity: `unknown`
+- Work domain: `core`
+- Artifact destination: `oss_runtime`
+- Data residency: `bounded_working`
+- Sensitivity: `internal`
+
+## Capabilities
+
+- Required: (not recorded)
+- Staffed by: (not recorded)
 
 ## Work Summary
 
-- Modified 4 file(s)
-
-## Changed Paths
-
-- apps/backend/package.json
-- apps/backend/src/jobs/processors/report-generation.processor.spec.ts
-- apps/backend/src/jobs/processors/report-generation.processor.ts
-- pnpm-lock.yaml
-- docs/protocols/reports/SESSION_HANDOFF_REPORT_GENERATION.json
-- docs/protocols/reports/session_handoff_report_generation.md
-
-## Continuation
-
-- **Owner:** operator
-- **Priority:** medium
-
-**Targets:**
-
-- orchestrator
-
-**Resume Checklist:**
-
-- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against schema
-- Work through next_actions in order — but items marked NEEDS LIVE OPERATOR
-  CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop
-  and get live operator confirmation before running git commit/push for those,
-  do not auto-execute them
+- Merged V3 pillar skills (architect, engine, roadmap, brand) + disk capacity
+  probe into tnf-v3-monorepo main at cfd2551; resolved rebase conflict in
+  session-entry.mjs combining meta-tier0 + disk probe; V2 pillar skills remain
+  on worktree branch tnf/worktree/pillar-skills-commit
 
 ## Next Actions
 
-- Merge PR353
-- Block browser profile publication
-- Correct PR352 runtime and RLS findings
-- ⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 6 file(s)
-  uncommitted — see
-  docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation
-
-## Artifacts
-
-**Commits:**
-
-- e8d1571eb537734dc8f55acf5fb2ea0453dc238b
+- Continue priority queue from SESSION_HANDOFF_LATEST.json
+  continuation.resume_checklist.
+- Emit a fresh handoff artifact immediately after completing the next critical
+  work unit.
+- ⚠️ NOTICE: 18 file(s) uncommitted — commit law:
+  docs/core/AGENTS.md#autonomous-commits-and-pushes (gates must pass;
+  authority-surface edits still need TNF_AUTHORITY_EDIT_CONFIRM)
