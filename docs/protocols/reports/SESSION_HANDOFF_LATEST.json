@@ -1,18 +1,23 @@
 {
-  "handoff_id": "f9aaee49-8552-4cf2-9afc-776adcf9d52b",
-  "created_at": "2026-10-18T02:42:35.694Z",
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "9420b0ab-25bf-41f3-b6ff-9f5424a5c726",
+  "created_at": "2026-10-18T05:19:33.261Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "main",
+  "head_sha": "374ed29c0586c4ad5ae1890ee843935813f4df18",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts."
+  ],
   "changed_paths": [
-    ".agent/META_SKILLS_GUIDE.md",
-    ".agent/skill-bank/ingest-report.json",
-    ".agent/skills/tnf-cli-agent-pillar-architect/",
+    "apps/frontend/src/data/codebase_map.json",
     ".agent/skills/tnf-cli-agent-pillar-architect/SKILL.md",
-    ".agent/skills/tnf-cli-agent-pillar-brand/",
     ".agent/skills/tnf-cli-agent-pillar-brand/SKILL.md",
-    ".agent/skills/tnf-cli-agent-pillar-engine/",
     ".agent/skills/tnf-cli-agent-pillar-engine/SKILL.md",
-    ".agent/skills/tnf-cli-agent-pillar-roadmap/",
     ".agent/skills/tnf-cli-agent-pillar-roadmap/SKILL.md",
-    ".agent/skills/tnf-skill-ubiquity-propagation/SKILL.md",
     "apps/frontend/docs/audits/all-routes-semantic-audit.json",
     "apps/frontend/docs/audits/all-routes-semantic-audit.md",
     "apps/frontend/docs/audits/self-improvement-scorecard.json",
@@ -25,17 +30,25 @@
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/handoff-registry.json",
-    "docs/protocols/lessons/2026-10-17-tnf-skill-yaml-block-scalar-footgun.md",
     "docs/protocols/lessons/INDEX.md",
     "docs/protocols/lessons/categories/general-operational/INDEX.md",
     "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/handoffs/2026/508f0a16-3bd0-4c91-a069-9b619954093e.json",
     "docs/protocols/reports/handoffs/2026/c6e4417d-f57a-4f8e-bdbc-8a53f3fff581.json",
     "docs/protocols/reports/handoffs/2026/d6eec111-fbf1-487e-8512-a0aab3444664.json",
     "logs/flywheel/property-health-history.jsonl",
-    "logs/flywheel/property-health-latest.json"
+    "logs/flywheel/property-health-latest.json",
+    "apps/frontend/docs/audits/audit-cycle-run-log.json",
+    "apps/frontend/public/data/",
+    "data/pages/",
+    "packages/llm-catalog/src/index.js",
+    "packages/llm-catalog/src/model-expiry.js",
+    "silent_output.txt",
+    "tmp/",
+    "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T051933-9420b0ab.json",
+    "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T051933-9420b0ab.md",
+    "docs/protocols/workspace-leases.json"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -45,50 +58,29 @@
     "notes": ""
   },
   "continuation": {
-    "owner": "operator",
-    "targets": ["orchestrator"],
-    "priority": "medium",
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against schema",
-      "Work through next_actions in order — but items marked ⚠️ NOTICE are auto-generated dirty-tree notices, not standing commands; commit/push policy is docs/core/AGENTS.md#autonomous-commits-and-pushes (autonomous, subject to gates/audit-trail; authority-surface edits still need TNF_AUTHORITY_EDIT_CONFIRM) — do not read a notice as a universal manual-confirmation requirement"
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
   "next_actions": [
     "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit.",
-    "⚠️ NOTICE: 18 file(s) uncommitted — commit law: docs/core/AGENTS.md#autonomous-commits-and-pushes (gates must pass; authority-surface edits still need TNF_AUTHORITY_EDIT_CONFIRM)"
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
   ],
-  "artifacts": {
-    "commits": ["9e6aac2f3d39f2d620bbeb4a6b721feb6736212f"],
-    "deployment_urls": [],
-    "database_migrations": []
-  },
-  "repository_context": {
-    "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": true,
-    "operation_in_progress": null,
-    "publication_targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ]
-  },
-  "classification": {
-    "work_domain": "core",
-    "artifact_destination": "oss_runtime",
-    "data_residency": "bounded_working",
-    "sensitivity": "internal"
-  },
-  "capabilities": {
-    "required": [],
-    "staffed_by": []
-  },
-  "publication": {
-    "public_runtime_affected": false,
-    "control_plane_affected": false,
-    "satellites": []
+  "reflection": {
+    "lessons": {
+      "considered": false
+    },
+    "skills": {
+      "considered": false
+    },
+    "gaps": {
+      "considered": false
+    }
   },
   "freshness_receipts": [
     {
@@ -158,62 +150,43 @@
       "value": "RECENT=20 MIRRORED=20 PENDING=0"
     }
   ],
-  "reflection": {
-    "lessons": {
-      "considered": true,
-      "recorded": ["tnf-skill-yaml-block-scalar-footgun"]
-    },
-    "skills": {
-      "considered": true,
-      "proposed": ["tnf-cli-agent-pillar-skills"],
-      "overlap_reviewed": true
-    },
-    "gaps": {
-      "considered": true,
-      "open": [
-        {
-          "summary": "V3 main merge at cfd2551 not yet pushed to origin"
-        },
-        {
-          "summary": "V2 shared checkout has 19 pre-existing dirty peer files belonging to another session - not addressed"
-        }
-      ]
-    },
-    "self_audit": {
-      "checks": [
-        {
-          "id": "work-summary-not-stale",
-          "ok": true,
-          "detail": "1 item(s), distinct from the previous handoff"
-        },
-        {
-          "id": "classification-complete",
-          "ok": true,
-          "detail": "all four fields set"
-        },
-        {
-          "id": "reflection-answered",
-          "ok": true,
-          "detail": "lessons.considered=true skills.considered=true"
-        },
-        {
-          "id": "gaps-considered",
-          "ok": true,
-          "detail": "2 open gap(s) recorded"
-        },
-        {
-          "id": "next-actions-not-all-inherited",
-          "ok": true,
-          "detail": "3 action(s), 0 inherited from the previous handoff"
-        },
-        {
-          "id": "changed-paths-recorded",
-          "ok": true,
-          "detail": "26 recorded, 26 dirty in the working tree"
-        }
-      ],
-      "findings": 0
-    }
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
   },
-  "basis": "c347e860b1633f084aaf1e5d73d5d71182104e4a"
+  "artifacts": {
+    "commits": ["374ed29c0586c4ad5ae1890ee843935813f4df18"]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "checkout_id": "co_mtpe199t_2c40fc93",
+  "task_id": "TNF-SESSION",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": [
+    "508f0a16-3bd0-4c91-a069-9b619954093e",
+    "3dadb2ed-edae-49d1-b8ae-c7ebdcc1f22c",
+    "686d2d0b-4e9c-4dfa-ad0b-3f9d569cf94f"
+  ],
+  "record_hash": "95d57f44bfabda6747603997a2a5a1cce791c6c3b1c706f95a2be1d5f4ca86d1"
 }

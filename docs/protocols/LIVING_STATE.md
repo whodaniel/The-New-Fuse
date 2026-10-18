@@ -5,10 +5,6 @@
 <!-- CURRENT_DIRECTIVE:START -->
 
 **Current Directive:** Product-first per docs/REORIENTATION_2026-09-09.md: every
-task cites Manifesto §1, a GTM §10 unchecked item, or Launch Gates 1-5, or it
-does not start; Crucible process is ACTIVE. Gamified multi-agent PvP audits and
-Fog-of-War discovery sweeps are the mandatory clearance path for all Launch Gate
-3 objectives; text-only worker lanes are not a code path
 
 <!-- CURRENT_DIRECTIVE:END -->
 
@@ -145,6 +141,10 @@ Fog-of-War discovery sweeps are the mandatory clearance path for all Launch Gate
   red-channel-coordinator.cjs, red-lane-persistent-listener.cjs
 
 ## History
+
+- 2026-10-18T05:19:34.219Z handoff `9420b0ab-25bf-41f3-b6ff-9f5424a5c726` head
+  `374ed29c0586` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-10-17T14:04:08.186Z handoff `508f0a16-3bd0-4c91-a069-9b619954093e` head
   `9e6aac2f3d39` project `TNF-SESSION` — Continue priority queue from
