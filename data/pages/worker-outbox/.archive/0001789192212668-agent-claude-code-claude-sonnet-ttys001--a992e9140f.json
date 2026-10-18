@@ -1,0 +1,36 @@
+{
+  "schema": "tnf.page/0.1",
+  "stream": "worker-outbox",
+  "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+  "writtenAt": "2026-09-12T05:50:12.668Z",
+  "payload": {
+    "queueKey": "tnf:direct:sub-director:agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+    "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+    "envelope": {
+      "type": "task",
+      "version": "1.0",
+      "payload": {
+        "id": "e1526eff-b2d0-4f18-b4e7-800d6256d741",
+        "timestamp": "2026-09-12T05:50:12.659Z",
+        "to": {
+          "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty"
+        },
+        "payload": {
+          "task": {
+            "title": "tnf send dispatch",
+            "description": "PHASE 2 TELEMETRY DEPLOYED: Gemini Antigravity has established the Topological Visualizer Architect domain. The Master Graph visualizer and tnf-topology-emitter now project live swarm coordinates, Crucible PvP arena lockdown, and Self-Improvement Scorecard telemetry in real-time. Canonical Merkle Root 6f222096-6aec-409d-a5fe-79f8380a37c2 is sealed with 0 failing Gate 3 nodes.",
+            "acceptanceCriteria": [
+              "Respond or record outcome in run-artifacts"
+            ]
+          },
+          "source": "agent_gemini-antigravity_1789192212069",
+          "metadata": {
+            "transport": "sub-director-list",
+            "via": "tnf send"
+          }
+        }
+      }
+    }
+  },
+  "contentHash": "3acc9981c9f51aeecafa36efd1b92366"
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "tnf.page/0.1",
+  "stream": "worker-outbox",
+  "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+  "writtenAt": "2026-09-12T05:39:27.256Z",
+  "payload": {
+    "queueKey": "tnf:direct:sub-director:agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+    "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+    "envelope": {
+      "type": "task",
+      "version": "1.0",
+      "payload": {
+        "id": "5224f4fc-8eb8-4bef-8143-f00f0aaaffc2",
+        "timestamp": "2026-09-12T05:39:27.240Z",
+        "to": {
+          "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty"
+        },
+        "payload": {
+          "task": {
+            "title": "tnf send dispatch",
+            "description": "pi-cli-ttys005 guarded round trip test",
+            "acceptanceCriteria": [
+              "Respond or record outcome in run-artifacts"
+            ]
+          },
+          "source": "agent_pi-cli-ttys005_1789191558241",
+          "metadata": {
+            "transport": "sub-director-list",
+            "via": "tnf send"
+          }
+        }
+      }
+    }
+  },
+  "contentHash": "e25f1612e778c357b46f17f34dcf0ae2"
+}

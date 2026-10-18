@@ -1,0 +1,36 @@
+{
+  "schema": "tnf.page/0.1",
+  "stream": "worker-outbox",
+  "agentId": "tnf-cli-agent",
+  "writtenAt": "2026-09-13T05:08:40.774Z",
+  "payload": {
+    "queueKey": "tnf:direct:sub-director:tnf-cli-agent",
+    "agentId": "tnf-cli-agent",
+    "envelope": {
+      "type": "task",
+      "version": "1.0",
+      "payload": {
+        "id": "74ec859e-965e-4304-bf25-2d160df00b41",
+        "timestamp": "2026-09-13T05:08:40.771Z",
+        "to": {
+          "agentId": "tnf-cli-agent"
+        },
+        "payload": {
+          "task": {
+            "title": "tnf send dispatch",
+            "description": "Muse Glimmer pattern-scan task pack ready. Start with docs/protocols/tasks/muse-glimmer-pattern-scan/00-README.md, then phase1-A-messaging-bus.md. Read-only over scope paths; write reports only to the paths each task specifies.",
+            "acceptanceCriteria": [
+              "Respond or record outcome in run-artifacts"
+            ]
+          },
+          "source": "agent_cli-sender_1789276120757",
+          "metadata": {
+            "transport": "sub-director-list",
+            "via": "tnf send"
+          }
+        }
+      }
+    }
+  },
+  "contentHash": "ab1bbff701f6b442a0175d27a1ca62d6"
+}

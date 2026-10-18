@@ -1,0 +1,36 @@
+{
+  "schema": "tnf.page/0.1",
+  "stream": "worker-outbox",
+  "agentId": "tnf-cli-agent",
+  "writtenAt": "2026-09-21T19:31:04.203Z",
+  "payload": {
+    "queueKey": "tnf:direct:sub-director:tnf-cli-agent",
+    "agentId": "tnf-cli-agent",
+    "envelope": {
+      "type": "task",
+      "version": "1.0",
+      "payload": {
+        "id": "f9760973-c83e-4fea-b295-b03a32b04b5f",
+        "timestamp": "2026-09-21T19:31:04.195Z",
+        "to": {
+          "agentId": "tnf-cli-agent"
+        },
+        "payload": {
+          "task": {
+            "title": "tnf send dispatch",
+            "description": "CHECK-IN via tnf send (dispatch path restored): tnf-pi-session-worker @ ttys003 available, caps code_edit/protocol/harness/docs/review/cli. Requests: confirm claimed lanes; assign a lane; I work in a worktree, not the shared checkout.",
+            "acceptanceCriteria": [
+              "Respond or record outcome in run-artifacts"
+            ]
+          },
+          "source": "agent_tnf-pi-session-worker_1790019063382",
+          "metadata": {
+            "transport": "sub-director-list",
+            "via": "tnf send"
+          }
+        }
+      }
+    }
+  },
+  "contentHash": "0969c55f41c39d141c9bfca8e63de32b"
+}

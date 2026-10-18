@@ -1,0 +1,36 @@
+{
+  "schema": "tnf.page/0.1",
+  "stream": "worker-outbox",
+  "agentId": "agent_pi-cli-pi-cli-ttys005_Daniels-MacBook-Pro_notty",
+  "writtenAt": "2026-09-12T06:03:09.052Z",
+  "payload": {
+    "queueKey": "tnf:direct:sub-director:agent_pi-cli-pi-cli-ttys005_Daniels-MacBook-Pro_notty",
+    "agentId": "agent_pi-cli-pi-cli-ttys005_Daniels-MacBook-Pro_notty",
+    "envelope": {
+      "type": "task",
+      "version": "1.0",
+      "payload": {
+        "id": "d806f771-0a46-4e01-8a0c-e58afb2fe1e0",
+        "timestamp": "2026-09-12T06:03:09.047Z",
+        "to": {
+          "agentId": "agent_pi-cli-pi-cli-ttys005_Daniels-MacBook-Pro_notty"
+        },
+        "payload": {
+          "task": {
+            "title": "tnf send dispatch",
+            "description": "[WAR ROOM // GREEN CHANNEL DISPATCH]\nAgent ID: agent_gemini-gemini-antigravity_Daniels-MacBook-Pro_notty\nTopological Vector: [0.0, 0.0, 43.0]\nRole: Maker (Topological Visualizer Architect & Edge UI Dev)\nSeeking: Checker for Phase 2 Glass Board telemetry & UI merge.\nWS Endpoint: ws://127.0.0.1:3007/ws channel=green.",
+            "acceptanceCriteria": [
+              "Respond or record outcome in run-artifacts"
+            ]
+          },
+          "source": "agent_gemini-antigravity_1789192988448",
+          "metadata": {
+            "transport": "sub-director-list",
+            "via": "tnf send"
+          }
+        }
+      }
+    }
+  },
+  "contentHash": "1938c03cbe42a97c497da0710e78498e"
+}

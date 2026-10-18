@@ -1,0 +1,199 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "9420b0ab-25bf-41f3-b6ff-9f5424a5c726",
+  "created_at": "2026-10-18T05:19:33.261Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "main",
+  "head_sha": "374ed29c0586c4ad5ae1890ee843935813f4df18",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": [
+    "TNF-SESSION"
+  ],
+  "work_summary": [
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts."
+  ],
+  "changed_paths": [
+    "apps/frontend/src/data/codebase_map.json",
+    ".agent/skills/tnf-cli-agent-pillar-architect/SKILL.md",
+    ".agent/skills/tnf-cli-agent-pillar-brand/SKILL.md",
+    ".agent/skills/tnf-cli-agent-pillar-engine/SKILL.md",
+    ".agent/skills/tnf-cli-agent-pillar-roadmap/SKILL.md",
+    "apps/frontend/docs/audits/all-routes-semantic-audit.json",
+    "apps/frontend/docs/audits/all-routes-semantic-audit.md",
+    "apps/frontend/docs/audits/self-improvement-scorecard.json",
+    "apps/frontend/docs/audits/self-improvement-scorecard.md",
+    "cloudflare-api-proxy/wrangler.toml",
+    "cloudflare-relay-proxy/wrangler.toml",
+    "data/agent-registry/onboarding-agent.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/lessons/INDEX.md",
+    "docs/protocols/lessons/categories/general-operational/INDEX.md",
+    "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/handoffs/2026/c6e4417d-f57a-4f8e-bdbc-8a53f3fff581.json",
+    "docs/protocols/reports/handoffs/2026/d6eec111-fbf1-487e-8512-a0aab3444664.json",
+    "logs/flywheel/property-health-history.jsonl",
+    "logs/flywheel/property-health-latest.json",
+    "apps/frontend/docs/audits/audit-cycle-run-log.json",
+    "apps/frontend/public/data/",
+    "data/pages/",
+    "packages/llm-catalog/src/index.js",
+    "packages/llm-catalog/src/model-expiry.js",
+    "silent_output.txt",
+    "tmp/",
+    "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T051933-9420b0ab.json",
+    "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T051933-9420b0ab.md",
+    "docs/protocols/workspace-leases.json"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
+  },
+  "continuation": {
+    "owner": "tnf-orchestrator",
+    "targets": [
+      "story-architect",
+      "librarian"
+    ],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": [
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+  ],
+  "reflection": {
+    "lessons": {
+      "considered": false
+    },
+    "skills": {
+      "considered": false
+    },
+    "gaps": {
+      "considered": false
+    }
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:48.458Z",
+      "value": "0ba9b9206b8eb32426b1b37efeed0acdf9507f8b"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:50.348Z",
+      "value": "c347e860b1633f084aaf1e5d73d5d71182104e4a"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:52.188Z",
+      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:53.912Z",
+      "value": "[]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:54.527Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.615Z",
+      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.829Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.987Z",
+      "value": "155a3b9273bad34ec15046ebf323d53e0854dc31\n2026-09-01"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:58.784Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=0ba9b9206b8eb32426b1b37efeed0acdf9507f8b\nbranch=main\ndirty=24"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:58.896Z",
+      "value": "PONG\nRELAY_OK"
+    },
+    {
+      "id": "tnf.handoff-scoped-propagation",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:39:00.998Z",
+      "value": "RECENT=20 MIRRORED=20 PENDING=0"
+    }
+  ],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": [
+      "374ed29c0586c4ad5ae1890ee843935813f4df18"
+    ]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "checkout_id": "co_mtpe199t_2c40fc93",
+  "task_id": "TNF-SESSION",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": [
+    "508f0a16-3bd0-4c91-a069-9b619954093e",
+    "3dadb2ed-edae-49d1-b8ae-c7ebdcc1f22c",
+    "686d2d0b-4e9c-4dfa-ad0b-3f9d569cf94f"
+  ],
+  "record_hash": "95d57f44bfabda6747603997a2a5a1cce791c6c3b1c706f95a2be1d5f4ca86d1"
+}

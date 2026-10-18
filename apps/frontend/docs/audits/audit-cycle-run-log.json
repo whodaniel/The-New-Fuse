@@ -1,0 +1,21 @@
+{
+  "spec": "tnf/audit-cycle-run-log/0.1",
+  "cycle": "light",
+  "lastRunAt": "2026-10-18T05:00:03.762Z",
+  "exitCode": 0,
+  "steps": [
+    {
+      "name": "auth-path-audit",
+      "exitCode": 0,
+      "durationMs": 3072,
+      "outputPreview": "{ \"ok\": true, \"summary\": { \"generatedAt\": \"2026-10-18T05:00:06.764Z\", \"total\": 4, \"passed\": 4, \"failed\": 0, \"fetchTimeoutMs\": 30000, \"publicBaseUrl\": \"https://thenewfuse.com\", \"apiBaseUrl\": \"https://api.thenewfuse.com\" }, \"reportJsonPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/frontend/docs/audits/auth-path-audit.json\", \"reportMdPath\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TN"
+    },
+    {
+      "name": "self-improvement-scorecard",
+      "exitCode": 0,
+      "durationMs": 740,
+      "outputPreview": "{ \"ok\": false, \"scorecardJson\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/frontend/docs/audits/self-improvement-scorecard.json\", \"scorecardMd\": \"/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/apps/frontend/docs/audits/self-improvement-scorecard.md\", \"overall\": { \"passed\": false, \"requiredAuditsPresent\": true, \"falsifiers\": [ { \"audit\": \"live\", \"falsified_by\": \"crawl report"
+    }
+  ],
+  "falsifiedBy": null
+}

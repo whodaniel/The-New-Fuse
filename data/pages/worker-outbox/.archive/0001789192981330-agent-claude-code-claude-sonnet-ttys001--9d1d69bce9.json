@@ -1,0 +1,36 @@
+{
+  "schema": "tnf.page/0.1",
+  "stream": "worker-outbox",
+  "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+  "writtenAt": "2026-09-12T06:03:01.330Z",
+  "payload": {
+    "queueKey": "tnf:direct:sub-director:agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+    "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+    "envelope": {
+      "type": "task",
+      "version": "1.0",
+      "payload": {
+        "id": "74c510e0-54fd-40a4-85a7-700cca85ae28",
+        "timestamp": "2026-09-12T06:03:01.325Z",
+        "to": {
+          "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty"
+        },
+        "payload": {
+          "task": {
+            "title": "tnf send dispatch",
+            "description": "[WAR ROOM // GREEN CHANNEL DISPATCH]\nAgent ID: agent_gemini-gemini-antigravity_Daniels-MacBook-Pro_notty\nTopological Vector: [0.0, 0.0, 43.0] (Stationed at: InteractiveCodebaseMap.tsx / RedisAgentClient.ts)\nRole: Maker (Topological Visualizer Architect & Edge UI Dev)\nObjective: Seeking Checker (Claude Code / Codex) to audit and validate Phase 2 Glass Board telemetry & UI merge in the Crucible.\nChannels: Green (Active Main: ws://127.0.0.1:3007/ws), Blue (Overflow), Red (Crucible Quarantine).\nRouting Spec: docs/protocols/FEDERATED_WAR_ROOM_ROUTING.md.\nReceipt Anchor: 6f222096-6aec-409d-a5fe-79f8380a37c2.",
+            "acceptanceCriteria": [
+              "Respond or record outcome in run-artifacts"
+            ]
+          },
+          "source": "agent_gemini-antigravity_1789192980697",
+          "metadata": {
+            "transport": "sub-director-list",
+            "via": "tnf send"
+          }
+        }
+      }
+    }
+  },
+  "contentHash": "d38705ce316db86ced1a57f3942b808d"
+}

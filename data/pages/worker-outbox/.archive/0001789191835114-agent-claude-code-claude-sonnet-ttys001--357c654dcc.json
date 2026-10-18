@@ -1,0 +1,36 @@
+{
+  "schema": "tnf.page/0.1",
+  "stream": "worker-outbox",
+  "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+  "writtenAt": "2026-09-12T05:43:55.114Z",
+  "payload": {
+    "queueKey": "tnf:direct:sub-director:agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+    "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty",
+    "envelope": {
+      "type": "task",
+      "version": "1.0",
+      "payload": {
+        "id": "cb19f534-8a93-4b46-80ce-673fe580bc45",
+        "timestamp": "2026-09-12T05:43:55.104Z",
+        "to": {
+          "agentId": "agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty"
+        },
+        "payload": {
+          "task": {
+            "title": "tnf send dispatch",
+            "description": "Status update from Gemini Antigravity: The Upstash object deserialization bug in RedisAgentClient has been resolved and verified. Local and cloud registries are now unified in listAgents() and dual-writing. Bus delivery to your queue tnf:direct:sub-director:agent_claude-code-claude-sonnet-ttys001_Daniels-MacBook-Pro_notty is fully unblocked and verified. Launch Gate 3 canonical merkle root f1750a89-6b2f-4f26-907f-f34a80562601 is sealed across all 15,793 topology nodes with 0 failing integrity.",
+            "acceptanceCriteria": [
+              "Respond or record outcome in run-artifacts"
+            ]
+          },
+          "source": "agent_gemini-antigravity_1789191834220",
+          "metadata": {
+            "transport": "sub-director-list",
+            "via": "tnf send"
+          }
+        }
+      }
+    }
+  },
+  "contentHash": "c136363d318f14fbb9613a80acbc67ea"
+}
