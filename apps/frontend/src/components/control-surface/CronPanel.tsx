@@ -57,19 +57,19 @@ const SystemProcessRow: React.FC<{
 }> = ({ process, onRun, running }) => (
   <div className="flex items-center gap-2 rounded-md border border-white/10 bg-black/20 px-3 py-2">
     <span
-      className={`h-2 w-2 shrink-0 rounded-full ${statusDotClass(process.runtime.status)}`}
-      title={process.runtime.status}
+      className={`h-2 w-2 shrink-0 rounded-full ${statusDotClass(process.runtime?.status ?? '')}`}
+      title={process.runtime?.status}
     />
     <div className="min-w-0">
       <p className="truncate text-sm text-white" title={process.description}>
         {process.title}
       </p>
-      <p className="truncate text-xs text-slate-400">{process.procedural.nextRunHint}</p>
+      <p className="truncate text-xs text-slate-400">{process.procedural?.nextRunHint}</p>
     </div>
     <span className="ml-auto shrink-0 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] text-cyan-200">
-      {process.procedural.enabled ? relativeTime(process.procedural.nextRunAt) : 'paused'}
+      {process.procedural?.enabled ? relativeTime(process.procedural.nextRunAt) : 'paused'}
     </span>
-    {process.controls.canRunNow && (
+    {process.controls?.canRunNow && (
       <button
         type="button"
         onClick={() => onRun(process.id)}
@@ -97,9 +97,9 @@ export const CronPanel: React.FC<{ limit?: number }> = ({ limit = 5 }) => {
   );
 
   const systemProcesses = (system.data?.processes ?? [])
-    .filter((process) => process.procedural.enabled)
+    .filter((process) => Boolean(process?.procedural?.enabled))
     .sort((a, b) =>
-      (a.procedural.nextRunAt ?? '9999').localeCompare(b.procedural.nextRunAt ?? '9999')
+      (a.procedural?.nextRunAt ?? '9999').localeCompare(b.procedural?.nextRunAt ?? '9999')
     );
 
   const handleRun = async (processId: string) => {
@@ -151,12 +151,14 @@ export const CronPanel: React.FC<{ limit?: number }> = ({ limit = 5 }) => {
             <div className="flex items-center justify-between mb-2">
               <ZoneBadge zone="system" detail="platform processes" />
               <span className="text-xs text-slate-500">
-                {system.data ? `${system.data.summary.enabled} enabled` : ''}
+                {system.data?.summary?.enabled != null
+                  ? `${system.data.summary.enabled} enabled`
+                  : ''}
               </span>
             </div>
             {system.isLoading ? (
               <p className="text-sm text-slate-400">Loading system processes...</p>
-            ) : system.isError || !system.data ? (
+            ) : system.isError || !system.data || !Array.isArray(system.data.processes) ? (
               <p className="text-sm text-slate-400">System process registry unavailable.</p>
             ) : systemProcesses.length === 0 ? (
               <p className="text-sm text-slate-400">No enabled system processes.</p>

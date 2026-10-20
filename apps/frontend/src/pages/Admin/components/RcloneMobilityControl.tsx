@@ -1098,8 +1098,8 @@ export function RcloneMobilityControl() {
             <div className="rounded border border-white/15 bg-black/30 p-2 text-[11px] space-y-1">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="text-slate-300">
-                  Worker · enabled {ardriveWorkerStatus?.worker.enabled ? 'yes' : 'no'} · interval{' '}
-                  {ardriveWorkerStatus?.worker.intervalMs ?? 'n/a'}ms
+                  Worker · enabled {ardriveWorkerStatus?.worker?.enabled ? 'yes' : 'no'} · interval{' '}
+                  {ardriveWorkerStatus?.worker?.intervalMs ?? 'n/a'}ms
                 </div>
                 <div className="flex items-center gap-2">
                   <PremiumButton

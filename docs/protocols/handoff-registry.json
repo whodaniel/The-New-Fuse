@@ -6,7 +6,7 @@
     "fingerprint": "109d42aef6c5b7f8",
     "origin": "whodaniel/tnf-monorepo"
   },
-  "mirroredAt": "2026-10-18T05:19:34.973Z",
+  "mirroredAt": "2026-10-20T14:42:09.351Z",
   "rows": [
     {
       "handoff_id": "legacy-037604196c37",
@@ -35855,9 +35855,198 @@
         "3dadb2ed-edae-49d1-b8ae-c7ebdcc1f22c",
         "686d2d0b-4e9c-4dfa-ad0b-3f9d569cf94f"
       ],
+      "superseded_by": "4b2fae68-252c-41d3-ba7e-c275e173ffa1",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/9420b0ab-25bf-41f3-b6ff-9f5424a5c726.json"
+    },
+    {
+      "handoff_id": "4b2fae68-252c-41d3-ba7e-c275e173ffa1",
+      "record_hash": "c9f2c9a25da3240f3342b6ccde8a40e69353f0860b568db630b4c659170a2764",
+      "created_at": "2026-10-18T05:39:53.097Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["9420b0ab-25bf-41f3-b6ff-9f5424a5c726"],
+      "superseded_by": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/4b2fae68-252c-41d3-ba7e-c275e173ffa1.json"
+    },
+    {
+      "handoff_id": "09e10e45-2b70-49b3-8ac7-b0579bb93107",
+      "record_hash": "d51dc813ee4e99f2bce9febd2654a0c269a007541cc17bc5b127bdb8d033705a",
+      "created_at": "2026-10-19T15:32:29.566Z",
+      "task_id": "codex:test-session-verify-1792423949246:turn-1792423949246",
+      "session_id": "test-session-verify-1792423949246",
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "internal",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [],
+      "superseded_by": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "state": "superseded",
+      "repo_body_uri": null
+    },
+    {
+      "handoff_id": "3b7034fe-c4c9-4436-bdce-5dd42aa54435",
+      "record_hash": "faaaa2f7fb77a5b565d03056ede76db8fd3fb16fe8aed754b27f7a6da734b358",
+      "created_at": "2026-10-19T15:34:42.067Z",
+      "task_id": "codex:01a154cc-aad1-71f0-ac13-0012cd2da24c:01a154cc-afe1-7c50-bf95-f6dcc8db60fc",
+      "session_id": "01a154cc-aad1-71f0-ac13-0012cd2da24c",
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "internal",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [],
+      "superseded_by": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "state": "superseded",
+      "repo_body_uri": null
+    },
+    {
+      "handoff_id": "ff100e90-64c7-44a7-98f0-415090102804",
+      "record_hash": "a042cbe0923f510b749d336d5e22089a36392bd25d0628580f88f96a9d3266fd",
+      "created_at": "2026-10-19T15:58:19.165Z",
+      "task_id": "codex:01a154ce-0f26-7253-ba12-55a58fb2807f:01a154e2-12e4-7630-b87b-5f490b685db6",
+      "session_id": "01a154ce-0f26-7253-ba12-55a58fb2807f",
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "internal",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [],
+      "superseded_by": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "state": "superseded",
+      "repo_body_uri": null
+    },
+    {
+      "handoff_id": "2155e99a-e888-456b-b55c-edb30695f66d",
+      "record_hash": "c215f8db085d2b79a316460124a318d500ad6d14b40419b260cb1e2bc7cd1f30",
+      "created_at": "2026-10-19T16:06:10.366Z",
+      "task_id": "codex:01a154ce-0f26-7253-ba12-55a58fb2807f:01a154e5-8905-7f53-9368-63bdbd2ac3df",
+      "session_id": "01a154ce-0f26-7253-ba12-55a58fb2807f",
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "internal",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [],
+      "superseded_by": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "state": "superseded",
+      "repo_body_uri": null
+    },
+    {
+      "handoff_id": "a1785d23-3f16-4601-bab7-e1af21cdb067",
+      "record_hash": "9dfafdf75ce00c8bdc5d58d97e24b510a8f0afc980d90fd5d03826df696c895a",
+      "created_at": "2026-10-19T16:48:36.870Z",
+      "task_id": "codex:01a154ce-0f26-7253-ba12-55a58fb2807f:01a154fe-5aad-7813-bb42-6f7507215708",
+      "session_id": "01a154ce-0f26-7253-ba12-55a58fb2807f",
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "internal",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [],
+      "superseded_by": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "state": "superseded",
+      "repo_body_uri": null
+    },
+    {
+      "handoff_id": "61f49c90-ccfa-45a6-b6fe-b9bbbb028005",
+      "record_hash": "7e9c7d82f29e60d3f55d44d968668387545bbee9fd43efaafacc12a827e79d2a",
+      "created_at": "2026-10-19T17:14:10.258Z",
+      "task_id": "codex:01a154ce-0f26-7253-ba12-55a58fb2807f:01a1551e-e91b-71e0-9ec2-f80ee5434ca3",
+      "session_id": "01a154ce-0f26-7253-ba12-55a58fb2807f",
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "internal",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [],
+      "superseded_by": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "state": "superseded",
+      "repo_body_uri": null
+    },
+    {
+      "handoff_id": "68fe1fd1-da6c-443f-90e5-7a0c495ebb09",
+      "record_hash": "de37da9d8d6145faf689ea419626acd1954b2d6b9ad7e1db43d7329bf35144b3",
+      "created_at": "2026-10-20T14:15:20.394Z",
+      "task_id": "codex:01a154ce-0f26-7253-ba12-55a58fb2807f:01a15992-af82-7d22-864b-81430fc69a97",
+      "session_id": "01a154ce-0f26-7253-ba12-55a58fb2807f",
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "internal",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [],
+      "superseded_by": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "state": "superseded",
+      "repo_body_uri": null
+    },
+    {
+      "handoff_id": "32df671f-845c-4988-8044-86884a8f7bcd",
+      "record_hash": "c735b691385160a2589a106a01d53d2b2f18d249fa2de01b2b7c46f68fcdc7db",
+      "created_at": "2026-10-20T14:42:04.560Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [
+        "4b2fae68-252c-41d3-ba7e-c275e173ffa1",
+        "09e10e45-2b70-49b3-8ac7-b0579bb93107",
+        "3b7034fe-c4c9-4436-bdce-5dd42aa54435",
+        "ff100e90-64c7-44a7-98f0-415090102804",
+        "2155e99a-e888-456b-b55c-edb30695f66d",
+        "a1785d23-3f16-4601-bab7-e1af21cdb067",
+        "61f49c90-ccfa-45a6-b6fe-b9bbbb028005",
+        "68fe1fd1-da6c-443f-90e5-7a0c495ebb09"
+      ],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/9420b0ab-25bf-41f3-b6ff-9f5424a5c726.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/32df671f-845c-4988-8044-86884a8f7bcd.json"
     }
   ]
 }

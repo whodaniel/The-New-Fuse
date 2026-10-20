@@ -102,10 +102,10 @@ export default function BackupRestore() {
         if (cfg) {
           setConfig(cfg);
           setCustomDestination(cfg.backup_destination);
-          setCronEnabled(cfg.schedule.enabled);
-          setCronFrequency(cfg.schedule.frequency);
-          setCronTime(cfg.schedule.time);
-          setRetentionCount(cfg.retention.keep_last_snapshots);
+          setCronEnabled(Boolean(cfg.schedule?.enabled));
+          setCronFrequency(cfg.schedule?.frequency || '');
+          setCronTime(cfg.schedule?.time || '');
+          setRetentionCount(cfg.retention?.keep_last_snapshots || 0);
         }
       } catch (error) {
         console.error('Failed to load backup data:', error);

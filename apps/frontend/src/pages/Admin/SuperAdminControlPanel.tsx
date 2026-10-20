@@ -1540,9 +1540,9 @@ export default function SuperAdminControlPanel() {
                 ) : (
                   chronologicalFilteredProcesses.map((process) => {
                     const draft = processDrafts[process.id] || {
-                      enabled: process.procedural.enabled,
-                      cadence: process.procedural.cadence,
-                      timezone: process.procedural.timezone,
+                      enabled: Boolean(process.procedural?.enabled),
+                      cadence: process.procedural?.cadence || '',
+                      timezone: process.procedural?.timezone || 'UTC',
                       notes: '',
                     };
                     const busy = Boolean(busyProcessMap[process.id]);

@@ -130,9 +130,11 @@ export type SystemProcess = {
 };
 
 export type SystemProcessesResult = {
+  available?: boolean;
+  reason?: string;
   generatedAt: string;
-  summary: { total: number; enabled: number; disabled: number; healthy: number; errored: number };
-  processes: SystemProcess[];
+  summary?: { total: number; enabled: number; disabled: number; healthy: number; errored: number };
+  processes?: SystemProcess[];
 };
 
 async function fetchJson<T>(url: string): Promise<T> {
