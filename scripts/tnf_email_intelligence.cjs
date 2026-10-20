@@ -7,7 +7,7 @@
  * the TNF Email Intelligence Ledger.
  */
 
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -128,6 +128,46 @@ function analyzeEmail(subject, body) {
   };
 }
 
+function publishToSynapticBus(entry) {
+  try {
+    const frame = {
+      id: entry.messageId,
+      timestamp: new Date().toISOString(),
+      from: {
+        agentId: 'email-sensory-bridge',
+        agentName: 'TNF Email Intelligence Sensor',
+        role: 'bridge',
+        platform: 'google-workspace'
+      },
+      to: {
+        channel: 'tnf:orchestrator',
+        broadcast: true
+      },
+      type: 'event',
+      content: `[EMAIL_DIRECTIVE] ${entry.subject}`,
+      payload: {
+        messageId: entry.messageId,
+        date: entry.date,
+        subject: entry.subject,
+        labels: entry.labels_applied,
+        keywords: entry.keywords,
+        actionItems: entry.action_items,
+        synthesis: entry.synthesis
+      }
+    };
+    const payloadStr = JSON.stringify(frame);
+    const escaped = payloadStr.replace(/'/g, "'\\''");
+    for (const channel of ['tnf:sensory:email', 'tnf:orchestrator', 'tnf:bus:ingress']) {
+      try {
+        execSync(`redis-cli publish "${channel}" '${escaped}'`, { stdio: 'pipe' });
+      } catch (e) {}
+    }
+    console.log(`  -> Broadcasted to Synaptic Bus (tnf:sensory:email, tnf:orchestrator)`);
+  } catch (err) {
+    console.warn(`  -> Synaptic Bus dispatch skipped: ${err.message}`);
+  }
+}
+
 async function run() {
   console.log('[TNF Email Intelligence] Initializing MCP bridge...');
   const { cp, send, call } = startMcp();
@@ -196,6 +236,11 @@ async function run() {
       ledger.entries[existingIdx] = entry;
     } else {
       ledger.entries.unshift(entry);
+    }
+
+    // Broadcast directive events to Synaptic Bus
+    if (analysis.categories.some(c => c.name === 'TNF/Directives')) {
+      publishToSynapticBus(entry);
     }
   }
 

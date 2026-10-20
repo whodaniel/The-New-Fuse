@@ -1635,6 +1635,37 @@
       ],
       "acquiredAt": "2026-10-20T16:37:59.460Z",
       "ttlMinutes": 120
+    },
+    {
+      "agent": "danielgoldberg",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json",
+        "scripts/tnf_email_intelligence.cjs",
+        "apps/api-gateway/src/main.ts",
+        "docs/protocols/AGENT_STATUS_LEDGER.md",
+        "docs/protocols/LIVING_STATE.md",
+        "docs/protocols/handoff-registry.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+        "docs/protocols/reports/session_handoff_gemini-ttys004-20261020T163750-a929786a.json",
+        "docs/protocols/reports/session_handoff_gemini-ttys004-20261020T163750-a929786a.md",
+        "docs/protocols/workspace-leases.json",
+        "package.json",
+        "scripts/ingest_architecture_sheets.cjs",
+        "scripts/tnf-gmail-filters.xml",
+        ".agent/skills/tnf-email-intelligence/",
+        ".cursor/",
+        "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T053953-4b2fae68.json",
+        "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T053953-4b2fae68.md",
+        "scripts/agents/",
+        "silent_output.txt",
+        "tmp/",
+        "docs/protocols/reports/session_handoff_gemini-ttys004-20261020T165640-99359471.json",
+        "docs/protocols/reports/session_handoff_gemini-ttys004-20261020T165640-99359471.md"
+      ],
+      "acquiredAt": "2026-10-20T16:56:51.819Z",
+      "ttlMinutes": 120
     }
   ]
 }
