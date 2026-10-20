@@ -6,7 +6,7 @@
     "fingerprint": "109d42aef6c5b7f8",
     "origin": "whodaniel/tnf-monorepo"
   },
-  "mirroredAt": "2026-10-20T16:56:55.070Z",
+  "mirroredAt": "2026-10-20T17:05:12.928Z",
   "rows": [
     {
       "handoff_id": "legacy-037604196c37",
@@ -36144,8 +36144,8 @@
         "state": "unverified"
       },
       "supersedes": ["e9dbc256-90fe-41df-9a6f-af5e1fd54192"],
-      "superseded_by": null,
-      "state": "active",
+      "superseded_by": "35271e8e-5735-4bd1-9e80-535ffdbe5cb1",
+      "state": "superseded",
       "repo_body_uri": "docs/protocols/reports/handoffs/2026/ef609a48-4083-4458-9f75-122b3e7105c7.json"
     },
     {
@@ -36164,9 +36164,49 @@
         "state": "unverified"
       },
       "supersedes": ["a929786a-0178-417b-9e98-9f96fe15867e"],
+      "superseded_by": "66e49aee-2b77-450b-8c57-54968a1cd888",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/99359471-5e98-4099-9216-14cc537e97f2.json"
+    },
+    {
+      "handoff_id": "35271e8e-5735-4bd1-9e80-535ffdbe5cb1",
+      "record_hash": "8c04e628122c4d3ab47987b64051d971f4b06b28b0a4adb4eb5f25a1d4dae041",
+      "created_at": "2026-10-20T17:00:39.288Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_unregistered_109d42aef6c5b7f8",
+      "branch": "tnf/fleet-cohesion-loop-20261020",
+      "head_sha": "ced3570bb76584817066aeccd835f9fc372e15f2",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["ef609a48-4083-4458-9f75-122b3e7105c7"],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/99359471-5e98-4099-9216-14cc537e97f2.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/35271e8e-5735-4bd1-9e80-535ffdbe5cb1.json"
+    },
+    {
+      "handoff_id": "66e49aee-2b77-450b-8c57-54968a1cd888",
+      "record_hash": "c05759c8e6947c0a3116fcb403b5b3ad0e7cc819f3e58847e07520404d2b1ce0",
+      "created_at": "2026-10-20T17:05:05.938Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "753b9df55bd93cc600a1fe31ab53352a0ce1297d",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["99359471-5e98-4099-9216-14cc537e97f2"],
+      "superseded_by": null,
+      "state": "active",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/66e49aee-2b77-450b-8c57-54968a1cd888.json"
     }
   ]
 }

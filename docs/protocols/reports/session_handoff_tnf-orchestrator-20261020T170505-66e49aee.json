@@ -1,0 +1,172 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "66e49aee-2b77-450b-8c57-54968a1cd888",
+  "created_at": "2026-10-20T17:05:05.938Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "main",
+  "head_sha": "753b9df55bd93cc600a1fe31ab53352a0ce1297d",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts."
+  ],
+  "changed_paths": [
+    "docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json",
+    ".agent/skills/tnf-email-intelligence/SKILL.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/session_handoff_gemini-ttys004-20261020T165640-99359471.json",
+    "docs/protocols/reports/session_handoff_gemini-ttys004-20261020T165640-99359471.md",
+    "docs/protocols/workspace-leases.json",
+    "scripts/tnf_email_intelligence.cjs",
+    ".cursor/",
+    "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T053953-4b2fae68.json",
+    "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T053953-4b2fae68.md",
+    "scripts/agents/",
+    "scripts/ingest_agent_research_lab.cjs",
+    "silent_output.txt",
+    "tmp/",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261020T170505-66e49aee.json",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261020T170505-66e49aee.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
+  },
+  "continuation": {
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": [
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+  ],
+  "reflection": {
+    "lessons": {
+      "considered": false
+    },
+    "skills": {
+      "considered": false
+    },
+    "gaps": {
+      "considered": false
+    }
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:48.458Z",
+      "value": "0ba9b9206b8eb32426b1b37efeed0acdf9507f8b"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:50.348Z",
+      "value": "c347e860b1633f084aaf1e5d73d5d71182104e4a"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:52.188Z",
+      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:53.912Z",
+      "value": "[]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:54.527Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.615Z",
+      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.829Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:57.987Z",
+      "value": "155a3b9273bad34ec15046ebf323d53e0854dc31\n2026-09-01"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:58.784Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=0ba9b9206b8eb32426b1b37efeed0acdf9507f8b\nbranch=main\ndirty=24"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:38:58.896Z",
+      "value": "PONG\nRELAY_OK"
+    },
+    {
+      "id": "tnf.handoff-scoped-propagation",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:39:00.998Z",
+      "value": "RECENT=20 MIRRORED=20 PENDING=0"
+    }
+  ],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": ["753b9df55bd93cc600a1fe31ab53352a0ce1297d"]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "checkout_id": "co_mtpe199t_2c40fc93",
+  "task_id": "TNF-SESSION",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": ["99359471-5e98-4099-9216-14cc537e97f2"],
+  "record_hash": "c05759c8e6947c0a3116fcb403b5b3ad0e7cc819f3e58847e07520404d2b1ce0"
+}
