@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:apps='http://schemas.google.com/apps/2006'>
+  <title>Mail Filters for TNF &amp; BizSynth</title>
+  <id>tag:mail.google.com,2008:filters:tnf-orchestration</id>
+  <updated>2026-10-20T15:20:00Z</updated>
+  <author>
+    <name>The New Fuse (TNF) Engine</name>
+    <email>bizsynth@gmail.com</email>
+  </author>
+
+  <!-- Filter 1: TNF Directives -->
+  <entry>
+    <category term='filter'></category>
+    <title>Mail Filter: TNF Directives</title>
+    <apps:property name='from' value='bizsynth@gmail.com'/>
+    <apps:property name='to' value='bizsynth@gmail.com'/>
+    <apps:property name='hasTheWord' value='subject:(Directives OR "TNF: Directives" OR "[TNF: Directives]" OR "TNF Directives")'/>
+    <apps:property name='label' value='TNF/Directives'/>
+    <apps:property name='shouldStar' value='true'/>
+    <apps:property name='shouldAlwaysMarkAsImportant' value='true'/>
+  </entry>
+
+  <!-- Filter 2: TNF Architecture -->
+  <entry>
+    <category term='filter'></category>
+    <title>Mail Filter: TNF Architecture</title>
+    <apps:property name='from' value='bizsynth@gmail.com'/>
+    <apps:property name='to' value='bizsynth@gmail.com'/>
+    <apps:property name='hasTheWord' value='subject:(Architecture OR "TNF: Architecture" OR "[TNF: Architecture]" OR USAD OR BEMAD)'/>
+    <apps:property name='label' value='TNF/Architecture'/>
+    <apps:property name='shouldAlwaysMarkAsImportant' value='true'/>
+  </entry>
+
+  <!-- Filter 3: TNF Schemas & Data -->
+  <entry>
+    <category term='filter'></category>
+    <title>Mail Filter: TNF Schemas and Data</title>
+    <apps:property name='from' value='bizsynth@gmail.com'/>
+    <apps:property name='to' value='bizsynth@gmail.com'/>
+    <apps:property name='hasTheWord' value='subject:(Schemas OR "TNF: Schemas" OR "[TNF: Schemas]" OR "API Logging" OR DDL OR pgvector)'/>
+    <apps:property name='label' value='TNF/Schemas-Data'/>
+    <apps:property name='shouldAlwaysMarkAsImportant' value='true'/>
+  </entry>
+
+  <!-- Filter 4: TNF Verification & UAT -->
+  <entry>
+    <category term='filter'></category>
+    <title>Mail Filter: TNF Verification &amp; UAT</title>
+    <apps:property name='from' value='bizsynth@gmail.com'/>
+    <apps:property name='to' value='bizsynth@gmail.com'/>
+    <apps:property name='hasTheWord' value='subject:(UAT OR "Readiness Criteria" OR Verification OR Benchmark OR "Test Report")'/>
+    <apps:property name='label' value='TNF/Verification-UAT'/>
+    <apps:property name='shouldAlwaysMarkAsImportant' value='true'/>
+  </entry>
+
+  <!-- Filter 5: TNF Ingestion Receipts & Deep Indexing -->
+  <entry>
+    <category term='filter'></category>
+    <title>Mail Filter: TNF Ingestion Receipts</title>
+    <apps:property name='from' value='bizsynth@gmail.com'/>
+    <apps:property name='to' value='bizsynth@gmail.com'/>
+    <apps:property name='hasTheWord' value='subject:("Deep index Drive" OR "Audit Drive" OR "Hierarchical Deep-Indexing" OR "Phase 2 Proof-of-Concept")'/>
+    <apps:property name='label' value='TNF/Ingestion-Receipts'/>
+    <apps:property name='shouldAlwaysMarkAsImportant' value='true'/>
+  </entry>
+
+  <!-- Filter 6: TNF Ideas & Backlog Dump -->
+  <entry>
+    <category term='filter'></category>
+    <title>Mail Filter: TNF Ideas and Backlog</title>
+    <apps:property name='from' value='bizsynth@gmail.com'/>
+    <apps:property name='to' value='bizsynth@gmail.com'/>
+    <apps:property name='hasTheWord' value='subject:(Idea OR Backlog OR Brainstorm OR "TNF: Idea")'/>
+    <apps:property name='label' value='TNF/Ideas-Backlog'/>
+  </entry>
+
+  <!-- Filter 7: General TNF Catch-all Root -->
+  <entry>
+    <category term='filter'></category>
+    <title>Mail Filter: TNF Catch-all</title>
+    <apps:property name='from' value='bizsynth@gmail.com'/>
+    <apps:property name='to' value='bizsynth@gmail.com'/>
+    <apps:property name='hasTheWord' value='subject:("TNF:" OR "[TNF]" OR "The New Fuse")'/>
+    <apps:property name='label' value='TNF'/>
+  </entry>
+</feed>

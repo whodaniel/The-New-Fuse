@@ -6,7 +6,7 @@
     "fingerprint": "109d42aef6c5b7f8",
     "origin": "whodaniel/tnf-monorepo"
   },
-  "mirroredAt": "2026-10-20T14:42:09.351Z",
+  "mirroredAt": "2026-10-20T16:38:01.745Z",
   "rows": [
     {
       "handoff_id": "legacy-037604196c37",
@@ -35731,8 +35731,8 @@
         "state": "unverified"
       },
       "supersedes": ["8c99548a-aaad-4e56-accd-0a9f02bae44f"],
-      "superseded_by": null,
-      "state": "active",
+      "superseded_by": "0d76c427-36be-4908-874f-c07495e1702e",
+      "state": "superseded",
       "repo_body_uri": "docs/protocols/reports/handoffs/2026/3229c16a-4e77-4b81-88e6-285c2a66fb89.json"
     },
     {
@@ -36044,9 +36044,69 @@
         "61f49c90-ccfa-45a6-b6fe-b9bbbb028005",
         "68fe1fd1-da6c-443f-90e5-7a0c495ebb09"
       ],
+      "superseded_by": "a929786a-0178-417b-9e98-9f96fe15867e",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/32df671f-845c-4988-8044-86884a8f7bcd.json"
+    },
+    {
+      "handoff_id": "0d76c427-36be-4908-874f-c07495e1702e",
+      "record_hash": "55738a1eefa7d37a343a93883218bdf145eb14da4f3a2c7f147e2d300464844b",
+      "created_at": "2026-10-20T16:21:37.932Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_unregistered_109d42aef6c5b7f8",
+      "branch": "tnf/fleet-cohesion-loop-20261020",
+      "head_sha": "3e41d1e073c3d98066bc5f952640257e34f8ad62",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["3229c16a-4e77-4b81-88e6-285c2a66fb89"],
+      "superseded_by": "e6cee154-2ed1-4096-a9ac-94102b4cac75",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/0d76c427-36be-4908-874f-c07495e1702e.json"
+    },
+    {
+      "handoff_id": "e6cee154-2ed1-4096-a9ac-94102b4cac75",
+      "record_hash": "c64b72603f958a2e7c031bd714eb0adacd60bcbe908ca0356e57c4c769225eba",
+      "created_at": "2026-10-20T16:35:41.279Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_unregistered_109d42aef6c5b7f8",
+      "branch": "tnf/fleet-cohesion-loop-20261020",
+      "head_sha": "3cb4e532b6f98e43fb689a697db3db59db66f050",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["0d76c427-36be-4908-874f-c07495e1702e"],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/32df671f-845c-4988-8044-86884a8f7bcd.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/e6cee154-2ed1-4096-a9ac-94102b4cac75.json"
+    },
+    {
+      "handoff_id": "a929786a-0178-417b-9e98-9f96fe15867e",
+      "record_hash": "d8588c9f42d0fd49bea3c469bee27ed83fdf43bc6c39fb7deedc53a55d63b6f7",
+      "created_at": "2026-10-20T16:37:50.595Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "64bbc19b7e70f4e4aceff71c3418f23034c3069b",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["32df671f-845c-4988-8044-86884a8f7bcd"],
+      "superseded_by": null,
+      "state": "active",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/a929786a-0178-417b-9e98-9f96fe15867e.json"
     }
   ]
 }

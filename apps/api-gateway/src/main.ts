@@ -33,9 +33,8 @@ const httpRateLimitStore = new Map<string, HttpRateLimitEntry>();
 
 // Fail-fast env validation. The gateway is frequently mis-deployed with
 // partial config; better to boot-fail with a clear list than to silently run.
-const REQUIRED_ENV = (process.env.API_GATEWAY_STRICT_ENV === '1')
-  ? ['DATABASE_URL', 'JWT_SECRET', 'REDIS_URL']
-  : [];
+const REQUIRED_ENV =
+  process.env.API_GATEWAY_STRICT_ENV === '1' ? ['DATABASE_URL', 'JWT_SECRET', 'REDIS_URL'] : [];
 const OPTIONAL_ENV_WORTH_LOG = [
   'CORS_ALLOWED_ORIGINS',
   'API_GATEWAY_RATE_LIMIT_RPM',
@@ -47,13 +46,15 @@ function validateEnvAtBoot(): void {
   if (missingRequired.length > 0) {
     console.error(
       `[api-gateway] Missing required env: ${missingRequired.join(', ')}. ` +
-      `Set API_GATEWAY_STRICT_ENV=0 to bypass (not recommended).`
+        `Set API_GATEWAY_STRICT_ENV=0 to bypass (not recommended).`
     );
     process.exit(1);
   }
   if (process.env.NODE_ENV !== 'production') {
     const setCount = OPTIONAL_ENV_WORTH_LOG.filter((k) => process.env[k]).length;
-    console.log(`[api-gateway] env: ${setCount}/${OPTIONAL_ENV_WORTH_LOG.length} optional vars set`);
+    console.log(
+      `[api-gateway] env: ${setCount}/${OPTIONAL_ENV_WORTH_LOG.length} optional vars set`
+    );
   }
 }
 validateEnvAtBoot();
@@ -374,6 +375,15 @@ async function bootstrap() {
   app.use((req, _res, next) => {
     if (req.url.startsWith('/v1/') || req.url === '/v1') {
       req.url = `/api${req.url}`;
+    }
+    next();
+  });
+
+  // Back-compat: rewrite unversioned /api/auth/* to versioned /api/v1/auth/*
+  // This ensures clients calling /api/auth/... work without explicit version.
+  app.use((req, _res, next) => {
+    if (req.url.startsWith('/api/auth/') || req.url === '/api/auth') {
+      req.url = `/api/v1${req.url.slice(4)}`; // /api/auth/* -> /api/v1/auth/*
     }
     next();
   });

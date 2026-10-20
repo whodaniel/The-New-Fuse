@@ -1,0 +1,102 @@
+{
+  "updated_at": "2026-10-20T16:30:13.576Z",
+  "entries": [
+    {
+      "messageId": "1a14eaf86069dc0f",
+      "threadId": "1a14eaf86069dc0f",
+      "date": "Sun, 18 Oct 2026 04:04:48 -0700",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/18/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-20T16:30:13.576Z"
+    },
+    {
+      "messageId": "1a153d4cba3f6e7d",
+      "threadId": "1a153d4cba3f6e7d",
+      "date": "Mon, 19 Oct 2026 04:03:36 -0700",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/19/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-20T16:30:13.075Z"
+    },
+    {
+      "messageId": "1a158fb21a582a98",
+      "threadId": "1a158fb21a582a98",
+      "date": "Tue, 20 Oct 2026 04:03:35 -0700",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/20/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-20T16:30:12.501Z"
+    },
+    {
+      "messageId": "1a159d659e89b537",
+      "threadId": "1a159d659e89b537",
+      "date": "Tue, 20 Oct 2026 11:03:01 -0400",
+      "from": "BizSynth com <operator@thenewfuse.com>",
+      "subject": "I like this direction of things, generally speaking. I think we’re definitely made progress and by chunking things into bigger categories, but let’s not get stucked in a stagnant continuous circle of wasting resources, re-indexing the same files. So once we have categorized things in a manageable number of containers, then let’s use the next cycle to dig down into specific areas, whichever is if most logically valuable and the most efficient use of the compute resources to accomplish the most sorting and indexing, tagging, et cetera. so we want to continue to be able to sift through the data that we have on a progressively more nuanced way that also continues to reflect and demonstrate the capabilities of the processing procedures themselves so that we can take note of what works and build on it, and it’s a self perpetuating self-evolving system that plugs well as the source of my personal data that I can plug into into the new fuze TNF",
+      "labels_applied": [
+        "TNF/Directives",
+        "TNF/Architecture",
+        "TNF/Schemas-Data",
+        "TNF/Verification-UAT",
+        "TNF/Ingestion-Receipts",
+        "TNF/Ideas-Backlog"
+      ],
+      "keywords": [
+        "USAD",
+        "BEMAD",
+        "pgvector",
+        "Docling",
+        "PostgreSQL",
+        "Hierarchical Deep-Indexing",
+        "Self-Evolving"
+      ],
+      "action_items": [
+        "Enforce focused deep-indexing on high-priority containers ([01] TNF Architecture, [02] Agent Lab) instead of macroscopic loops."
+      ],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-20T16:30:11.985Z"
+    },
+    {
+      "messageId": "1a159daa6aa03cf4",
+      "threadId": "1a159d7c49bf0c06",
+      "date": "Tue, 20 Oct 2026 11:07:44 -0400",
+      "from": "BizSynth com <operator@thenewfuse.com>",
+      "subject": "TNF: (Create category based email folders that can be referenced to by AI based on topic and purpose) ( create or discover the system that allows tagging self sent emails to auto-navigate to the folders) mark keywords based on AI review also) Fwd: I like this direction of things, generally speaking. I think we’re definitely made progress and by chunking things into bigger categories, but let’s not get stucked in a stagnant continuous circle of wasting resources, re-indexing the same files. So once we have categorized things in a manageable number of containers, then let’s use the next cycle to dig down into specific areas, whichever is if most logically valuable and the most efficient use of the compute resources to accomplish the most sorting and indexing, tagging, et cetera. so we want to continue to be able to sift through the data that we have on a progressively more nuanced way that also continues to reflect and demonstrate the capabilities of the processing procedures themse...",
+      "labels_applied": [
+        "TNF/Directives",
+        "TNF/Architecture",
+        "TNF/Schemas-Data",
+        "TNF/Verification-UAT",
+        "TNF/Ingestion-Receipts",
+        "TNF/Ideas-Backlog"
+      ],
+      "keywords": [
+        "USAD",
+        "BEMAD",
+        "pgvector",
+        "Docling",
+        "PostgreSQL",
+        "Hierarchical Deep-Indexing",
+        "Self-Evolving"
+      ],
+      "action_items": [
+        "Provision category-based Gmail labels for agentic query.",
+        "Deploy auto-routing system / XML filters for self-sent emails.",
+        "Run automated keyword tagging and register in intelligence ledger.",
+        "Enforce focused deep-indexing on high-priority containers ([01] TNF Architecture, [02] Agent Lab) instead of macroscopic loops."
+      ],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-20T16:30:11.228Z"
+    }
+  ]
+}

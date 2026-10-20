@@ -1,18 +1,23 @@
 {
   "spec": "tnf/session-handoff/0.3",
-  "handoff_id": "32df671f-845c-4988-8044-86884a8f7bcd",
-  "created_at": "2026-10-20T14:42:04.560Z",
+  "handoff_id": "a929786a-0178-417b-9e98-9f96fe15867e",
+  "created_at": "2026-10-20T16:37:50.595Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "c368fe90b611169f1edbe392697d5f20d8acb606",
+  "head_sha": "64bbc19b7e70f4e4aceff71c3418f23034c3069b",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
-    "CI/hook gates now block critical changes without fresh handoff artifacts."
+    "Deploy TNF email triage engine, Gmail filter taxonomy, and architecture sheet ingest"
   ],
   "changed_paths": [
+    "apps/api-gateway/src/main.ts",
+    "docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json",
+    "package.json",
+    "scripts/ingest_architecture_sheets.cjs",
+    "scripts/tnf-gmail-filters.xml",
+    "scripts/tnf_email_intelligence.cjs",
     "apps/frontend/src/components/control-surface/CronPanel.tsx",
     "apps/frontend/src/components/control-surface/__tests__/CronPanel.test.tsx",
     "apps/frontend/src/components/control-surface/useLocalRuntime.ts",
@@ -21,92 +26,40 @@
     "apps/frontend/src/pages/Admin/components/RcloneMobilityControl.tsx",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261020T144204-32df671f.json",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261020T144204-32df671f.md",
+    "docs/protocols/workspace-leases.json",
+    ".cursor/",
     "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T053953-4b2fae68.json",
     "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T053953-4b2fae68.md",
-    "docs/protocols/reports/twip-terminal-macro-board-latest.md",
-    ".agent/skills/tnf-agent-resource-convergence/SKILL.md",
-    ".agent/skills/tnf-engineering-context/SKILL.md",
-    ".agent/skills/tnf-federated-ws-channel-control/SKILL.md",
-    ".agent/skills/tnf-source-concordance/SKILL.md",
-    ".agent/skills/tnf-ufte-federated-tag-governor/SKILL.md",
-    ".skills/tnf-stack-self-improvement-loop/scripts/run_loop.sh",
-    "apps/frontend/docs/audits/all-routes-semantic-audit.json",
-    "apps/frontend/docs/audits/all-routes-semantic-audit.md",
-    "apps/frontend/docs/audits/auth-path-audit.json",
-    "apps/frontend/docs/audits/auth-path-audit.md",
-    "apps/frontend/docs/audits/self-improvement-scorecard.json",
-    "apps/frontend/docs/audits/self-improvement-scorecard.md",
-    "apps/frontend/src/config/routeCatalog.ts",
-    "apps/frontend/src/data/codebase_map.json",
-    "apps/frontend/src/pages/About.tsx",
-    "apps/frontend/src/pages/Docs.tsx",
-    "apps/frontend/src/routes/core.routes.tsx",
-    "data/llm-intel/ranking-recommendations.json",
-    "data/llm-intel/ranking-report-latest.md",
-    "data/marketplace/catalog-items.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.json",
-    "docs/operations/tnf-master-reconciliation-report-latest.md",
-    "docs/operations/tnf-self-improvement-run-log.md",
-    "docs/operations/tnf-substrate-seal.json",
-    "docs/protocols/AGENT_WHO_IS_WHO.md",
-    "docs/protocols/handoff-registry.json",
-    "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
-    "docs/protocols/workspace-leases.json",
-    "logs/flywheel/property-health-history.jsonl",
-    "logs/flywheel/property-health-latest.json",
-    "packages/tnf-cli/src/RedisAgentClient.ts",
-    "packages/tnf-cli/src/cli.ts",
-    "packages/tnf-cli/src/commands/agents-announce.ts",
-    "scripts/tnf-onboard-twip.cjs",
-    "apps/frontend/docs/audits/audit-cycle-run-log.json",
-    "apps/frontend/public/data/providers/catalog.json",
-    "apps/frontend/public/data/providers/model-overviews.json",
-    "apps/frontend/public/data/providers/nvidia-models.json",
-    "data/pages/worker-outbox/.archive/0001789191389991-agent-claude-code-claude-sonnet-ttys001--a43dba24aa.json",
-    "data/pages/worker-outbox/.archive/0001789191567256-agent-claude-code-claude-sonnet-ttys001--43a751d088.json",
-    "data/pages/worker-outbox/.archive/0001789191835114-agent-claude-code-claude-sonnet-ttys001--357c654dcc.json",
-    "data/pages/worker-outbox/.archive/0001789192212668-agent-claude-code-claude-sonnet-ttys001--a992e9140f.json",
-    "data/pages/worker-outbox/.archive/0001789192981330-agent-claude-code-claude-sonnet-ttys001--9d1d69bce9.json",
-    "data/pages/worker-outbox/.archive/0001789192989052-agent-pi-cli-pi-cli-ttys005-daniels-macb-89fb730bd1.json",
-    "data/pages/worker-outbox/.archive/0001789276120774-tnf-cli-agent-067d2a7f2c.json",
-    "data/pages/worker-outbox/.archive/0001789276149958-tnf-cli-agent-ecb7ff5933.json",
-    "data/pages/worker-outbox/.archive/0001790019064203-tnf-cli-agent-e567a9a992.json",
-    "data/pages/worker-outbox/.archive/0001790019445198-tnf-cli-agent-e494b783e8.json",
-    "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T051933-9420b0ab.json",
-    "docs/protocols/reports/session_handoff_tnf-cli-agent-20261018T051933-9420b0ab.md",
-    "packages/llm-catalog/src/index.js",
-    "packages/llm-catalog/src/model-expiry.js",
-    ".cursor/",
-    "CHANGELOG.md",
-    "apps/frontend/src/pages/ArchitectureEvolution.tsx",
     "scripts/agents/",
     "silent_output.txt",
     "tmp/",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261020T144204-32df671f.json",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261020T144204-32df671f.md"
+    "docs/protocols/reports/session_handoff_gemini-ttys004-20261020T163750-a929786a.json",
+    "docs/protocols/reports/session_handoff_gemini-ttys004-20261020T163750-a929786a.md"
   ],
   "verification": {
-    "privacy_guard": "na",
-    "secret_sweep": "na",
-    "docs_pii_guard": "na",
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
     "supabase_rls_audit": "na",
-    "notes": ""
+    "notes": "Auto-verify 2026-10-20T16:37:56.430Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
   },
   "continuation": {
-    "owner": "tnf-orchestrator",
+    "owner": "gemini-ttys004",
     "targets": ["story-architect", "librarian"],
     "priority": "high",
     "resume_checklist": [
-      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
-      "Execute listed next actions in order and preserve privacy/security gates"
+      "Verify crontab email triage daemon",
+      "Inspect docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json"
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Advance Drive deep-indexing to [02] AI Agent Research Lab",
+    "Sync extracted schemas to Supabase Concordance API"
   ],
   "reflection": {
     "lessons": {
@@ -199,7 +152,7 @@
     ]
   },
   "artifacts": {
-    "commits": ["c368fe90b611169f1edbe392697d5f20d8acb606"]
+    "commits": ["64bbc19b7e70f4e4aceff71c3418f23034c3069b"]
   },
   "classification": {
     "work_domain": "unknown",
@@ -220,15 +173,6 @@
   "task_id": "TNF-SESSION",
   "turn_status": "turn_complete",
   "task_status": "in_progress",
-  "supersedes": [
-    "4b2fae68-252c-41d3-ba7e-c275e173ffa1",
-    "09e10e45-2b70-49b3-8ac7-b0579bb93107",
-    "3b7034fe-c4c9-4436-bdce-5dd42aa54435",
-    "ff100e90-64c7-44a7-98f0-415090102804",
-    "2155e99a-e888-456b-b55c-edb30695f66d",
-    "a1785d23-3f16-4601-bab7-e1af21cdb067",
-    "61f49c90-ccfa-45a6-b6fe-b9bbbb028005",
-    "68fe1fd1-da6c-443f-90e5-7a0c495ebb09"
-  ],
-  "record_hash": "c735b691385160a2589a106a01d53d2b2f18d249fa2de01b2b7c46f68fcdc7db"
+  "supersedes": ["32df671f-845c-4988-8044-86884a8f7bcd"],
+  "record_hash": "d8588c9f42d0fd49bea3c469bee27ed83fdf43bc6c39fb7deedc53a55d63b6f7"
 }
