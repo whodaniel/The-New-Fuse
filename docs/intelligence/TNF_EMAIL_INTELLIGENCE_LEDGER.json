@@ -1,6 +1,18 @@
 {
-  "updated_at": "2026-10-20T17:00:24.942Z",
+  "updated_at": "2026-10-21T19:15:38.115Z",
   "entries": [
+    {
+      "messageId": "1a15e2106af98603",
+      "threadId": "1a15e2106af98603",
+      "date": "Wed, 21 Oct 2026 04:03:05 -0700",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/21/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-21T19:15:33.967Z"
+    },
     {
       "messageId": "1a14eaf86069dc0f",
       "threadId": "1a14eaf86069dc0f",
@@ -11,7 +23,7 @@
       "keywords": [],
       "action_items": [],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-20T17:00:24.942Z"
+      "reviewed_at": "2026-10-21T08:05:22.190Z"
     },
     {
       "messageId": "1a153d4cba3f6e7d",
@@ -23,7 +35,7 @@
       "keywords": [],
       "action_items": [],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-20T17:00:24.538Z"
+      "reviewed_at": "2026-10-21T19:15:38.115Z"
     },
     {
       "messageId": "1a158fb21a582a98",
@@ -35,7 +47,7 @@
       "keywords": [],
       "action_items": [],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-20T17:00:24.096Z"
+      "reviewed_at": "2026-10-21T19:15:37.328Z"
     },
     {
       "messageId": "1a159d659e89b537",
@@ -64,7 +76,7 @@
         "Enforce focused deep-indexing on high-priority containers ([01] TNF Architecture, [02] Agent Lab) instead of macroscopic loops."
       ],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-20T17:00:23.519Z"
+      "reviewed_at": "2026-10-21T19:15:36.365Z"
     },
     {
       "messageId": "1a159daa6aa03cf4",
@@ -96,7 +108,7 @@
         "Enforce focused deep-indexing on high-priority containers ([01] TNF Architecture, [02] Agent Lab) instead of macroscopic loops."
       ],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-20T17:00:22.540Z"
+      "reviewed_at": "2026-10-21T19:15:35.118Z"
     }
   ]
 }

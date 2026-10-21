@@ -19,8 +19,14 @@
 ## ⚡ Active Steps
 
 - [✅] 2026-09-12T08:26:19.317Z New script(s) created:
+- [✅] 2026-10-21T16:19:08.565Z New script(s) created:
+  announce-availability.cjs, announce-live-cli-sessions.cjs,
+  subdirector-codegen-worker-cycle.sh, subdirector-infra-worker-cycle.sh,
+  subdirector-local-cli-agent-cycle.sh
+
   federation-lane-listener.cjs, red-channel-coordinator-service.sh,
   red-channel-coordinator.cjs
+
 - [✅] 2026-09-12T12:51:56.552Z New script(s) created:
   emit-session-handoff.reflection.test.cjs
 - [✅] 2026-09-12T12:56:27.490Z New script(s) created:
@@ -141,6 +147,10 @@
   red-channel-coordinator.cjs, red-lane-persistent-listener.cjs
 
 ## History
+
+- 2026-10-21T19:21:14.533Z handoff `96904bc7-5dd1-41d7-ae8b-1b1f583a87ed` head
+  `2530ae6ae335` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-10-20T17:05:10.029Z handoff `66e49aee-2b77-450b-8c57-54968a1cd888` head
   `753b9df55bd9` project `TNF-SESSION` — Continue priority queue from

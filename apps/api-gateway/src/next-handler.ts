@@ -1,60 +1,57 @@
-// Static page renderer for gateway fallback.
-// Previously attempted Next.js but it caused:
-// 1. Symlink issues (pages/ pointed outside repo, Turbopack rejects)
-// 2. OOM during build (monorepo too large for Next.js turbopack)
-// 3. Dev server conflicts when next() spawns its own server
-// This simple static handler serves the three demo pages directly.
-
-// Simple HTML templates for each page
-const PAGE_TEMPLATES: Record<string, string> = {
-  '/pricing': `<!DOCTYPE html>
-<html>
-<head><title>Pricing - The New Fuse</title></head>
-<body style="font-family: sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto;">
-<h1>Pricing Page</h1>
-<p>This is the pricing page for The New Fuse.</p>
-</body>
-</html>`,
-  '/features': `<!DOCTYPE html>
-<html>
-<head><title>Features - The New Fuse</title></head>
-<body style="font-family: sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto;">
-<h1>Features Page</h1>
-<p>This is the features page for The New Fuse.</p>
-</body>
-</html>`,
-  '/docs': `<!DOCTYPE html>
-<html>
-<head><title>Docs - The New Fuse</title></head>
-<body style="font-family: sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto;">
-<h1>Docs Page</h1>
-<p>This is the documentation page for The New Fuse.</p>
-</body>
-</html>`,
-};
-
 /**
- * Returns a handler for serving static pages.
- * Serves HTML for known routes, 404 for others.
- *
- * Call this ONCE at bootstrap, not per request.
- * The caller must register the resulting handler after the route table, so
- * routes the gateway owns ('/', '/health', the proxy prefixes) are matched
- * before this ever sees them. It deliberately keeps no exemption list: an
- * allowlist of "routes I must not swallow" silently rots as routes are added.
+ * Next.js gateway handler for serving static pages via the API Gateway.
+ * Uses the Next.js installation from the monorepo root node_modules.
+ * Pages are located at the repo root (../../../.. from dist/next-handler.js).
  */
-export async function ensureNextHandler(): Promise<(req: any, res: any) => void> {
-  return (req: any, res: any) => {
-    const url = req.url || req.path || '';
-    const cleanUrl = url.split('?')[0];
 
-    if (cleanUrl in PAGE_TEMPLATES) {
-      res.setHeader('Content-Type', 'text/html');
-      res.end(PAGE_TEMPLATES[cleanUrl]);
-    } else {
+let nextHandlerReady: Promise<(req: any, res: any) => Promise<void>>;
+
+async function ensureNextHandler(): Promise<(req: any, res: any) => Promise<void>> {
+  if (nextHandlerReady) return nextHandlerReady;
+
+  try {
+    // Dynamic import of Next.js from monorepo root node_modules
+    // Using absolute path to bypass pnpm's strict node_modules resolution
+    const nextModule =
+      await import('/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/node_modules/next/dist/server/next.js');
+    const next = nextModule.default;
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[TNF-next] Starting Next.js handler');
+    }
+
+    // Point to repo root (so it finds pages/ and package.json)
+    // In compiled dist/next-handler.js, __dirname = apps/api-gateway/dist
+    // Repo root is ../../..
+    const path = await import('node:path');
+    // eslint-disable-next-line no-underscore-dangle
+    const dirname = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+    const repoRoot = path.resolve(dirname, '..', '..', '..');
+
+    const nextApp = next({
+      dev: process.env.NODE_ENV !== 'production',
+      dir: repoRoot,
+    });
+
+    await nextApp.prepare();
+    const handler = nextApp.getRequestHandler();
+    nextHandlerReady = Promise.resolve(handler);
+    return handler;
+  } catch (err) {
+    console.warn(
+      '[TNF-next] Next.js handler not available:',
+      err instanceof Error ? err.message : String(err)
+    );
+
+    // Safe fallback: 404 page stub
+    const fallbackHandler = async (_req: any, res: any) => {
       res.statusCode = 404;
       res.setHeader('Content-Type', 'text/html');
-      res.end('<h1>Not Found</h1><p>The requested page does not exist.</p>');
-    }
-  };
+      res.end('<h1>Not Found</h1><p>Static pages handler unavailable</p>');
+    };
+    nextHandlerReady = Promise.resolve(fallbackHandler);
+    return nextHandlerReady;
+  }
 }
+
+export { ensureNextHandler };

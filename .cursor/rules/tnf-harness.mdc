@@ -1,0 +1,26 @@
+---
+description: TNF manifest-derived harness pointer
+alwaysApply: true
+---
+
+# TNF Harness — Required
+
+TNF is the control plane. This rule injects pointers, not copied authority.
+
+At session start or after context reset/provider switch/repository movement:
+
+```bash
+pnpm run tnf:onboard -- --task "<current task if known>"
+```
+
+- Stage A inventory authority: `docs/core/FRONTLOAD_MANIFEST.md`
+- lifecycle/write readiness: `docs/protocols/TURN_ZERO_MANDATE.md`
+- machine onboarding contract: `data/harness/onboarding-contract.json`
+
+For nontrivial engineering load `.agent/skills/tnf-engineering-context/SKILL.md`.
+
+Before creating a new abstraction, search current code and active PR/workstream ownership for the same responsibility. Do not race another agent's active package without explicit coordination.
+
+For source/multi-agent conflicts use `docs/protocols/TNF_MULTI_AGENT_SOURCE_GOVERNANCE.md` + `tnf-source-concordance`.
+
+Before high-impact tools, use the permission berm. Verify outcomes empirically.

@@ -404,6 +404,21 @@ async function bootstrap() {
   // Global interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
 
+  // Static-page fallback for non-/api routes.
+  // MUST be registered before setGlobalPrefix('api') so non-API routes
+  // are not swallowed by the global prefix. Express runs middleware in
+  // registration order; a catch-all that runs last cannot drift out of date.
+  const staticPageHandler = await ensureNextHandler();
+  app.use(async (req: any, res: any, nextMw: any) => {
+    try {
+      if (req.url && req.url.startsWith('/api')) return nextMw();
+      await staticPageHandler(req, res);
+    } catch (err) {
+      console.error('[next-fallback] error:', err);
+      nextMw();
+    }
+  });
+
   // Global prefix for ALL routes
   app.setGlobalPrefix('api');
 
@@ -481,7 +496,7 @@ async function bootstrap() {
         operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
       });
 
-      SwaggerModule.setup('docs', app as any, document, {
+      SwaggerModule.setup('api/docs', app as any, document, {
         swaggerOptions: {
           persistAuthorization: true,
           tagsSorter: 'alpha',
@@ -559,25 +574,6 @@ async function bootstrap() {
   });
   app.getHttpAdapter().get('/api/v1/health', (req, res) => {
     res.json(healthPayload());
-  });
-
-  // Static-page fallback for non-/api routes.
-  //
-  // MUST be registered last. Express runs middleware in registration order, so
-  // when this sat above the route table it swallowed '/' and '/health' before
-  // their handlers could run — which is why it previously needed a hand-kept
-  // list of routes to exempt. A catch-all that has to enumerate what it must
-  // not catch drifts out of date the moment someone adds a route; one that
-  // runs last cannot.
-  const staticPageHandler = await ensureNextHandler();
-  app.use(async (req: any, res: any, nextMw: any) => {
-    try {
-      if (req.url && req.url.startsWith('/api')) return nextMw();
-      await staticPageHandler(req, res);
-    } catch (err) {
-      console.error('[next-fallback] error:', err);
-      nextMw();
-    }
   });
 
   // Listen on provided API_GATEWAY_PORT, default to PORT provided by CloudRuntime, fallback to 8080
