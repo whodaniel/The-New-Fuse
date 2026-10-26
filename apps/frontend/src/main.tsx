@@ -38,19 +38,32 @@ const installMceGuard = () => {
   if (!window?.customElements) return;
   if ((window as any).__TNF_MCE_GUARD__) return;
   const registry = window.customElements;
-  const originalDefine = registry.define.bind(registry);
-  const originalGet = registry.get.bind(registry);
+  // If define is already guarded by app.html / index.html, do not attempt to redefine non-configurable property
+  if ((registry.define as any)?.__isSafeGuarded) {
+    (window as any).__TNF_MCE_GUARD__ = true;
+    return;
+  }
+  try {
+    const originalDefine = registry.define.bind(registry);
+    const originalGet = registry.get.bind(registry);
 
-  Object.defineProperty(registry, 'define', {
-    value(name: string, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) {
-      if (name === 'mce-autosize-textarea' && originalGet(name)) {
-        return;
-      }
-      return originalDefine(name, constructor, options);
-    },
-    configurable: false,
-    writable: false,
-  });
+    Object.defineProperty(registry, 'define', {
+      value(
+        name: string,
+        constructor: CustomElementConstructor,
+        options?: ElementDefinitionOptions
+      ) {
+        if (name === 'mce-autosize-textarea' && originalGet(name)) {
+          return;
+        }
+        return originalDefine(name, constructor, options);
+      },
+      configurable: false,
+      writable: false,
+    });
+  } catch (_err) {
+    // Already non-configurable from HTML-level guard
+  }
 
   (window as any).__TNF_MCE_GUARD__ = true;
 };

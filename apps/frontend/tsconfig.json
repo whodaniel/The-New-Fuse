@@ -23,7 +23,7 @@
       "@components/*": ["./components/*"],
       "@lib/*": ["./lib/*"]
     },
-    "types": ["jest", "node", "react", "react-dom"],
+    "types": ["vite/client", "jest", "node", "react", "react-dom"],
     "typeRoots": [
       "./node_modules",
       "./node_modules/@types",

@@ -124,12 +124,34 @@ export async function onRequest(context) {
 
   // 3. App Domain Specific Logic
   if (isAppDomain) {
-    // Serve known visualization HTML assets directly on app domain.
-    // Without this, the SPA shell captures these paths and hides the visualization surfaces.
-    if (path === '/visualizations/dashboard') {
-      return context.env.ASSETS.fetch(
-        new Request(new URL('/visualizations/dashboard.html' + url.search, url.origin))
-      );
+    const isVisualizationSpaRoute =
+      path === '/visualizations' ||
+      path === '/visualizations/' ||
+      path === '/visualizations/master-graph' ||
+      path === '/visualizations/concordance' ||
+      path === '/visualizations/surface' ||
+      path === '/visualizations/terminals';
+
+    // Serve static visualization assets directly on app domain.
+    // Handles both exact filenames and Clean URL paths without .html.
+    if (path.startsWith('/visualizations/') && !isVisualizationSpaRoute) {
+      if (path === '/visualizations/dashboard') {
+        return context.env.ASSETS.fetch(
+          new Request(new URL('/visualizations/dashboard.html' + url.search, url.origin))
+        );
+      }
+      let visResponse = await context.env.ASSETS.fetch(context.request);
+      if (visResponse.status === 200) {
+        return visResponse;
+      }
+      if (!path.includes('.')) {
+        visResponse = await context.env.ASSETS.fetch(
+          new Request(new URL(path + '.html' + url.search, url.origin), context.request)
+        );
+        if (visResponse.status === 200) {
+          return visResponse;
+        }
+      }
     }
 
     const isStaticAsset = path.includes('.') && !path.endsWith('.html');

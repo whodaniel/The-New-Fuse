@@ -6,7 +6,7 @@
     "fingerprint": "109d42aef6c5b7f8",
     "origin": "whodaniel/tnf-monorepo"
   },
-  "mirroredAt": "2026-10-21T19:21:18.736Z",
+  "mirroredAt": "2026-10-26T16:46:37.018Z",
   "rows": [
     {
       "handoff_id": "legacy-037604196c37",
@@ -36424,8 +36424,8 @@
         "state": "unverified"
       },
       "supersedes": ["df99d359-9081-4493-a83c-0ba0573ee122"],
-      "superseded_by": null,
-      "state": "active",
+      "superseded_by": "78bb697b-d049-4dca-be31-e498c2022855",
+      "state": "superseded",
       "repo_body_uri": "docs/protocols/reports/handoffs/2026/17e897cb-f321-423c-b4d9-a21bd67846df.json"
     },
     {
@@ -36447,9 +36447,112 @@
         "66e49aee-2b77-450b-8c57-54968a1cd888",
         "9f6c9469-d839-4e77-820f-b41019cafc7f"
       ],
+      "superseded_by": "974242c2-0274-4e88-8cfa-bde2e548f321",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/96904bc7-5dd1-41d7-ae8b-1b1f583a87ed.json"
+    },
+    {
+      "handoff_id": "78bb697b-d049-4dca-be31-e498c2022855",
+      "record_hash": "9f324fe2c3d8c56f29f800d8282b61aef4a88817ee547ea60546f6bfc2a95b72",
+      "created_at": "2026-10-21T19:26:47.348Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_unregistered_109d42aef6c5b7f8",
+      "branch": "fix/onboard-json-pipe",
+      "head_sha": "fbd60ac293f243b94373d98f1534a6d8a1298f32",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["17e897cb-f321-423c-b4d9-a21bd67846df"],
+      "superseded_by": "d609903d-883b-450f-8dad-076deec013b8",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/78bb697b-d049-4dca-be31-e498c2022855.json"
+    },
+    {
+      "handoff_id": "b73405f5-c5c5-4532-bf82-916fbaba0aec",
+      "record_hash": "b028a30f2305c6d0dfded3176f5df22f1ea62463353ee4f0b0fe938a662265cc",
+      "created_at": "2026-10-26T15:27:40.774Z",
+      "task_id": "codex:01a15fd1-a101-7b43-bcbc-d6bf6bcdf53c:01a178d2-7dea-79d1-872a-2ef2ca5673e1",
+      "session_id": "01a15fd1-a101-7b43-bcbc-d6bf6bcdf53c",
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "37f96dc7b639dfcc7a1783deaaae4a579f379e29",
+      "classification": "internal",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [],
+      "superseded_by": "974242c2-0274-4e88-8cfa-bde2e548f321",
+      "state": "superseded",
+      "repo_body_uri": null
+    },
+    {
+      "handoff_id": "d609903d-883b-450f-8dad-076deec013b8",
+      "record_hash": "3481458a2bbec9c45dd2b05bd477f45990596a8cbf25b88191a840750b1a9ca5",
+      "created_at": "2026-10-26T15:59:13.844Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_unregistered_109d42aef6c5b7f8",
+      "branch": "sentinel-fix-admin-auth-bypass-16463182580044675087",
+      "head_sha": "b07772063059e5892bb01826eeac8c6533bf2ab1",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["78bb697b-d049-4dca-be31-e498c2022855"],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/96904bc7-5dd1-41d7-ae8b-1b1f583a87ed.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/d609903d-883b-450f-8dad-076deec013b8.json"
+    },
+    {
+      "handoff_id": "974242c2-0274-4e88-8cfa-bde2e548f321",
+      "record_hash": "8bf63ff6d15c9c852917fda31132a308384983376ddfcb941a7d1e4177a00095",
+      "created_at": "2026-10-26T16:35:09.673Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "37f96dc7b639dfcc7a1783deaaae4a579f379e29",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": [
+        "96904bc7-5dd1-41d7-ae8b-1b1f583a87ed",
+        "b73405f5-c5c5-4532-bf82-916fbaba0aec"
+      ],
+      "superseded_by": "1ebaaeff-ae3c-44c3-af0e-e26f453b97ae",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/974242c2-0274-4e88-8cfa-bde2e548f321.json"
+    },
+    {
+      "handoff_id": "1ebaaeff-ae3c-44c3-af0e-e26f453b97ae",
+      "record_hash": "d08c00f5822a9d8113732cde78aab4cc3a17b38f9d19d574d7c1695928e57f25",
+      "created_at": "2026-10-26T16:46:33.649Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "37f96dc7b639dfcc7a1783deaaae4a579f379e29",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["974242c2-0274-4e88-8cfa-bde2e548f321"],
+      "superseded_by": null,
+      "state": "active",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/1ebaaeff-ae3c-44c3-af0e-e26f453b97ae.json"
     }
   ]
 }

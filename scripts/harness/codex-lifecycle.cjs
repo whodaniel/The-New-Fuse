@@ -52,9 +52,23 @@ function run(script, args, env = {}, root = ROOT) {
     );
   return result.stdout;
 }
+/** Parse a child's JSON stdout; a truncated or non-JSON output names the script and size instead of a bare parse error. */
+function parseJsonOutput(script, text, { verb = 'printed', showTail = true } = {}) {
+  const raw = String(text ?? '');
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    const bytes = Buffer.byteLength(raw, 'utf8');
+    // The hook payload can carry the user's prompt: never echo its content into the message.
+    const tail = showTail ? `; tail: ${JSON.stringify(raw.slice(-80).replace(/\s+/g, ' '))}` : '';
+    const hint = Math.abs(bytes - 65536) <= 2048 ? ' A 65536-byte cut means the writer exited before draining its stdout pipe.' : '';
+    throw new Error(`${script} ${verb} ${bytes} bytes that are not valid JSON (${error.message})${tail}.${hint}`);
+  }
+}
 function onboard(event, dir) {
   const canonical = require('./checkout-ledger.cjs').repoIdentity(ROOT).sharedPrimary;
-  const output = JSON.parse(
+  const output = parseJsonOutput(
+    'tnf-onboard-twip.cjs',
     run(
       'tnf-onboard-twip.cjs',
       ['--json', '--task', 'Codex TNF lifecycle orientation (analysis only)'],
@@ -64,7 +78,7 @@ function onboard(event, dir) {
   );
   if (output.ok !== true) throw new Error('TNF onboarding failed');
   // Capture this invocation's gate output instead of racing the shared latest file.
-  const receipt = JSON.parse(output.results[0].stdout);
+  const receipt = parseJsonOutput('turn-zero-v2-gate.cjs (via onboard results[0])', output.results[0].stdout);
   if (receipt.harnessed !== true || receipt.repoRoot !== canonical)
     throw new Error('Turn Zero receipt missing or failed');
   const observed = {
@@ -264,8 +278,8 @@ function main(args) {
   const cmd = args[0];
   if (cmd === 'install') return install();
   if (cmd === 'hook') {
-    const event = JSON.parse(fs.readFileSync(0, 'utf8'));
     try {
+      const event = parseJsonOutput('Codex hook payload (stdin)', fs.readFileSync(0, 'utf8'), { verb: 'received', showTail: false });
       return handle(event);
     } catch (error) {
       // Surface failure and stop instead of silently claiming protocol completion.
