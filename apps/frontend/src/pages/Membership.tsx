@@ -1,4 +1,6 @@
+import { authFetch } from '@/utils/authToken';
 import { ArrowRight, Crown, Shield, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PayPalSubscriptionButton } from '../components/billing/PayPalSubscriptionButton';
 
@@ -26,6 +28,39 @@ export default function Membership() {
   const stripeMembershipCheckoutUrl = (
     import.meta.env.VITE_STRIPE_MEMBERSHIP_CHECKOUT_URL || ''
   ).trim();
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
+
+  const createStripeCheckout = async () => {
+    setStripeLoading(true);
+    setStripeError(null);
+    try {
+      const response = await authFetch('/api/billing/stripe/checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId: import.meta.env.VITE_STRIPE_MEMBERSHIP_PRICE_ID || undefined,
+          mode: 'subscription',
+          successUrl: `${window.location.origin}/membership?checkout=success`,
+          cancelUrl: `${window.location.origin}/membership?checkout=cancel`,
+        }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || 'Failed to create Stripe checkout session');
+      }
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (err) {
+      setStripeError(err instanceof Error ? err.message : 'Stripe checkout failed');
+    } finally {
+      setStripeLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -41,16 +76,12 @@ export default function Membership() {
                 <span className="text-cyan-300">Live access to AI-ARCADE & the Protocol</span>
               </h1>
               <p className="max-w-2xl text-base text-slate-300 sm:text-lg">
-                Membership billing is paused during public beta. Hosted platform access is free
-                while we validate orchestration, relay reliability, and the open-runtime install
-                path.
+                Dual-rail billing is live. Subscribe with PayPal or Stripe to unlock Pro tier access
+                to AI-ARCADE and the Protocol.
               </p>
               <div className="flex flex-wrap gap-3">
-                <span className="rounded-full border border-cyan-500/60 bg-cyan-500/10 px-4 py-1 text-xs font-black uppercase tracking-widest text-cyan-200">
-                  Beta — Free Access
-                </span>
-                <span className="rounded-full border border-white/15 px-4 py-1 text-xs uppercase tracking-[0.3em] text-slate-300">
-                  Paid tiers coming soon
+                <span className="rounded-full border border-white/20 bg-white/5 px-4 py-1 text-xs font-black uppercase tracking-widest text-white">
+                  Live — Pro Tier Available
                 </span>
               </div>
             </div>
@@ -58,22 +89,56 @@ export default function Membership() {
               <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Active Membership</p>
               <h2 className="mt-4 text-2xl font-black text-white">Join the Protocol</h2>
               <p className="mt-3 text-sm text-slate-300">
-                PayPal remains the default recurring billing path for thenewfuse.com. Stripe can run
-                in parallel as an additional checkout rail for agentic billing workflows.
+                Choose your checkout rail below. PayPal is the default recurring billing path;
+                Stripe is available for agentic billing workflows.
               </p>
-              <div className="mt-6">
+              <div className="mt-6 space-y-3">
                 <PayPalSubscriptionButton />
-              </div>
-              {stripeMembershipCheckoutUrl && (
-                <a
-                  href={stripeMembershipCheckoutUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 inline-flex w-full items-center justify-center rounded-md border border-white/20 bg-transparent/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-transparent/15"
+                <button
+                  onClick={createStripeCheckout}
+                  disabled={stripeLoading}
+                  className="w-full inline-flex items-center justify-center rounded-md border border-white/20 bg-transparent/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10 disabled:opacity-50"
                 >
-                  Checkout with Stripe
-                </a>
-              )}
+                  {stripeLoading ? (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="animate-spin h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Creating Stripe session…
+                    </span>
+                  ) : (
+                    'Checkout with Stripe'
+                  )}
+                </button>
+                {stripeError && <p className="text-red-400 text-xs mt-2">{stripeError}</p>}
+                {stripeMembershipCheckoutUrl && (
+                  <a
+                    href={stripeMembershipCheckoutUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 inline-flex w-full items-center justify-center rounded-md border border-white/20 bg-transparent/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+                  >
+                    Open Stripe Customer Portal
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>

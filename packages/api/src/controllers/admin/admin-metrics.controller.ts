@@ -5,6 +5,7 @@
 import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AdminGuard } from '../../modules/guards/admin.guard.js';
 import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard.js';
 import { ApiLogsRepository } from '../../repositories/api-logs.repository.js';
 import { SystemMetricsService } from '../../services/system-metrics.service.js';
@@ -12,7 +13,7 @@ import { toError } from '../../utils/error.js';
 
 @ApiTags('admin', 'system')
 @Controller()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AdminGuard)
 export class AdminMetricsController {
   constructor(
     private readonly systemMetricsService: SystemMetricsService,

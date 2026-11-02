@@ -131,17 +131,23 @@ export class GatewayAuthService implements OnModuleDestroy {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
   ) {
-    const secret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
-    if (!secret || secret.length < 32 || secret === 'dev-secret-key-123') {
-      // In dev mode, we'll allow it for now but log a warning if needed.
-      // For this session, I'll bypass the strict length check if it's explicitly dev.
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          '[GatewayAuth] WARNING: Weak JWT secret detected. Proceeding for development.'
-        );
-      } else {
-        throw new Error('[GatewayAuth] 🛑 CRITICAL SECURITY ERROR: Invalid or missing JWT secret.');
-      }
+    const accessSecret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+    if (!accessSecret || accessSecret.length < 32 || accessSecret === 'dev-secret-key-123') {
+      throw new Error(
+        '[GatewayAuth] JWT_SECRET must be set to a value at least 32 characters long; dev fallbacks are not permitted.'
+      );
+    }
+
+    const refreshSecret =
+      this.configService.get<string>('JWT_REFRESH_SECRET') || process.env.JWT_REFRESH_SECRET;
+    if (
+      !refreshSecret ||
+      refreshSecret.length < 32 ||
+      refreshSecret === 'dev-refresh-secret-key-123'
+    ) {
+      throw new Error(
+        '[GatewayAuth] JWT_REFRESH_SECRET must be set to a value at least 32 characters long; dev fallbacks are not permitted.'
+      );
     }
   }
 
@@ -558,17 +564,20 @@ export class GatewayAuthService implements OnModuleDestroy {
   }
 
   private getAccessSecret(): string {
-    return (
-      this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET || 'dev-secret-key-123'
-    );
+    const secret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('[GatewayAuth] JWT_SECRET must be configured');
+    }
+    return secret;
   }
 
   private getRefreshSecret(): string {
-    return (
-      this.configService.get<string>('JWT_REFRESH_SECRET') ||
-      process.env.JWT_REFRESH_SECRET ||
-      'dev-refresh-secret-key-123'
-    );
+    const secret =
+      this.configService.get<string>('JWT_REFRESH_SECRET') || process.env.JWT_REFRESH_SECRET;
+    if (!secret) {
+      throw new Error('[GatewayAuth] JWT_REFRESH_SECRET must be configured');
+    }
+    return secret;
   }
 
   async forgotPassword(

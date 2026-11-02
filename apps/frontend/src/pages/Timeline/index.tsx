@@ -20,6 +20,8 @@ import { Calendar, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSearchParams } from 'react-router-dom';
+import MacroTimelinePage from './MacroTimelinePage';
+import TimelineModulePage from './TimelineModulePage';
 
 type FormState = {
   title: string;
@@ -183,7 +185,7 @@ function isOptionalGithubImportFailure(message: string): boolean {
 
 export default function TimelinePage() {
   const { user } = useAuth();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     data: macroData,
     loading: macroLoading,
@@ -236,12 +238,17 @@ export default function TimelinePage() {
 
   const sortedEvents = useMemo(
     () =>
-      [...events].sort((a, b) => {
-        const ap = readPayload(a).point;
-        const bp = readPayload(b).point;
-        if (ap !== bp) return ap - bp;
-        return a.timestamp.localeCompare(b.timestamp);
-      }),
+      events
+        .map((event) => ({ event, point: readPayload(event).point }))
+        .sort((a, b) => {
+          if (a.point !== b.point) return a.point - b.point;
+          return a.event.timestamp < b.event.timestamp
+            ? -1
+            : a.event.timestamp > b.event.timestamp
+              ? 1
+              : 0;
+        })
+        .map((wrapped) => wrapped.event),
     [events]
   );
 
@@ -550,6 +557,17 @@ export default function TimelinePage() {
     }
   };
 
+  const timelineView = searchParams.get('view');
+  if (timelineView === 'macro') return <MacroTimelinePage />;
+  if (timelineView === 'lab') return <TimelineModulePage />;
+
+  const goToView = (next?: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (next) params.set('view', next);
+    else params.delete('view');
+    setSearchParams(params);
+  };
+
   return (
     <div className="dark min-h-screen bg-[#020617] text-slate-100 p-4 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -564,6 +582,29 @@ export default function TimelinePage() {
             <h1 className="text-4xl md:text-5xl font-black mt-2 tracking-tight">
               Unified Timeline
             </h1>
+            <div className="flex flex-wrap gap-2 mt-4">
+              {[
+                { key: 'timeline', label: 'Timeline', target: undefined },
+                { key: 'macro', label: 'Macro', target: 'macro' },
+                { key: 'lab', label: 'Lab', target: 'lab' },
+              ].map((tab) => {
+                const active = (tab.target ?? undefined) === (timelineView ?? undefined);
+                return (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => goToView(tab.target)}
+                    className={`rounded-md border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition ${
+                      active
+                        ? 'border-amber-400/40 bg-amber-500/15 text-amber-200'
+                        : 'border-slate-600 bg-slate-900/70 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
             <div className="flex flex-wrap gap-4 mt-4">
               <div className="bg-slate-900/80 border border-slate-600 px-4 py-2 rounded-lg">
                 <p className="text-[10px] text-slate-300 uppercase font-bold tracking-widest">

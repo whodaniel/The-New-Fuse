@@ -1,13 +1,16 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { execFile } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { promisify } from 'node:util';
+import { AdminGuard } from '../auth/admin.guard';
+import { GatewayAuthGuard } from '../auth/gateway-auth.guard';
 
 const execFileAsync = promisify(execFile);
 
 @ApiTags('admin-backups')
+@UseGuards(GatewayAuthGuard, AdminGuard)
 @Controller('admin/backups')
 export class AdminBackupGatewayController {
   private readonly repoRoot: string;

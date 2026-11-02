@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from '@/utils/fetchWithTimeout';
 import { A2AMessageType, A2APriority, AgentType } from '@the-new-fuse/a2a-core';
 import {
   A2AMessage,
@@ -227,16 +228,18 @@ function EnhancedMultiAgentChatUI() {
         },
       ];
 
+      // 8 second timeout for each agent registration
       for (const agent of agents) {
-        await fetch(`${apiUrl}/a2a/agents/register`, {
+        await fetchWithTimeout(`${apiUrl}/a2a/agents/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(agent),
+          timeout: 8000,
         });
       }
 
-      // Create a conversation between agents
-      const response = await fetch(`${apiUrl}/a2a/conversations`, {
+      // Create a conversation between agents - 8 second timeout
+      const response = await fetchWithTimeout(`${apiUrl}/a2a/conversations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -244,6 +247,7 @@ function EnhancedMultiAgentChatUI() {
           participants: [agents[1].agentId],
           topic: 'Automated Agent Collaboration',
         }),
+        timeout: 8000,
       });
 
       const { conversationId } = await response.json();
@@ -265,7 +269,7 @@ function EnhancedMultiAgentChatUI() {
         }
       );
     } catch (error) {
-      console.error('Automation failed:', error);
+      console.error('Automation failed:', error instanceof Error ? error.message : error);
     } finally {
       setIsAutomating(false);
     }
@@ -276,7 +280,7 @@ function EnhancedMultiAgentChatUI() {
 
     try {
       const apiUrl = A2A_CONFIG.url.replace('ws://', 'http://').replace(':3001', ':3000');
-      const response = await fetch(`${apiUrl}/a2a/conversations`, {
+      const response = await fetchWithTimeout(`${apiUrl}/a2a/conversations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -284,6 +288,7 @@ function EnhancedMultiAgentChatUI() {
           participants: agents.slice(0, 3).map((a) => a.agentId), // Include up to 3 agents
           topic: 'Multi-Agent Discussion',
         }),
+        timeout: 8000,
       });
 
       const { conversationId } = await response.json();
@@ -293,7 +298,10 @@ function EnhancedMultiAgentChatUI() {
       // Join the conversation
       await joinConversation(conversationId);
     } catch (error) {
-      console.error('Failed to create conversation:', error);
+      console.error(
+        'Failed to create conversation:',
+        error instanceof Error ? error.message : error
+      );
     }
   }, [agents, joinConversation]);
 
@@ -315,20 +323,37 @@ function EnhancedMultiAgentChatUI() {
   }
 
   if (!connectionState.connected && !connectionState.connecting) {
+    const isTimeoutError = connectionState.error?.includes('timeout');
     return (
       <div
         className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white"
         role="status"
         aria-live="polite"
       >
-        <div className="w-20 h-20 border-8 border-dashed rounded-full animate-spin border-blue-500 mb-6"></div>
-        <h1 className="text-2xl font-bold mb-2">A2A Multi-Agent Chat</h1>
-        <p className="text-gray-400 mb-4">Connecting to A2A protocol...</p>
+        {!isTimeoutError ? (
+          <>
+            <div className="w-20 h-20 border-8 border-dashed rounded-full animate-spin border-blue-500 mb-6"></div>
+            <h1 className="text-2xl font-bold mb-2">A2A Multi-Agent Chat</h1>
+            <p className="text-gray-400 mb-4">Connecting to A2A protocol...</p>
+          </>
+        ) : (
+          <>
+            <AlertCircle className="w-20 h-20 text-red-500 mb-6" />
+            <h1 className="text-2xl font-bold mb-2">Connection Timeout</h1>
+            <p className="text-gray-400 mb-4 max-w-md text-center">
+              The connection to the A2A service took too long. Please check your network connection
+              and try again.
+            </p>
+            {connectionState.error && (
+              <p className="text-sm text-gray-500 mb-4">{connectionState.error}</p>
+            )}
+          </>
+        )}
         <button
           onClick={connect}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Retry Connection
+          {isTimeoutError ? 'Retry Connection' : 'Connect'}
         </button>
       </div>
     );
@@ -475,6 +500,7 @@ function EnhancedMultiAgentChatUI() {
         <div className="flex items-center space-x-2">
           <div className="flex-1 relative">
             <input
+              aria-label="Message input"
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
@@ -507,7 +533,7 @@ function EnhancedMultiAgentChatUI() {
               (mode === 'conversation' && !currentConversation)
             }
             aria-label="Send message"
-            className="p-3 bg-blue-500 text-white rounded-full disabled:bg-gray-400 hover:bg-blue-600"
+            className="p-3 bg-blue-500 text-white rounded-full disabled:bg-gray-400 hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             <Send className="h-6 w-6" />
           </button>

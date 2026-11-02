@@ -7,6 +7,7 @@ import { Body, Controller, Get, Post, Put, Res, UseGuards } from '@nestjs/common
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { CurrentUser } from '../../modules/decorators/current-user.decorator.js';
+import { AdminGuard } from '../../modules/guards/admin.guard.js';
 import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard.js';
 import { AdminConfigurationService } from '../../services/admin-configuration.service.js';
 import { toError } from '../../utils/error.js';
@@ -17,7 +18,7 @@ interface User {
 
 @ApiTags('admin')
 @Controller('admin/settings')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AdminGuard)
 export class AdminSettingsController {
   constructor(private readonly configService: AdminConfigurationService) {}
 

@@ -179,13 +179,14 @@ export class PgVectorDriver implements IVectorDatabase {
   }
 
   async addDocuments(collection: string, documents: VectorDocument[]): Promise<void> {
+    const sanitizedCollection = this.sanitizeIdentifier(collection);
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
 
       for (const doc of documents) {
         const query = `
-          INSERT INTO "${collection}" (id, content, metadata, embedding)
+          INSERT INTO "${sanitizedCollection}" (id, content, metadata, embedding)
           VALUES ($1, $2, $3, $4)
           ON CONFLICT (id) DO UPDATE SET
             content = EXCLUDED.content,
@@ -203,10 +204,10 @@ export class PgVectorDriver implements IVectorDatabase {
       }
 
       await client.query('COMMIT');
-      this.logger.log(`Added ${documents.length} documents to collection "${collection}"`);
+      this.logger.log(`Added ${documents.length} documents to collection "${sanitizedCollection}"`);
     } catch (error) {
       await client.query('ROLLBACK');
-      this.logger.error(`Failed to add documents to collection "${collection}"`, error);
+      this.logger.error(`Failed to add documents to collection "${sanitizedCollection}"`, error);
       throw error;
     } finally {
       client.release();
@@ -218,6 +219,7 @@ export class PgVectorDriver implements IVectorDatabase {
     id: string,
     document: Partial<VectorDocument>
   ): Promise<void> {
+    const sanitizedCollection = this.sanitizeIdentifier(collection);
     const client = await this.pool.connect();
     try {
       const setParts: string[] = [];
@@ -247,7 +249,7 @@ export class PgVectorDriver implements IVectorDatabase {
       values.push(id);
 
       const query = `
-        UPDATE "${collection}" 
+        UPDATE "${sanitizedCollection}"
         SET ${setParts.join(', ')}
         WHERE id = $${paramIndex}
       `;
@@ -255,12 +257,17 @@ export class PgVectorDriver implements IVectorDatabase {
       const result = await client.query(query, values);
 
       if (result.rowCount === 0) {
-        throw new Error(`Document with id "${id}" not found in collection "${collection}"`);
+        throw new Error(
+          `Document with id "${id}" not found in collection "${sanitizedCollection}"`
+        );
       }
 
-      this.logger.log(`Updated document "${id}" in collection "${collection}"`);
+      this.logger.log(`Updated document "${id}" in collection "${sanitizedCollection}"`);
     } catch (error) {
-      this.logger.error(`Failed to update document "${id}" in collection "${collection}"`, error);
+      this.logger.error(
+        `Failed to update document "${id}" in collection "${sanitizedCollection}"`,
+        error
+      );
       throw error;
     } finally {
       client.release();
@@ -268,17 +275,23 @@ export class PgVectorDriver implements IVectorDatabase {
   }
 
   async deleteDocument(collection: string, id: string): Promise<void> {
+    const sanitizedCollection = this.sanitizeIdentifier(collection);
     const client = await this.pool.connect();
     try {
-      const result = await client.query(`DELETE FROM "${collection}" WHERE id = $1`, [id]);
+      const result = await client.query(`DELETE FROM "${sanitizedCollection}" WHERE id = $1`, [id]);
 
       if (result.rowCount === 0) {
-        throw new Error(`Document with id "${id}" not found in collection "${collection}"`);
+        throw new Error(
+          `Document with id "${id}" not found in collection "${sanitizedCollection}"`
+        );
       }
 
-      this.logger.log(`Deleted document "${id}" from collection "${collection}"`);
+      this.logger.log(`Deleted document "${id}" from collection "${sanitizedCollection}"`);
     } catch (error) {
-      this.logger.error(`Failed to delete document "${id}" from collection "${collection}"`, error);
+      this.logger.error(
+        `Failed to delete document "${id}" from collection "${sanitizedCollection}"`,
+        error
+      );
       throw error;
     } finally {
       client.release();
@@ -286,12 +299,13 @@ export class PgVectorDriver implements IVectorDatabase {
   }
 
   async getDocument(collection: string, id: string): Promise<VectorDocument | null> {
+    const sanitizedCollection = this.sanitizeIdentifier(collection);
     const client = await this.pool.connect();
     try {
       const result = await client.query(
         `
         SELECT id, content, metadata, embedding 
-        FROM "${collection}" 
+        FROM "${sanitizedCollection}"
         WHERE id = $1
       `,
         [id]
@@ -309,7 +323,10 @@ export class PgVectorDriver implements IVectorDatabase {
         embedding: row.embedding ? JSON.parse(row.embedding) : undefined,
       };
     } catch (error) {
-      this.logger.error(`Failed to get document "${id}" from collection "${collection}"`, error);
+      this.logger.error(
+        `Failed to get document "${id}" from collection "${sanitizedCollection}"`,
+        error
+      );
       throw error;
     } finally {
       client.release();
@@ -317,6 +334,7 @@ export class PgVectorDriver implements IVectorDatabase {
   }
 
   async similaritySearch(collection: string, query: VectorQuery): Promise<VectorSearchResult[]> {
+    const sanitizedCollection = this.sanitizeIdentifier(collection);
     const client = await this.pool.connect();
     try {
       let whereClause = '';
@@ -332,7 +350,10 @@ export class PgVectorDriver implements IVectorDatabase {
       if (query.metadata_filter) {
         const filterConditions: string[] = [];
         for (const [key, value] of Object.entries(query.metadata_filter)) {
-          filterConditions.push(`metadata->>'${key}' = $${++paramIndex}`);
+          const keyParam = ++paramIndex;
+          const valueParam = ++paramIndex;
+          filterConditions.push(`metadata->>$${keyParam} = $${valueParam}`);
+          values.push(key);
           values.push(value);
         }
         if (filterConditions.length > 0) {
@@ -347,7 +368,7 @@ export class PgVectorDriver implements IVectorDatabase {
           metadata,
           embedding <=> $1 as distance,
           1 - (embedding <=> $1) as score
-        FROM "${collection}"
+        FROM "${sanitizedCollection}"
         ${whereClause}
         ORDER BY embedding <=> $1
         LIMIT $${++paramIndex}
@@ -367,7 +388,10 @@ export class PgVectorDriver implements IVectorDatabase {
           distance: row.distance,
         }));
     } catch (error) {
-      this.logger.error(`Failed to perform similarity search in collection "${collection}"`, error);
+      this.logger.error(
+        `Failed to perform similarity search in collection "${sanitizedCollection}"`,
+        error
+      );
       throw error;
     } finally {
       client.release();
@@ -385,18 +409,22 @@ export class PgVectorDriver implements IVectorDatabase {
   }
 
   async batchDelete(collection: string, ids: string[]): Promise<void> {
+    const sanitizedCollection = this.sanitizeIdentifier(collection);
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
 
-      const query = `DELETE FROM "${collection}" WHERE id = ANY($1)`;
+      const query = `DELETE FROM "${sanitizedCollection}" WHERE id = ANY($1)`;
       await client.query(query, [ids]);
 
       await client.query('COMMIT');
-      this.logger.log(`Deleted ${ids.length} documents from collection "${collection}"`);
+      this.logger.log(`Deleted ${ids.length} documents from collection "${sanitizedCollection}"`);
     } catch (error) {
       await client.query('ROLLBACK');
-      this.logger.error(`Failed to batch delete documents from collection "${collection}"`, error);
+      this.logger.error(
+        `Failed to batch delete documents from collection "${sanitizedCollection}"`,
+        error
+      );
       throw error;
     } finally {
       client.release();
@@ -416,6 +444,9 @@ export class PgVectorDriver implements IVectorDatabase {
   }
 
   async getStats(collection?: string): Promise<Record<string, any>> {
+    if (collection) {
+      collection = this.sanitizeIdentifier(collection);
+    }
     const client = await this.pool.connect();
     try {
       if (collection) {
@@ -431,19 +462,18 @@ export class PgVectorDriver implements IVectorDatabase {
           document_count: parseInt(result.rows[0].document_count),
           size_bytes: parseInt(result.rows[0].size_bytes),
         };
-      } else {
-        const collections = await this.listCollections();
-        const stats: Record<string, any> = {
-          total_collections: collections.length,
-          collections: {},
-        };
-
-        for (const coll of collections) {
-          stats.collections[coll] = await this.getStats(coll);
-        }
-
-        return stats;
       }
+      const collections = await this.listCollections();
+      const stats: Record<string, any> = {
+        total_collections: collections.length,
+        collections: {},
+      };
+
+      for (const coll of collections) {
+        stats.collections[coll] = await this.getStats(coll);
+      }
+
+      return stats;
     } catch (error) {
       this.logger.error('Failed to get stats', error);
       throw error;

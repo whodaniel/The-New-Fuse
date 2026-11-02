@@ -1,7 +1,8 @@
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
 import { getAuthTokenCandidates as resolveAuthTokenCandidates } from '@/utils/authToken';
 
-const generateId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+const generateId = () =>
+  globalThis.crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
 export type LedgerStatus =
   | 'submitted'
@@ -487,7 +488,7 @@ function filterLocalTimelineEvents(
       const track = String(payload.timelineTrack || payload.segment || '').toLowerCase();
       return track === timelineTrack;
     })
-    .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+    .sort((a, b) => (b.timestamp < a.timestamp ? -1 : b.timestamp > a.timestamp ? 1 : 0));
 }
 
 function generateLocalTimelineEventId(): string {

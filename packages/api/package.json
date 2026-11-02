@@ -101,5 +101,31 @@
     },
     "./package.json": "./package.json",
     "./*": "./dist/*"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "transform": {
+      "^.+\\.ts$": [
+        "ts-jest",
+        {
+          "diagnostics": false,
+          "tsconfig": {
+            "module": "commonjs",
+            "moduleResolution": "node",
+            "isolatedModules": true,
+            "esModuleInterop": true,
+            "experimentalDecorators": true,
+            "emitDecoratorMetadata": true
+          }
+        }
+      ]
+    }
   }
 }

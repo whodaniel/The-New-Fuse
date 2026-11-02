@@ -7,6 +7,7 @@
 import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AdminGuard } from '../../modules/guards/admin.guard.js';
 import { JwtAuthGuard } from '../../modules/guards/jwt-auth.guard.js';
 import { AuditLogQuery } from '../../repositories/audit-logs.repository.js';
 import { AdminAuditLogsService } from '../../services/admin-audit-logs.service.js';
@@ -14,7 +15,7 @@ import { toError } from '../../utils/error.js';
 
 @ApiTags('admin')
 @Controller('admin/audit-logs')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AdminGuard)
 export class AdminAuditLogsController {
   constructor(private readonly auditLogsService: AdminAuditLogsService) {}
 
