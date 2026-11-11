@@ -343,6 +343,7 @@ const getIsAppHost = () => {
     host === 'app.thenewfuse.com' ||
     host.startsWith('app.') ||
     host.includes('localhost') ||
+    host === '127.0.0.1' ||
     host.includes('pages.dev')
   );
 };

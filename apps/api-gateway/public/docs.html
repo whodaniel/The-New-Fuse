@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — The New Fuse</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif; background: #020617; color: #f8fafc; min-height: 100vh; }
+    nav { position: sticky; top: 0; z-index: 50; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 2rem; display: flex; align-items: center; gap: 2rem; height: 72px; }
+    .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.03em; color: #60a5fa; text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; margin-left: auto; align-items: center; }
+    .nav-links a { color: #94a3b8; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .nav-links a:hover { color: #f8fafc; }
+    .btn-pricing { color: #f8fafc; text-decoration: none; font-size: 14px; background: #3b82f6; padding: 8px 16px; border-radius: 8px; font-weight: 600; transition: background 0.2s; }
+    .btn-pricing:hover { background: #2563eb; }
+    main { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
+    h1 { font-size: 42px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 1rem; line-height: 1.1; }
+    .subtitle { color: #94a3b8; font-size: 18px; line-height: 1.6; max-width: 720px; margin-bottom: 3rem; }
+    .docs { display: grid; gap: 2rem; }
+    article { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 2rem; }
+    article h2 { font-size: 20px; font-weight: 600; margin-bottom: 0.75rem; color: #f1f5f9; }
+    article p { color: #94a3b8; line-height: 1.6; }
+    article code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 14px; color: #60a5fa; font-family: monospace; }
+    footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 2rem; text-align: center; color: #64748b; font-size: 13px; }
+    footer a { color: #94a3b8; text-decoration: none; }
+    footer a:hover { color: #f8fafc; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">The New Fuse</a>
+    <div class="nav-links">
+      <a href="/features">Features</a>
+      <a href="/docs">Docs</a>
+      <a href="/pricing" class="btn-pricing">Pricing</a>
+    </div>
+  </nav>
+  <main>
+    <section style="margin-bottom: 3rem;">
+      <h1>Documentation</h1>
+      <p class="subtitle">Everything you need to set up, configure, and extend The New Fuse desktop operator and federation surface.</p>
+    </section>
+    <div class="docs">
+      <article>
+        <h2>Quick Start</h2>
+        <p>Launch the app from your desktop. The MCP route connects to the federation layer automatically. No manual configuration required for basic workflow automation.</p>
+      </article>
+      <article>
+        <h2>MCP Protocol</h2>
+        <p>The Model Context Protocol enables seamless agent-to-agent communication. Configure endpoints in <code>mcp-config.json</code> to integrate external tools and custom providers.</p>
+      </article>
+      <article>
+        <h2>Support</h2>
+        <p>Reach out via the agent registry for federated assistance, or check the API docs linked in the app header for endpoint references.</p>
+      </article>
+    </div>
+  </main>
+  <footer>
+    <p>The New Fuse — AI Collaboration Platform. <a href="/">Home</a> · <a href="/docs">Documentation</a></p>
+  </footer>
+</body>
+</html>

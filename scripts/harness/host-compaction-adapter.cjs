@@ -23,6 +23,12 @@ const ADAPTER_DIR = path.join(ROOT, 'data/harness/host-compaction');
 const COMPACTION_DIR = path.join(ROOT, 'data/harness/compaction');
 const COMPACTION_SCRIPT = path.join(ROOT, 'scripts/harness/compaction-record.cjs');
 const RECEIPT_DIR = path.join(ROOT, 'data/harness/receipts');
+const BREADCRUMB_FILE = path.join(ROOT, '.agent/runtime-state/terminal-breadcrumbs.json');
+const BREADCRUMB_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days (Hermes v0.8.0 parity)
+
+function normalizeHostName(raw) {
+  return String(raw || 'cursor').trim().replace(/^@/, '').toLowerCase();
+}
 
 function parseArgs(argv) {
   const args = {
@@ -31,15 +37,22 @@ function parseArgs(argv) {
     run: '',
     summary: '',
     transcript: '',
+    tty: process.env.TWIP_TERMINAL_ID || process.env.TTY || 'default-tty',
+    sessionId: '',
+    dryRun: false,
     json: false,
     strict: false,
   };
   for (let i = 1; i < argv.length; i += 1) {
     const t = argv[i];
-    if (t === '--host') args.host = argv[++i] || args.host;
+    if (t === '--host' || t === '--from') args.host = normalizeHostName(argv[++i] || args.host);
+    else if (t && t.startsWith('@')) args.host = normalizeHostName(t);
     else if (t === '--run') args.run = argv[++i] || '';
     else if (t === '--summary') args.summary = argv[++i] || '';
     else if (t === '--transcript') args.transcript = argv[++i] || '';
+    else if (t === '--tty') args.tty = argv[++i] || args.tty;
+    else if (t === '--session-id') args.sessionId = argv[++i] || '';
+    else if (t === '--dry-run') args.dryRun = true;
     else if (t === '--json') args.json = true;
     else if (t === '--strict') args.strict = true;
   }
@@ -256,7 +269,164 @@ function discover(args) {
     hostFilter: args.host || null,
     candidates: filtered,
     guidance:
-      'Use import --transcript <export> after the host exports a transcript. TNF does not scrape private host DBs.',
+      'Use import --transcript <export> after the host exports a transcript, or resume --from @claude|@codex|@cursor for read-only latest session handoff.',
+  };
+}
+
+/**
+ * Walk a directory tree up to maxDepth to find the most recently modified
+ * JSONL transcript file (Hermes v0.8.0 `--resume @claude/@codex` parity, #031).
+ */
+function findLatestTranscriptInDirs(dirs, maxDepth = 4) {
+  let newest = null;
+  function walk(dir, depth) {
+    if (depth > maxDepth || !fs.existsSync(dir)) return;
+    let entries = [];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full, depth + 1);
+      } else if (entry.isFile() && entry.name.endsWith('.jsonl')) {
+        try {
+          const st = fs.statSync(full);
+          if (st.size > 0 && (!newest || st.mtimeMs > newest.mtimeMs)) {
+            newest = { path: full, size: st.size, mtimeMs: st.mtimeMs, mtime: st.mtime.toISOString() };
+          }
+        } catch {
+          // ignore unreadable files
+        }
+      }
+    }
+  }
+  for (const d of dirs) walk(d, 0);
+  return newest;
+}
+
+function findLatestHostTranscript(host, homeDir = os.homedir()) {
+  const normalized = normalizeHostName(host);
+  const searchDirs =
+    normalized === 'claude'
+      ? [path.join(homeDir, '.claude', 'projects'), path.join(homeDir, '.claude')]
+      : normalized === 'codex'
+        ? [path.join(homeDir, '.codex', 'sessions'), path.join(homeDir, '.codex')]
+        : [path.join(homeDir, '.cursor', 'projects'), path.join(homeDir, '.cursor')];
+  return findLatestTranscriptInDirs(searchDirs, 4);
+}
+
+function updateBreadcrumb({ tty, host, sessionId, adapterId, transcriptPath, cwd = process.cwd() }) {
+  fs.mkdirSync(path.dirname(BREADCRUMB_FILE), { recursive: true });
+  let store = { version: 1, breadcrumbs: {} };
+  if (fs.existsSync(BREADCRUMB_FILE)) {
+    try {
+      store = JSON.parse(fs.readFileSync(BREADCRUMB_FILE, 'utf8'));
+      if (!store.breadcrumbs || typeof store.breadcrumbs !== 'object') store.breadcrumbs = {};
+    } catch {
+      store = { version: 1, breadcrumbs: {} };
+    }
+  }
+  const now = Date.now();
+  // Prune expired breadcrumbs (> 30 days)
+  for (const [key, val] of Object.entries(store.breadcrumbs)) {
+    const updatedMs = val && val.updatedAt ? Date.parse(val.updatedAt) : 0;
+    if (updatedMs && now - updatedMs > BREADCRUMB_TTL_MS) {
+      delete store.breadcrumbs[key];
+    }
+  }
+  const key = tty || process.env.TWIP_TERMINAL_ID || 'default-tty';
+  store.breadcrumbs[key] = {
+    tty: key,
+    host: normalizeHostName(host),
+    sessionId: sessionId || adapterId || null,
+    adapterId: adapterId || null,
+    transcriptPath: transcriptPath || null,
+    cwd,
+    updatedAt: new Date(now).toISOString(),
+    expiresAt: new Date(now + BREADCRUMB_TTL_MS).toISOString(),
+  };
+  fs.writeFileSync(BREADCRUMB_FILE, `${JSON.stringify(store, null, 2)}\n`);
+  return store.breadcrumbs[key];
+}
+
+function getBreadcrumb(args) {
+  const key = args.tty || process.env.TWIP_TERMINAL_ID || 'default-tty';
+  if (!fs.existsSync(BREADCRUMB_FILE)) {
+    return { ok: true, tty: key, found: false, breadcrumb: null };
+  }
+  try {
+    const store = JSON.parse(fs.readFileSync(BREADCRUMB_FILE, 'utf8'));
+    const entry = store?.breadcrumbs?.[key] || null;
+    return {
+      ok: true,
+      tty: key,
+      found: Boolean(entry),
+      breadcrumb: entry,
+      totalActiveTerminals: Object.keys(store?.breadcrumbs || {}).length,
+    };
+  } catch (err) {
+    return { ok: false, tty: key, error: err.message };
+  }
+}
+
+function resumeFromHost(args, homeDir = os.homedir()) {
+  const host = normalizeHostName(args.host);
+  const latest = args.transcript
+    ? {
+        path: path.isAbsolute(args.transcript) ? args.transcript : path.join(ROOT, args.transcript),
+        size: fs.existsSync(args.transcript) ? fs.statSync(args.transcript).size : 0,
+        mtime: new Date().toISOString(),
+      }
+    : findLatestHostTranscript(host, homeDir);
+
+  if (!latest || !fs.existsSync(latest.path)) {
+    return {
+      ok: false,
+      host,
+      error: `No readable ${host} JSONL session transcript found under home directory`,
+    };
+  }
+
+  const lines = fs
+    .readFileSync(latest.path, 'utf8')
+    .split(/\r?\n/)
+    .filter(Boolean);
+  if (args.dryRun) {
+    return {
+      ok: true,
+      dryRun: true,
+      host,
+      sourcePath: latest.path,
+      bytes: latest.size,
+      eventsCount: lines.length,
+      mtime: latest.mtime,
+    };
+  }
+
+  const imported = importTranscript({
+    ...args,
+    host,
+    transcript: latest.path,
+    summary:
+      args.summary ||
+      `Cross-harness session resume from @${host} (${lines.length} JSONL events, ${latest.size} bytes) into TNF control-plane.`,
+  });
+  const crumb = updateBreadcrumb({
+    tty: args.tty,
+    host,
+    sessionId: args.sessionId || path.basename(latest.path, '.jsonl'),
+    adapterId: imported.adapter?.id,
+    transcriptPath: imported.adapter?.transcriptCopy,
+    cwd: process.cwd(),
+  });
+  return {
+    ...imported,
+    resumedFrom: `@${host}`,
+    eventsCount: lines.length,
+    breadcrumb: crumb,
   };
 }
 
@@ -269,13 +439,32 @@ function main() {
   else if (args.cmd === 'status') result = status();
   else if (args.cmd === 'verify') result = verify(args);
   else if (args.cmd === 'discover') result = discover(args);
-  else throw new Error(`unknown command: ${args.cmd} (record|import|list|status|verify|discover)`);
+  else if (args.cmd === 'resume') result = resumeFromHost(args);
+  else if (args.cmd === 'breadcrumb') {
+    result = args.sessionId
+      ? { ok: true, breadcrumb: updateBreadcrumb(args) }
+      : getBreadcrumb(args);
+  } else
+    throw new Error(
+      `unknown command: ${args.cmd} (record|import|list|status|verify|discover|resume|breadcrumb)`
+    );
 
   console.log(JSON.stringify(result, null, 2));
   if (result.ok === false) process.exit(1);
 }
 
-module.exports = { record, importTranscript, list, status, verify, discover };
+module.exports = {
+  record,
+  importTranscript,
+  list,
+  status,
+  verify,
+  discover,
+  resumeFromHost,
+  findLatestHostTranscript,
+  updateBreadcrumb,
+  getBreadcrumb,
+};
 
 if (require.main === module) {
   try {

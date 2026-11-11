@@ -165,7 +165,7 @@ export default function TurnstileWidget({
     timeoutId = setTimeout(() => {
       if (cancelled || tokenReceived) return;
       finishWithBypass('Turnstile load timeout', true);
-    }, 5000);
+    }, TURNSTILE_LOAD_TIMEOUT_MS);
 
     return () => {
       cancelled = true;

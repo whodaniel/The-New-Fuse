@@ -253,4 +253,43 @@ describe('credentialed CORS containment', { concurrency: false }, () => {
     assert.equal(response.headers.get('Access-Control-Allow-Origin'), null);
     assert.equal(response.headers.get('Access-Control-Allow-Credentials'), null);
   });
+
+  test('falls back to Supabase Auth at the edge when upstream /api/auth/me returns 503', async () => {
+    globalThis.fetch = async (request) => {
+      const url = typeof request === 'string' ? request : request.url;
+      if (url.startsWith('https://upstream.example.test')) {
+        return new Response('Service Unavailable', { status: 503 });
+      }
+      if (url === 'https://database.example.test/auth/v1/user') {
+        return new Response(
+          JSON.stringify({
+            id: 'supa-user-1',
+            email: 'founder@thenewfuse.com',
+            user_metadata: { full_name: 'Founder' },
+            app_metadata: { role: 'SUPER_ADMIN', roles: ['SUPER_ADMIN'] },
+            email_confirmed_at: '2026-01-01T00:00:00Z',
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+      return new Response('not found', { status: 404 });
+    };
+
+    const response = await invoke(
+      new Request('https://api.thenewfuse.com/api/auth/me', {
+        headers: {
+          Origin: 'https://app.thenewfuse.com',
+          Authorization: 'Bearer valid-supabase-jwt',
+        },
+      })
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('Access-Control-Allow-Origin'), 'https://app.thenewfuse.com');
+    assert.equal(response.headers.get('X-TNF-Edge-Auth'), 'supabase-fallback');
+    const body = await response.json();
+    assert.equal(body.id, 'supa-user-1');
+    assert.equal(body.email, 'founder@thenewfuse.com');
+    assert.equal(body.role, 'SUPER_ADMIN');
+  });
 });

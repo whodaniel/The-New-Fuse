@@ -1,8 +1,10 @@
 import { authFetch } from '@/utils/authToken';
 import { ArrowRight, Crown, Shield, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PayPalSubscriptionButton } from '../components/billing/PayPalSubscriptionButton';
+
+const COMMERCIAL_SALES_ENABLED = import.meta.env.VITE_COMMERCIAL_SALES_ENABLED === 'true';
 
 const benefits = [
   {
@@ -25,6 +27,7 @@ const benefits = [
 ];
 
 export default function Membership() {
+  const navigate = useNavigate();
   const stripeMembershipCheckoutUrl = (
     import.meta.env.VITE_STRIPE_MEMBERSHIP_CHECKOUT_URL || ''
   ).trim();
@@ -32,6 +35,10 @@ export default function Membership() {
   const [stripeError, setStripeError] = useState<string | null>(null);
 
   const createStripeCheckout = async () => {
+    if (!COMMERCIAL_SALES_ENABLED) {
+      navigate('/dashboard?access=early_access');
+      return;
+    }
     setStripeLoading(true);
     setStripeError(null);
     try {
@@ -50,6 +57,10 @@ export default function Membership() {
         throw new Error(err.message || 'Failed to create Stripe checkout session');
       }
       const data = await response.json();
+      if (data.prelaunch) {
+        navigate('/dashboard?access=early_access');
+        return;
+      }
       if (data.url) {
         window.location.href = data.url;
       } else {
@@ -93,7 +104,15 @@ export default function Membership() {
                 Stripe is available for agentic billing workflows.
               </p>
               <div className="mt-6 space-y-3">
-                <PayPalSubscriptionButton />
+                {COMMERCIAL_SALES_ENABLED ? (
+                  <PayPalSubscriptionButton />
+                ) : (
+                  <div className="rounded-md border border-emerald-500/40 bg-emerald-500/10 p-3 text-xs text-emerald-200">
+                    <strong>Pre-Commercial Early Access Active ($0.00):</strong> Paid billing is
+                    intentionally paused during beta. Click below to enter the dashboard with full
+                    member access at no cost.
+                  </div>
+                )}
                 <button
                   onClick={createStripeCheckout}
                   disabled={stripeLoading}
@@ -123,8 +142,10 @@ export default function Membership() {
                       </svg>
                       Creating Stripe session…
                     </span>
-                  ) : (
+                  ) : COMMERCIAL_SALES_ENABLED ? (
                     'Checkout with Stripe'
+                  ) : (
+                    'Enter Dashboard (Free Early Access)'
                   )}
                 </button>
                 {stripeError && <p className="text-red-400 text-xs mt-2">{stripeError}</p>}

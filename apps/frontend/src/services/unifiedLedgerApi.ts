@@ -1,5 +1,8 @@
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
-import { getAuthTokenCandidates as resolveAuthTokenCandidates } from '@/utils/authToken';
+import {
+  authFetch,
+  getAuthTokenCandidates as resolveAuthTokenCandidates,
+} from '@/utils/authToken';
 
 const generateId = () =>
   globalThis.crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -269,48 +272,10 @@ async function getAuthTokenCandidates(): Promise<string[]> {
 }
 
 async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  const baseHeaders = new Headers(init?.headers);
-  if (baseHeaders.has('Authorization')) {
-    return fetch(input, {
-      ...init,
-      headers: baseHeaders,
-      credentials: 'include',
-    });
-  }
-
-  const tokenCandidates = await getAuthTokenCandidates();
-  const authOptions = tokenCandidates.length > 0 ? tokenCandidates : [null];
-
-  let lastResponse: Response | null = null;
-  for (let i = 0; i < authOptions.length; i += 1) {
-    const token = authOptions[i];
-    const headers = new Headers(baseHeaders);
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    const response = await fetch(input, {
-      ...init,
-      headers,
-      credentials: 'include',
-    });
-    lastResponse = response;
-
-    const canRetryAuth = i < authOptions.length - 1;
-    if ((response.status === 401 || response.status === 403) && canRetryAuth) {
-      continue;
-    }
-    return response;
-  }
-
-  return (
-    lastResponse ||
-    fetch(input, {
-      ...init,
-      headers: baseHeaders,
-      credentials: 'include',
-    })
-  );
+  // Use shared authFetch so timeline/ledger routes silent-refresh / re-exchange
+  // on 401 instead of surfacing Nest "Authentication required" toasts while the
+  // SPA still appears signed in on a stale or Supabase-only bearer.
+  return authFetch(input, init);
 }
 
 async function parse<T>(res: Response): Promise<T> {

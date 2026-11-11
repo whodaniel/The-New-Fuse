@@ -72,3 +72,42 @@ it('recovers an expired access token through cookie refresh before redirecting',
   expect(getAccessToken()).toBe('refreshed');
   expect(fetch).toHaveBeenCalledTimes(3);
 });
+
+it('falls back to valid JWT claims and renders workspace when /api/auth/me returns 503 (no local harness running)', async () => {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const payload = btoa(
+    JSON.stringify({
+      sub: 'user-jwt-1',
+      email: 'jwt@example.test',
+      user_metadata: { full_name: 'JWT User' },
+      role: 'authenticated',
+      exp: Math.floor(Date.now() / 1000) + 3600,
+    })
+  );
+  const jwt = `${header}.${payload}.sig`;
+  persistTokens({ accessToken: jwt });
+  vi.mocked(fetch).mockResolvedValueOnce(new Response('Service Unavailable', { status: 503 }));
+  mount();
+  expect(await screen.findByText('Verified workspace')).toBeInTheDocument();
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  expect(getAccessToken()).toBe(jwt);
+});
+
+it('clears an expired JWT when /api/auth/me and /api/auth/refresh return 401/503 instead of trapping on 503 screen', async () => {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const payload = btoa(
+    JSON.stringify({
+      sub: 'user-jwt-expired',
+      email: 'expired@example.test',
+      exp: Math.floor(Date.now() / 1000) - 3600,
+    })
+  );
+  const expiredJwt = `${header}.${payload}.sig`;
+  persistTokens({ accessToken: expiredJwt });
+  vi.mocked(fetch)
+    .mockResolvedValueOnce(new Response('Service Unavailable', { status: 503 }))
+    .mockResolvedValueOnce(new Response('{}', { status: 401 }));
+  mount();
+  await waitFor(() => expect(getAccessToken()).toBeNull());
+  expect(screen.queryByText('Unable to verify your session')).not.toBeInTheDocument();
+});

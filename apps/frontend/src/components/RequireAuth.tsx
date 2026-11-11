@@ -20,8 +20,15 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
   redirectTo = '/auth/login',
 }) => {
-  const { isAuthenticated, isLoading, isSlowLoading, sessionUnavailable, retrySession, error } =
-    useAuth();
+  const {
+    isAuthenticated,
+    isLoading,
+    isSlowLoading,
+    sessionUnavailable,
+    retrySession,
+    logout,
+    error,
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const hasRedirected = useRef(false);
@@ -96,9 +103,20 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
         <p role="alert">
           {error || 'The service is temporarily unavailable. Your credentials have been kept.'}
         </p>
-        <button className="min-h-11 rounded bg-blue-600 px-5" onClick={retrySession}>
-          Retry connection
-        </button>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button className="min-h-11 rounded bg-blue-600 px-5" onClick={retrySession}>
+            Retry connection
+          </button>
+          <button
+            className="min-h-11 rounded border border-slate-700 bg-slate-900 px-5 text-slate-200 hover:bg-slate-800"
+            onClick={async () => {
+              await logout();
+              navigate(redirectTo, { replace: true, state: { from: location } });
+            }}
+          >
+            Sign in again
+          </button>
+        </div>
       </main>
     );
   }

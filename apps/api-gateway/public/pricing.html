@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — The New Fuse</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif; background: #020617; color: #f8fafc; min-height: 100vh; }
+    nav { position: sticky; top: 0; z-index: 50; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 2rem; display: flex; align-items: center; gap: 2rem; height: 72px; }
+    .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.03em; color: #60a5fa; text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; margin-left: auto; align-items: center; }
+    .nav-links a { color: #94a3b8; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .nav-links a:hover { color: #f8fafc; }
+    .btn-pricing { color: #f8fafc; text-decoration: none; font-size: 14px; background: #3b82f6; padding: 8px 16px; border-radius: 8px; font-weight: 600; transition: background 0.2s; }
+    .btn-pricing:hover { background: #2563eb; }
+    main { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
+    h1 { font-size: 42px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 1rem; line-height: 1.1; }
+    .subtitle { color: #94a3b8; font-size: 18px; line-height: 1.6; max-width: 720px; margin-bottom: 3rem; }
+    .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; align-items: start; }
+    .plan { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 2rem; }
+    .plan.popular { background: rgba(255,255,255,0.06); border: 1px solid rgba(56, 189, 248, 0.25); position: relative; }
+    .popular-badge { position: absolute; top: -12px; right: 1.5rem; background: #38bdf8; color: #020617; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; letter-spacing: 0.04em; }
+    .plan h3 { font-size: 20px; font-weight: 700; margin-bottom: 0.25rem; }
+    .plan .desc { color: #94a3b8; font-size: 14px; margin-bottom: 1.25rem; }
+    .plan .price { font-size: 36px; font-weight: 700; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+    .plan .price span { font-size: 16px; font-weight: 500; color: #94a3b8; }
+    .plan ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; color: #cbd5e1; font-size: 14px; line-height: 1.5; }
+    footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 2rem; text-align: center; color: #64748b; font-size: 13px; }
+    footer a { color: #94a3b8; text-decoration: none; }
+    footer a:hover { color: #f8fafc; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">The New Fuse</a>
+    <div class="nav-links">
+      <a href="/features">Features</a>
+      <a href="/docs">Docs</a>
+      <a href="/pricing" class="btn-pricing">Pricing</a>
+    </div>
+  </nav>
+  <main>
+    <section style="margin-bottom: 3rem;">
+      <h1>Pricing</h1>
+      <p class="subtitle">Start free. Scale as your federation and agent workload grow.</p>
+    </section>
+    <div class="plans">
+      <div class="plan">
+        <h3>Starter</h3>
+        <p class="desc">For individuals and small teams.</p>
+        <div class="price">$0 <span>/month</span></div>
+        <ul>
+          <li>✓ 3 active agents</li>
+          <li>✓ Basic MCP integration</li>
+          <li>✓ Community support</li>
+        </ul>
+      </div>
+      <div class="plan popular">
+        <div class="popular-badge">POPULAR</div>
+        <h3>Professional</h3>
+        <p class="desc">For growing federations.</p>
+        <div class="price">$49 <span>/month</span></div>
+        <ul>
+          <li>✓ 20 active agents</li>
+          <li>✓ Full MCP + A2A protocols</li>
+          <li>✓ Priority support</li>
+          <li>✓ Analytics dashboard</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <h3>Enterprise</h3>
+        <p class="desc">Custom contracts and SSO.</p>
+        <div class="price">Custom</div>
+        <ul>
+          <li>✓ Unlimited agents</li>
+          <li>✓ Dedicated relay nodes</li>
+          <li>✓ SLA & audit logs</li>
+          <li>✓ Onboarding support</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>The New Fuse — AI Collaboration Platform. <a href="/">Home</a> · <a href="/docs">Documentation</a></p>
+  </footer>
+</body>
+</html>

@@ -118,11 +118,13 @@ function resolveProviderFailover(opts = {}) {
   const env = opts.env || process.env;
   const disabled = disabledSet(policy, env);
   const pin = (opts.host && policy.hostPins && policy.hostPins[opts.host]) || null;
+  const roleTier = (opts.role && policy.roleTiers && policy.roleTiers[opts.role]) || null;
   const primary = catalogPrimary(ctx, opts.providers);
   const liveChain = opts.seed ? [] : contextWatchdogChain(ctx);
   const fromCatalog = catalogFamilies(opts.providers);
 
   const preferred = [
+    ...(roleTier?.prefer || []),
     ...(pin?.prefer || []),
     ...liveChain,
     ...fromCatalog,
@@ -143,6 +145,8 @@ function resolveProviderFailover(opts = {}) {
 
   return {
     host: opts.host || 'default',
+    role: opts.role || null,
+    roleTier: roleTier || null,
     primary,
     chain,
     chainCsv: chain.join(','),
@@ -154,6 +158,56 @@ function resolveProviderFailover(opts = {}) {
   };
 }
 
+/**
+ * Validate and normalize a zero-prose System-1 decision primitive (JEV 8hfbG5PhcB8).
+ * Enforces TNF's "Don't Let Models Reason When Classification Suffices" principle:
+ * - mode === 'choice': value must be one of `options`, or `null` if abstaining.
+ * - mode === 'score': value must be a finite number in [min, max], or `null` if below minConfidence.
+ */
+function validateSystem1Decision(spec = {}) {
+  const mode = spec.mode || 'choice';
+  const rawValue = spec.value;
+  const confidence = typeof spec.confidence === 'number' ? spec.confidence : 1.0;
+  const minConfidence = typeof spec.minConfidence === 'number' ? spec.minConfidence : 0.5;
+
+  if (rawValue === null || rawValue === 'null' || confidence < minConfidence) {
+    return { ok: true, mode, decision: null, abstained: true, confidence };
+  }
+
+  if (mode === 'choice') {
+    const options = Array.isArray(spec.options) ? spec.options.map(String) : [];
+    const candidate = String(rawValue).trim();
+    if (options.length > 0 && !options.includes(candidate)) {
+      return {
+        ok: false,
+        mode,
+        decision: null,
+        abstained: true,
+        error: `choice "${candidate}" not in allowed options [${options.join(', ')}]`,
+      };
+    }
+    return { ok: true, mode, decision: candidate, abstained: false, confidence };
+  }
+
+  if (mode === 'score') {
+    const num = Number(rawValue);
+    const min = typeof spec.min === 'number' ? spec.min : 0;
+    const max = typeof spec.max === 'number' ? spec.max : 1;
+    if (!Number.isFinite(num) || num < min || num > max) {
+      return {
+        ok: false,
+        mode,
+        decision: null,
+        abstained: true,
+        error: `score "${rawValue}" outside [${min}, ${max}]`,
+      };
+    }
+    return { ok: true, mode, decision: num, abstained: false, confidence };
+  }
+
+  return { ok: false, mode, decision: null, abstained: true, error: `unsupported System-1 mode: ${mode}` };
+}
+
 function writeReceipt(payload) {
   fs.mkdirSync(RECEIPT_DIR, { recursive: true });
   const receipt = path.join(RECEIPT_DIR, `provider-failover-${Date.now()}.json`);
@@ -162,7 +216,7 @@ function writeReceipt(payload) {
 }
 
 function parseArgs(argv) {
-  const out = { json: false, host: null, seed: false, write: true };
+  const out = { json: false, host: null, role: null, seed: false, write: true };
   for (let i = 0; i < argv.length; i += 1) {
     const t = argv[i];
     if (t === '--json') out.json = true;
@@ -170,6 +224,7 @@ function parseArgs(argv) {
     else if (t === '--no-write') out.write = false;
     else if (t === '--write') out.write = true;
     else if (t === '--host') out.host = argv[++i] || null;
+    else if (t === '--role') out.role = argv[++i] || null;
   }
   return out;
 }
@@ -181,6 +236,7 @@ function main(argv = process.argv.slice(2)) {
   const ctxForPrimary = loadJson(CONTEXT, {});
   const resolution = resolveProviderFailover({
     host: opts.host || 'watchdog',
+    role: opts.role || null,
     seed: opts.seed,
     ctx: opts.seed
       ? {
@@ -201,6 +257,7 @@ function main(argv = process.argv.slice(2)) {
   } else {
     console.log('TNF provider failover');
     console.log(`host: ${payload.host}${payload.seed ? ' (seed)' : ''}`);
+    if (payload.role) console.log(`role: ${payload.role}`);
     console.log(
       `primary: ${payload.primary.id}${payload.primary.model ? ` (${payload.primary.model})` : ''}`
     );
@@ -218,6 +275,7 @@ module.exports = {
   POLICY,
   loadPolicy,
   resolveProviderFailover,
+  validateSystem1Decision,
   normalizeFamily,
   main,
 };

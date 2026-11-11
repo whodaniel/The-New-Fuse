@@ -3,6 +3,7 @@ import { Button, Card, Input, Label, Textarea } from '@/components/ui';
 import TimelineView from '@/features/timeline/components/TimelineView';
 import { useTimeline } from '@/features/timeline/hooks/useTimeline';
 import { useAuth } from '@/providers/AuthProvider';
+import { ensureAppAccessToken } from '@/services/authSession';
 import {
   bootstrapPersonalTimeline,
   createTimelineEvent,
@@ -184,7 +185,7 @@ function isOptionalGithubImportFailure(message: string): boolean {
 }
 
 export default function TimelinePage() {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const {
     data: macroData,
@@ -342,6 +343,17 @@ export default function TimelinePage() {
     setLoading(true);
     setGraphLoading(true);
 
+    const appToken = await ensureAppAccessToken();
+    if (!appToken) {
+      setEvents([]);
+      setSelectedId(null);
+      setNarrativeGraph(null);
+      setLoading(false);
+      setGraphLoading(false);
+      toast.error('Your session appears expired. Please sign in again and retry.');
+      return;
+    }
+
     try {
       const rows = await listTimelineEvents(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
       setEvents(rows);
@@ -351,7 +363,18 @@ export default function TimelinePage() {
         await runBootstrap(true);
       }
     } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Failed to load your timeline'));
+      const message = getApiErrorMessage(error, 'Failed to load your timeline');
+      const statusCode =
+        error instanceof Error && 'status' in error ? Number((error as any).status) : 0;
+      if (
+        statusCode === 401 ||
+        statusCode === 403 ||
+        /(^|[^0-9])401([^0-9]|$)|unauthorized|forbidden/i.test(message)
+      ) {
+        toast.error('Your session appears expired. Please sign in again and retry.');
+      } else {
+        toast.error(message);
+      }
       setEvents([]);
       setSelectedId(null);
     } finally {
@@ -365,15 +388,27 @@ export default function TimelinePage() {
       setNarrativeGraph(graph);
     } catch (error) {
       setNarrativeGraph(null);
-      toast.error(getApiErrorMessage(error, 'Timeline graph unavailable'));
+      const message = getApiErrorMessage(error, 'Timeline graph unavailable');
+      const statusCode =
+        error instanceof Error && 'status' in error ? Number((error as any).status) : 0;
+      if (
+        statusCode === 401 ||
+        statusCode === 403 ||
+        /(^|[^0-9])401([^0-9]|$)|unauthorized|forbidden/i.test(message)
+      ) {
+        toast.error('Your session appears expired. Please sign in again and retry.');
+      } else {
+        toast.error(message);
+      }
     } finally {
       setGraphLoading(false);
     }
   };
 
   useEffect(() => {
-    load();
-  }, [ownerScopeId, userId]);
+    if (authLoading) return;
+    void load();
+  }, [ownerScopeId, userId, authLoading]);
 
   useEffect(() => {
     if (!selectedEventRef.current || !selectedEvent) return;

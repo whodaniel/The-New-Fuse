@@ -32,7 +32,7 @@ const executorSource = fs.readFileSync(
 );
 
 /** Pre-existing advertised-without-executor debt. Shrink this; never grow it. */
-const KNOWN_MISSING = new Set(['todo_add', 'todo_list', 'todo_update', 'todo_done']);
+const KNOWN_MISSING = new Set<string>([]);
 
 const executed = new Set(
   [...executorSource.matchAll(/case\s+'([a-z0-9_]+)'\s*:/gi)].map((m) => m[1] as string)
@@ -62,7 +62,18 @@ for (const tool of BUILTIN_TOOLS.filter((t) => t.defaultEnabled)) {
 }
 
 // The tools this change adds must be genuinely wired, not merely advertised.
-for (const name of ['graph_query', 'graph_path', 'graph_explain']) {
+for (const name of [
+  'graph_query',
+  'graph_path',
+  'graph_explain',
+  'graph_skeleton',
+  'self_compact',
+  'system1_decide',
+  'todo_add',
+  'todo_list',
+  'todo_update',
+  'todo_done',
+]) {
   assert.ok(
     BUILTIN_TOOLS.some((t) => t.name === name),
     `${name} should be advertised in llm-tools.ts`

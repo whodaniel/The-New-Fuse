@@ -1,3 +1,8 @@
+// Always prefer the configured absolute API origin in production builds —
+// including *.pages.dev preview/production aliases. Forcing relative `/api`
+// on pages.dev routed auth exchange/refresh through the Pages Functions proxy,
+// which is flaky and left the SPA "logged in" on a Supabase bearer that
+// JwtAuthGuard rejects for timeline/ledger routes.
 const rawConfiguredApiUrl = String(import.meta.env.VITE_API_URL || '')
   .trim()
   .replace(/\/+$/, '');

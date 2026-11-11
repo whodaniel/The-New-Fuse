@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features — The New Fuse</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif; background: #020617; color: #f8fafc; min-height: 100vh; }
+    nav { position: sticky; top: 0; z-index: 50; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 2rem; display: flex; align-items: center; gap: 2rem; height: 72px; }
+    .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.03em; color: #60a5fa; text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; margin-left: auto; align-items: center; }
+    .nav-links a { color: #94a3b8; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .nav-links a:hover { color: #f8fafc; }
+    .btn-pricing { color: #f8fafc; text-decoration: none; font-size: 14px; background: #3b82f6; padding: 8px 16px; border-radius: 8px; font-weight: 600; transition: background 0.2s; }
+    .btn-pricing:hover { background: #2563eb; }
+    main { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
+    h1 { font-size: 42px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 1rem; line-height: 1.1; }
+    .subtitle { color: #94a3b8; font-size: 18px; line-height: 1.6; max-width: 720px; margin-bottom: 3rem; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .feature { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 1.75rem; }
+    .feature h3 { font-size: 18px; font-weight: 600; margin-bottom: 0.5rem; color: #f1f5f9; }
+    .feature p { color: #94a3b8; font-size: 14px; line-height: 1.6; }
+    footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 2rem; text-align: center; color: #64748b; font-size: 13px; }
+    footer a { color: #94a3b8; text-decoration: none; }
+    footer a:hover { color: #f8fafc; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">The New Fuse</a>
+    <div class="nav-links">
+      <a href="/features">Features</a>
+      <a href="/docs">Docs</a>
+      <a href="/pricing" class="btn-pricing">Pricing</a>
+    </div>
+  </nav>
+  <main>
+    <section style="margin-bottom: 3rem;">
+      <h1>Features</h1>
+      <p class="subtitle">Multi-agent orchestration, protocol integration, and real-time analytics built for enterprise AI workflows.</p>
+    </section>
+    <div class="features">
+      <div class="feature">
+        <h3>Multi-LLM Support</h3>
+        <p>GPT-4, Claude, Gemini, and Llama integration with automatic fallback chains.</p>
+      </div>
+      <div class="feature">
+        <h3>Visual Workflow Builder</h3>
+        <p>Design agent orchestration flows with a drag-and-drop interface.</p>
+      </div>
+      <div class="feature">
+        <h3>MCP & A2A Protocols</h3>
+        <p>Native support for Model Context Protocol and Agent-to-Agent communication.</p>
+      </div>
+      <div class="feature">
+        <h3>Real-time Analytics</h3>
+        <p>Live dashboard tracking agent health, latency, and federation status.</p>
+      </div>
+      <div class="feature">
+        <h3>Web3 Native</h3>
+        <p>Built-in NFT marketplace and decentralized identity support.</p>
+      </div>
+      <div class="feature">
+        <h3>Enterprise Security</h3>
+        <p>Role-based access, audit logs, and encrypted relay channels.</p>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>The New Fuse — AI Collaboration Platform. <a href="/">Home</a> · <a href="/docs">Documentation</a></p>
+  </footer>
+</body>
+</html>

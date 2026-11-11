@@ -7,6 +7,14 @@ const getSubdomainInfo = () => {
   const hostname = window.location.hostname;
   const parts = hostname.split('.');
 
+  if (hostname === '127.0.0.1') {
+    return { name: null, isApp: true };
+  }
+
+  if (hostname.endsWith('.pages.dev')) {
+    return { name: null, isApp: true };
+  }
+
   if (hostname.includes('localhost')) {
     if (parts.length > 1 && parts[0] !== 'www') {
       return {
@@ -14,6 +22,7 @@ const getSubdomainInfo = () => {
         isApp: parts[0] === 'app' || parts[0] === 'saas',
       };
     }
+    return { name: null, isApp: true };
   } else {
     if (parts.length > 2 && parts[0] !== 'www') {
       return {

@@ -32,6 +32,26 @@
     {
       "name": "AGENTS.md standard",
       "url": "https://agents.md/"
+    },
+    {
+      "name": "Shanghai AI Lab — Harness-of-Harness (HoH) & Epistemic Evidence State (AI 7 #016)",
+      "url": "https://www.youtube.com/watch?v=yeb2ffn8rJk"
+    },
+    {
+      "name": "Google DeepMind / Research — Agent Skills Lifecycle & Multiplicative Competence (AI 7 #002/#006)",
+      "url": "https://www.youtube.com/watch?v=kFpLzCVLA20"
+    },
+    {
+      "name": "Nous Research — Hermes Agent v0.8.0 Cross-Harness Session Resume & Breadcrumbs (AI 7 #031)",
+      "url": "https://www.youtube.com/watch?v=f-dcqcdmPi0"
+    },
+    {
+      "name": "JEV — System-1 Subconscious Zero-Prose Fast-Lane Classifier (AI 7 #102/#113)",
+      "url": "https://www.youtube.com/watch?v=8hfbG5PhcB8"
+    },
+    {
+      "name": "Graft — Tree-Sitter AST Code Graph Skeleton & Top-3 Symbol Grounding (AI 7 #043/#073)",
+      "url": "https://www.youtube.com/watch?v=fXcdZg2wTWI"
     }
   ],
   "role": "control-plane",
@@ -243,7 +263,12 @@
     "concurrent_workstream_collision_boundaries",
     "parody_assimilate_gap_matrix",
     "content_addressed_resource_convergence",
-    "thin_verified_host_adapters"
+    "thin_verified_host_adapters",
+    "epistemic_evidence_dual_state",
+    "cross_harness_session_resume",
+    "system1_zero_prose_classifier",
+    "multiplicative_skill_competence_doctor",
+    "code_graph_symbol_skeleton"
   ],
   "verify": {
     "commands": [

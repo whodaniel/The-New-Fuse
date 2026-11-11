@@ -308,14 +308,30 @@ export async function executeBuiltinTool(
         result = { ...(await runtime.callTool(server, tool, toolArgs)) };
         break;
       }
+      case 'todo_add':
+      case 'todo_list':
+      case 'todo_update':
+      case 'todo_done': {
+        if (!ctx.quiet) console.error(`[agents-run] ${name}`);
+        result = await executeTodoTool(name, args);
+        break;
+      }
       case 'graph_query':
       case 'graph_path':
-      case 'graph_explain': {
-        // Every tool this file advertises has a case here. `llm-tools.ts` lists
-        // todo_add/todo_list/todo_update/todo_done with no executor below, which
-        // is exactly the defect this block refuses to repeat.
+      case 'graph_explain':
+      case 'graph_skeleton': {
         if (!ctx.quiet) console.error(`[agents-run] ${name}`);
         result = await executeCodeGraphTool(name, args, ctx);
+        break;
+      }
+      case 'self_compact': {
+        if (!ctx.quiet) console.error(`[agents-run] self_compact`);
+        result = await executeSelfCompact(args, ctx);
+        break;
+      }
+      case 'system1_decide': {
+        if (!ctx.quiet) console.error(`[agents-run] system1_decide`);
+        result = executeSystem1Decide(args);
         break;
       }
       default:
@@ -1132,6 +1148,33 @@ async function executeCodeGraphTool(
     };
   }
 
+  if (name === 'graph_skeleton') {
+    const fileFilter = String(args.file ?? '').trim();
+    if (!fileFilter) return { ok: false, error: 'graph_skeleton: empty file' };
+    const matchedNodes = [...graph.nodes.values()].filter(
+      (n) => n.sourceFile && (n.sourceFile === fileFilter || n.sourceFile.includes(fileFilter))
+    );
+    const incomingCounts = new Map<string, number>();
+    const outgoingCounts = new Map<string, number>();
+    for (const e of graph.edges) {
+      outgoingCounts.set(e.source, (outgoingCounts.get(e.source) || 0) + 1);
+      incomingCounts.set(e.target, (incomingCounts.get(e.target) || 0) + 1);
+    }
+    return {
+      ok: true,
+      fileFilter,
+      count: matchedNodes.length,
+      symbols: matchedNodes.slice(0, 200).map((n) => ({
+        id: n.id,
+        kind: n.kind,
+        file: n.sourceFile,
+        line: n.sourceLocation ?? null,
+        incomingEdges: incomingCounts.get(n.id) || 0,
+        outgoingEdges: outgoingCounts.get(n.id) || 0,
+      })),
+    };
+  }
+
   const target = String(args.name ?? '');
   if (!target) return { ok: false, error: 'graph_explain: empty name' };
   const result = engine.explain(graph, target);
@@ -1154,4 +1197,198 @@ async function executeCodeGraphTool(
       .slice(0, 40)
       .map((o) => ({ to: o.node.id, relation: o.edge.relation, confidence: o.edge.confidence })),
   };
+}
+
+/**
+ * Durable Kanban-backed Todo executor: prefers KanbanService (UnifiedLedgerClient)
+ * and degrades gracefully to `~/.tnf/kanban/tasks.json` when offline.
+ */
+async function executeTodoTool(
+  name: string,
+  args: Record<string, unknown>
+): Promise<Record<string, unknown>> {
+  const colArg = args.column ? String(args.column) : undefined;
+  const validCol = (
+    colArg === 'doing' || colArg === 'done' ? colArg : 'todo'
+  ) as 'todo' | 'doing' | 'done';
+  const prioArg = args.priority ? String(args.priority) : undefined;
+  const validPrio = (
+    prioArg === 'low' || prioArg === 'high' ? prioArg : 'medium'
+  ) as 'low' | 'medium' | 'high';
+
+  try {
+    const { KanbanService } = await import('../services/KanbanService.js');
+    const kanban = new KanbanService();
+    if (name === 'todo_add') {
+      const title = String(args.title ?? '').trim();
+      if (!title) return { ok: false, error: 'todo_add: empty title' };
+      const task = await kanban.addTask(title, {
+        description: args.description ? String(args.description) : undefined,
+        column: validCol,
+        priority: validPrio,
+      });
+      return { ok: true, engine: 'ledger', task };
+    }
+    if (name === 'todo_list') {
+      const tasks = await kanban.getTasks(
+        colArg && ['todo', 'doing', 'done'].includes(colArg)
+          ? (colArg as 'todo' | 'doing' | 'done')
+          : undefined
+      );
+      return { ok: true, engine: 'ledger', count: tasks.length, tasks };
+    }
+    if (name === 'todo_update') {
+      const taskId = String(args.taskId ?? '').trim();
+      if (!taskId) return { ok: false, error: 'todo_update: empty taskId' };
+      const task = await kanban.updateTask(taskId, {
+        ...(args.title ? { title: String(args.title) } : {}),
+        ...(colArg && ['todo', 'doing', 'done'].includes(colArg) ? { column: validCol } : {}),
+        ...(prioArg && ['low', 'medium', 'high'].includes(prioArg) ? { priority: validPrio } : {}),
+      });
+      return { ok: true, engine: 'ledger', task };
+    }
+    if (name === 'todo_done') {
+      const taskId = String(args.taskId ?? '').trim();
+      if (!taskId) return { ok: false, error: 'todo_done: empty taskId' };
+      const task = await kanban.moveTask(taskId, 'done');
+      return { ok: true, engine: 'ledger', task };
+    }
+  } catch {
+    // Fall through to local durable JSON file (~/.tnf/kanban/tasks.json)
+  }
+
+  const os = await import('node:os');
+  const kanbanFile = path.join(os.homedir(), '.tnf', 'kanban', 'tasks.json');
+  fs.mkdirSync(path.dirname(kanbanFile), { recursive: true });
+  let tasks: Array<Record<string, unknown>> = [];
+  if (fs.existsSync(kanbanFile)) {
+    try {
+      tasks = JSON.parse(fs.readFileSync(kanbanFile, 'utf8'));
+      if (!Array.isArray(tasks)) tasks = [];
+    } catch {
+      tasks = [];
+    }
+  }
+  const now = new Date().toISOString();
+
+  if (name === 'todo_add') {
+    const title = String(args.title ?? '').trim();
+    if (!title) return { ok: false, error: 'todo_add: empty title' };
+    const id = `KAN-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    const task = {
+      id,
+      title,
+      description: args.description ? String(args.description) : '',
+      column: validCol,
+      priority: validPrio,
+      createdAt: now,
+      updatedAt: now,
+    };
+    tasks.push(task);
+    fs.writeFileSync(kanbanFile, JSON.stringify(tasks, null, 2) + '\n', 'utf8');
+    return { ok: true, engine: 'file', task };
+  }
+  if (name === 'todo_list') {
+    const filtered =
+      colArg && ['todo', 'doing', 'done'].includes(colArg)
+        ? tasks.filter((t) => t.column === colArg)
+        : tasks;
+    return { ok: true, engine: 'file', count: filtered.length, tasks: filtered };
+  }
+  if (name === 'todo_update' || name === 'todo_done') {
+    const taskId = String(args.taskId ?? '').trim();
+    if (!taskId) return { ok: false, error: `${name}: empty taskId` };
+    const idx = tasks.findIndex((t) => t.id === taskId);
+    if (idx === -1) return { ok: false, error: `Task not found: ${taskId}` };
+    const updated = {
+      ...tasks[idx],
+      ...(args.title ? { title: String(args.title) } : {}),
+      ...(name === 'todo_done'
+        ? { column: 'done' }
+        : colArg && ['todo', 'doing', 'done'].includes(colArg)
+          ? { column: validCol }
+          : {}),
+      ...(prioArg && ['low', 'medium', 'high'].includes(prioArg) ? { priority: validPrio } : {}),
+      updatedAt: now,
+    };
+    tasks[idx] = updated;
+    fs.writeFileSync(kanbanFile, JSON.stringify(tasks, null, 2) + '\n', 'utf8');
+    return { ok: true, engine: 'file', task: updated };
+  }
+  return { ok: false, error: `unknown todo tool: ${name}` };
+}
+
+/**
+ * Pi Coding Agent `self_compact` + Shanghai AI Lab HoH Dual State s_t = (A_t, E_t)
+ * + Google Agent Skills State X_t checkpoint writer.
+ */
+async function executeSelfCompact(
+  args: Record<string, unknown>,
+  ctx: { cwd: string; quiet: boolean }
+): Promise<Record<string, unknown>> {
+  const summary = String(args.summary ?? '').trim();
+  if (!summary) return { ok: false, error: 'self_compact: empty summary' };
+  const scriptPath = path.resolve(ctx.cwd, 'scripts/harness/compaction-record.cjs');
+  const cliArgs = [
+    scriptPath,
+    'write',
+    '--tnf-owned',
+    '--stage',
+    'self_compact',
+    '--summary',
+    summary,
+  ];
+  if (args.artifactState) cliArgs.push('--artifact-state', String(args.artifactState));
+  if (args.evidenceState) cliArgs.push('--evidence-state', String(args.evidenceState));
+  if (args.skillState) cliArgs.push('--skill-state', String(args.skillState));
+
+  const { stdout } = await execFileAsync(process.execPath, cliArgs, {
+    cwd: ctx.cwd,
+    timeout: 15_000,
+  });
+  try {
+    return JSON.parse(stdout);
+  } catch {
+    return { ok: true, raw: stdout };
+  }
+}
+
+/**
+ * JEV System-1 zero-prose classifier/scorer primitive (`choice`, `score`, `null`).
+ */
+function executeSystem1Decide(args: Record<string, unknown>): Record<string, unknown> {
+  const mode = String(args.mode ?? 'choice');
+  const rawValue = args.value !== undefined ? String(args.value) : null;
+  const confidence = typeof args.confidence === 'number' ? args.confidence : 1.0;
+  const minConfidence = typeof args.minConfidence === 'number' ? args.minConfidence : 0.5;
+  const options = args.options
+    ? String(args.options)
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : [];
+
+  if (mode === 'null' || rawValue === null || rawValue === 'null' || confidence < minConfidence) {
+    return { ok: true, mode, decision: null, abstained: true, confidence };
+  }
+  if (mode === 'choice') {
+    if (options.length > 0 && !options.includes(rawValue)) {
+      return {
+        ok: false,
+        mode,
+        decision: null,
+        abstained: true,
+        error: `choice "${rawValue}" not in [${options.join(', ')}]`,
+      };
+    }
+    return { ok: true, mode, decision: rawValue, abstained: false, confidence };
+  }
+  if (mode === 'score') {
+    const num = Number(rawValue);
+    if (!Number.isFinite(num)) {
+      return { ok: false, mode, decision: null, abstained: true, error: `invalid score "${rawValue}"` };
+    }
+    return { ok: true, mode, decision: num, abstained: false, confidence };
+  }
+  return { ok: false, mode, decision: null, abstained: true, error: `unsupported mode: ${mode}` };
 }

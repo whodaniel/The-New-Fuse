@@ -203,7 +203,7 @@ export default function DurableTasksPage() {
                 <div className="font-semibold flex items-center gap-2">
                   {t.id}
                   <Badge variant="secondary">v{t.version}</Badge>
-                  <Badge variant="outline">{t.machine}</Badge>
+                  <Badge variant="default">{t.machine}</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   handler={t.handler} · queue={t.queue.name} · concurrency=

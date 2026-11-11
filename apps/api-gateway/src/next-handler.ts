@@ -11,9 +11,8 @@ async function ensureNextHandler(): Promise<(req: any, res: any) => Promise<void
 
   try {
     // Dynamic import of Next.js from monorepo root node_modules
-    // Using absolute path to bypass pnpm's strict node_modules resolution
-    const nextModule =
-      await import('/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/node_modules/next/dist/server/next.js');
+    // Using dynamic import() to load ES module from CommonJS context
+    const nextModule = await import('/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/node_modules/next/dist/server/next.js');
     const next = nextModule.default;
 
     if (process.env.NODE_ENV === 'development') {

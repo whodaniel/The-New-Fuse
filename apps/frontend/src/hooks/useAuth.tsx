@@ -4,7 +4,9 @@ import { API_BASE, API_ENDPOINTS } from '../config/api';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 import {
   clearTokens,
+  extractJwtUser,
   getAccessToken,
+  isJwtExpired,
   persistAuthPayload,
   persistTokens,
   silentRefreshAccessToken,
@@ -85,6 +87,117 @@ function toUser(raw: any, fallbackEmail = ''): User {
   };
 }
 
+/** Convert a Supabase Auth user object into our `User` type */
+function supabaseUserToUser(supaUser: any, fallbackEmail = ''): User | null {
+  if (!supaUser || (!supaUser.id && !supaUser.sub)) return null;
+  const userMeta =
+    supaUser.user_metadata && typeof supaUser.user_metadata === 'object'
+      ? supaUser.user_metadata
+      : {};
+  const appMeta =
+    supaUser.app_metadata && typeof supaUser.app_metadata === 'object' ? supaUser.app_metadata : {};
+  const email = String(supaUser.email ?? userMeta.email ?? fallbackEmail ?? '');
+  const name = String(
+    userMeta.full_name ?? userMeta.name ?? supaUser.name ?? (email || 'User')
+  );
+  const rawRole = String(appMeta.role ?? userMeta.role ?? supaUser.role ?? 'USER');
+  const normalizedRole =
+    rawRole.toLowerCase() === 'authenticated' || rawRole.toLowerCase() === 'anon' || !rawRole
+      ? 'USER'
+      : rawRole;
+  const roles = Array.isArray(appMeta.roles)
+    ? appMeta.roles.map((r: unknown) => String(r))
+    : Array.isArray(userMeta.roles)
+      ? userMeta.roles.map((r: unknown) => String(r))
+      : [normalizedRole];
+  return toUser(
+    {
+      id: supaUser.id ?? supaUser.sub,
+      email,
+      name,
+      role: normalizedRole,
+      roles,
+      photoURL: userMeta.avatar_url ?? userMeta.picture,
+    },
+    fallbackEmail
+  );
+}
+
+/**
+ * Fallback session verification when the backend API / local TNF harness is
+ * unavailable (e.g., 503/502/504 or network failure). Verifies against Supabase
+ * Auth or non-expired JWT claims so `/dashboard` never requires a local TNF CLI
+ * agent or backend harness to be running.
+ */
+async function resolveOfflineOrSupabaseSession(
+  preferredToken?: string | null,
+  fallbackEmail = ''
+): Promise<{
+  resolved: { user: User; token: string } | null;
+  confirmedNoSession: boolean;
+}> {
+  let supabaseCheckedAndEmpty = false;
+
+  if (hasSupabaseConfig && supabase) {
+    try {
+      const { data, error: sessionErr } = await withAuthDeadline(() =>
+        supabase!.auth.getSession()
+      );
+      if (!sessionErr) {
+        const session = data?.session;
+        const sessionToken = session?.access_token;
+        const tokenExpired = sessionToken ? isJwtExpired(sessionToken) === true : true;
+        if (sessionToken && !tokenExpired && session?.user) {
+          const user = supabaseUserToUser(session.user, fallbackEmail);
+          if (user) {
+            return {
+              resolved: { user, token: sessionToken },
+              confirmedNoSession: false,
+            };
+          }
+        }
+        supabaseCheckedAndEmpty = !sessionToken || tokenExpired;
+      }
+    } catch {
+      /* ignore and continue to getUser / JWT fallback */
+    }
+
+    if (preferredToken && typeof (supabase.auth as any).getUser === 'function') {
+      try {
+        const { data, error: userErr } = await withAuthDeadline(() =>
+          supabase!.auth.getUser(preferredToken)
+        );
+        if (!userErr && data?.user) {
+          const user = supabaseUserToUser(data.user, fallbackEmail);
+          if (user) {
+            return {
+              resolved: { user, token: preferredToken },
+              confirmedNoSession: false,
+            };
+          }
+        }
+      } catch {
+        /* ignore and continue to JWT fallback */
+      }
+    }
+  }
+
+  if (preferredToken) {
+    const jwtUser = extractJwtUser(preferredToken);
+    if (jwtUser) {
+      return {
+        resolved: { user: toUser(jwtUser, fallbackEmail), token: preferredToken },
+        confirmedNoSession: false,
+      };
+    }
+    if (isJwtExpired(preferredToken) === true) {
+      return { resolved: null, confirmedNoSession: true };
+    }
+  }
+
+  return { resolved: null, confirmedNoSession: supabaseCheckedAndEmpty };
+}
+
 // ---------------------------------------------------------------------------
 // AuthProvider
 // ---------------------------------------------------------------------------
@@ -118,11 +231,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
       if (res.status === 401) return null;
-      if (!res.ok)
+      if (!res.ok) {
+        const fallback = await resolveOfflineOrSupabaseSession(token);
+        if (fallback.resolved) {
+          console.log('[Auth] fetchMe – backend unavailable, verified via Supabase/JWT fallback');
+          return fallback.resolved.user;
+        }
+        if (fallback.confirmedNoSession) {
+          console.warn(
+            '[Auth] fetchMe – backend unavailable and no active Supabase/JWT session; clearing stale token'
+          );
+          return null;
+        }
         throw new AuthTransientError(
           `Session verification unavailable (${res.status})`,
           res.status
         );
+      }
       const raw = await res.json();
       const data = raw?.data ?? raw;
       const rawUser = data?.user ?? data;
@@ -132,6 +257,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('[Auth] fetchMe – user validated');
       return toUser(rawUser);
     } catch (err: any) {
+      if (!(err instanceof AuthTransientError) || !err.status) {
+        const fallback = await resolveOfflineOrSupabaseSession(token);
+        if (fallback.resolved) {
+          console.log('[Auth] fetchMe – network error, verified via Supabase/JWT fallback');
+          return fallback.resolved.user;
+        }
+        if (fallback.confirmedNoSession) {
+          return null;
+        }
+      }
       throw err instanceof AuthTransientError
         ? err
         : new AuthTransientError('Unable to verify your session. Please retry.');
@@ -160,10 +295,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ accessToken: supabaseAccessToken }),
           });
-          const rawPayload = await res.json();
+          const rawPayload = await res.json().catch(() => ({}));
           const payload = unwrap(rawPayload);
 
           if (!res.ok) {
+            if (res.status === 401) {
+              return null;
+            }
+            const fallback = await resolveOfflineOrSupabaseSession(supabaseAccessToken);
+            if (fallback.resolved) {
+              // Keep UI identity, but do not persist a Supabase bearer as the app token.
+              console.log(
+                '[Auth] exchangeSupabaseToken – backend unavailable, using Supabase identity only'
+              );
+              return fallback.resolved;
+            }
             if (res.status === 429) {
               throw new AuthTransientError(
                 'Too many authentication requests. Please wait a moment and try again.',
@@ -173,15 +319,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const msg =
               extractError(payload) ?? extractError(rawPayload as any) ?? `HTTP ${res.status}`;
             console.warn('[Auth] exchangeSupabaseToken failed:', msg);
-            // If explicit 401, check if Supabase token is truly rejected
-            if (res.status === 401) {
-              return null;
-            }
             throw new AuthTransientError(msg, res.status);
           }
 
           const appToken = extractToken(payload);
           if (!appToken) {
+            const fallback = await resolveOfflineOrSupabaseSession(supabaseAccessToken);
+            if (fallback.resolved) {
+              return fallback.resolved;
+            }
             throw new AuthTransientError('Session exchange returned an invalid response');
           }
 
@@ -203,6 +349,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.warn('[Auth] exchangeSupabaseToken – got token but fetchMe failed');
           return null;
         } catch (err: any) {
+          const fallback = await resolveOfflineOrSupabaseSession(supabaseAccessToken);
+          if (fallback.resolved) {
+            console.log(
+              '[Auth] exchangeSupabaseToken – identity fallback only after exchange error'
+            );
+            return fallback.resolved;
+          }
           throw err instanceof AuthTransientError
             ? err
             : new AuthTransientError('Unable to exchange your session. Please retry.');
@@ -626,16 +779,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           let validated = await fetchMe(storedToken);
           if (cancelled) return;
           if (!validated) {
-            const refreshed = await silentRefreshAccessToken();
-            if (cancelled) return;
-            if (refreshed) validated = await fetchMe(refreshed);
+            try {
+              const refreshed = await silentRefreshAccessToken();
+              if (cancelled) return;
+              if (refreshed) validated = await fetchMe(refreshed);
+            } catch (refreshErr) {
+              // If the stored token was already rejected or expired and the backend
+              // refresh endpoint is offline (503) while Supabase is configured,
+              // fall through to the Supabase session check rather than blocking.
+              if (!hasSupabaseConfig || !supabase) {
+                throw refreshErr;
+              }
+            }
           }
           if (cancelled) return;
           if (validated) {
             setUser(validated);
             return;
           }
-          clearAuthToken(); // fetchMe returns null only for a confirmed 401.
+          clearAuthToken(); // fetchMe returns null for confirmed 401 or stale offline token.
         }
         if (hasSupabaseConfig && supabase) {
           const { data, error: sessionError } = await withAuthDeadline(() =>
@@ -645,16 +807,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (sessionError)
             throw new AuthTransientError('Unable to read your session. Please retry.');
           if (data.session?.access_token) {
-            const result = await exchangeSupabaseToken(data.session.access_token);
-            if (cancelled) return;
-            if (result) {
-              setUser(result.user);
-              return;
+            let activeSupabaseToken: string | null = data.session.access_token;
+            if (isJwtExpired(activeSupabaseToken) === true) {
+              try {
+                const { data: refreshedData } = await supabase!.auth.refreshSession();
+                activeSupabaseToken = refreshedData?.session?.access_token ?? null;
+              } catch {
+                activeSupabaseToken = null;
+              }
             }
-            // Preserve the provider session, but do not mount TNF queries until exchange succeeds.
-            throw new AuthTransientError(
-              'Your session could not be connected to TNF. Please retry or sign in again.'
-            );
+            if (cancelled) return;
+            if (activeSupabaseToken && isJwtExpired(activeSupabaseToken) !== true) {
+              const result = await exchangeSupabaseToken(activeSupabaseToken);
+              if (cancelled) return;
+              if (result) {
+                setUser(result.user);
+                return;
+              }
+            }
+            // Exchange returned null (401 rejected) or Supabase session is expired/revoked —
+            // clear the stale Supabase session so we never enter a login redirect loop.
+            clearAuthToken();
+            try {
+              await supabase!.auth.signOut();
+            } catch {
+              /* ignore */
+            }
           }
         }
         if (!cancelled) setUser(null);
@@ -678,6 +856,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(slowLoadingTimer);
     };
   }, [fetchMe, exchangeSupabaseToken, bootstrapAttempt]);
+
+  useEffect(() => {
+    if (!hasSupabaseConfig || !supabase || typeof supabase.auth?.onAuthStateChange !== 'function') {
+      return;
+    }
+    const subscriptionResult = supabase.auth.onAuthStateChange((event, session) => {
+      if (
+        (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') &&
+        session?.access_token &&
+        session?.user
+      ) {
+        // Never persist the raw Supabase access token into auth_token keys —
+        // UnifiedLedger/timeline JwtAuthGuard only accepts the app JWT minted
+        // by /auth/supabase/exchange. Clobbering caused SPA-authenticated 401s.
+        void exchangeSupabaseToken(session.access_token)
+          .then((result) => {
+            if (result?.user) {
+              setUser(result.user);
+              setSessionUnavailable(false);
+              setError(null);
+              return;
+            }
+            const directUser = supabaseUserToUser(session.user);
+            if (directUser) {
+              setUser((prev) => prev ?? directUser);
+              setSessionUnavailable(false);
+              setError(null);
+            }
+          })
+          .catch(() => {
+            const directUser = supabaseUserToUser(session.user);
+            if (directUser) {
+              setUser((prev) => prev ?? directUser);
+            }
+          });
+      }
+    });
+    const subscription = (subscriptionResult as any)?.data?.subscription;
+    return () => {
+      if (subscription && typeof subscription.unsubscribe === 'function') {
+        subscription.unsubscribe();
+      }
+    };
+  }, [exchangeSupabaseToken]);
 
   // -----------------------------------------------------------------------
   // Provide context

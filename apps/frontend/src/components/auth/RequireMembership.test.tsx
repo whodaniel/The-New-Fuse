@@ -144,14 +144,25 @@ describe('RequireMembership – 401 handling (non-destructive)', () => {
     });
   });
 
-  it('does NOT call logout on a non-401 network error (catch block)', async () => {
+  it('does NOT call logout on a non-401 network error (catch block) and allows dashboard access when harness API is offline', async () => {
     typedMockFetch.mockRejectedValue(new Error('Network failure'));
 
     renderMembership();
 
-    await waitFor(() => {
-      expect(mockLogout).not.toHaveBeenCalled();
-    });
+    expect(await screen.findByTestId('protected-content')).toBeInTheDocument();
+    expect(mockLogout).not.toHaveBeenCalled();
+  });
+
+  it('renders protected content when membership endpoint returns 503 (no local harness running)', async () => {
+    typedMockFetch.mockResolvedValue({
+      ok: false,
+      status: 503,
+    } as Response);
+
+    renderMembership();
+
+    expect(await screen.findByTestId('protected-content')).toBeInTheDocument();
+    expect(mockLogout).not.toHaveBeenCalled();
   });
 });
 

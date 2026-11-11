@@ -15,7 +15,15 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import * as crypto from 'node:crypto';
 import { hasAuthorizationLevel } from '../auth/auth-policy';
-import { GenerateInviteCodeDto, LoginDto, RegisterDto, SupabaseAuthDto } from '../dtos/auth.dto';
+import {
+  ForgotPasswordDto,
+  GenerateInviteCodeDto,
+  LoginDto,
+  RegisterDto,
+  ResetPasswordDto,
+  SupabaseAuthDto,
+  ValidateTokenDto,
+} from '../dtos/auth.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { AuthLevel, RequireAuthLevel } from '../guards/secure-auth.guard';
 import { AuthService } from '../services/auth.service';
@@ -302,6 +310,89 @@ export class AuthController {
     } catch {
       return { authenticated: false, user: null };
     }
+  }
+
+  @Get('status')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @ApiOperation({ summary: 'Get lightweight auth session status' })
+  @ApiResponse({ status: 200, description: 'Session payload' })
+  async status(@Req() req: Request) {
+    const authHeader = req.headers.authorization;
+    const cookieToken = req.cookies?.[ACCESS_COOKIE] as string | undefined;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : cookieToken;
+
+    if (!token) {
+      return { authenticated: false, user: null };
+    }
+
+    try {
+      const user = await this.authService.validateToken(token);
+      return {
+        authenticated: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          name: user.name,
+          role: user.role,
+          roles: user.roles,
+        },
+      };
+    } catch {
+      return { authenticated: false, user: null };
+    }
+  }
+
+  @Post('forgot-password')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @ApiOperation({ summary: 'Initiate password reset flow' })
+  @ApiResponse({ status: 200, description: 'Reset email sent if user exists' })
+  async forgotPassword(@Body() dto: ForgotPasswordDto, @Req() req: Request) {
+    const ipAddress = req?.ip || req?.socket?.remoteAddress;
+    return this.authService.forgotPassword(dto, { ipAddress });
+  }
+
+  @Post('reset-password')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @ApiOperation({ summary: 'Complete password reset using token' })
+  @ApiResponse({ status: 200, description: 'Password reset successful' })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
+  }
+
+  @Post('validate')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @ApiOperation({ summary: 'Validate a JWT token and return exp + scopes' })
+  @ApiResponse({ status: 200, description: 'Token valid; returns exp + scopes' })
+  @ApiResponse({ status: 401, description: 'Token invalid' })
+  async validate(@Body() dto: ValidateTokenDto) {
+    const result = await this.authService.validateTokenWithPayload(dto.token);
+    if (!result) {
+      return { valid: false, user: null, scopes: [], exp: null };
+    }
+    return {
+      valid: true,
+      user: {
+        id: result.user.id,
+        email: result.user.email,
+        username: result.user.username,
+        name: result.user.name,
+        role: result.user.role,
+        roles: result.user.roles,
+      },
+      scopes: result.payload.permissions || [],
+      exp: result.payload.exp || null,
+    };
+  }
+
+  @Get('verify-email')
+  @RequireAuthLevel(AuthLevel.PUBLIC)
+  @ApiOperation({ summary: 'Verify email using token after registration' })
+  @ApiResponse({ status: 200, description: 'Email verification result' })
+  async verifyEmail(@Req() req: Request) {
+    // Token would come from query params in real implementation
+    const token = req.query.token as string;
+    return this.authService.verifyEmail(token || '');
   }
 
   private assertAdmin(user: any) {

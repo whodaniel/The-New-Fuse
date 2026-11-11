@@ -309,7 +309,7 @@ export class AuthController {
   }
 
   @Get('status')
-  @Version('1')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Get lightweight auth session status' })
   @ApiResponse({ status: 200, description: 'Session payload' })
   async status(@Req() req: any) {
@@ -366,7 +366,7 @@ export class AuthController {
   }
 
   @Get('session')
-  @Version('1')
+  @Version(['1', VERSION_NEUTRAL])
   @ApiOperation({ summary: 'Get lightweight auth session status' })
   @ApiResponse({ status: 200, description: 'Session payload' })
   async session(@Req() req: any) {

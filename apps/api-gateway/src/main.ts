@@ -290,12 +290,29 @@ async function bootstrap() {
   });
 
   // Disable Express "X-Powered-By" header (information leakage)
-  // Disable Express "X-Powered-By" header (information leakage)
   const expressApp = app.getHttpAdapter().getInstance();
   if (expressApp && typeof expressApp.set === 'function') {
     expressApp.set('x-powered-by', false);
   }
-  // Alternative: app.disable('x-powered-by') — but getHttpAdapter is safer in NestJS
+
+  // CRITICAL: Auth rewrite middleware MUST be FIRST in chain (immediately after NestFactory.create)
+  // Rewrites /api/auth/* -> /api/v1/auth/* so versioned routes match.
+  // Per TNF middleware ordering pitfall (2026-05-20): incorrect placement = middleware never executes.
+  app.use((req, _res, next) => {
+    if (req.url.startsWith('/api/auth/') || req.url === '/api/auth') {
+      req.url = `/api/v1${req.url.slice(4)}`; // /api/auth/* -> /api/v1/auth/*
+    }
+    next();
+  });
+
+  // Back-compat: some clients still call /v1/* without the global /api prefix.
+  // This rewrite makes /v1/X work alongside /api/v1/X. Both are canonical.
+  app.use((req, _res, next) => {
+    if (req.url.startsWith('/v1/') || req.url === '/v1') {
+      req.url = `/api${req.url}`;
+    }
+    next();
+  });
 
   // Security headers middleware — applied before all routes
   app.use((req: any, res: any, next: any) => {
@@ -370,24 +387,6 @@ async function bootstrap() {
     next();
   });
 
-  // Back-compat: some clients still call /v1/* without the global /api prefix.
-  // This rewrite makes /v1/X work alongside /api/v1/X. Both are canonical.
-  app.use((req, _res, next) => {
-    if (req.url.startsWith('/v1/') || req.url === '/v1') {
-      req.url = `/api${req.url}`;
-    }
-    next();
-  });
-
-  // Back-compat: rewrite unversioned /api/auth/* to versioned /api/v1/auth/*
-  // This ensures clients calling /api/auth/... work without explicit version.
-  app.use((req, _res, next) => {
-    if (req.url.startsWith('/api/auth/') || req.url === '/api/auth') {
-      req.url = `/api/v1${req.url.slice(4)}`; // /api/auth/* -> /api/v1/auth/*
-    }
-    next();
-  });
-
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -404,17 +403,25 @@ async function bootstrap() {
   // Global interceptors
   app.useGlobalInterceptors(new LoggingInterceptor(), new ResponseInterceptor());
 
-  // Static-page fallback for non-/api routes.
+  // Next.js static-page fallback for non-/api routes.
   // MUST be registered before setGlobalPrefix('api') so non-API routes
   // are not swallowed by the global prefix. Express runs middleware in
   // registration order; a catch-all that runs last cannot drift out of date.
-  const staticPageHandler = await ensureNextHandler();
   app.use(async (req: any, res: any, nextMw: any) => {
     try {
-      if (req.url && req.url.startsWith('/api')) return nextMw();
-      await staticPageHandler(req, res);
+      // Skip API routes and known non-page routes
+      const url = req.url || '/';
+      if (
+        url.startsWith('/api') ||
+        url === '/health' ||
+        url.startsWith('/health')
+      ) {
+        return nextMw();
+      }
+      const nextHandler = await ensureNextHandler();
+      await nextHandler(req, res);
     } catch (err) {
-      console.error('[next-fallback] error:', err);
+      console.error('[next-pages-fallback] error:', err);
       nextMw();
     }
   });

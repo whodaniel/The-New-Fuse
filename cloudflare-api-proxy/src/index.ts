@@ -240,6 +240,317 @@ async function handleStripeWebhook(request: Request, env: Env): Promise<Response
   });
 }
 
+function isEdgeFallbackPath(pathname: string): boolean {
+  return (
+    pathname === '/health' ||
+    pathname === '/api/health' ||
+    pathname === '/api/system/health' ||
+    pathname.startsWith('/api/auth/') ||
+    pathname === '/api/billing/membership/me' ||
+    pathname === '/api/billing/stripe/config' ||
+    pathname === '/api/billing/stripe/checkout' ||
+    pathname === '/api/billing/stripe/checkout-session' ||
+    pathname === '/api/pricing'
+  );
+}
+
+function formatSupabaseUser(supaUser: Record<string, any>) {
+  const userMeta =
+    supaUser.user_metadata && typeof supaUser.user_metadata === 'object'
+      ? (supaUser.user_metadata as Record<string, unknown>)
+      : {};
+  const appMeta =
+    supaUser.app_metadata && typeof supaUser.app_metadata === 'object'
+      ? (supaUser.app_metadata as Record<string, unknown>)
+      : {};
+  const rawRole = String(appMeta.role ?? userMeta.role ?? supaUser.role ?? 'USER');
+  const role =
+    rawRole.toLowerCase() === 'authenticated' || rawRole.toLowerCase() === 'anon' || !rawRole
+      ? 'USER'
+      : rawRole;
+  const roles = Array.isArray(appMeta.roles)
+    ? appMeta.roles.map((r: unknown) => String(r))
+    : Array.isArray(userMeta.roles)
+      ? userMeta.roles.map((r: unknown) => String(r))
+      : [role];
+  const email = String(supaUser.email ?? userMeta.email ?? '');
+  const name = String(userMeta.full_name ?? userMeta.name ?? (email || 'User'));
+  return {
+    id: String(supaUser.id),
+    email,
+    name,
+    role,
+    roles,
+    emailVerified: Boolean(supaUser.email_confirmed_at || supaUser.confirmed_at),
+  };
+}
+
+async function verifySupabaseAccessToken(
+  accessToken: string,
+  env: Env
+): Promise<ReturnType<typeof formatSupabaseUser> | null> {
+  if (!accessToken || !env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  const baseUrl = env.SUPABASE_URL.replace(/\/+$/, '');
+  try {
+    const res = await fetch(`${baseUrl}/auth/v1/user`, {
+      method: 'GET',
+      headers: {
+        apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (!res.ok) return null;
+    const rawUser = (await res.json()) as Record<string, any>;
+    if (!rawUser?.id) return null;
+    return formatSupabaseUser(rawUser);
+  } catch {
+    return null;
+  }
+}
+
+function extractBearerToken(request: Request, body?: Record<string, unknown>): string | null {
+  const authHeader = request.headers.get('Authorization') || request.headers.get('authorization');
+  if (authHeader?.toLowerCase().startsWith('bearer ')) {
+    const token = authHeader.slice(7).trim();
+    if (token) return token;
+  }
+  const candidate = body?.accessToken ?? body?.access_token ?? body?.token;
+  if (typeof candidate === 'string' && candidate.trim()) {
+    return candidate.trim();
+  }
+  return null;
+}
+
+async function handleEdgeAuthFallback(
+  request: Request,
+  pathname: string,
+  bodyText: string,
+  env: Env
+): Promise<Response | null> {
+  const jsonResponse = (payload: unknown, status = 200) =>
+    new Response(JSON.stringify(payload), {
+      status,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-TNF-Edge-Auth': 'supabase-fallback',
+      },
+    });
+
+  if (
+    request.method === 'GET' &&
+    (pathname === '/health' || pathname === '/api/health' || pathname === '/api/system/health')
+  ) {
+    return jsonResponse({
+      status: 'ok',
+      mode: 'edge-fallback',
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+    return null;
+  }
+
+  let parsedBody: Record<string, unknown> = {};
+  if (bodyText) {
+    try {
+      const parsed = JSON.parse(bodyText);
+      if (parsed && typeof parsed === 'object') {
+        parsedBody = parsed as Record<string, unknown>;
+      }
+    } catch {
+      /* ignore invalid JSON */
+    }
+  }
+
+  if (request.method === 'GET' && pathname === '/api/auth/me') {
+    const token = extractBearerToken(request);
+    if (!token) return jsonResponse({ message: 'Unauthorized' }, 401);
+    const user = await verifySupabaseAccessToken(token, env);
+    if (!user) return jsonResponse({ message: 'Invalid or expired token' }, 401);
+    return jsonResponse(user, 200);
+  }
+
+  if (
+    request.method === 'GET' &&
+    (pathname === '/api/auth/session' || pathname === '/api/auth/status')
+  ) {
+    const token = extractBearerToken(request);
+    if (!token) return jsonResponse({ authenticated: false, user: null }, 200);
+    const user = await verifySupabaseAccessToken(token, env);
+    if (!user) return jsonResponse({ authenticated: false, user: null }, 401);
+    return jsonResponse({ authenticated: true, user }, 200);
+  }
+
+  if (request.method === 'POST' && pathname === '/api/auth/supabase') {
+    const token = extractBearerToken(request, parsedBody);
+    if (!token) return jsonResponse({ message: 'accessToken is required' }, 400);
+    const user = await verifySupabaseAccessToken(token, env);
+    if (!user) return jsonResponse({ message: 'Invalid Supabase access token' }, 401);
+    return jsonResponse(
+      {
+        accessToken: token,
+        access_token: token,
+        token,
+        user,
+      },
+      200
+    );
+  }
+
+  if (request.method === 'POST' && pathname === '/api/auth/login') {
+    const email = typeof parsedBody.email === 'string' ? parsedBody.email.trim() : '';
+    const password = typeof parsedBody.password === 'string' ? parsedBody.password : '';
+    if (!email || !password) {
+      return jsonResponse({ message: 'Email and password are required' }, 400);
+    }
+    const baseUrl = env.SUPABASE_URL.replace(/\/+$/, '');
+    try {
+      const res = await fetch(`${baseUrl}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) {
+        return jsonResponse({ message: 'Invalid email or password' }, 401);
+      }
+      const data = (await res.json()) as Record<string, any>;
+      const accessToken = String(data.access_token || '');
+      const refreshToken = data.refresh_token ? String(data.refresh_token) : null;
+      if (!accessToken || !data.user?.id) {
+        return jsonResponse({ message: 'Authentication failed' }, 401);
+      }
+      const user = formatSupabaseUser(data.user);
+      return jsonResponse(
+        {
+          accessToken,
+          access_token: accessToken,
+          token: accessToken,
+          refreshToken,
+          refresh_token: refreshToken,
+          user,
+        },
+        200
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  if (request.method === 'POST' && pathname === '/api/auth/refresh') {
+    const refreshToken =
+      typeof parsedBody.refreshToken === 'string'
+        ? parsedBody.refreshToken.trim()
+        : typeof parsedBody.refresh_token === 'string'
+          ? parsedBody.refresh_token.trim()
+          : '';
+    if (!refreshToken) {
+      return jsonResponse({ message: 'Refresh token required' }, 401);
+    }
+    const baseUrl = env.SUPABASE_URL.replace(/\/+$/, '');
+    try {
+      const res = await fetch(`${baseUrl}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+      if (!res.ok) {
+        return jsonResponse({ message: 'Invalid or expired refresh token' }, 401);
+      }
+      const data = (await res.json()) as Record<string, any>;
+      const accessToken = String(data.access_token || '');
+      if (!accessToken) {
+        return jsonResponse({ message: 'Invalid refresh response' }, 401);
+      }
+      const nextRefresh = data.refresh_token ? String(data.refresh_token) : refreshToken;
+      return jsonResponse(
+        {
+          accessToken,
+          access_token: accessToken,
+          token: accessToken,
+          refreshToken: nextRefresh,
+          refresh_token: nextRefresh,
+          user: data.user?.id ? formatSupabaseUser(data.user) : undefined,
+        },
+        200
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  if (request.method === 'POST' && pathname === '/api/auth/logout') {
+    return jsonResponse({ success: true }, 200);
+  }
+
+  if (request.method === 'GET' && pathname === '/api/billing/membership/me') {
+    const token = extractBearerToken(request);
+    if (!token) return jsonResponse({ message: 'Unauthorized' }, 401);
+    const user = await verifySupabaseAccessToken(token, env);
+    if (!user) return jsonResponse({ message: 'Unauthorized' }, 401);
+    return jsonResponse(
+      {
+        found: true,
+        active: true,
+        tier: 'PRO',
+        userId: user.id,
+      },
+      200
+    );
+  }
+
+  if (request.method === 'GET' && pathname === '/api/billing/stripe/config') {
+    return jsonResponse(
+      {
+        checkoutEnabled: { PRO: false, ENTERPRISE: false },
+        commercialSalesEnabled: false,
+        mode: 'prelaunch-access-vr',
+      },
+      200
+    );
+  }
+
+  if (
+    request.method === 'POST' &&
+    (pathname === '/api/billing/stripe/checkout' ||
+      pathname === '/api/billing/stripe/checkout-session')
+  ) {
+    return jsonResponse(
+      {
+        prelaunch: true,
+        commercialSalesEnabled: false,
+        url: '/dashboard?access=early_access',
+        message:
+          'Early Access Beta: Commercial billing is paused ($0.00). Your workspace access is unlocked!',
+      },
+      200
+    );
+  }
+
+  if (request.method === 'GET' && pathname === '/api/pricing') {
+    return jsonResponse(
+      {
+        plans: [
+          { id: 'STARTER', name: 'Starter', priceMonthly: 0, currency: 'USD' },
+          { id: 'PRO', name: 'Pro', priceMonthly: 29, currency: 'USD' },
+          { id: 'ENTERPRISE', name: 'Enterprise', priceMonthly: 99, currency: 'USD' },
+        ],
+      },
+      200
+    );
+  }
+
+  return null;
+}
+
 export default {
   async fetch(request: Request, env: Env, _ctx: WorkerExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -273,11 +584,16 @@ export default {
     targetUrl.pathname = url.pathname;
     targetUrl.search = url.search;
 
+    const canFallbackAtEdge = isEdgeFallbackPath(url.pathname);
+    const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
+    const bufferedBodyText =
+      canFallbackAtEdge && hasBody ? await request.text().catch(() => '') : '';
+
     // Create a new request based on the original, but with the target URL
     const newRequest = new Request(targetUrl.toString(), {
       method: request.method,
       headers: request.headers,
-      body: request.body,
+      body: canFallbackAtEdge ? (hasBody ? bufferedBodyText : null) : request.body,
       redirect: 'manual',
     });
 
@@ -285,11 +601,83 @@ export default {
       // Fetch from GCP Cloud Run
       const response = await fetch(newRequest);
 
+      if (response.status >= 500 && canFallbackAtEdge) {
+        const fallbackResponse = await handleEdgeAuthFallback(
+          request,
+          url.pathname,
+          bufferedBodyText,
+          env
+        );
+        if (fallbackResponse) {
+          return applyCorsToResponse(fallbackResponse, request, env);
+        }
+      }
+
+      if (request.method === 'GET' && url.pathname === '/api/billing/membership/me') {
+        const commercialSalesEnabled =
+          String((env as unknown as Record<string, unknown>).COMMERCIAL_SALES_ENABLED || '')
+            .trim()
+            .toLowerCase() === 'true';
+
+        if (response.status === 401) {
+          const token = extractBearerToken(request);
+          const supaUser = token ? await verifySupabaseAccessToken(token, env) : null;
+          if (supaUser) {
+            const bridged = new Response(
+              JSON.stringify({
+                found: true,
+                active: true,
+                tier: 'STARTER',
+                prelaunch: !commercialSalesEnabled,
+                userId: supaUser.id,
+              }),
+              {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              }
+            );
+            return applyCorsToResponse(bridged, request, env);
+          }
+        }
+
+        if (response.status === 200 && !commercialSalesEnabled) {
+          try {
+            const raw = (await response.clone().json()) as Record<string, any>;
+            const inner = raw?.data && typeof raw.data === 'object' ? raw.data : raw;
+            if (inner && inner.active === false && inner.found !== false) {
+              const patchedPayload =
+                raw?.data && typeof raw.data === 'object'
+                  ? { ...raw, data: { ...inner, active: true, prelaunch: true } }
+                  : { ...inner, active: true, prelaunch: true };
+              const patchedResponse = new Response(JSON.stringify(patchedPayload), {
+                status: 200,
+                headers: response.headers,
+              });
+              patchedResponse.headers.set('Content-Type', 'application/json');
+              return applyCorsToResponse(patchedResponse, request, env);
+            }
+          } catch {
+            /* fall through to normal response */
+          }
+        }
+      }
+
       // Create a new response to allow modifying headers
       const newResponse = new Response(response.body, response);
 
       return applyCorsToResponse(newResponse, request, env);
     } catch (error) {
+      if (canFallbackAtEdge) {
+        const fallbackResponse = await handleEdgeAuthFallback(
+          request,
+          url.pathname,
+          bufferedBodyText,
+          env
+        );
+        if (fallbackResponse) {
+          return applyCorsToResponse(fallbackResponse, request, env);
+        }
+      }
       console.error('Proxy fetch failed:', error);
       return applyCorsToResponse(
         new Response(

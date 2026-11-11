@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -7,11 +7,14 @@ import { compare, hash } from 'bcrypt';
 import * as crypto from 'node:crypto';
 import WebSocket from 'ws';
 import {
+  ForgotPasswordDto,
   GenerateInviteCodeDto,
   LoginDto,
   RegisterDto,
+  ResetPasswordDto,
   SupabaseAuthDto,
   TokenDto,
+  ValidateTokenDto,
 } from '../dtos/auth.dto';
 
 type AuthResponse = TokenDto & {
@@ -481,6 +484,77 @@ export class AuthService {
 
   async logout(): Promise<void> {
     // Stateless JWT logout handled client-side for now.
+  }
+
+  async forgotPassword(dto: ForgotPasswordDto, meta: AuthRequestMeta = {}): Promise<{ success: boolean; message: string }> {
+    const user = await this.db.users.findByEmail(dto.email);
+    // Always return success to prevent email enumeration
+    if (!user) {
+      return { success: true, message: 'If the email exists, a reset link has been sent' };
+    }
+
+    // Generate a reset token (in production, send via email)
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 3600000); // 1 hour
+
+    // Store reset token in user record (simplified - in production use a dedicated table)
+    await this.db.users.update(user.id, {
+      resetToken,
+      resetTokenExpiresAt: expiresAt,
+    } as any);
+
+    this.logger.log(`Password reset requested for ${dto.email}`);
+    return { success: true, message: 'If the email exists, a reset link has been sent' };
+  }
+
+  async resetPassword(dto: ResetPasswordDto): Promise<{ success: boolean; message: string }> {
+    if (dto.newPassword !== dto.confirmPassword) {
+      throw new BadRequestException('Passwords do not match');
+    }
+
+    // Find user by reset token (simplified - in production use a dedicated table)
+    // This is a placeholder implementation
+    const users = await this.db.client.execute(
+      sql`SELECT * FROM users WHERE reset_token = ${dto.token} AND reset_token_expires_at > now() LIMIT 1`
+    ) as any[];
+
+    if (!users[0]) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    const user = users[0];
+    const hashedPassword = await hash(dto.newPassword, 10);
+
+    await this.db.users.update(user.id, {
+      hashedPassword,
+      resetToken: null,
+      resetTokenExpiresAt: null,
+    } as any);
+
+    this.logger.log(`Password reset completed for user ${user.id}`);
+    return { success: true, message: 'Password has been reset successfully' };
+  }
+
+  async validateTokenWithPayload(token: string): Promise<{ user: User; payload: JwtPayload } | null> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      const user = await this.db.users.findById(payload.sub);
+      if (!user) {
+        return null;
+      }
+      return { user, payload };
+    } catch {
+      return null;
+    }
+  }
+
+  async verifyEmail(token: string): Promise<{ success: boolean; message: string }> {
+    // Placeholder for email verification
+    // In production, verify the token and mark user.emailVerified = true
+    this.logger.log(`Email verification requested with token: ${token}`);
+    return { success: true, message: 'Email verification initiated' };
   }
 
   async getCurrentUser(userId: string): Promise<User | null> {

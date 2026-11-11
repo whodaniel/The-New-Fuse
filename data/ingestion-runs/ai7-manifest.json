@@ -1,0 +1,386 @@
+{
+  "playlist": "AI 7 (PLEqvBlPAYfkA)",
+  "totalPlaylistItems": 190,
+  "items": [
+    {
+      "sourceId": "Kbxg-_CXs78",
+      "videoId": "Kbxg-_CXs78",
+      "index": 2,
+      "title": "Agentic Skills Are Becoming AI\u2019s Procedural Operating System (Google)",
+      "channel": "Discover AI",
+      "url": "https://www.youtube.com/watch?v=Kbxg-_CXs78",
+      "status": "succeeded",
+      "segments": 858
+    },
+    {
+      "sourceId": "lNlMXsUQggc",
+      "videoId": "lNlMXsUQggc",
+      "index": 3,
+      "title": "Your LLM Has a New Boss: The Adaptive Harness",
+      "channel": "Discover AI",
+      "url": "https://www.youtube.com/watch?v=lNlMXsUQggc",
+      "status": "succeeded",
+      "segments": 727
+    },
+    {
+      "sourceId": "gDPJI1cp0gw",
+      "videoId": "gDPJI1cp0gw",
+      "index": 6,
+      "title": "Agentic Skills + Knowledge Graphs = AI\u2019s Scientific Operating System",
+      "channel": "Discover AI",
+      "url": "https://www.youtube.com/watch?v=gDPJI1cp0gw",
+      "status": "succeeded",
+      "segments": 703
+    },
+    {
+      "sourceId": "rKUKTIb3Q-o",
+      "videoId": "rKUKTIb3Q-o",
+      "index": 13,
+      "title": "GPT-6 Astra: The harness matters more than you think",
+      "channel": "Prompt Engineering",
+      "url": "https://www.youtube.com/watch?v=rKUKTIb3Q-o",
+      "status": "succeeded",
+      "segments": 360
+    },
+    {
+      "sourceId": "c_QzwZO0dd8",
+      "videoId": "c_QzwZO0dd8",
+      "index": 16,
+      "title": "Claude Code Improves Massively w/ 2nd Harness",
+      "channel": "Discover AI",
+      "url": "https://www.youtube.com/watch?v=c_QzwZO0dd8",
+      "status": "succeeded",
+      "segments": 935
+    },
+    {
+      "sourceId": "S2sjyokoxeE",
+      "videoId": "S2sjyokoxeE",
+      "index": 26,
+      "title": "Are Agent Swarms USEFUL? OpenAI\u2019s GPT-6 Astra SWARM Takeaways",
+      "channel": "IndyDevDan",
+      "url": "https://www.youtube.com/watch?v=S2sjyokoxeE",
+      "status": "succeeded",
+      "segments": 1190
+    },
+    {
+      "sourceId": "8RWew9zqYnk",
+      "videoId": "8RWew9zqYnk",
+      "index": 30,
+      "title": "My Whole AI Harness Exists to Solve One Problem",
+      "channel": "Unsupervised Learning",
+      "url": "https://www.youtube.com/watch?v=8RWew9zqYnk",
+      "status": "succeeded",
+      "segments": 29
+    },
+    {
+      "sourceId": "nWMRwc2dHT8",
+      "videoId": "nWMRwc2dHT8",
+      "index": 31,
+      "title": "New Hermes Update Just Changes AI Agents FOREVER!",
+      "channel": "Julian Goldie SEO",
+      "url": "https://www.youtube.com/watch?v=nWMRwc2dHT8",
+      "status": "succeeded",
+      "segments": 292
+    },
+    {
+      "sourceId": "cyIWQHYoUg8",
+      "videoId": "cyIWQHYoUg8",
+      "index": 43,
+      "title": "Github Top Trending Tool Just Fixed The AI Agent\u2019s Biggest Problem",
+      "channel": "AI LABS",
+      "url": "https://www.youtube.com/watch?v=cyIWQHYoUg8",
+      "status": "succeeded",
+      "segments": 389
+    },
+    {
+      "sourceId": "eWS8Cr3nagA",
+      "videoId": "eWS8Cr3nagA",
+      "index": 46,
+      "title": "Top AI Agent Projects : Tucky, Airuncode, Tadata, HyperProbe & GPT-6 Astra",
+      "channel": "ManuAGI - AutoGPT Tutorials",
+      "url": "https://www.youtube.com/watch?v=eWS8Cr3nagA",
+      "status": "succeeded",
+      "segments": 584
+    },
+    {
+      "sourceId": "0NvD6qNapiU",
+      "videoId": "0NvD6qNapiU",
+      "index": 56,
+      "title": "NEW Procedural Graphs: AI\u2019s Missing Control Layer",
+      "channel": "Discover AI",
+      "url": "https://www.youtube.com/watch?v=0NvD6qNapiU",
+      "status": "succeeded",
+      "segments": 953
+    },
+    {
+      "sourceId": "Shqtk_2Jd3c",
+      "videoId": "Shqtk_2Jd3c",
+      "index": 59,
+      "title": "How to set up Herdr for multi-agent coding (full guide)",
+      "channel": "Dave Ebbelaar",
+      "url": "https://www.youtube.com/watch?v=Shqtk_2Jd3c",
+      "status": "succeeded",
+      "segments": 764
+    },
+    {
+      "sourceId": "VW58Q8c5F0I",
+      "videoId": "VW58Q8c5F0I",
+      "index": 73,
+      "title": "/GRAFT Skill + Astra: THIS IS ABSOLUTELY CRAZY!",
+      "channel": "AICodeKing",
+      "url": "https://www.youtube.com/watch?v=VW58Q8c5F0I",
+      "status": "succeeded",
+      "segments": 325
+    },
+    {
+      "sourceId": "HIRDzMtuWFk",
+      "videoId": "HIRDzMtuWFk",
+      "index": 74,
+      "title": "Anthropic Engineer Explains: What to Build Instead of AI Agents",
+      "channel": "Nate Herk | AI Automation",
+      "url": "https://www.youtube.com/watch?v=HIRDzMtuWFk",
+      "status": "succeeded",
+      "segments": 374
+    },
+    {
+      "sourceId": "_LCeJZFIsd4",
+      "videoId": "_LCeJZFIsd4",
+      "index": 78,
+      "title": "Building a Software Factory that actually works (Full Course)",
+      "channel": "Greg Isenberg",
+      "url": "https://www.youtube.com/watch?v=_LCeJZFIsd4",
+      "status": "succeeded",
+      "segments": 886
+    },
+    {
+      "sourceId": "BFR4Sto70d8",
+      "videoId": "BFR4Sto70d8",
+      "index": 80,
+      "title": "Agent OS + Hermes Cloud is SCARY GOOD!",
+      "channel": "Julian Goldie SEO",
+      "url": "https://www.youtube.com/watch?v=BFR4Sto70d8",
+      "status": "succeeded",
+      "segments": 225
+    },
+    {
+      "sourceId": "K2F_ViLU2Vs",
+      "videoId": "K2F_ViLU2Vs",
+      "index": 84,
+      "title": "Beyond GraphRAG: Runtime Graph Repair (w/ Human Cognition)",
+      "channel": "Discover AI",
+      "url": "https://www.youtube.com/watch?v=K2F_ViLU2Vs",
+      "status": "succeeded",
+      "segments": 864
+    },
+    {
+      "sourceId": "SxuQs9GGYbk",
+      "videoId": "SxuQs9GGYbk",
+      "index": 88,
+      "title": "Pi Agent dev reveals his Agentic Engineering Workflow",
+      "channel": "David Ondrej",
+      "url": "https://www.youtube.com/watch?v=SxuQs9GGYbk",
+      "status": "succeeded",
+      "segments": 1818
+    },
+    {
+      "sourceId": "zt4Qs1Nm1qc",
+      "videoId": "zt4Qs1Nm1qc",
+      "index": 93,
+      "title": "Orca ADE: New FREE AI Coding Agent!",
+      "channel": "Julian Goldie SEO",
+      "url": "https://www.youtube.com/watch?v=zt4Qs1Nm1qc",
+      "status": "succeeded",
+      "segments": 398
+    },
+    {
+      "sourceId": "Vok_nReMFaU",
+      "videoId": "Vok_nReMFaU",
+      "index": 95,
+      "title": "The Engineering System for AI Agents.",
+      "channel": "JavaScript Mastery",
+      "url": "https://www.youtube.com/watch?v=Vok_nReMFaU",
+      "status": "succeeded",
+      "segments": 503
+    },
+    {
+      "sourceId": "SNJ3yuJ_QwY",
+      "videoId": "SNJ3yuJ_QwY",
+      "index": 102,
+      "title": "Jev (Fully Tested) + Browser Use: FASTEST AI Agent I'VE TRIED YET!",
+      "channel": "AICodeKing",
+      "url": "https://www.youtube.com/watch?v=SNJ3yuJ_QwY",
+      "status": "succeeded",
+      "segments": 254
+    },
+    {
+      "sourceId": "o1CogAtWdBk",
+      "videoId": "o1CogAtWdBk",
+      "index": 113,
+      "title": "JEV: How It Works and What You Can Build",
+      "channel": "Riley Brown",
+      "url": "https://www.youtube.com/watch?v=o1CogAtWdBk",
+      "status": "succeeded",
+      "segments": 500
+    },
+    {
+      "sourceId": "aL4eepffdjM",
+      "videoId": "aL4eepffdjM",
+      "index": 114,
+      "title": "Harness Arena (Fully Tested): This NEW Benchmark TESTED Every AGENT HARNESS (which is the best?)",
+      "channel": "AICodeKing",
+      "url": "https://www.youtube.com/watch?v=aL4eepffdjM",
+      "status": "succeeded",
+      "segments": 193
+    },
+    {
+      "sourceId": "mH5lUWrWcFg",
+      "videoId": "mH5lUWrWcFg",
+      "index": 131,
+      "title": "NEW Hermes Agent Update is ABSOLUTELY WILD!",
+      "channel": "Julian Goldie SEO",
+      "url": "https://www.youtube.com/watch?v=mH5lUWrWcFg",
+      "status": "succeeded",
+      "segments": 208
+    },
+    {
+      "sourceId": "Lnyml75U13w",
+      "videoId": "Lnyml75U13w",
+      "index": 132,
+      "title": "The First Fully AI OS Just Dropped And It's Seriously Powerful",
+      "channel": "AI Revolution",
+      "url": "https://www.youtube.com/watch?v=Lnyml75U13w",
+      "status": "succeeded",
+      "segments": 353
+    },
+    {
+      "sourceId": "9Zbaw69O3QQ",
+      "videoId": "9Zbaw69O3QQ",
+      "index": 135,
+      "title": "Codex's NEW A2A Communication & Crazy NEW UPDATES: You don't know about these SECRET UPDATES!",
+      "channel": "AICodeKing",
+      "url": "https://www.youtube.com/watch?v=9Zbaw69O3QQ",
+      "status": "succeeded",
+      "segments": 162
+    },
+    {
+      "sourceId": "3b0U4_02bAE",
+      "videoId": "3b0U4_02bAE",
+      "index": 136,
+      "title": "Self-Compact Pi Agent: ZERO HYPE Agentic Coding Devlog",
+      "channel": "IndyDevDan",
+      "url": "https://www.youtube.com/watch?v=3b0U4_02bAE",
+      "status": "succeeded",
+      "segments": 886
+    },
+    {
+      "sourceId": "NUjVluzsYQA",
+      "videoId": "NUjVluzsYQA",
+      "index": 144,
+      "title": "Verified Graphs Beat AI Agent Swarms (in Science)",
+      "channel": "Discover AI",
+      "url": "https://www.youtube.com/watch?v=NUjVluzsYQA",
+      "status": "succeeded",
+      "segments": 822
+    },
+    {
+      "sourceId": "vygExAE_fmA",
+      "videoId": "vygExAE_fmA",
+      "index": 147,
+      "title": "Hermes AI Agent Now Has Its Own Computer",
+      "channel": "Julian Goldie SEO",
+      "url": "https://www.youtube.com/watch?v=vygExAE_fmA",
+      "status": "succeeded",
+      "segments": 203
+    },
+    {
+      "sourceId": "uO127euWCow",
+      "videoId": "uO127euWCow",
+      "index": 154,
+      "title": "OpenAI's New Agent O Changes ChatGPT Forever",
+      "channel": "AI Revolution",
+      "url": "https://www.youtube.com/watch?v=uO127euWCow",
+      "status": "succeeded",
+      "segments": 396
+    },
+    {
+      "sourceId": "fw1b7Lz5TE4",
+      "videoId": "fw1b7Lz5TE4",
+      "index": 164,
+      "title": "Tecent Octop (Opensource): Wait, Tencent just ENDED OpenAI Dots & Muse!?",
+      "channel": "AICodeKing",
+      "url": "https://www.youtube.com/watch?v=fw1b7Lz5TE4",
+      "status": "succeeded",
+      "segments": 396
+    },
+    {
+      "sourceId": "6r5zi-BMAuI",
+      "videoId": "6r5zi-BMAuI",
+      "index": 168,
+      "title": "Claude Just Changed Completely (Full AIOS Build)",
+      "channel": "Mansel Scheffel",
+      "url": "https://www.youtube.com/watch?v=6r5zi-BMAuI",
+      "status": "succeeded",
+      "segments": 1910
+    },
+    {
+      "sourceId": "oz2CwrPV2Rg",
+      "videoId": "oz2CwrPV2Rg",
+      "index": 171,
+      "title": "Anthropic Engineers Just 10x'd Everyone's Claude Code",
+      "channel": "Nate Herk | AI Automation",
+      "url": "https://www.youtube.com/watch?v=oz2CwrPV2Rg",
+      "status": "succeeded",
+      "segments": 452
+    },
+    {
+      "sourceId": "lNum1UFDYn0",
+      "videoId": "lNum1UFDYn0",
+      "index": 180,
+      "title": "AI HARNESS: An In-Depth Explanation",
+      "channel": "Nick Saraev",
+      "url": "https://www.youtube.com/watch?v=lNum1UFDYn0",
+      "status": "succeeded",
+      "segments": 817
+    },
+    {
+      "sourceId": "xSDzfOf0se4",
+      "videoId": "xSDzfOf0se4",
+      "index": 182,
+      "title": "Hermes Agent Is Becoming a Full AI Operating System",
+      "channel": "Julian Goldie SEO",
+      "url": "https://www.youtube.com/watch?v=xSDzfOf0se4",
+      "status": "succeeded",
+      "segments": 240
+    },
+    {
+      "sourceId": "FbKXvab-0yQ",
+      "videoId": "FbKXvab-0yQ",
+      "index": 184,
+      "title": "Cloudroom just destroyed all AI coding apps (fully open-source)",
+      "channel": "David Ondrej",
+      "url": "https://www.youtube.com/watch?v=FbKXvab-0yQ",
+      "status": "succeeded",
+      "segments": 1901
+    },
+    {
+      "sourceId": "YaK6cnET2IE",
+      "videoId": "YaK6cnET2IE",
+      "index": 187,
+      "title": "OpenCode hack is INSANE.",
+      "channel": "David Ondrej",
+      "url": "https://www.youtube.com/watch?v=YaK6cnET2IE",
+      "status": "succeeded",
+      "segments": 990
+    },
+    {
+      "sourceId": "oPAe-qZZqlA",
+      "videoId": "oPAe-qZZqlA",
+      "index": 188,
+      "title": "Opus + Sol Orchestrated Team: This BEATS every AI MODEL right now! (Tested)",
+      "channel": "AICodeKing",
+      "url": "https://www.youtube.com/watch?v=oPAe-qZZqlA",
+      "status": "succeeded",
+      "segments": 395
+    }
+  ]
+}

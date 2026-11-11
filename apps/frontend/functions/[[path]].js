@@ -136,29 +136,53 @@ export async function onRequest(context) {
     // Handles both exact filenames and Clean URL paths without .html.
     if (path.startsWith('/visualizations/') && !isVisualizationSpaRoute) {
       if (path === '/visualizations/dashboard') {
-        return context.env.ASSETS.fetch(
+        const resp = await context.env.ASSETS.fetch(
           new Request(new URL('/visualizations/dashboard.html' + url.search, url.origin))
         );
+        const headers = new Headers(resp.headers);
+        headers.set('X-Frame-Options', 'SAMEORIGIN');
+        return new Response(resp.body, { status: resp.status, headers });
       }
+
       let visResponse = await context.env.ASSETS.fetch(context.request);
-      if (visResponse.status === 200) {
-        return visResponse;
+      if (visResponse.status >= 300 && visResponse.status < 400) {
+        const redirectUrl = visResponse.headers.get('Location');
+        if (redirectUrl) {
+          visResponse = await context.env.ASSETS.fetch(
+            new Request(new URL(redirectUrl, url.origin), context.request)
+          );
+        }
       }
+      if (visResponse.status === 200) {
+        const headers = new Headers(visResponse.headers);
+        headers.set('X-Frame-Options', 'SAMEORIGIN');
+        return new Response(visResponse.body, { status: 200, headers });
+      }
+
       if (!path.includes('.')) {
         visResponse = await context.env.ASSETS.fetch(
           new Request(new URL(path + '.html' + url.search, url.origin), context.request)
         );
+        if (visResponse.status >= 300 && visResponse.status < 400) {
+          const redirectUrl = visResponse.headers.get('Location');
+          if (redirectUrl) {
+            visResponse = await context.env.ASSETS.fetch(
+              new Request(new URL(redirectUrl, url.origin), context.request)
+            );
+          }
+        }
         if (visResponse.status === 200) {
-          return visResponse;
+          const headers = new Headers(visResponse.headers);
+          headers.set('X-Frame-Options', 'SAMEORIGIN');
+          return new Response(visResponse.body, { status: 200, headers });
         }
       }
     }
 
     const isStaticAsset = path.includes('.') && !path.endsWith('.html');
-    const isVisualizationHtmlAsset = path.startsWith('/visualizations/') && path.endsWith('.html');
 
-    // Static assets (CSS, JS, images) and explicit visualization HTML -> let Cloudflare serve them
-    if (isStaticAsset || isVisualizationHtmlAsset) {
+    // Static assets (CSS, JS, images) -> let Cloudflare serve them
+    if (isStaticAsset) {
       return context.env.ASSETS.fetch(context.request);
     }
 

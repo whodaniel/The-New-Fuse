@@ -35,6 +35,7 @@ function parseArgs(argv) {
   const out = {
     apply: false,
     check: false,
+    doctor: false,
     json: false,
     cleanup: false,
     aggressive: false,
@@ -45,6 +46,7 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === '--apply') out.apply = true;
     else if (arg === '--check') out.check = true;
+    else if (arg === '--doctor') out.doctor = true;
     else if (arg === '--json') out.json = true;
     else if (arg === '--cleanup') out.cleanup = true;
     else if (arg === '--aggressive') out.aggressive = true;
@@ -58,6 +60,7 @@ Vaults overflow skills to skills_inactive to protect the LLM context window.
 
 Options:
   --check                 Audit active skill count across all runtimes
+  --doctor                Run Anthropic /doctor token-bloat + Google multiplicative skill competence audit
   --apply                 Move imported skill packs to runtime-specific inactive vaults
   --aggressive            With --apply, also move every non-core top-level skill directory
   --cleanup               Restore active directory back to clean baseline state
@@ -167,9 +170,121 @@ function auditRuntime(name, activeRoot, inactiveRoot, options) {
   };
 }
 
+/**
+ * Anthropic `/doctor` + `/context` Skill Token Audit (eW9sX2J5-y0) combined with
+ * Google Agent Skills Multiplicative Competence Formula (kFpLzCVLA20):
+ *   Competence(s) = Q_stored * Q_retrieval * R_execution * Q_verification
+ */
+function runSkillDoctor(repoRoot) {
+  const canonicalSkillsRoot = path.join(repoRoot, '.agent', 'skills');
+  const trajectoriesDir = path.join(repoRoot, 'data', 'harness', 'trajectories');
+  const skillFiles = walkSkillFiles(canonicalSkillsRoot);
+
+  // Load trajectory corpus once to count empirical skill invocations
+  let trajectoryCorpus = '';
+  if (fs.existsSync(trajectoriesDir)) {
+    try {
+      const tFiles = fs.readdirSync(trajectoriesDir).filter((f) => f.endsWith('.json') || f.endsWith('.jsonl'));
+      trajectoryCorpus = tFiles
+        .slice(0, 200)
+        .map((f) => {
+          try {
+            return fs.readFileSync(path.join(trajectoriesDir, f), 'utf8');
+          } catch {
+            return '';
+          }
+        })
+        .join('\n');
+    } catch {
+      trajectoryCorpus = '';
+    }
+  }
+
+  const skills = [];
+  let totalFrontmatterTokens = 0;
+  let totalBodyTokens = 0;
+
+  for (const file of skillFiles) {
+    let raw = '';
+    try {
+      raw = fs.readFileSync(file, 'utf8');
+    } catch {
+      continue;
+    }
+    const rel = path.relative(canonicalSkillsRoot, file);
+    const folderName = rel.split(path.sep)[0];
+    const fmMatch = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    const fmRaw = fmMatch ? fmMatch[1] : '';
+    const bodyRaw = fmMatch ? raw.slice(fmMatch[0].length) : raw;
+
+    const nameMatch = fmRaw.match(/^name:\s*(.+)$/m);
+    const descMatch = fmRaw.match(/^description:\s*(.+)$/m);
+    const skillName = (nameMatch ? nameMatch[1].trim() : folderName).replace(/^['"]|['"]$/g, '');
+    const description = (descMatch ? descMatch[1].trim() : '').replace(/^['"]|['"]$/g, '');
+
+    const frontmatterTokens = Math.ceil((fmRaw.length || 1) / 4);
+    const bodyTokens = Math.ceil((bodyRaw.length || 1) / 4);
+    totalFrontmatterTokens += frontmatterTokens;
+    totalBodyTokens += bodyTokens;
+
+    // Multiplicative factors in [0, 1]
+    const qStored = fmMatch && bodyRaw.trim().length > 80 ? 1.0 : fmMatch ? 0.6 : 0.25;
+    const qRetrieval =
+      description.length >= 25 && frontmatterTokens <= 120
+        ? 1.0
+        : description.length > 0
+          ? 0.65
+          : 0.2;
+    const hasExecutableSurface = /```(bash|sh|zsh|json|ts|js|python)|node\s+scripts\/|pnpm\s+run|tnf\s+/i.test(bodyRaw);
+    const rExecution = hasExecutableSurface ? 1.0 : 0.7;
+    const hasVerificationSurface = /verify|gate|test|assert|check|--json/i.test(bodyRaw);
+    const qVerification = hasVerificationSurface ? 1.0 : 0.7;
+
+    const competence = Number((qStored * qRetrieval * rExecution * qVerification).toFixed(3));
+    const trajectoryMentions =
+      trajectoryCorpus && skillName
+        ? trajectoryCorpus.split(folderName).length - 1
+        : 0;
+
+    skills.push({
+      skill: folderName,
+      name: skillName,
+      frontmatterTokens,
+      bodyTokens,
+      bloatedFrontmatter: frontmatterTokens > 120,
+      missingDescription: description.length === 0,
+      competence,
+      factors: { qStored, qRetrieval, rExecution, qVerification },
+      trajectoryMentions,
+    });
+  }
+
+  skills.sort((a, b) => b.frontmatterTokens - a.frontmatterTokens);
+  const bloated = skills.filter((s) => s.bloatedFrontmatter);
+  const missingDescriptions = skills.filter((s) => s.missingDescription);
+  const lowCompetence = skills.filter((s) => s.competence < 0.5);
+  const avgCompetence =
+    skills.length > 0
+      ? Number((skills.reduce((acc, s) => acc + s.competence, 0) / skills.length).toFixed(3))
+      : 0;
+
+  return {
+    totalCanonicalSkills: skills.length,
+    totalFrontmatterTokens,
+    totalBodyTokens,
+    avgCompetence,
+    bloatedFrontmatterCount: bloated.length,
+    missingDescriptionCount: missingDescriptions.length,
+    lowCompetenceCount: lowCompetence.length,
+    topTokenHeaviest: skills.slice(0, 10),
+    lowCompetenceSkills: lowCompetence.slice(0, 10),
+  };
+}
+
 function main() {
   const options = parseArgs(process.argv.slice(2));
   const home = os.homedir();
+  const repoRoot = path.resolve(__dirname, '..', '..');
 
   const runtimes = [
     {
@@ -190,9 +305,16 @@ function main() {
   ];
 
   const results = runtimes.map((r) => auditRuntime(r.name, r.activeRoot, r.inactiveRoot, options));
+  const doctor = options.doctor ? runSkillDoctor(repoRoot) : undefined;
 
   if (options.json) {
-    console.log(JSON.stringify({ timestamp: new Date().toISOString(), results }, null, 2));
+    console.log(
+      JSON.stringify(
+        { timestamp: new Date().toISOString(), results, ...(doctor ? { doctor } : {}) },
+        null,
+        2
+      )
+    );
     return;
   }
 
@@ -209,6 +331,17 @@ function main() {
     if (!res.withinBudget) allPass = false;
   }
 
+  if (doctor) {
+    console.log('\n🩺 === Skill /doctor Token & Multiplicative Competence Audit ===');
+    console.log(`   Canonical Skills (.agent/skills): ${doctor.totalCanonicalSkills}`);
+    console.log(`   Tier-0 Frontmatter Token Load:    ~${doctor.totalFrontmatterTokens} tokens`);
+    console.log(`   Full Body Token Load (if eager):  ~${doctor.totalBodyTokens} tokens`);
+    console.log(`   Mean Multiplicative Competence:   ${doctor.avgCompetence}`);
+    console.log(`   Bloated Frontmatter (>120 tok):   ${doctor.bloatedFrontmatterCount}`);
+    console.log(`   Missing YAML Description:         ${doctor.missingDescriptionCount}`);
+    console.log(`   Low Competence (<0.50):           ${doctor.lowCompetenceCount}`);
+  }
+
   console.log('\n----------------------------------------------------');
   if (allPass) {
     console.log('✅ Context Budget Status: HEALTHY (Tier-0 Progressive Disclosure Active)\n');
@@ -218,4 +351,12 @@ function main() {
   }
 }
 
-main();
+module.exports = {
+  auditRuntime,
+  runSkillDoctor,
+  walkSkillFiles,
+};
+
+if (require.main === module) {
+  main();
+}

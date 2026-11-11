@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-11-09T06:06:12Z",
+  "cycle_type": "tnf-continuous-correction-flywheel",
+  "mode": "headless_security_audit_only",
+  "properties_tested": [
+    "thenewfuse.com",
+    "app.thenewfuse.com",
+    "api.thenewfuse.com",
+    "relay.thenewfuse.com",
+    "extreamix.com",
+    "app.extreamix.com",
+    "concordance-api",
+    "local-relay",
+    "redis"
+  ],
+  "baseline_comparison": {
+    "thenewfuse.com": { "expected": 200, "actual": 200, "status": "OK" },
+    "app.thenewfuse.com": { "expected": 200, "actual": 200, "status": "OK" },
+    "api.thenewfuse.com": { "expected": 200, "actual": 503, "status": "CRITICAL_DEVIATION" },
+    "api.thenewfuse.com/docs": { "expected": 200, "actual": 500, "status": "CRITICAL_DEVIATION" },
+    "relay.thenewfuse.com": { "expected": 200, "actual": 503, "status": "CRITICAL_DEVIATION" },
+    "extreamix.com": { "expected": 525, "actual": 525, "status": "OK_INTENTIONAL" },
+    "app.extreamix.com": { "expected": 525, "actual": 525, "status": "OK_INTENTIONAL" },
+    "local_relay_3007": { "expected": "status:ok", "actual": "status:ok", "status": "OK" },
+    "redis": { "expected": "PONG", "actual": "PONG", "status": "OK" },
+    "auth_login": { "expected": 400, "actual": 503, "status": "CRITICAL_DEVIATION" },
+    "auth_v1_login": { "expected": 400, "actual": 503, "status": "CRITICAL_DEVIATION" },
+    "marketplace_catalog": { "expected": 401, "actual": "not_tested", "status": "UNTESTED" },
+    "concordance_api": { "expected": 200, "actual": 200, "status": "OK" }
+  },
+  "critical_findings": [
+    { "id": "C-001", "severity": "CRITICAL", "category": "Availability", "target": "api.thenewfuse.com", "title": "API domain completely unavailable (503 Service Unavailable)", "description": "All endpoints on api.thenewfuse.com return HTTP 503. This includes /docs, /api/health, /api/auth/login, /api/v1/auth/login, and all other routes.", "expected": "200 (per baseline 2026-09-11)", "actual": "503", "impact": "All API-dependent functionality broken; marketplace, auth, health checks non-functional" },
+    { "id": "C-002", "severity": "CRITICAL", "category": "Availability", "target": "relay.thenewfuse.com", "title": "Relay domain completely unavailable (503 Service Unavailable)", "description": "All endpoints on relay.thenewfuse.com return HTTP 503. This affects WebSocket relay functionality.", "expected": "200 (per baseline 2026-09-11, NXDOMAIN fixed 2026-08-06)", "actual": "503", "impact": "WebSocket relay non-functional; real-time features broken" },
+    { "id": "C-003", "severity": "CRITICAL", "category": "Security", "target": "thenewfuse.com", "title": "Wildcard CORS (access-control-allow-origin: *)", "description": "Main domain allows requests from any origin via wildcard CORS policy.", "evidence": "curl -H 'Origin: https://evil-test.com' returns 'access-control-allow-origin: *'", "impact": "Any website can make credentialed requests to thenewfuse.com" },
+    { "id": "C-004", "severity": "CRITICAL", "category": "Security", "target": "app.thenewfuse.com", "title": "Wildcard CORS (access-control-allow-origin: *)", "description": "App domain allows requests from any origin via wildcard CORS policy.", "evidence": "curl -H 'Origin: https://evil-test.com' returns 'access-control-allow-origin: *'", "impact": "Any website can make credentialed requests to app.thenewfuse.com" }
+  ],
+  "high_findings": [
+    { "id": "H-001", "severity": "HIGH", "category": "Availability", "target": "api.thenewfuse.com/docs", "title": "API docs endpoint returns 500 instead of 200", "description": "Swagger/OpenAPI documentation endpoint returns server error instead of documentation.", "expected": "200 (per baseline 2026-09-11: 'used to 404' - now fixed)", "actual": "500" },
+    { "id": "H-002", "severity": "HIGH", "category": "Availability", "target": "app.thenewfuse.com/api/health", "title": "App health endpoint returns 503", "description": "Health check endpoint on app domain returns service unavailable.", "expected": "200", "actual": "503" },
+    { "id": "H-003", "severity": "HIGH", "category": "Functional", "target": "api.thenewfuse.com/api/auth/login", "title": "Auth login endpoint returns 503 instead of 400", "description": "POST /api/auth/login should return 400 on empty body (validation rejects), but returns 503.", "expected": "400 (per baseline 2026-09-11: 'endpoint exists, validation rejects')", "actual": "503" },
+    { "id": "H-004", "severity": "HIGH", "category": "Functional", "target": "api.thenewfuse.com/api/v1/auth/login", "title": "Auth v1 login endpoint returns 503 instead of 400", "description": "POST /api/v1/auth/login should return 400 on empty body, but returns 503.", "expected": "400 (per baseline 2026-09-11: 'both auth mounts are live')", "actual": "503" },
+    { "id": "H-005", "severity": "HIGH", "category": "Security", "target": "thenewfuse.com", "title": "Missing Content-Security-Policy header", "description": "No CSP header present on main domain.", "expected": "present", "actual": "missing" },
+    { "id": "H-006", "severity": "HIGH", "category": "Security", "target": "app.thenewfuse.com", "title": "Missing Content-Security-Policy header", "description": "No CSP header present on app domain.", "expected": "present", "actual": "missing" },
+    { "id": "H-007", "severity": "HIGH", "category": "Security", "target": "thenewfuse.com", "title": "API documentation exposed at /api-docs", "description": "Swagger UI accessible at /api-docs on production domain.", "evidence": "curl https://thenewfuse.com/api-docs returns HTML (Swagger UI)", "impact": "API structure exposed publicly" },
+    { "id": "H-008", "severity": "HIGH", "category": "Security", "target": "app.thenewfuse.com", "title": "API documentation exposed at /api-docs", "description": "Swagger UI accessible at /api-docs on production app domain.", "evidence": "curl https://app.thenewfuse.com/api-docs returns HTML (Swagger UI)", "impact": "API structure exposed publicly" },
+    { "id": "H-009", "severity": "HIGH", "category": "Security", "target": "thenewfuse.com", "title": "API index exposed at /api/v1", "description": "API index/version endpoint returns content at /api/v1.", "evidence": "curl https://thenewfuse.com/api/v1 returns 503 page but endpoint responds", "impact": "API structure partially exposed" },
+    { "id": "H-010", "severity": "HIGH", "category": "Security", "target": "app.thenewfuse.com", "title": "API index exposed at /api/v1", "description": "API index/version endpoint returns content at /api/v1.", "evidence": "curl https://app.thenewfuse.com/api/v1 returns 503 page but endpoint responds", "impact": "API structure partially exposed" },
+    { "id": "H-011", "severity": "HIGH", "category": "Security", "target": "thenewfuse.com", "title": "Missing Permissions-Policy header", "description": "No Permissions-Policy header to control browser features.", "expected": "present", "actual": "missing" },
+    { "id": "H-012", "severity": "HIGH", "category": "Security", "target": "app.thenewfuse.com", "title": "Missing Permissions-Policy header", "description": "No Permissions-Policy header to control browser features.", "expected": "present", "actual": "missing" }
+  ],
+  "medium_findings": [
+    { "id": "M-001", "severity": "MEDIUM", "category": "Security", "target": "extreamix.com", "title": "Missing X-Content-Type-Options header", "description": "No nosniff header to prevent MIME type sniffing.", "expected": "present", "actual": "missing" },
+    { "id": "M-002", "severity": "MEDIUM", "category": "Security", "target": "app.extreamix.com", "title": "Missing X-Content-Type-Options header", "description": "No nosniff header to prevent MIME type sniffing.", "expected": "present", "actual": "missing" },
+    { "id": "M-003", "severity": "MEDIUM", "category": "Security", "target": "api.thenewfuse.com", "title": "All security headers missing (returns 503)", "description": "API domain returns 503 with no security headers (x-frame-options, x-content-type-options, CSP, HSTS, referrer-policy, permissions-policy).", "expected": "headers present", "actual": "all missing (503 response)" },
+    { "id": "M-004", "severity": "MEDIUM", "category": "Security", "target": "relay.thenewfuse.com", "title": "All security headers missing (returns 503)", "description": "Relay domain returns 503 with no security headers.", "expected": "headers present", "actual": "all missing (503 response)" },
+    { "id": "M-005", "severity": "MEDIUM", "category": "Security", "target": "extreamix.com", "title": "Missing HSTS header", "description": "No Strict-Transport-Security header (though behind Cloudflare).", "expected": "present", "actual": "missing" },
+    { "id": "M-006", "severity": "MEDIUM", "category": "Security", "target": "app.extreamix.com", "title": "Missing HSTS header", "description": "No Strict-Transport-Security header (though behind Cloudflare).", "expected": "present", "actual": "missing" },
+    { "id": "M-007", "severity": "MEDIUM", "category": "Security", "target": "api.thenewfuse.com", "title": "Missing Referrer-Policy header", "description": "No referrer-policy header on 503 response.", "expected": "present", "actual": "missing" },
+    { "id": "M-008", "severity": "MEDIUM", "category": "Security", "target": "relay.thenewfuse.com", "title": "Missing Referrer-Policy header", "description": "No referrer-policy header on 503 response.", "expected": "present", "actual": "missing" }
+  ],
+  "low_findings": [
+    { "id": "L-001", "severity": "LOW", "category": "Availability", "target": "thenewfuse.com/api/health", "title": "Health endpoint returns 500", "description": "Main domain's /api/health returns 500 instead of 200.", "expected": "200", "actual": "500" },
+    { "id": "L-002", "severity": "INFO", "category": "Informational", "target": "extreamix.com", "title": "Intentional 525 (SSL handshake failure) - benched per baseline", "description": "Domain intentionally benched 2026-08-06. Alert only on change from 525.", "expected": "525", "actual": "525", "status": "BASELINE_MATCH" },
+    { "id": "L-003", "severity": "INFO", "category": "Informational", "target": "app.extreamix.com", "title": "Intentional 525 (SSL handshake failure) - benched per baseline", "description": "Domain intentionally benched 2026-08-06. Alert only on change from 525.", "expected": "525", "actual": "525", "status": "BASELINE_MATCH" }
+  ],
+  "healthy_systems": [
+    { "target": "Concordance API", "url": "https://wslydgtgindrywldatbv.supabase.co/functions/v1/concordance/stats", "status": "HEALTHY", "details": "Returns 200 with data: 149,475 unique identifiers, 8,689 files indexed, 10 categories, last generated 2026-05-08" },
+    { "target": "Local Relay", "url": "http://127.0.0.1:3007/health", "status": "HEALTHY", "details": "Returns status:ok, relay:running, websocket:true, 1 agent, 14 channels, uptime 963322s" },
+    { "target": "Redis", "url": "localhost:6379", "status": "HEALTHY", "details": "Returns PONG" },
+    { "target": "thenewfuse.com (main)", "url": "https://thenewfuse.com/", "status": "HEALTHY", "details": "Returns 200, all security headers present except CSP and Permissions-Policy" },
+    { "target": "app.thenewfuse.com (main + routes)", "url": "https://app.thenewfuse.com/", "status": "HEALTHY", "details": "Returns 200; /login, /register, /dashboard, /pricing, /docs all return 200/301" }
+  ],
+  "summary": { "total_findings": 27, "critical": 4, "high": 12, "medium": 8, "low": 3, "healthy_systems": 5, "baseline_deviations": 6 }
+}

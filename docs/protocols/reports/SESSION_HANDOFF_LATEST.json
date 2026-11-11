@@ -1,61 +1,77 @@
 {
   "spec": "tnf/session-handoff/0.3",
-  "handoff_id": "262bd389-1fa9-4bf4-b458-7df505b30133",
-  "created_at": "2026-11-02T13:56:42.124Z",
+  "handoff_id": "a5e7028f-4ea7-4699-906d-22aa0319a544",
+  "created_at": "2026-11-11T22:18:34.226Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "fbc9dbc043b687695daf635e07ba4ee9bff9e6dc",
+  "head_sha": "49c5749060fa4d331b31e2b4a621c2739e060cdd",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": [],
-  "work_summary": ["Modified 36 file(s)"],
+  "work_summary": [
+    "Modified 51 file(s)"
+  ],
   "changed_paths": [
-    "apps/api-gateway/package.json",
     "apps/api-gateway/src/auth/auth.controller.ts",
-    "apps/api-gateway/src/auth/gateway-auth.service.ts",
-    "apps/api-gateway/src/gateway/admin-backup-gateway.controller.ts",
-    "apps/api-gateway/src/gateway/admin-backup-gateway.module.ts",
     "apps/api-gateway/src/main.ts",
+    "apps/api-gateway/src/next-handler.ts",
     "apps/api/src/controllers/auth.controller.ts",
     "apps/api/src/dtos/auth.dto.ts",
     "apps/api/src/services/auth.service.ts",
     "apps/frontend/functions/[[path]].js",
     "apps/frontend/public/_headers",
-    "apps/frontend/src/components/A2AMultiAgentChat.tsx",
+    "apps/frontend/src/ComprehensiveRouter.tsx",
+    "apps/frontend/src/components/RequireAuth.tsx",
+    "apps/frontend/src/components/auth/RequireMembership.test.tsx",
+    "apps/frontend/src/components/auth/RequireMembership.tsx",
     "apps/frontend/src/components/auth/TurnstileWidget.tsx",
+    "apps/frontend/src/components/control-surface/GoalsPanel.tsx",
+    "apps/frontend/src/config/api-base.ts",
     "apps/frontend/src/data/codebase_map.json",
+    "apps/frontend/src/hooks/useAuth.recovery.test.tsx",
+    "apps/frontend/src/hooks/useAuth.tsx",
     "apps/frontend/src/layouts/AppShell.tsx",
     "apps/frontend/src/pages/Membership.tsx",
+    "apps/frontend/src/pages/Pricing.tsx",
     "apps/frontend/src/pages/Timeline/index.tsx",
     "apps/frontend/src/pages/auth/OAuthCallback.tsx",
     "apps/frontend/src/pages/durable-tasks/DurableTasksPage.tsx",
+    "apps/frontend/src/routers/SubdomainRouter.tsx",
+    "apps/frontend/src/services/authSession.ts",
     "apps/frontend/src/services/unifiedLedgerApi.ts",
     "apps/frontend/tsconfig.json",
+    "cloudflare-api-proxy/src/index.ts",
+    "cloudflare-api-proxy/test/cors.test.mjs",
     "data/agent-registry/onboarding-agent.json",
+    "data/harness/harness-config.json",
+    "data/harness/provider-failover-policy.json",
     "docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md",
     "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "logs/flywheel/property-health-history.jsonl",
     "logs/flywheel/property-health-latest.json",
-    "packages/api/package.json",
-    "packages/api/src/controllers/admin/admin-audit-logs.controller.ts",
-    "packages/api/src/controllers/admin/admin-config.controller.ts",
-    "packages/api/src/controllers/admin/admin-metrics.controller.ts",
-    "packages/api/src/controllers/admin/admin-settings.controller.ts",
-    "packages/core-vector-db/src/drivers/pgvector.driver.ts",
+    "packages/tnf-cli/src/commands/agents-run.ts",
+    "packages/tnf-cli/src/utils/llm-tools.executors.test.ts",
+    "packages/tnf-cli/src/utils/llm-tools.ts",
+    "pages/index.tsx",
     "scripts/flywheel/tnf-property-health-flywheel.cjs",
-    "apps/api-gateway/src/auth/admin.guard.spec.ts",
-    "apps/api-gateway/src/auth/admin.guard.ts",
-    "apps/api-gateway/src/gateway/admin-backup-gateway.controller.spec.ts",
-    "apps/frontend/public/app.html",
-    "packages/api/src/modules/guards/__tests__/admin.guard.unit.spec.ts",
-    "packages/api/src/modules/guards/admin.guard.ts",
-    "packages/core-vector-db/src/drivers/pgvector.driver.spec.ts",
+    "scripts/harness/assimilation-scan.test.cjs",
+    "scripts/harness/compaction-record.cjs",
+    "scripts/harness/host-compaction-adapter.cjs",
+    "scripts/harness/provider-failover.cjs",
+    "scripts/skills/universal-skill-disclosure-guard.cjs",
+    "data/mcp_config.json",
+    ".agent/skills/dogfood/output/",
     "apps/api-gateway/public/",
     "apps/api-gateway/src/static-pages-handler.ts",
-    "apps/frontend/src/utils/fetchWithTimeout.ts"
+    "apps/frontend/src/components/control-surface/__tests__/GoalsPanel.test.tsx",
+    "apps/frontend/src/utils/fetchWithTimeout.ts",
+    "data/ingestion-runs/",
+    "packages/jules-skill/",
+    "apps/frontend/public/app.html"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -66,7 +82,9 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": ["orchestrator"],
+    "targets": [
+      "orchestrator"
+    ],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
@@ -77,10 +95,12 @@
   "next_actions": [
     "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
     "Emit a fresh handoff artifact immediately after completing the next critical work unit.",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 46 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 59 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
   ],
   "artifacts": {
-    "commits": ["fbc9dbc043b687695daf635e07ba4ee9bff9e6dc"],
+    "commits": [
+      "49c5749060fa4d331b31e2b4a621c2739e060cdd"
+    ],
     "deployment_urls": [],
     "database_migrations": []
   },
@@ -114,61 +134,61 @@
     {
       "id": "github.dev.main",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:26.577Z",
-      "value": "e86c4175378c9f65f9d4d9d2839a2748c8e7290c"
+      "observed_at": "2026-11-07T02:53:24.839Z",
+      "value": "face46dde32b72b14a505e2548c3dec505dc3971"
     },
     {
       "id": "github.public.main",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:28.365Z",
+      "observed_at": "2026-11-07T02:53:25.956Z",
       "value": "fbc9dbc043b687695daf635e07ba4ee9bff9e6dc"
     },
     {
       "id": "github.control-plane.main",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:30.171Z",
+      "observed_at": "2026-11-07T02:53:27.403Z",
       "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
     },
     {
       "id": "github.public.pr-queue",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:32.078Z",
+      "observed_at": "2026-11-07T02:53:28.580Z",
       "value": "[]"
     },
     {
       "id": "github.public.ruleset",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:32.560Z",
+      "observed_at": "2026-11-07T02:53:29.181Z",
       "value": "deletion,non_fast_forward,pull_request,required_status_checks"
     },
     {
       "id": "github.public.proprietary-leak",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:34.662Z",
+      "observed_at": "2026-11-07T02:53:31.164Z",
       "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
     },
     {
       "id": "tnf.product-repo-map",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:35.002Z",
+      "observed_at": "2026-11-07T02:53:31.329Z",
       "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
     },
     {
       "id": "tnf.oss-app-boundary",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:35.204Z",
+      "observed_at": "2026-11-07T02:53:31.503Z",
       "value": "155a3b9273bad34ec15046ebf323d53e0854dc31\n2026-09-01"
     },
     {
       "id": "git.repository.identity",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:37.425Z",
-      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=fbc9dbc043b687695daf635e07ba4ee9bff9e6dc\nbranch=main\ndirty=37"
+      "observed_at": "2026-11-07T02:53:32.597Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=49c5749060fa4d331b31e2b4a621c2739e060cdd\nbranch=main\ndirty=25"
     },
     {
       "id": "runtime.services",
       "state": "STALE",
-      "observed_at": "2026-11-01T16:23:37.746Z",
+      "observed_at": "2026-11-07T02:53:32.816Z",
       "value": "PONG\nRELAY_OK"
     },
     {
@@ -177,51 +197,5 @@
       "observed_at": "2026-10-17T04:39:00.998Z",
       "value": "RECENT=20 MIRRORED=20 PENDING=0"
     }
-  ],
-  "reflection": {
-    "lessons": {
-      "considered": false
-    },
-    "skills": {
-      "considered": false
-    },
-    "gaps": {
-      "considered": false
-    },
-    "self_audit": {
-      "checks": [
-        {
-          "id": "work-summary-not-stale",
-          "ok": true,
-          "detail": "1 item(s), distinct from the previous handoff"
-        },
-        {
-          "id": "classification-complete",
-          "ok": true,
-          "detail": "all four fields set"
-        },
-        {
-          "id": "reflection-answered",
-          "ok": false,
-          "detail": "lessons.considered=false skills.considered=false"
-        },
-        {
-          "id": "gaps-considered",
-          "ok": false,
-          "detail": "no gap analysis recorded for this session"
-        },
-        {
-          "id": "next-actions-not-all-inherited",
-          "ok": true,
-          "detail": "3 action(s), 2 inherited from the previous handoff"
-        },
-        {
-          "id": "changed-paths-recorded",
-          "ok": true,
-          "detail": "46 recorded, 46 dirty in the working tree"
-        }
-      ],
-      "findings": 2
-    }
-  }
+  ]
 }

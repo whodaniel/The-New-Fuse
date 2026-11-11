@@ -20,12 +20,12 @@ const OAuthCallback = () => {
   const location = useLocation();
   const { login, handleSSOCallback } = useAuth();
   useEffect(() => {
+    const next = consumeDeepLinkNext('/dashboard');
     const run = async () => {
       const params = new URLSearchParams(location.search);
       const hashParams = new URLSearchParams(
         location.hash.startsWith('#') ? location.hash.slice(1) : location.hash
       );
-      const next = consumeDeepLinkNext('/dashboard');
       const error = extractCallbackError(location);
       if (error) {
         console.error('Authentication failed:', error);
@@ -69,8 +69,13 @@ const OAuthCallback = () => {
           const { data } = await supabase.auth.getSession();
           if (data?.session?.access_token) {
             console.log(
-              'OAuthCallback: Existing Supabase session detected, forwarding to dashboard'
+              'OAuthCallback: Existing Supabase session detected, hydrating AuthContext and forwarding to dashboard'
             );
+            try {
+              await handleSSOCallback('supabase', '');
+            } catch {
+              await login(data.session.access_token).catch(() => {});
+            }
             navigate(next, { replace: true });
             return;
           }
@@ -84,12 +89,17 @@ const OAuthCallback = () => {
     };
     run().catch((err) => {
       console.error('OAuth callback handling failed:', err);
-      // If we have an active session in Supabase, navigate to next instead of showing error
+      // If we have an active session in Supabase, hydrate AuthContext and navigate to next instead of showing error
       if (hasSupabaseConfig && supabase) {
         supabase.auth
           .getSession()
-          .then(({ data }) => {
-            if (data?.session) {
+          .then(async ({ data }) => {
+            if (data?.session?.access_token) {
+              try {
+                await login(data.session.access_token);
+              } catch {
+                /* ignore */
+              }
               navigate(next, { replace: true });
               return;
             }

@@ -4,7 +4,7 @@
   Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  X-Frame-Options: DENY
+  X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
 

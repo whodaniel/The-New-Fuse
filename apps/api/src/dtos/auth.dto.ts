@@ -139,3 +139,41 @@ export class SupabaseAuthDto {
   @IsOptional()
   refreshToken?: string;
 }
+
+export class ForgotPasswordDto {
+  @ApiProperty()
+  @IsEmail()
+  email: string = '';
+
+  @ApiProperty({
+    required: false,
+    description: 'Optional Cloudflare Turnstile token (required when server enables Turnstile)',
+  })
+  @IsString()
+  @IsOptional()
+  cfTurnstileToken?: string;
+}
+
+export class ResetPasswordDto {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  token: string = '';
+
+  @ApiProperty()
+  @IsString()
+  @MinLength(8)
+  newPassword: string = '';
+
+  @ApiProperty()
+  @IsString()
+  @MinLength(8)
+  confirmPassword: string = '';
+}
+
+export class ValidateTokenDto {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  token: string = '';
+}

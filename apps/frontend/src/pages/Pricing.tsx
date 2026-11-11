@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { authFetch } from '@/utils/authToken';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.thenewfuse.com';
+const COMMERCIAL_SALES_ENABLED = import.meta.env.VITE_COMMERCIAL_SALES_ENABLED === 'true';
 
 const Pricing = () => {
   const navigate = useNavigate();
@@ -40,6 +41,15 @@ const Pricing = () => {
   }, [searchParams, setSearchParams]);
 
   const handleSubscribe = async (priceId: string) => {
+    if (!COMMERCIAL_SALES_ENABLED) {
+      toast.success(
+        'Early Access Beta: Commercial billing is paused ($0.00). Unlocking your workspace now!',
+        { duration: 5000 }
+      );
+      navigate('/dashboard?access=early_access');
+      return;
+    }
+
     setLoading(priceId);
     try {
       const response = await authFetch(`${API_BASE_URL}/api/billing/stripe/checkout`, {
@@ -55,11 +65,21 @@ const Pricing = () => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await response.json().catch(() => ({}));
         throw new Error(error.message || 'Failed to create checkout session');
       }
 
       const data = await response.json();
+
+      if (data.prelaunch) {
+        toast.success(
+          data.message ||
+            'Early Access Beta: Commercial billing is paused ($0.00). Unlocking your workspace!',
+          { duration: 5000 }
+        );
+        navigate('/dashboard?access=early_access');
+        return;
+      }
 
       if (data.url) {
         window.location.href = data.url;
@@ -80,12 +100,18 @@ const Pricing = () => {
     <div className="min-h-screen bg-background py-16 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
+          {!COMMERCIAL_SALES_ENABLED && (
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-300">
+              Early Access Beta · $0.00 Pre-Commercial Access Active
+            </div>
+          )}
           <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground mb-6">
             Simple, Transparent Pricing
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Choose the perfect plan for your automation needs. Whether you're a hobbyist or an
-            enterprise, we've got you covered.
+            {COMMERCIAL_SALES_ENABLED
+              ? "Choose the perfect plan for your automation needs. Whether you're a hobbyist or an enterprise, we've got you covered."
+              : 'All plans are currently unlocked at $0.00 during our Pre-Commercial Early Access Beta. Sign in or select any tier below to enter your workspace with no payment required.'}
           </p>
         </div>
 

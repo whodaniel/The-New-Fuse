@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-10-18T04:17:09.852Z",
-  "durationMs": 74956,
+  "timestamp": "2026-11-09T06:16:21.594Z",
+  "durationMs": 13592,
   "summary": {
-    "total": 9,
-    "ok": 0,
-    "findings": 9
+    "total": 10,
+    "ok": 7,
+    "findings": 3
   },
   "checks": [
     {
@@ -13,8 +13,22 @@
       "expected": [
         200
       ],
-      "actual": 0,
-      "status": "finding",
+      "actual": 200,
+      "bytes": 60463,
+      "minBytes": 1000,
+      "status": "ok",
+      "note": null
+    },
+    {
+      "target": "https://www.thenewfuse.com",
+      "kind": "http",
+      "expected": [
+        200
+      ],
+      "actual": 200,
+      "bytes": 60463,
+      "minBytes": 1000,
+      "status": "ok",
       "note": null
     },
     {
@@ -23,8 +37,10 @@
       "expected": [
         200
       ],
-      "actual": 0,
-      "status": "finding",
+      "actual": 200,
+      "bytes": 28339,
+      "minBytes": 1000,
+      "status": "ok",
       "note": null
     },
     {
@@ -33,7 +49,9 @@
       "expected": [
         200
       ],
-      "actual": 0,
+      "actual": 500,
+      "bytes": 323,
+      "minBytes": null,
       "status": "finding",
       "note": null
     },
@@ -43,7 +61,9 @@
       "expected": [
         200
       ],
-      "actual": 0,
+      "actual": 503,
+      "bytes": 302,
+      "minBytes": null,
       "status": "finding",
       "note": null
     },
@@ -51,9 +71,12 @@
       "target": "https://relay.thenewfuse.com",
       "kind": "http",
       "expected": [
-        200
+        200,
+        426
       ],
-      "actual": 0,
+      "actual": 503,
+      "bytes": 302,
+      "minBytes": null,
       "status": "finding",
       "note": null
     },
@@ -63,8 +86,10 @@
       "expected": [
         525
       ],
-      "actual": 0,
-      "status": "finding",
+      "actual": 525,
+      "bytes": 16,
+      "minBytes": null,
+      "status": "ok",
       "note": "benched 2026-08-06 — alert only on change"
     },
     {
@@ -73,23 +98,25 @@
       "expected": [
         525
       ],
-      "actual": 0,
-      "status": "finding",
+      "actual": 525,
+      "bytes": 16,
+      "minBytes": null,
+      "status": "ok",
       "note": "benched 2026-08-06 — alert only on change"
     },
     {
       "target": "local-relay-3007",
       "kind": "relay-health",
       "expected": "ok",
-      "actual": "down",
-      "status": "finding"
+      "actual": "ok",
+      "status": "ok"
     },
     {
       "target": "local-redis",
       "kind": "redis-ping",
       "expected": "ok",
-      "actual": "down",
-      "status": "finding"
+      "actual": "ok",
+      "status": "ok"
     }
   ]
 }

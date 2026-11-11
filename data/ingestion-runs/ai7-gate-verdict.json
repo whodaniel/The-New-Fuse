@@ -1,0 +1,215 @@
+{
+  "complete": true,
+  "manifestSuccesses": 38,
+  "queueSourcesSeen": 38,
+  "queueSources": 38,
+  "unreconciledSources": [],
+  "modalityGaps": {
+    "files": 38,
+    "total": 357,
+    "unresolved": 357,
+    "resolved": 0,
+    "not_material": 0,
+    "by_source": {
+      "gaps_Kbxg-_CXs78.json": {
+        "unresolved": 5,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_eWS8Cr3nagA.json": {
+        "unresolved": 1,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_rKUKTIb3Q-o.json": {
+        "unresolved": 1,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_8RWew9zqYnk.json": {
+        "unresolved": 0,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_0NvD6qNapiU.json": {
+        "unresolved": 6,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_Vok_nReMFaU.json": {
+        "unresolved": 4,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_Shqtk_2Jd3c.json": {
+        "unresolved": 14,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_FbKXvab-0yQ.json": {
+        "unresolved": 10,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_BFR4Sto70d8.json": {
+        "unresolved": 3,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_c_QzwZO0dd8.json": {
+        "unresolved": 4,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_vygExAE_fmA.json": {
+        "unresolved": 11,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_fw1b7Lz5TE4.json": {
+        "unresolved": 2,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_VW58Q8c5F0I.json": {
+        "unresolved": 4,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_YaK6cnET2IE.json": {
+        "unresolved": 11,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_S2sjyokoxeE.json": {
+        "unresolved": 20,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps__LCeJZFIsd4.json": {
+        "unresolved": 13,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_oPAe-qZZqlA.json": {
+        "unresolved": 3,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_lNum1UFDYn0.json": {
+        "unresolved": 2,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_oz2CwrPV2Rg.json": {
+        "unresolved": 7,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_NUjVluzsYQA.json": {
+        "unresolved": 2,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_nWMRwc2dHT8.json": {
+        "unresolved": 0,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_SxuQs9GGYbk.json": {
+        "unresolved": 7,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_HIRDzMtuWFk.json": {
+        "unresolved": 11,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_mH5lUWrWcFg.json": {
+        "unresolved": 2,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_zt4Qs1Nm1qc.json": {
+        "unresolved": 23,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_SNJ3yuJ_QwY.json": {
+        "unresolved": 5,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_xSDzfOf0se4.json": {
+        "unresolved": 0,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_aL4eepffdjM.json": {
+        "unresolved": 6,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_3b0U4_02bAE.json": {
+        "unresolved": 10,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_uO127euWCow.json": {
+        "unresolved": 35,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_6r5zi-BMAuI.json": {
+        "unresolved": 70,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_Lnyml75U13w.json": {
+        "unresolved": 26,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_9Zbaw69O3QQ.json": {
+        "unresolved": 22,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_lNlMXsUQggc.json": {
+        "unresolved": 5,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_cyIWQHYoUg8.json": {
+        "unresolved": 1,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_gDPJI1cp0gw.json": {
+        "unresolved": 1,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_K2F_ViLU2Vs.json": {
+        "unresolved": 4,
+        "resolved": 0,
+        "not_material": 0
+      },
+      "gaps_o1CogAtWdBk.json": {
+        "unresolved": 6,
+        "resolved": 0,
+        "not_material": 0
+      }
+    }
+  },
+  "orderingViolations": {
+    "fillWithoutQueue": [],
+    "retainedFrames": [],
+    "ungatedFills": []
+  },
+  "failures": [],
+  "warnings": [
+    "357/357 modality gaps remain unresolved; dependent factoids must stay unverified"
+  ]
+}

@@ -469,6 +469,91 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
       additionalProperties: false,
     },
   },
+  {
+    name: 'graph_skeleton',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Return the AST symbol skeleton (functions, classes, methods, exports, and exact line numbers + dependency edge counts) for a file or path prefix without reading full function bodies (Graft pattern). Requires `tnf graph build` to have run.',
+    parameters: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          description: 'Relative or partial file path to extract the AST skeleton for.',
+        },
+      },
+      required: ['file'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'self_compact',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Write a TNF-owned compaction checkpoint (Pi self_compact + HoH dual state s_t = (A_t, E_t) + Google Skill State X_t). Separates verified artifact state from epistemic evidence and unresolved blockers.',
+    parameters: {
+      type: 'object',
+      properties: {
+        summary: {
+          type: 'string',
+          description: 'Concise checkpoint summary of completed work and next intent.',
+        },
+        artifactState: {
+          type: 'string',
+          description: 'JSON or CSV of modified files, commits, or concrete artifacts (A_t).',
+        },
+        evidenceState: {
+          type: 'string',
+          description:
+            'JSON or CSV of verified test/gate results vs. unverified hypotheses or gaps (E_t).',
+        },
+        skillState: {
+          type: 'string',
+          description:
+            'JSON object of { goal, currentStage, unresolvedBlockers, pendingSteps } (X_t).',
+        },
+      },
+      required: ['summary'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'system1_decide',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Zero-prose System-1 classification or threshold scoring primitive (JEV pattern: choice, score, or null abstention). Use for binary/categorical routing or numeric triage instead of open-ended chain-of-thought reasoning.',
+    parameters: {
+      type: 'object',
+      properties: {
+        mode: {
+          type: 'string',
+          enum: ['choice', 'score', 'null'],
+          description: 'System-1 primitive mode.',
+        },
+        value: {
+          type: 'string',
+          description: 'Selected choice label, numeric score as string, or "null" to abstain.',
+        },
+        options: {
+          type: 'string',
+          description: 'Comma-separated allowed options when mode is "choice".',
+        },
+        confidence: {
+          type: 'number',
+          description: 'Confidence in [0, 1]. Below minConfidence automatically abstains (null).',
+        },
+        minConfidence: {
+          type: 'number',
+          description: 'Minimum confidence threshold before abstaining to null (default 0.5).',
+        },
+      },
+      required: ['mode', 'value'],
+      additionalProperties: false,
+    },
+  },
 ]) as readonly BuiltinTool[];
 
 /**

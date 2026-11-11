@@ -37,12 +37,16 @@ const STATE = path.join(STATE_DIR, 'alert-state.json');
 const HISTORY_MAX = 500;
 
 // Verified baseline 2026-09-01. extreamix 525 = intentionally benched (not a regression).
+// 2026-11-01: HTML properties also require minBytes. An empty HTTP 200 on
+// app.thenewfuse.com passed this flywheel for 6 days after public/app.html
+// was deleted in fbc9dbc043. Status-code-only probes are a self-faked gate.
 const HTTP_CHECKS = [
-  { target: 'https://thenewfuse.com', expect: [200] },
-  { target: 'https://app.thenewfuse.com', expect: [200] },
+  { target: 'https://thenewfuse.com', expect: [200], minBytes: 1000 },
+  { target: 'https://www.thenewfuse.com', expect: [200], minBytes: 1000 },
+  { target: 'https://app.thenewfuse.com', expect: [200], minBytes: 1000 },
   { target: 'https://api.thenewfuse.com', expect: [200] },
   { target: 'https://api.thenewfuse.com/docs', expect: [200] },
-  { target: 'https://relay.thenewfuse.com', expect: [200] },
+  { target: 'https://relay.thenewfuse.com', expect: [200, 426] },
   { target: 'https://extreamix.com', expect: [525], note: 'benched 2026-08-06 — alert only on change' },
   { target: 'https://app.extreamix.com', expect: [525], note: 'benched 2026-08-06 — alert only on change' },
 ];
@@ -60,13 +64,30 @@ async function probeHttp(target) {
   try {
     const { stdout } = await execFileAsync(
       'curl',
-      ['-sS', '-L', '-o', '/dev/null', '-w', '%{http_code}', '--max-time', '10', '--max-redirs', '5', target],
+      [
+        '-sS',
+        '-L',
+        '-o',
+        '/dev/null',
+        '-w',
+        '%{http_code} %{size_download}',
+        '--max-time',
+        '10',
+        '--max-redirs',
+        '5',
+        target,
+      ],
       { timeout: 15000 }
     );
-    const code = Number.parseInt(stdout.trim(), 10);
-    return Number.isFinite(code) ? code : 0;
+    const [codeRaw, sizeRaw] = stdout.trim().split(/\s+/);
+    const code = Number.parseInt(codeRaw, 10);
+    const bytes = Number.parseInt(sizeRaw, 10);
+    return {
+      code: Number.isFinite(code) ? code : 0,
+      bytes: Number.isFinite(bytes) ? bytes : 0,
+    };
   } catch {
-    return 0; // ERR / timeout
+    return { code: 0, bytes: 0 }; // ERR / timeout
   }
 }
 
@@ -94,14 +115,21 @@ async function probeRedis() {
 async function runChecks() {
   const checks = [];
   for (const c of HTTP_CHECKS) {
-    const actual = await probeHttp(c.target);
+    const { code, bytes } = await probeHttp(c.target);
+    const codeOk = c.expect.includes(code);
+    const sizeOk = c.minBytes == null || bytes >= c.minBytes;
+    const noteParts = [];
+    if (c.note) noteParts.push(c.note);
+    if (!sizeOk) noteParts.push(`empty-or-tiny body: ${bytes}B < minBytes ${c.minBytes}`);
     checks.push({
       target: c.target,
       kind: 'http',
       expected: c.expect,
-      actual,
-      status: c.expect.includes(actual) ? 'ok' : 'finding',
-      note: c.note || null,
+      actual: code,
+      bytes,
+      minBytes: c.minBytes || null,
+      status: codeOk && sizeOk ? 'ok' : 'finding',
+      note: noteParts.length ? noteParts.join('; ') : null,
     });
   }
   for (const c of INFRA_CHECKS) {

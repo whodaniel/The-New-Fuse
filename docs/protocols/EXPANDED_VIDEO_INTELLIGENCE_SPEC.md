@@ -1,18 +1,20 @@
 # 🎬 Comprehensive Value & Action Matrix for Video Intelligence Ingestion
 
+> **[CLASS:PRIME] [STATUS:ACTIVE] [DOC_TYPE:PROTOCOL] [DOMAIN_SCOPE:VIDEO_INTELLIGENCE]**
+
 ## 1. Executive Framing
 
 When we ingest technical and creative YouTube videos into The New Fuse (TNF), we
 are not merely extracting code snippets. We are tapping into an active, live
 cultural and engineering ecosystem.
 
-This document formalizes the **5 Extended Value Vectors** that transform raw
+This document formalizes the **Extended Value Vectors** that transform raw
 video ingestion into deep, operational leverage across engineering, media
-generation, tool discovery, and market sensing.
+generation, tool discovery, harness attribution, and market sensing.
 
 ---
 
-## 2. The 5 Extended Value Vectors
+## 2. The Extended Value Vectors
 
 ```mermaid
 graph TD
@@ -21,12 +23,16 @@ graph TD
     Video --> V3[3. Longitudinal Trend & Paradigm Shifts]
     Video --> V4[4. Developer Experience & UI/UX Patterns]
     Video --> V5[5. Community Consensus & Market Sentiment]
+    Video --> V6[6. User-Centric Persona Synthesis & Creative Combinatorics]
+    Video --> V7[7. Harness-to-Model Attribution & Evaluator Integrity]
 
     V1 --> ToolGraph[(Dynamic Tool Registry & MCP Discovery)]
     V2 --> MediaForge[(TNF Media Engine: Hook, Pacing, Scripts, Voice)]
     V3 --> Radar[(Technology Delta & Trend Velocity Radar)]
     V4 --> UIStandard[(TNF Vibe Standard & Operator DX)]
     V5 --> Roadmap[(Strategic Decision Engine & Autonomous Backlog)]
+    V6 --> PersonaEngine[(Sovereign Individual Second-Brain Projections)]
+    V7 --> HarnessLedger[(Harness Config & Verification Gate Authority)]
 ```
 
 ---
@@ -149,6 +155,37 @@ graph LR
   - Honoring TNF's foundational tenet that the system exists to empower the
     **Sovereign Individual** to express their own unique vision, curiosity, and
     creative freedom.
+
+---
+
+### Vector 7: Harness-to-Model Attribution & Evaluator Integrity
+
+_Separating model capability from harness scaffolding and auditing the physical
+verification modality of every benchmark claim (Attributed to AI 7 playlist
+sources: Shanghai AI Lab HoH `yeb2ffn8rJk`, Google Agent Skills Paper
+`kFpLzCVLA20`, Stanford Meta-Harness `v5Tc2219-dc`, and JEV System-1
+`8hfbG5PhcB8`)._
+
+- **Harness vs. Model Isolation**:
+  - Every extracted performance claim must separate:
+    1. **Model weights** (base LLM/VLM reasoning),
+    2. **Harness scaffolding** (state schema $s_t = (A_t, E_t)$, compaction
+       policy, tool schema filtering, retry boundaries), and
+    3. **Evaluator modality** (deterministic compiler/test/AST exit codes vs.
+       unpaginated LLM-as-a-judge).
+- **The 95.2% Unpaginated Judge Guard**:
+  - Any benchmark or self-improvement claim relying on an LLM judge without
+    deterministic verification or paginated inspection of full build/test
+    transcripts must be tagged `EVALUATOR_UNVERIFIED` (Shanghai AI Lab HoH found
+    **95.2%** of naive LLM-judge passes failed deterministic criteria when logs
+    were truncated).
+- **System-1 vs. System-2 Cognitive Economics**:
+  - Classify whether the demonstrated agent operation requires open-ended
+    System-2 chain-of-thought reasoning or a zero-prose System-1 classification
+    primitive (`choice`, `score`, `null`) per TNF's *Don't Let Models Reason
+    When Classification Suffices* principle.
+- **Target Artifact in TNF**: [`data/harness/harness-config.json`](file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/data/harness/harness-config.json)
+  and [`scripts/harness/compaction-record.cjs`](file:///Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse/scripts/harness/compaction-record.cjs).
 
 ---
 

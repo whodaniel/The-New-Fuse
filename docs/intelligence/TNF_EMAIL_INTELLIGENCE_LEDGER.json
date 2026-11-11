@@ -1,6 +1,200 @@
 {
-  "updated_at": "2026-10-21T19:15:38.115Z",
+  "updated_at": "2026-11-11T22:30:53.119Z",
   "entries": [
+    {
+      "messageId": "1a1c554ba74569e4",
+      "threadId": "1a1c554ba74569e4",
+      "date": "Tue, 10 Nov 2026 06:00:27 -0600",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/10/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-11T22:30:52.772Z"
+    },
+    {
+      "messageId": "1a1c7f71ddbfbd15",
+      "threadId": "1a1c7f71ddbfbd15",
+      "date": "Tue, 10 Nov 2026 18:17:03 -0600",
+      "from": "operator@thenewfuse.com",
+      "subject": "You’re in! Meet the new CC 🎉",
+      "labels_applied": [
+        "TNF/Architecture"
+      ],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-11T22:30:52.399Z"
+    },
+    {
+      "messageId": "1a1ca7ae89e05b7b",
+      "threadId": "1a1ca7ae89e05b7b",
+      "date": "Wed, 11 Nov 2026 07:00:15 -0500",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/11/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-11T22:30:51.917Z"
+    },
+    {
+      "messageId": "1a1c02fad362e09e",
+      "threadId": "1a1c02fad362e09e",
+      "date": "Mon, 9 Nov 2026 04:01:52 -0800",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/09/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-11T22:30:53.118Z"
+    },
+    {
+      "messageId": "1a1b5e44151aae47",
+      "threadId": "1a1b5e44151aae47",
+      "date": "Sat, 7 Nov 2026 04:03:17 -0800",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/07/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-09T16:45:46.278Z"
+    },
+    {
+      "messageId": "1a1bb09de2bb8b33",
+      "threadId": "1a1bb09de2bb8b33",
+      "date": "Sun, 8 Nov 2026 04:02:28 -0800",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/08/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-09T16:45:45.913Z"
+    },
+    {
+      "messageId": "1a1a6713bd06776b",
+      "threadId": "1a1a6713bd06776b",
+      "date": "Wed, 4 Nov 2026 04:03:20 -0800",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/04/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-07T03:30:13.524Z"
+    },
+    {
+      "messageId": "1a1ab97433f3403d",
+      "threadId": "1a1ab97433f3403d",
+      "date": "Thu, 5 Nov 2026 04:02:59 -0800",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/05/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-07T03:30:13.201Z"
+    },
+    {
+      "messageId": "1a1b0bcfdac2c3df",
+      "threadId": "1a1b0bcfdac2c3df",
+      "date": "Fri, 6 Nov 2026 04:02:18 -0800",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/06/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-09T06:45:12.014Z"
+    },
+    {
+      "messageId": "1a19c22b8652ca48",
+      "threadId": "1a19c22b8652ca48",
+      "date": "Mon, 2 Nov 2026 07:01:23 -0500",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/02/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-02T14:15:08.671Z"
+    },
+    {
+      "messageId": "1a18c777a9a674e3",
+      "threadId": "1a18c777a9a674e3",
+      "date": "Fri, 30 Oct 2026 04:00:02 -0700",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/30/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-01T16:45:37.591Z"
+    },
+    {
+      "messageId": "1a1919dd2227b957",
+      "threadId": "1a1919dd2227b957",
+      "date": "Sat, 31 Oct 2026 07:00:01 -0400",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/31/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-02T14:15:09.476Z"
+    },
+    {
+      "messageId": "1a196fe2b4cd1193",
+      "threadId": "1a196fe2b4cd1193",
+      "date": "Sun, 1 Nov 2026 06:03:22 -0600",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 11/01/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-11-02T14:15:09.092Z"
+    },
+    {
+      "messageId": "1a16d94563dc496a",
+      "threadId": "1a16d94563dc496a",
+      "date": "Sat, 24 Oct 2026 04:03:20 -0700",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/24/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-26T17:00:15.680Z"
+    },
+    {
+      "messageId": "1a172b7c9f5672a8",
+      "threadId": "1a172b7c9f5672a8",
+      "date": "Sun, 25 Oct 2026 04:00:09 -0700",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/25/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-26T17:00:15.242Z"
+    },
+    {
+      "messageId": "1a177de29f688ea0",
+      "threadId": "1a177de29f688ea0",
+      "date": "Mon, 26 Oct 2026 04:00:10 -0700",
+      "from": "operator@thenewfuse.com",
+      "subject": "💌 Your Day Ahead 10/26/2026",
+      "labels_applied": [],
+      "keywords": [],
+      "action_items": [],
+      "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
+      "reviewed_at": "2026-10-26T17:00:14.842Z"
+    },
     {
       "messageId": "1a15e2106af98603",
       "threadId": "1a15e2106af98603",
@@ -11,7 +205,7 @@
       "keywords": [],
       "action_items": [],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-21T19:15:33.967Z"
+      "reviewed_at": "2026-10-21T19:45:09.467Z"
     },
     {
       "messageId": "1a14eaf86069dc0f",
@@ -35,7 +229,7 @@
       "keywords": [],
       "action_items": [],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-21T19:15:38.115Z"
+      "reviewed_at": "2026-10-21T19:45:11.240Z"
     },
     {
       "messageId": "1a158fb21a582a98",
@@ -47,7 +241,7 @@
       "keywords": [],
       "action_items": [],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-21T19:15:37.328Z"
+      "reviewed_at": "2026-10-21T19:45:10.863Z"
     },
     {
       "messageId": "1a159d659e89b537",
@@ -76,7 +270,7 @@
         "Enforce focused deep-indexing on high-priority containers ([01] TNF Architecture, [02] Agent Lab) instead of macroscopic loops."
       ],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-21T19:15:36.365Z"
+      "reviewed_at": "2026-10-21T19:45:10.362Z"
     },
     {
       "messageId": "1a159daa6aa03cf4",
@@ -108,7 +302,7 @@
         "Enforce focused deep-indexing on high-priority containers ([01] TNF Architecture, [02] Agent Lab) instead of macroscopic loops."
       ],
       "synthesis": "Actionable directive shifting ingestion engine from circular macroscopic scanning to targeted deep-indexing, backed by categorized Gmail feedback loop.",
-      "reviewed_at": "2026-10-21T19:15:35.118Z"
+      "reviewed_at": "2026-10-21T19:45:09.862Z"
     }
   ]
 }

@@ -35,6 +35,22 @@
     "agy": { "prefer": ["google", "catalog_primary"], "assimilate": "agy" },
     "openclaw": { "prefer": ["catalog_primary"], "assimilate": "openclaw" }
   },
+  "roleTiers": {
+    "lead_verifier": {
+      "prefer": ["anthropic", "catalog_primary"],
+      "description": "High-context architectural orchestration, adversarial verification, and multi-agent decomposition (Attributed: Bambood Lead+Worker x9cAYdq6-r8)"
+    },
+    "specialist_worker": {
+      "prefer": ["openai", "catalog_primary", "deepseek"],
+      "description": "High-precision surgical code synthesis, debugging, and bounded worktree implementation (Attributed: Bambood Lead+Worker x9cAYdq6-r8)"
+    },
+    "system1_classifier": {
+      "prefer": ["nvidia", "openrouter", "google"],
+      "maxTokens": 16,
+      "primitives": ["choice", "score", "null"],
+      "description": "Zero-prose sub-200ms System-1 classification, routing, and threshold scoring with explicit null abstention (Attributed: JEV 8hfbG5PhcB8)"
+    }
+  },
   "rules": [
     {
       "id": "catalog-before-cli-affinity",

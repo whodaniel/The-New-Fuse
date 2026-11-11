@@ -57,10 +57,11 @@ export const GoalsPanel: React.FC<{ limit?: number }> = ({ limit = 6 }) => {
     },
   });
 
-  const localGoals: LocalGoal[] =
-    summary.data?.goals.available === true ? summary.data.goals.goals : [];
-  const activeGoalId =
-    summary.data?.goals.available === true ? summary.data.goals.activeGoalId : null;
+  // Local-runtime summary may be a flat { available: false } payload when the
+  // operator machine / Pages API is offline — never assume nested `goals`.
+  const goals = summary.data?.goals;
+  const localGoals: LocalGoal[] = goals?.available === true ? goals.goals : [];
+  const activeGoalId = goals?.available === true ? goals.activeGoalId : null;
 
   const merged = useMemo<MergedGoal[]>(() => {
     const rows: MergedGoal[] = localGoals.map((goal) => ({

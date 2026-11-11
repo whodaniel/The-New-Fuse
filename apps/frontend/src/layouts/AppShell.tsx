@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useAuthorization } from '../hooks/useAuthorization';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: '📊', roles: ['member'] },
@@ -13,12 +14,21 @@ const NAV_ITEMS = [
 ] as const;
 
 export function AppShell() {
-  const { user, hasRole } = useAuth();
+  const { user } = useAuth();
+  const { hasRole } = useAuthorization();
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+
+  const displayName =
+    (user as any)?.displayName ||
+    [user?.firstName, user?.lastName].filter(Boolean).join(' ') ||
+    user?.email ||
+    'User';
+  const displayInitial = displayName[0]?.toUpperCase() || 'U';
+  const displayRole = (user as any)?.roles?.[0] || user?.role || 'member';
 
   // Responsive: auto-collapse on desktop < 1024px
   useEffect(() => {
@@ -30,10 +40,10 @@ export function AppShell() {
   }, []);
 
   const filteredNav = NAV_ITEMS.filter((item) =>
-    item.roles.some((r) => r === 'member' || (user && hasRole(r)))
+    item.roles.some((r) => r === 'member' || (user && hasRole([r])))
   );
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent | React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
       setCommandOpen(true);
@@ -42,8 +52,9 @@ export function AppShell() {
   };
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown as EventListener);
-    return () => window.removeEventListener('keydown', handleKeyDown as EventListener);
+    const onKeyDown = (e: KeyboardEvent) => handleKeyDown(e);
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
   return (
@@ -95,11 +106,11 @@ export function AppShell() {
           {!collapsed && user && (
             <div className="user-preview">
               <div className="user-avatar" aria-hidden="true">
-                {user.displayName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'}
+                {displayInitial}
               </div>
               <div className="user-info">
-                <span className="user-name">{user.displayName || user.email}</span>
-                <span className="user-role">{user.roles?.[0] || 'member'}</span>
+                <span className="user-name">{displayName}</span>
+                <span className="user-role">{displayRole}</span>
               </div>
             </div>
           )}
@@ -163,16 +174,16 @@ export function AppShell() {
                 aria-haspopup="true"
               >
                 <div className="user-avatar" aria-hidden="true">
-                  {user?.displayName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
+                  {displayInitial}
                 </div>
                 {!collapsed && (
-                  <span className="user-name">{user?.displayName || user?.email}</span>
+                  <span className="user-name">{displayName}</span>
                 )}
               </button>
               <div className="user-dropdown" role="menu">
                 <div className="dropdown-header">
-                  <span>{user?.displayName || user?.email}</span>
-                  <small>{user?.roles?.[0] || 'member'}</small>
+                  <span>{displayName}</span>
+                  <small>{displayRole}</small>
                 </div>
                 <NavLink to="/settings/profile" className="dropdown-item" role="menuitem">
                   👤 Profile
