@@ -763,9 +763,12 @@ export async function runAgentsRun(opts: RunOptions): Promise<JsonResult> {
         // delegation (a parent granting a narrower scope to a child) is
         // unaffected.
         const suppliedIdentity = process.env.TNF_SUBDIRECTOR_IDENTITY_TOKEN || '';
+        const isAssignedDirector =
+          typeof (auth as any).matchesAssignedAgent === 'function'
+            ? auth.matchesAssignedAgent(resolvedAgentId)
+            : authConfig.agentId === resolvedAgentId;
         const identityToken =
-          suppliedIdentity ||
-          (authConfig.agentId === resolvedAgentId ? auth.signLocalSubdirectorIdentity() : '');
+          suppliedIdentity || (isAssignedDirector ? auth.signLocalSubdirectorIdentity() : '');
         const isSubdirector = auth.verifyLocalSubdirectorIdentity(identityToken);
 
         if (isSubdirector) {

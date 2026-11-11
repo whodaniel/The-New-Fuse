@@ -16,6 +16,8 @@ const LEGACY_TOKEN_ROLE = 'local-subdirector';
 export interface LocalSubdirectorConfig {
   /** Agent this authority is bound to. Authority is not granted to whoever asks. */
   agentId: string;
+  /** Optional list of additional assigned agent IDs / DIDs authorized as Local Subdirector. */
+  allowedAgentIds?: string[];
   autonomyEnabled: boolean;
   capabilities: string[];
 }
@@ -150,6 +152,9 @@ export class LocalSubdirectorAuthorityService {
       const parsed = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
       return {
         agentId: parsed.agentId || DEFAULT_LOCAL_SUBDIRECTOR_CONFIG.agentId,
+        ...(Array.isArray(parsed.allowedAgentIds)
+          ? { allowedAgentIds: parsed.allowedAgentIds.map(String) }
+          : {}),
         autonomyEnabled: Boolean(parsed.autonomyEnabled),
         capabilities: Array.isArray(parsed.capabilities) ? parsed.capabilities : [],
       };
@@ -157,6 +162,54 @@ export class LocalSubdirectorAuthorityService {
       // The file exists but is unreadable. Never widen authority on an error.
       return { ...DENIED_CONFIG };
     }
+  }
+
+  /**
+   * Check whether a given agent identifier (bare CLI name or `did:tnf:...`)
+   * matches the configured Local Subdirector or holds an operator-granted
+   * director role (`sub-director`, `super-director`, `super-admin`) in
+   * `~/.tnf/authority/roles.json`.
+   */
+  public matchesAssignedAgent(candidateAgentId: string): boolean {
+    const id = String(candidateAgentId || '').trim();
+    if (!id) return false;
+    const config = this.getConfig();
+    if (!config.autonomyEnabled) return false;
+    if (config.agentId === id) return true;
+    if (Array.isArray(config.allowedAgentIds) && config.allowedAgentIds.includes(id)) {
+      return true;
+    }
+    // Canonical local subdirector aliases when the config binds to the host DID
+    const canonicalLocalIds = new Set([
+      'tnf-cli-agent',
+      'tnf-local-subdirector',
+      'did:tnf:local:agent:tnfcli:tnf_cli_agent:001',
+      'did:tnf:local:agent:tnfcli:tnf_local_subdirector:001',
+    ]);
+    if (
+      canonicalLocalIds.has(id) &&
+      (canonicalLocalIds.has(config.agentId) || config.agentId.startsWith('did:tnf:local:agent:tnfcli:'))
+    ) {
+      return true;
+    }
+    // Consult ~/.tnf/authority/roles.json for operator-granted director roles
+    try {
+      const home = path.dirname(path.dirname(this.configPath));
+      const rolesPath = path.join(home, '.tnf', 'authority', 'roles.json');
+      if (fs.existsSync(rolesPath)) {
+        const rolesDoc = JSON.parse(fs.readFileSync(rolesPath, 'utf8'));
+        const entry = rolesDoc?.agents?.[id];
+        if (
+          entry &&
+          ['sub-director', 'super-director', 'super-admin'].includes(String(entry.role))
+        ) {
+          return true;
+        }
+      }
+    } catch {
+      // ignore unreadable roles.json
+    }
+    return false;
   }
 
   public updateConfig(config: Partial<LocalSubdirectorConfig>): LocalSubdirectorConfig {
