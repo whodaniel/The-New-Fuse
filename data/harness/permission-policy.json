@@ -86,6 +86,20 @@
       "decision": "allow_with_audit",
       "directive": "D8",
       "reason": "Routine workspace mutations under standing autonomy with audit trail."
+    },
+    {
+      "id": "autonomous-self-improvement-allow",
+      "match": {
+        "actionClass": [
+          "self_improve",
+          "orchestrate",
+          "worktree_closure",
+          "scout_assimilate"
+        ]
+      },
+      "decision": "allow_with_audit",
+      "directive": "D27",
+      "reason": "Continuous self-improvement, orchestration, and workcycle closure under D27 standing AI autonomy."
     }
   ]
 }

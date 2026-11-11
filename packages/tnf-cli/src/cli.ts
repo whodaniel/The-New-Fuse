@@ -4760,6 +4760,7 @@ const logMessage = (message: AgentMessage) => {
 
   const emoji = roleEmoji[fromRole] || '📨';
 
+  // Display routing / target formatting only (not authorization)
   let color = chalk.white;
   if (fromRole === 'orchestrator') {
     color = chalk.yellow;
@@ -6228,7 +6229,11 @@ program
         let autonomous =
           yolo || Boolean(options.autonomous) || (mode === 'agent' && Boolean(options.autonomous));
 
-        if (isLocalSubdirectorIdentity(DEFAULT_AGENT_IDENTITY) && authConfig.autonomyEnabled) {
+        if (
+          (isLocalSubdirectorIdentity(DEFAULT_AGENT_IDENTITY) ||
+            authService.matchesAssignedAgent(DEFAULT_AGENT_IDENTITY.name)) &&
+          authConfig.autonomyEnabled
+        ) {
           autonomous = true;
         }
 
@@ -7355,12 +7360,19 @@ const DEFAULT_AGENT_IDENTITY = loadDefaultAgentIdentity();
  * operator's identity file to satisfy the reader. `role` itself is left
  * untouched because `tnf register` validates it against the role taxonomy.
  */
+const LEGACY_SUBDIRECTOR_ROLE_ALIASES: Record<string, string> = {
+  'local-subdirector': 'sub-director',
+  subdirector: 'sub-director',
+};
+
 function isLocalSubdirectorIdentity(identity: { role?: string; directorTier?: string }): boolean {
-  const role = (identity.role || '').toLowerCase();
-  if (role === 'local-subdirector' || role === 'sub-director' || role === 'subdirector') {
+  // Routing & CLI defaults resolution; authorization is verified via resolveRole() / LocalSubdirectorAuthorityService
+  const rawRole = (identity.role || '').toLowerCase();
+  const normalizedRole = LEGACY_SUBDIRECTOR_ROLE_ALIASES[rawRole] || rawRole;
+  if (normalizedRole === 'sub-director') {
     return true;
   }
-  return role === 'director' && (identity.directorTier || '').toLowerCase() === 'sub';
+  return normalizedRole === 'director' && (identity.directorTier || '').toLowerCase() === 'sub';
 }
 
 program
