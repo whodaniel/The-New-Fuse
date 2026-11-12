@@ -25,6 +25,7 @@ const SCRIPTS = {
   failover: 'scripts/harness/provider-failover.cjs',
   hostProfiles: 'scripts/harness/host-prompt-profiles.cjs',
   scoutStaff: 'scripts/scouting/staff-scout-missions.cjs',
+  selfImprove: 'scripts/harness/autonomous-self-improvement-loop.cjs',
 };
 
 function run(rel, args) {
@@ -54,6 +55,7 @@ Commands:
   host-compaction record|import|list|status|verify|discover …
   host-profiles [--verify|--json]
   scout-staff [--json] [--limit=N]
+  self-improve [cycle|workcycle-doctor] [--agent <id>] [--json]
 `);
 }
 
@@ -77,6 +79,9 @@ function main() {
   if (cmd === 'host-compaction') run(SCRIPTS.hostCompaction, rest);
   if (cmd === 'host-profiles') run(SCRIPTS.hostProfiles, rest.length ? rest : ['--verify']);
   if (cmd === 'scout-staff') run(SCRIPTS.scoutStaff, rest);
+  if (cmd === 'self-improve' || cmd === 'workcycle-doctor') {
+    run(SCRIPTS.selfImprove, cmd === 'workcycle-doctor' ? ['workcycle-doctor', ...rest] : rest);
+  }
   console.error(`unknown command: ${cmd}`);
   help();
   process.exit(1);

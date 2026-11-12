@@ -1,6 +1,8 @@
 import { API_BASE } from '@/config/api';
 import {
+  ensureAppAccessToken,
   getAccessToken,
+  isAppAccessToken,
   getAuthTokenCandidates as sessionTokenCandidates,
   silentRefreshAccessToken,
 } from '@/services/authSession';
@@ -20,10 +22,20 @@ export function getStoredAuthToken(): string | null {
 
 /**
  * Resolve bearer token candidates in priority order.
- * App JWT is tried before Supabase session tokens to avoid 401 desync on timeline and ledger routes.
+ * Prefers a minted TNF app JWT (via ensure/exchange) so Settings/workspaces/timeline
+ * never send a raw Supabase session token to JwtAuthGuard/SecureAuthGuard routes.
  */
 export async function getAuthTokenCandidates(): Promise<string[]> {
-  return sessionTokenCandidates();
+  try {
+    const ensured = await ensureAppAccessToken();
+    if (ensured && isAppAccessToken(ensured)) {
+      return [ensured];
+    }
+  } catch {
+    /* fall through to session candidates */
+  }
+  const candidates = await sessionTokenCandidates();
+  return candidates.filter((token) => isAppAccessToken(token));
 }
 
 /**
@@ -104,6 +116,10 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
   // without needing per-callsite changes.
   const resolvedInput = resolveApiUrl(input);
 
+  // Mint/refresh the app JWT up front so every authFetch caller (Settings
+  // workspaces, timeline, ledger, etc.) shares the same exchange behavior.
+  await ensureAppAccessToken().catch(() => null);
+
   const headers = await buildAuthHeaders(init?.headers);
   const tokenCandidates = await getAuthTokenCandidates();
   const authOptions = tokenCandidates.length > 0 ? tokenCandidates : [null];
@@ -135,10 +151,10 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
       continue;
     }
 
-    // Silent refresh once, then retry original request with new bearer.
+    // Silent refresh / re-exchange once, then retry original request with new bearer.
     if (response.status === 401) {
-      const refreshed = await silentRefreshAccessToken();
-      if (refreshed) {
+      const refreshed = await silentRefreshAccessToken().catch(() => null);
+      if (refreshed && isAppAccessToken(refreshed)) {
         const retryHeaders = { ...attemptHeaders, Authorization: `Bearer ${refreshed}` };
         const retryResponse = await fetch(resolvedInput, {
           ...init,

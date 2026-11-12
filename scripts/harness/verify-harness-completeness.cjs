@@ -214,11 +214,31 @@ function main() {
     'scripts/harness/tnf-harness.cjs',
     'scripts/harness/mcp-supply-chain-attest.cjs',
     'scripts/harness/host-compaction-adapter.cjs',
+    'scripts/harness/autonomous-self-improvement-loop.cjs',
     'scripts/harness/memory-mcp-server.cjs',
     'data/harness/mcp.memory.server.json',
   ]) {
     checks.push({ name: `file.${rel}`, ok: exists(rel), detail: exists(rel) ? 'present' : 'missing' });
   }
+
+  const wcDoctor = runNode('scripts/harness/autonomous-self-improvement-loop.cjs', [
+    'workcycle-doctor',
+    '--json',
+  ]);
+  let wcDoctorOk = wcDoctor.code === 0;
+  let wcDoctorDetail = 'workcycle-doctor failed';
+  try {
+    const parsed = JSON.parse(wcDoctor.stdout || '{}');
+    wcDoctorOk = wcDoctor.code === 0 && parsed.ok === true;
+    wcDoctorDetail = `state=${parsed.closureState || 'unknown'} head=${String(parsed.commit?.headSha || '').slice(0, 8)}`;
+  } catch {
+    wcDoctorOk = false;
+  }
+  checks.push({
+    name: 'workcycle.closure_doctor',
+    ok: wcDoctorOk,
+    detail: wcDoctorDetail,
+  });
 
   // Worktree hygiene. A worktree can stop tracking reality without anyone
   // touching it — a stale index.lock froze one for six days on 2026-09-01, and

@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-09T06:16:21.594Z",
-  "durationMs": 13592,
+  "timestamp": "2026-11-11T22:42:56.894Z",
+  "durationMs": 1782,
   "summary": {
     "total": 10,
-    "ok": 7,
-    "findings": 3
+    "ok": 10,
+    "findings": 0
   },
   "checks": [
     {
@@ -49,10 +49,10 @@
       "expected": [
         200
       ],
-      "actual": 500,
-      "bytes": 323,
+      "actual": 200,
+      "bytes": 75,
       "minBytes": null,
-      "status": "finding",
+      "status": "ok",
       "note": null
     },
     {
@@ -61,10 +61,10 @@
       "expected": [
         200
       ],
-      "actual": 503,
-      "bytes": 302,
+      "actual": 200,
+      "bytes": 209,
       "minBytes": null,
-      "status": "finding",
+      "status": "ok",
       "note": null
     },
     {
@@ -74,10 +74,10 @@
         200,
         426
       ],
-      "actual": 503,
-      "bytes": 302,
+      "actual": 426,
+      "bytes": 67,
       "minBytes": null,
-      "status": "finding",
+      "status": "ok",
       "note": null
     },
     {

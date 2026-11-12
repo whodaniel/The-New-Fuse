@@ -1,31 +1,76 @@
 {
   "spec": "tnf/session-handoff/0.3",
-  "handoff_id": "a5e7028f-4ea7-4699-906d-22aa0319a544",
-  "created_at": "2026-11-11T22:18:34.226Z",
+  "handoff_id": "1c852575-bb04-48c4-abd6-47cda894717f",
+  "created_at": "2026-11-12T00:10:02.250Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "49c5749060fa4d331b31e2b4a621c2739e060cdd",
+  "head_sha": "427ef8cc8bd670d69a6f98ab568678bcc55a2f22",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
-  "project_ids": [],
+  "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Modified 51 file(s)"
+    "Fixed TURN_ZERO_MANDATE.md missing protocol references (LIVING_STATE.md, .agent/SYSTEM_PROMPT.md, .agent/context/resource-map.md, .agent/context/agent-onboarding.md)",
+    "Turn Zero V2 passes clean with zero warnings",
+    "SESSION_HANDOFF_LATEST.json validated against schema (tnf/session-handoff/0.3)",
+    "Added challenge rationale event for TURN_ZERO_MANDATE.md mutation"
   ],
   "changed_paths": [
+    "apps/frontend/src/pages/settings/General.tsx",
+    "apps/frontend/src/utils/authToken.ts",
+    "data/harness/harness-config.json",
+    "docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.json",
+    "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/TURN_ZERO_MANDATE.md",
+    "docs/protocols/challenge-rationales/2026-11-12-turn-zero-mandate-cross-refs.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/session_handoff_operator-20261112T000333-faae6f41.json",
+    "docs/protocols/reports/session_handoff_operator-20261112T000333-faae6f41.md",
+    "docs/protocols/workspace-leases.json",
+    "logs/flywheel/property-health-history.jsonl",
+    "logs/flywheel/property-health-latest.json",
+    "packages/tnf-cli/src/commands/agents-run.ts",
+    "packages/tnf-cli/src/utils/llm-tools.executors.test.ts",
+    "packages/tnf-cli/src/utils/llm-tools.ts",
+    "pnpm-lock.yaml",
+    "scripts/harness/autonomous-self-improvement-loop.cjs",
+    "scripts/harness/permission-berm.cjs",
+    "scripts/harness/tnf-harness.cjs",
+    "scripts/harness/verify-harness-completeness.cjs",
+    ".agent/skills/dogfood/output/critical_high_issues.json",
+    ".agent/skills/dogfood/output/flywheel-cycle-report.json",
+    ".agent/skills/dogfood/output/flywheel-cycle-report.md",
+    "apps/api-gateway/package.json",
+    "apps/api-gateway/public/docs.html",
+    "apps/api-gateway/public/features.html",
+    "apps/api-gateway/public/pricing.html",
+    "apps/api-gateway/src/auth/admin.guard.spec.ts",
+    "apps/api-gateway/src/auth/admin.guard.ts",
     "apps/api-gateway/src/auth/auth.controller.ts",
+    "apps/api-gateway/src/auth/gateway-auth.service.ts",
+    "apps/api-gateway/src/gateway/admin-backup-gateway.controller.spec.ts",
+    "apps/api-gateway/src/gateway/admin-backup-gateway.controller.ts",
+    "apps/api-gateway/src/gateway/admin-backup-gateway.module.ts",
     "apps/api-gateway/src/main.ts",
     "apps/api-gateway/src/next-handler.ts",
+    "apps/api-gateway/src/static-pages-handler.ts",
     "apps/api/src/controllers/auth.controller.ts",
     "apps/api/src/dtos/auth.dto.ts",
     "apps/api/src/services/auth.service.ts",
     "apps/frontend/functions/[[path]].js",
     "apps/frontend/public/_headers",
     "apps/frontend/src/ComprehensiveRouter.tsx",
+    "apps/frontend/src/components/A2AMultiAgentChat.tsx",
     "apps/frontend/src/components/RequireAuth.tsx",
     "apps/frontend/src/components/auth/RequireMembership.test.tsx",
     "apps/frontend/src/components/auth/RequireMembership.tsx",
     "apps/frontend/src/components/auth/TurnstileWidget.tsx",
     "apps/frontend/src/components/control-surface/GoalsPanel.tsx",
+    "apps/frontend/src/components/control-surface/__tests__/GoalsPanel.test.tsx",
     "apps/frontend/src/config/api-base.ts",
     "apps/frontend/src/data/codebase_map.json",
     "apps/frontend/src/hooks/useAuth.recovery.test.tsx",
@@ -39,23 +84,31 @@
     "apps/frontend/src/routers/SubdomainRouter.tsx",
     "apps/frontend/src/services/authSession.ts",
     "apps/frontend/src/services/unifiedLedgerApi.ts",
+    "apps/frontend/src/utils/fetchWithTimeout.ts",
     "apps/frontend/tsconfig.json",
     "cloudflare-api-proxy/src/index.ts",
     "cloudflare-api-proxy/test/cors.test.mjs",
     "data/agent-registry/onboarding-agent.json",
-    "data/harness/harness-config.json",
+    "data/harness/permission-policy.json",
     "data/harness/provider-failover-policy.json",
-    "docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "data/ingestion-runs/ai7-action-queue.json",
+    "data/ingestion-runs/ai7-gate-verdict.json",
+    "data/ingestion-runs/ai7-manifest.json",
     "docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md",
     "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "logs/flywheel/property-health-history.jsonl",
-    "logs/flywheel/property-health-latest.json",
-    "packages/tnf-cli/src/commands/agents-run.ts",
-    "packages/tnf-cli/src/utils/llm-tools.executors.test.ts",
-    "packages/tnf-cli/src/utils/llm-tools.ts",
+    "packages/api/package.json",
+    "packages/api/src/controllers/admin/admin-audit-logs.controller.ts",
+    "packages/api/src/controllers/admin/admin-config.controller.ts",
+    "packages/api/src/controllers/admin/admin-metrics.controller.ts",
+    "packages/api/src/controllers/admin/admin-settings.controller.ts",
+    "packages/api/src/modules/guards/__tests__/admin.guard.unit.spec.ts",
+    "packages/api/src/modules/guards/admin.guard.ts",
+    "packages/core-vector-db/src/drivers/pgvector.driver.spec.ts",
+    "packages/core-vector-db/src/drivers/pgvector.driver.ts",
+    "packages/jules-skill/mcp-config.example.json",
+    "packages/tnf-cli/src/cli.ts",
+    "packages/tnf-cli/src/services/LocalSubdirectorAuthorityService.ts",
+    "packages/tnf-cli/src/services/WorkerEnvelope.ts",
     "pages/index.tsx",
     "scripts/flywheel/tnf-property-health-flywheel.cjs",
     "scripts/harness/assimilation-scan.test.cjs",
@@ -63,15 +116,14 @@
     "scripts/harness/host-compaction-adapter.cjs",
     "scripts/harness/provider-failover.cjs",
     "scripts/skills/universal-skill-disclosure-guard.cjs",
-    "data/mcp_config.json",
-    ".agent/skills/dogfood/output/",
-    "apps/api-gateway/public/",
-    "apps/api-gateway/src/static-pages-handler.ts",
-    "apps/frontend/src/components/control-surface/__tests__/GoalsPanel.test.tsx",
-    "apps/frontend/src/utils/fetchWithTimeout.ts",
-    "data/ingestion-runs/",
-    "packages/jules-skill/",
-    "apps/frontend/public/app.html"
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T223653-9e88887b.json",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T223653-9e88887b.md",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224202-65e8f18e.json",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224202-65e8f18e.md",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224728-51b072e1.json",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224728-51b072e1.md",
+    "docs/protocols/reports/session_handoff_operator-20261112T001002-1c852575.json",
+    "docs/protocols/reports/session_handoff_operator-20261112T001002-1c852575.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -82,53 +134,29 @@
   },
   "continuation": {
     "owner": "operator",
-    "targets": [
-      "orchestrator"
-    ],
+    "targets": ["orchestrator"],
     "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
       "Validate SESSION_HANDOFF_LATEST.json against schema",
-      "Work through next_actions in order — but items marked NEEDS LIVE OPERATOR CONFIRMATION are notices, not standing commands; per docs/core/AGENTS.md, stop and get live operator confirmation before running git commit/push for those, do not auto-execute them"
+      "Work through next_actions in order"
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit.",
-    "⚠️ NEEDS LIVE OPERATOR CONFIRMATION (do not auto-commit): 59 file(s) uncommitted — see docs/core/AGENTS.md#commits-and-pushes-require-live-operator-confirmation"
+    "Review updated LIVING_STATE.md for new active steps",
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit"
   ],
-  "artifacts": {
-    "commits": [
-      "49c5749060fa4d331b31e2b4a621c2739e060cdd"
-    ],
-    "deployment_urls": [],
-    "database_migrations": []
-  },
-  "repository_context": {
-    "canonical_source": "whodaniel/tnf-monorepo",
-    "actual": "whodaniel/tnf-monorepo",
-    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": true,
-    "operation_in_progress": null,
-    "publication_targets": [
-      "whodaniel/The-New-Fuse",
-      "whodaniel/fuse-control-plane"
-    ]
-  },
-  "classification": {
-    "work_domain": "unknown",
-    "artifact_destination": "unknown",
-    "data_residency": "unknown",
-    "sensitivity": "unknown"
-  },
-  "capabilities": {
-    "required": [],
-    "staffed_by": []
-  },
-  "publication": {
-    "public_runtime_affected": false,
-    "control_plane_affected": false,
-    "satellites": []
+  "reflection": {
+    "lessons": {
+      "considered": false
+    },
+    "skills": {
+      "considered": false
+    },
+    "gaps": {
+      "considered": false
+    }
   },
   "freshness_receipts": [
     {
@@ -197,5 +225,40 @@
       "observed_at": "2026-10-17T04:39:00.998Z",
       "value": "RECENT=20 MIRRORED=20 PENDING=0"
     }
-  ]
+  ],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": ["427ef8cc8bd670d69a6f98ab568678bcc55a2f22"]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "checkout_id": "co_mtpe199t_2c40fc93",
+  "task_id": "TNF-SESSION",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": ["faae6f41-d44f-48ad-b9d9-38dbd0de6500"],
+  "record_hash": "2e3cb5f74a60fe9317eeed3e7ea8db5cc5695c19925e9fc2f050d2e24fb2a0ac"
 }

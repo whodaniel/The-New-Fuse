@@ -334,6 +334,11 @@ export async function executeBuiltinTool(
         result = executeSystem1Decide(args);
         break;
       }
+      case 'self_improve_cycle': {
+        if (!ctx.quiet) console.error(`[agents-run] self_improve_cycle`);
+        result = await executeSelfImproveCycle(args, ctx);
+        break;
+      }
       default:
         return { ok: false, error: `unknown tool: ${name}` };
     }
@@ -1144,9 +1149,7 @@ async function executeCodeGraphTool(
       weakestLink: result.weakestLink,
       steps: result.steps.map((s) => ({
         node: s.node.id,
-        ...(s.via
-          ? { via: { relation: s.via.relation, confidence: s.via.confidence } }
-          : {}),
+        ...(s.via ? { via: { relation: s.via.relation, confidence: s.via.confidence } } : {}),
       })),
     };
   }
@@ -1211,13 +1214,15 @@ async function executeTodoTool(
   args: Record<string, unknown>
 ): Promise<Record<string, unknown>> {
   const colArg = args.column ? String(args.column) : undefined;
-  const validCol = (
-    colArg === 'doing' || colArg === 'done' ? colArg : 'todo'
-  ) as 'todo' | 'doing' | 'done';
+  const validCol = (colArg === 'doing' || colArg === 'done' ? colArg : 'todo') as
+    | 'todo'
+    | 'doing'
+    | 'done';
   const prioArg = args.priority ? String(args.priority) : undefined;
-  const validPrio = (
-    prioArg === 'low' || prioArg === 'high' ? prioArg : 'medium'
-  ) as 'low' | 'medium' | 'high';
+  const validPrio = (prioArg === 'low' || prioArg === 'high' ? prioArg : 'medium') as
+    | 'low'
+    | 'medium'
+    | 'high';
 
   try {
     const { KanbanService } = await import('../services/KanbanService.js');
@@ -1389,9 +1394,37 @@ function executeSystem1Decide(args: Record<string, unknown>): Record<string, unk
   if (mode === 'score') {
     const num = Number(rawValue);
     if (!Number.isFinite(num)) {
-      return { ok: false, mode, decision: null, abstained: true, error: `invalid score "${rawValue}"` };
+      return {
+        ok: false,
+        mode,
+        decision: null,
+        abstained: true,
+        error: `invalid score "${rawValue}"`,
+      };
     }
     return { ok: true, mode, decision: num, abstained: false, confidence };
   }
   return { ok: false, mode, decision: null, abstained: true, error: `unsupported mode: ${mode}` };
+}
+
+/**
+ * Autonomous self-improvement & workcycle-closure cycle executor.
+ */
+async function executeSelfImproveCycle(
+  args: Record<string, unknown>,
+  ctx: { cwd: string; quiet: boolean }
+): Promise<Record<string, unknown>> {
+  const mode = args.mode === 'workcycle-doctor' ? 'workcycle-doctor' : 'cycle';
+  const agent = String(args.agent || process.env.TNF_AGENT_ID || 'tnf-cli-agent');
+  const scriptPath = path.resolve(ctx.cwd, 'scripts/harness/autonomous-self-improvement-loop.cjs');
+  const { stdout } = await execFileAsync(
+    process.execPath,
+    [scriptPath, mode, '--agent', agent, '--json'],
+    { cwd: ctx.cwd, timeout: 60_000 }
+  );
+  try {
+    return JSON.parse(stdout);
+  } catch {
+    return { ok: true, raw: stdout };
+  }
 }
