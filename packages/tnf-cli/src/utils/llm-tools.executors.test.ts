@@ -26,10 +26,7 @@ import { fileURLToPath } from 'node:url';
 import { BUILTIN_TOOLS } from './llm-tools.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const executorSource = fs.readFileSync(
-  path.join(here, '..', 'commands', 'agents-run.ts'),
-  'utf8'
-);
+const executorSource = fs.readFileSync(path.join(here, '..', 'commands', 'agents-run.ts'), 'utf8');
 
 /** Pre-existing advertised-without-executor debt. Shrink this; never grow it. */
 const KNOWN_MISSING = new Set<string>([]);
@@ -69,6 +66,7 @@ for (const name of [
   'graph_skeleton',
   'self_compact',
   'system1_decide',
+  'self_improve_cycle',
   'todo_add',
   'todo_list',
   'todo_update',

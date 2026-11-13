@@ -20,6 +20,9 @@
 
 - [✅] 2026-09-12T08:26:19.317Z New script(s) created:
 - [✅] 2026-10-21T16:19:08.565Z New script(s) created:
+- [✅] 2026-11-11T23:55:11.525Z New script(s) created:
+  autonomous-self-improvement-loop.cjs
+
   announce-availability.cjs, announce-live-cli-sessions.cjs,
   subdirector-codegen-worker-cycle.sh, subdirector-infra-worker-cycle.sh,
   subdirector-local-cli-agent-cycle.sh
@@ -147,6 +150,38 @@
   red-channel-coordinator.cjs, red-lane-persistent-listener.cjs
 
 ## History
+
+- 2026-11-13T16:42:28.556Z handoff `5c56e997-98f7-483e-a8d4-97ad968c3544` head
+  `c5b334eff8b2` project `TNF-SESSION` — Operator: review and merge PR for
+  tnf/operator-handoff-sync-20261112
+
+- 2026-11-13T16:35:19.518Z handoff `15d5fd42-df04-4b58-ace2-0e6497bb6a6b` head
+  `09a8c53ca5eb` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-12T00:17:22.452Z handoff `f296bd9d-0f64-41ef-88de-78ec481d6ce4` head
+  `09a8c53ca5eb` project `TNF-SESSION` — Review updated LIVING_STATE.md for new
+  active steps
+
+- 2026-11-12T00:10:04.053Z handoff `1c852575-bb04-48c4-abd6-47cda894717f` head
+  `427ef8cc8bd6` project `TNF-SESSION` — Review updated LIVING_STATE.md for new
+  active steps
+
+- 2026-11-12T00:03:35.603Z handoff `faae6f41-d44f-48ad-b9d9-38dbd0de6500` head
+  `427ef8cc8bd6` project `TNF-SESSION` — Review updated LIVING_STATE.md for new
+  active steps
+
+- 2026-11-11T22:47:30.105Z handoff `51b072e1-2c3a-47d0-9b7a-fed1fc254818` head
+  `427ef8cc8bd6` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-11T22:42:03.809Z handoff `65e8f18e-802e-431a-9e91-f63e8aebeb6a` head
+  `427ef8cc8bd6` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-11T22:36:59.159Z handoff `9e88887b-9d7e-4ea2-a422-720b01397a08` head
+  `62a178ca206d` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
 
 - 2026-10-26T16:46:35.632Z handoff `1ebaaeff-ae3c-44c3-af0e-e26f453b97ae` head
   `37f96dc7b639` project `TNF-SESSION` — Continue priority queue from

@@ -142,9 +142,9 @@
         "tnf full-auto",
         "DIRECTIVES.md D10",
         "packages/tnf-cli/src/utils/full-auto-cycle.ts",
-        ".agent/skills/tnf-development-workcycle-closure/SKILL.md"
-      ],
-      "gap": "Worktree-to-merge closure is now specified but still needs a machine-readable receipt and doctor check covering commit, push, PR/CI resolution, merge proof, and safe cleanup."
+        ".agent/skills/tnf-development-workcycle-closure/SKILL.md",
+        "scripts/harness/autonomous-self-improvement-loop.cjs"
+      ]
     },
     "memory_session_trajectories": {
       "status": "implemented",

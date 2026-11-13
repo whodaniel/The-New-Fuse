@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/compon
 // @ts-nocheck
 import { WorkspaceApiService, type WorkspaceProject } from '@/api/workspace';
 import { useWorkspace } from '@/hooks/useWorkspace';
+import { useAuth } from '@/providers/AuthProvider';
 import { useEffect, useMemo, useState } from 'react';
 
 function formatDate(value?: string): string {
@@ -12,10 +13,13 @@ function formatDate(value?: string): string {
 }
 
 export default function General() {
+  const { user } = useAuth();
   const workspaceApi = useMemo(() => new WorkspaceApiService(), []);
   const { loading, error, currentWorkspace, workspaces } = useWorkspace();
   const [projects, setProjects] = useState<WorkspaceProject[]>([]);
   const [projectsLoading, setProjectsLoading] = useState(false);
+  const authError =
+    error && /authentication required|unauthorized|401/i.test(String(error.message || error));
 
   useEffect(() => {
     let isCancelled = false;
@@ -50,11 +54,17 @@ export default function General() {
         <CardContent className="space-y-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="Your name" />
+            <Input id="name" placeholder="Your name" defaultValue={user?.name || ''} readOnly />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="Your email" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="Your email"
+              defaultValue={user?.email || ''}
+              readOnly
+            />
           </div>
         </CardContent>
       </Card>
@@ -69,7 +79,13 @@ export default function General() {
               Loading your workspace and project data...
             </p>
           )}
-          {!loading && error && (
+          {!loading && authError && (
+            <p className="text-sm text-red-500">
+              Your API session is missing or expired. Sign out and sign in again, then reload
+              Settings.
+            </p>
+          )}
+          {!loading && error && !authError && (
             <p className="text-sm text-red-500">
               Unable to load personal workspaces: {error.message}
             </p>

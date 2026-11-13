@@ -488,6 +488,15 @@ Current spec:
 
 ---
 
+## Cross-Protocol References
+
+Turn Zero V2 reads and depends on the following frontload and context surfaces:
+
+- `docs/protocols/LIVING_STATE.md` — durable active session state
+- `.agent/SYSTEM_PROMPT.md` — runtime prompt surface
+- `.agent/context/resource-map.md` — agent context resource map
+- `.agent/context/agent-onboarding.md` — agent onboarding context
+
 ## Enforcement Targets
 
 These surfaces must remain aligned with Turn Zero:

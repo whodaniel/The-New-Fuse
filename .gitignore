@@ -580,3 +580,11 @@ data/llm-intel/history/
 apps/frontend/public/visualizations/terminals/data/
 apps/frontend/public/visualizations/terminals/twip-terminal-macro-board-*.md
 apps/frontend/public/visualizations/terminals/*.state.json
+
+# User-specific intelligence and personal data stores (never in codebase proper)
+docs/intelligence/*_LEDGER.json
+docs/intelligence/*.local.json
+docs/intelligence/*.personal.json
+*.personal.json
+*.personal.db
+

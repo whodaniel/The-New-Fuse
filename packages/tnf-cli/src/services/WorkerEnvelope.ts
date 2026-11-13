@@ -59,7 +59,7 @@ export function isSubDirectorWorker(agent: {
   agentId?: string;
   id?: string;
 }): boolean {
-  // Routing target pool filter only (not authorization)
+  // Routing target pool filter / queue selection
   const role = String(agent.role || '').toLowerCase();
   const id = String(agent.agentId || agent.id || '');
   return role === 'worker' || /worker/i.test(id);

@@ -9,11 +9,21 @@
 
 const { spawn, execSync } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
-const TNF_ROOT = '/Users/danielgoldberg/Desktop/A1-Inter-LLM-Com/TNF/The-New-Fuse';
-const MCP_DIR = '/Users/danielgoldberg/.gemini/extensions/google-workspace';
-const LEDGER_PATH = path.join(TNF_ROOT, 'docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json');
+const TNF_ROOT = path.resolve(__dirname, '..');
+const MCP_DIR =
+  process.env.TNF_GOOGLE_WORKSPACE_MCP_DIR ||
+  path.join(os.homedir(), '.gemini/extensions/google-workspace');
+
+// Personal/user-specific data store: Never stored in the codebase proper.
+// Defaults to user choice of data store ($TNF_USER_DATA_STORE / $TNF_EMAIL_LEDGER_PATH / ~/.tnf/intelligence/)
+const USER_INTEL_DIR =
+  process.env.TNF_USER_DATA_STORE || path.join(os.homedir(), '.tnf/intelligence');
+const LEDGER_PATH =
+  process.env.TNF_EMAIL_LEDGER_PATH ||
+  path.join(USER_INTEL_DIR, 'email-intelligence-ledger.json');
 
 // Label map
 const LABEL_MAP = {

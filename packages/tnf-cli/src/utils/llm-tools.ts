@@ -554,6 +554,28 @@ export const BUILTIN_TOOLS: readonly BuiltinTool[] = Object.freeze([
       additionalProperties: false,
     },
   },
+  {
+    name: 'self_improve_cycle',
+    category: 'work',
+    defaultEnabled: true,
+    description:
+      'Execute an autonomous TNF self-improvement and workcycle-closure cycle (Authority check + Skill Competence /doctor + Resource Fabric convergence + System-1 triage + HoH Dual-State compaction receipt).',
+    parameters: {
+      type: 'object',
+      properties: {
+        mode: {
+          type: 'string',
+          enum: ['cycle', 'workcycle-doctor'],
+          description: 'Run full self-improvement cycle or workcycle-doctor receipt only.',
+        },
+        agent: {
+          type: 'string',
+          description: 'Assigned AI agent ID or DID executing the cycle (default tnf-cli-agent).',
+        },
+      },
+      additionalProperties: false,
+    },
+  },
 ]) as readonly BuiltinTool[];
 
 /**
