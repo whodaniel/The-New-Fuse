@@ -1,14 +1,14 @@
 # SESSION_HANDOFF (tnf-orchestrator)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-13T17:28:03.435Z` Handoff ID: `5e8febe5-8e3f-44e8-97f2-e965198f13c0`
+`2026-11-13T17:46:00.250Z` Handoff ID: `998b9cd7-1ce6-4a3a-87e1-28df20e4e389`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `abc142f60e386556d9e9292041d38e813afd8a4c`
+- Head SHA: `3a25011983d6eb2d2cb62f8186e71ac0efed3d3f`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -31,6 +31,11 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 - apps/chrome-extension/aivi/src/DirectAPIProcessor.js
 - apps/frontend/docs/audits/self-improvement-scorecard.json
 - apps/frontend/docs/audits/self-improvement-scorecard.md
+- apps/frontend/public/data/providers/catalog.json
+- apps/frontend/public/data/providers/nvidia-models.json
+- apps/frontend/src/components/visualization/InteractiveCodebaseMap.tsx
+- data/providers/catalog.json
+- data/providers/nvidia-models.json
 - docs/operations/tnf-self-improvement-run-log.md
 - docs/operations/tnf-substrate-seal.json
 - docs/protocols/AGENT_STATUS_LEDGER.md
@@ -42,22 +47,22 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.md
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.json
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.md
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T172803-5e8febe5.json
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T172803-5e8febe5.md
 - docs/protocols/workspace-leases.json
 - packages/sync-core/src/dashboard/useSyncDashboard.ts
-- scripts/runtime/install-self-improvement-launchd.sh
-- apps/frontend/public/data/providers/catalog.json
-- apps/frontend/public/data/providers/nvidia-models.json
-- apps/frontend/src/components/visualization/InteractiveCodebaseMap.tsx
-- data/providers/catalog.json
-- data/providers/nvidia-models.json
 - packages/tnf-cli/package.json
 - packages/tnf-cli/src/cli.ts
 - packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/services/ModelsService.resolve-args.test.ts
 - packages/tnf-cli/src/services/ModelsService.ts
 - packages/tnf-cli/src/slashCommands.ts
-- packages/tnf-cli/src/services/ModelsService.resolve-args.test.ts
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T172803-5e8febe5.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T172803-5e8febe5.md
+- scripts/runtime/install-self-improvement-launchd.sh
+- .agent/skills/tnf-proactive-goal-wizard/SKILL.md
+- docs/protocols/DIRECTIVES.md
+- docs/protocols/LIVING_DIRECTIVES_CARD.md
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T174600-998b9cd7.json
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T174600-998b9cd7.md
 
 ## Verification
 

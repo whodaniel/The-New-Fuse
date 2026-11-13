@@ -1,6 +1,6 @@
 {
   "schema": "tnf/substrate-seal/0.1",
-  "writtenAt": "2026-11-13T17:27:40.035Z",
+  "writtenAt": "2026-11-13T17:31:05.566Z",
   "lockfile": "pnpm-lock.yaml",
   "lockfileSha256": "d7a64284942273eda2d97271f4299b3eb6d1aab71a2918bd2ba90e94d63f7bd7",
   "cliCriticalArtifacts": {
