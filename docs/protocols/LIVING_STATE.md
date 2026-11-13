@@ -151,6 +151,38 @@
 
 ## History
 
+- 2026-11-13T18:59:17.037Z handoff `462742a1-0cae-4754-bfc4-f87651677398` head
+  `16e0716711ea` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:54:58.834Z handoff `84f86b13-d9ee-47ff-ba01-c98f97b9ffdb` head
+  `df96cd2f1482` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:53:33.131Z handoff `0ef38eef-4f59-4a19-9456-d76f17394799` head
+  `df96cd2f1482` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:46:11.663Z handoff `998b9cd7-1ce6-4a3a-87e1-28df20e4e389` head
+  `3a25011983d6` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:28:13.735Z handoff `5e8febe5-8e3f-44e8-97f2-e965198f13c0` head
+  `abc142f60e38` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:09:37.297Z handoff `73b7d9b0-f309-49da-b69b-4bd01ad8dfa7` head
+  `30d9f264f176` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:03:00.447Z handoff `4a8425e3-7dd6-41d9-8f92-e0ab759f0f57` head
+  `eedfe17b6c01` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:01:13.637Z handoff `5110a743-e925-438a-930d-fa357fa80320` head
+  `eedfe17b6c01` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
 - 2026-11-13T16:42:28.556Z handoff `5c56e997-98f7-483e-a8d4-97ad968c3544` head
   `c5b334eff8b2` project `TNF-SESSION` — Operator: review and merge PR for
   tnf/operator-handoff-sync-20261112

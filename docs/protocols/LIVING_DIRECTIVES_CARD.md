@@ -40,7 +40,9 @@ evolvable).
 ## ALLOWS (within bounds)
 
 - Bold internal actions; resourceful before asking.
-- Proactive in Personal domain (lead user, thread vague goals).
+- Proactive in Personal domain (lead user, thread vague goals) and offer
+  proactive interactive dialogs (`ask_question`) where logical, congruent, and
+  cohesive for authorizations or multi-path decisions.
 - Adopt/delegate via Agent Bank (MCP + REST).
 - Spawn Claw subagents; route Dept chain
   Scout→Library→Forge→Governance→Journaling.

@@ -172,6 +172,63 @@ function modelsFromPayload(payload: unknown): unknown[] | null {
   return null;
 }
 
+/**
+ * Resolve `tnf models [provider|query] [search]` / `/models …` arguments.
+ *
+ * A single positional token is treated as a provider filter when it matches a
+ * known provider id (case-insensitive); otherwise it is a substring search.
+ * That makes `/models gpt` and `tnf models gpt` search, while `tnf models openai`
+ * still scopes to the openai provider. Use `-s/--search` to search a string
+ * that happens to equal a provider id (e.g. `-s openai`).
+ */
+export function resolveModelsCliArgs(input: {
+  providerArg?: string;
+  searchArg?: string;
+  searchOption?: string;
+  knownProviderIds: Iterable<string>;
+}): { provider?: string; searchQuery: string } {
+  const known = new Set(
+    [...input.knownProviderIds].map((id) => id.trim().toLowerCase()).filter(Boolean)
+  );
+  const first = String(input.providerArg ?? '').trim();
+  const second = String(input.searchArg ?? '').trim();
+  const searchOption = String(input.searchOption ?? '').trim();
+  const firstIsProvider = Boolean(first) && known.has(first.toLowerCase());
+
+  if (searchOption) {
+    return {
+      provider: firstIsProvider ? first : undefined,
+      searchQuery: searchOption.toLowerCase(),
+    };
+  }
+
+  if (first && second) {
+    return {
+      provider: firstIsProvider ? first : undefined,
+      searchQuery: (firstIsProvider ? second : `${first} ${second}`).toLowerCase(),
+    };
+  }
+
+  if (first) {
+    if (firstIsProvider) return { provider: first, searchQuery: '' };
+    return { searchQuery: first.toLowerCase() };
+  }
+
+  return { searchQuery: '' };
+}
+
+/** Substring match on model id, display name, or provider id. */
+export function filterModelsByQuery(models: ModelInfo[], query: string): ModelInfo[] {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return models;
+  return models.filter(
+    (m) =>
+      m.id.toLowerCase().includes(needle) ||
+      (m.name && m.name.toLowerCase().includes(needle)) ||
+      (m.provider && m.provider.toLowerCase().includes(needle))
+  );
+}
+
 function mergeModels(primary: ModelInfo[], fallback: ModelInfo[]): ModelInfo[] {
   const byId = new Map<string, ModelInfo>();
   for (const model of [...primary, ...fallback]) {
@@ -199,6 +256,11 @@ export class ModelsService {
 
   getConfigSource(): { source: string; path: string } {
     return { source: this.providerConfig.source, path: this.providerConfig.configPath };
+  }
+
+  /** Enabled provider ids from the loaded registry (no live probe). */
+  knownProviderIds(): string[] {
+    return this.providerConfig.providers.filter((p) => p.enabled).map((p) => p.id);
   }
 
   private catalogModels(config: ProviderDef): ModelInfo[] {

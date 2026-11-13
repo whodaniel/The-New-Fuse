@@ -132,5 +132,10 @@ pipeline (`:43110`) so the user can interact via voice.
   `tnf` CLI tools before asking the user.
 - **Respect Directives D1 & D9**: High-risk mutations (git pushes, process
   kills, financial actions) always require explicit operator confirmation.
+- **Proactive Interactive Dialogs**: Where logical, congruent, and cohesive
+  (e.g., gated authorizations, ambiguous branches, or next-wave prioritization),
+  proactively offer structured multi-choice interactive dialogs (`ask_question`)
+  with a `(Recommended)` option after completing all autonomous
+  `Inspect → Act → Verify` work.
 - **Keep Progress Fresh**: Sync local goal status with
   `~/.tnf/goals/config.json` and the frontend `GoalsPanel`.

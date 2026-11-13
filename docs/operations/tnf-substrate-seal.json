@@ -1,8 +1,8 @@
 {
   "schema": "tnf/substrate-seal/0.1",
-  "writtenAt": "2026-08-31T13:47:02.798Z",
+  "writtenAt": "2026-11-13T17:31:05.566Z",
   "lockfile": "pnpm-lock.yaml",
-  "lockfileSha256": "6e33c03b0bad547ab1b212992b56c83ca8284e792198206d2c2d8bacd5577d2b",
+  "lockfileSha256": "d7a64284942273eda2d97271f4299b3eb6d1aab71a2918bd2ba90e94d63f7bd7",
   "cliCriticalArtifacts": {
     "@the-new-fuse/infrastructure": {
       "rel": "packages/infrastructure/dist/index.js",
@@ -10,7 +10,7 @@
     },
     "@the-new-fuse/shared": {
       "rel": "packages/shared/dist/index.js",
-      "sha256": "e8fb72459f2819289c1e97f16d4a097358e559c375da6a1f0d6c9e5b3fc181ea"
+      "sha256": "b5c55e660b56cb4886e2791fbeca2eebd076b5b9d3a490476e53d936f4e786ad"
     },
     "@the-new-fuse/tnf-core": {
       "rel": "packages/tnf-core/dist/index.js",

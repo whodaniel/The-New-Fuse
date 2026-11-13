@@ -16,7 +16,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 // Load config from project root
 const config = require('../lib/config');
@@ -141,8 +141,21 @@ async function callGeminiAPI(prompt, maxRetries = 3) {
 async function fetchTranscript(videoId) {
   try {
     const tempFilePrefix = `temp_${videoId}`;
-    const cmd = `yt-dlp --skip-download --write-auto-sub --sub-langs en --sub-format json3 --output "${tempFilePrefix}" "https://www.youtube.com/watch?v=${videoId}" 2>&1`;
-    execSync(cmd, { cwd: DATA_DIR, stdio: 'pipe', timeout: 60000 });
+    execFileSync(
+      'yt-dlp',
+      [
+        '--skip-download',
+        '--write-auto-sub',
+        '--sub-langs',
+        'en',
+        '--sub-format',
+        'json3',
+        '--output',
+        tempFilePrefix,
+        `https://www.youtube.com/watch?v=${videoId}`,
+      ],
+      { cwd: DATA_DIR, stdio: 'pipe', timeout: 60000 }
+    );
 
     const possibleFiles = [
       path.join(DATA_DIR, `${tempFilePrefix}.en.json3`),

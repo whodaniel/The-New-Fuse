@@ -208,10 +208,11 @@ const CodebaseMapInner = () => {
     setSearchTerm(term);
     if (!term || !codebaseData) return;
 
+    // Precompute term.toLowerCase() outside the O(N) loop
+    const termLower = term.toLowerCase();
+
     // Search all 15k nodes for label match
-    const match = codebaseData.nodes.find((n) =>
-      n.data.label.toLowerCase().includes(term.toLowerCase())
-    );
+    const match = codebaseData.nodes.find((n) => n.data.label.toLowerCase().includes(termLower));
 
     if (match) {
       // If we find a match, jump to its parent and highlight it
@@ -266,9 +267,7 @@ const CodebaseMapInner = () => {
       <div className="w-full h-full bg-[#050505] text-white flex items-center justify-center">
         <div className="flex items-center gap-3 text-white/60">
           <Activity className="w-4 h-4 animate-pulse text-blue-400" />
-          <span className="text-xs font-black uppercase tracking-widest">
-            Loading codebase map
-          </span>
+          <span className="text-xs font-black uppercase tracking-widest">Loading codebase map</span>
         </div>
       </div>
     );
@@ -331,6 +330,7 @@ const CodebaseMapInner = () => {
             <button
               onClick={goBack}
               className="h-11 px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center gap-2"
+              aria-label="Move up one level in architecture hierarchy"
             >
               Move Up Architecture
             </button>
@@ -442,11 +442,17 @@ const CodebaseMapInner = () => {
                   <Code className="w-3 h-3" /> Actions
                 </h4>
                 <div className="grid grid-cols-1 gap-3">
-                  <button className="flex items-center justify-between p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-2xl transition-all group">
+                  <button
+                    className="flex items-center justify-between p-4 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-2xl transition-all group"
+                    aria-label={`Open in IDE Workbench: ${selectedNode.data.label}`}
+                  >
                     <span className="text-xs font-bold text-blue-400">Open in IDE Workbench</span>
                     <ExternalLink className="w-4 h-4 text-blue-400 opacity-50 group-hover:opacity-100" />
                   </button>
-                  <button className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all group">
+                  <button
+                    className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all group"
+                    aria-label={`Generate Documentation: ${selectedNode.data.label}`}
+                  >
                     <span className="text-xs font-bold text-white/60">Generate Documentation</span>
                     <ChevronRight className="w-4 h-4 text-white/20 group-hover:opacity-100" />
                   </button>

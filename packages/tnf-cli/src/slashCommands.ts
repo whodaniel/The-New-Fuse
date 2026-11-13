@@ -267,8 +267,8 @@ const TNF_SLASH_COMMANDS: SlashCommandDefinition[] = [
   },
   {
     name: 'models',
-    summary: 'List available model/provider information.',
-    usage: '/models [query]',
+    summary: 'List or search available models across providers.',
+    usage: '/models [query|provider] [search]',
     source: 'tnf',
     mode: 'cli',
     cliCommand: ['models'],
