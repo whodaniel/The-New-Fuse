@@ -30,7 +30,7 @@ export interface SourceModuleStatus {
   name: string;
   kind: 'session_bridge' | 'notes' | 'storage_location' | 'local' | 'cli';
   description: string;
-  status: 'mirrored' | 'available' | 'not_mirrored' | 'policy_ready';
+  status: 'mirrored' | 'available' | 'not_mirrored' | 'policy_ready' | 'not_connected';
   itemCount?: number;
   mirrorPath?: string;
   cliHint?: string;

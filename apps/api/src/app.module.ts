@@ -63,6 +63,7 @@ import { DurableTasksModule } from './modules/durable-tasks/durable-tasks.module
 import { ExportModule } from './modules/export/export.module';
 import { LocalRuntimeModule } from './modules/local-runtime/local-runtime.module';
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
+import { PersonalIntelligenceModule } from './modules/personal-intelligence/personal-intelligence.module';
 import { PromptTemplatesModule } from './modules/prompt-templates.module';
 import { ResourcesModule } from './modules/resources/resources.module';
 import { SecurityModule } from './modules/security/security.module';
@@ -170,6 +171,7 @@ const enableGraphql = process.env.ENABLE_GRAPHQL !== 'false' && graphqlAdapterAv
     TerminalsModule,
     LocalRuntimeModule,
     DurableTasksModule,
+    PersonalIntelligenceModule,
     UnifiedLedgerModule,
     BrandConsistencyAgentModule, // Self-Improving Brand Consistency Agent
     BrowserHubSwarmModule, // Browser Hub Improvement Agent Swarm

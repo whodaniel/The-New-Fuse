@@ -702,7 +702,15 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               <Route path="/marketplace" element={<MarketplacePublicPage />} />
               <Route path="/product-map" element={<MarketplacePublicPage />} />
               <Route path="/capabilities" element={<MarketplacePublicPage />} />
-              <Route path="/platform" element={<PlatformHub />} />
+              {/* Platform Hub */}
+              <Route
+                path="/platform"
+                element={
+                  <RequireMemberAccess>
+                    <PlatformHub />
+                  </RequireMemberAccess>
+                }
+              />
 
               {/* Admin Marketplace Console */}
               <Route

@@ -51,6 +51,7 @@ import { registerHermesParityGapCommands } from './commands/hermes-parity-gaps.j
 import { registerLogsCommand } from './commands/logs.js';
 import { registerParityCommand } from './commands/parity.js';
 import { registerPeerCliParityGapCommands } from './commands/peer-cli-parity-gaps.js';
+import { registerPersonalIntelCommand } from './commands/personal-intel.js';
 import { registerPersonalKnowledgeCommands } from './commands/personal-knowledge.js';
 import { registerRefreshContextCommand } from './commands/refresh-context/command.js';
 import { registerRememberCommands } from './commands/remember.js';
@@ -20637,6 +20638,7 @@ workspaceCommand
 const notesCommand = program.command('notes').description('TNF note-taking workspace commands');
 registerSparkCommand(program);
 registerGoogleAiCommand(program, repoRoot);
+registerPersonalIntelCommand(program);
 
 async function createNotesService(options: {
   vaultPath?: string;

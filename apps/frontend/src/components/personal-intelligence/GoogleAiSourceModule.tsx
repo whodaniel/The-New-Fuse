@@ -55,8 +55,8 @@ export function GoogleAiSourceModule({
           <p className="text-slate-500">Refresh concordance into ~/.tnf/personal-intelligence</p>
         </div>
         <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
-          <div className="font-mono text-emerald-400">tnf google-ai list -n 25</div>
-          <p className="text-slate-500">Inspect bridged sessions from the terminal</p>
+          <div className="font-mono text-emerald-400">tnf personal-intel upload</div>
+          <p className="text-slate-500">Push owner-scoped index to /api/personal-intelligence</p>
         </div>
       </div>
 

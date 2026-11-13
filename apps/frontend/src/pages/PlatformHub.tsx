@@ -19,14 +19,17 @@ import type {
   UnifiedPersonalIntelPayload,
 } from '../components/personal-intelligence/types';
 import { EMPTY_UNIFIED } from '../components/personal-intelligence/types';
+import { authFetch } from '../utils/authToken';
 
-/** Optional unified index (preferred when present). */
+/** Auth'd owner-scoped index (production path). */
+const AUTH_INDEX_URL = '/api/personal-intelligence';
+/** Optional local-dev static mirrors (gitignored; never for private prod corpora). */
 const UNIFIED_INDEX_URL = '/local-intel/personal_intelligence_index.json';
 /** Google AI is one module mirror — not the hub identity. */
 const GOOGLE_AI_MIRROR_URL = '/local-intel/google_ai_session_concordance.json';
 
 const GOOGLE_MIRROR_SETUP =
-  'tnf google-ai sync && cp ~/.tnf/personal-intelligence/google_ai_session_concordance.json apps/frontend/public/local-intel/';
+  'tnf google-ai sync && tnf personal-intel index && tnf personal-intel upload --token <jwt>';
 
 const POLICY_SOURCES: SourceModuleStatus[] = [
   {
@@ -42,52 +45,55 @@ const POLICY_SOURCES: SourceModuleStatus[] = [
     id: 'apple_notes',
     name: 'Apple Notes',
     kind: 'notes',
-    description: 'Distilled notes intelligence from the operator-local Apple Notes corpus.',
-    status: 'policy_ready',
+    description:
+      'Distilled notes intelligence from the operator-local Apple Notes corpus (planned connector).',
+    status: 'not_connected',
     cliHint: '~/.tnf/personal-intelligence/apple_notes_intelligence_distillation.md',
   },
   {
     id: 'google_drive',
     name: 'Google Drive',
     kind: 'storage_location',
-    description: 'Consented Drive location pointers (metadata only — not a drive mirror).',
-    status: 'policy_ready',
+    description: 'Consented Drive location pointers (metadata only — not connected).',
+    status: 'not_connected',
   },
   {
     id: 'dropbox',
     name: 'Dropbox',
     kind: 'storage_location',
-    description: 'Bring-your-own Dropbox location registry entry.',
-    status: 'policy_ready',
+    description: 'Bring-your-own Dropbox location registry entry (planned connector).',
+    status: 'not_connected',
   },
   {
     id: 'onedrive',
     name: 'OneDrive',
     kind: 'storage_location',
-    description: 'Bring-your-own OneDrive / Microsoft 365 location registry entry.',
-    status: 'policy_ready',
+    description:
+      'Bring-your-own OneDrive / Microsoft 365 location registry entry (planned connector).',
+    status: 'not_connected',
   },
   {
     id: 'local_device',
     name: 'Local device',
     kind: 'local',
-    description: 'Approved local path hints and device-local working sets.',
-    status: 'policy_ready',
+    description: 'Approved local path hints and device-local working sets (planned connector).',
+    status: 'not_connected',
   },
   {
     id: 'private_github',
     name: 'Private GitHub',
     kind: 'cli',
-    description: 'Private repo locations for personal or client artifacts.',
-    status: 'policy_ready',
+    description: 'Private repo locations for personal or client artifacts (planned connector).',
+    status: 'not_connected',
   },
   {
     id: 'cli_import',
     name: 'CLI / file import',
     kind: 'cli',
-    description: 'Operator CLI and file drops into ~/.tnf/personal-intelligence/.',
-    status: 'policy_ready',
-    cliHint: 'tnf remember retain · local-intel mirrors',
+    description:
+      'Operator CLI and file drops into ~/.tnf/personal-intelligence/ (local storage active).',
+    status: 'available',
+    cliHint: 'tnf personal-intel index · upload',
   },
 ];
 
@@ -160,6 +166,23 @@ export default function PlatformHub() {
   const [syncNotice, setSyncNotice] = useState<string | null>(null);
   const [googleMirrorPresent, setGoogleMirrorPresent] = useState(false);
 
+  const applyUnified = (unified: UnifiedPersonalIntelPayload): boolean => {
+    if (!Array.isArray(unified.items) || !unified.items.length) return false;
+    setData({
+      generatedAt: unified.generatedAt || '',
+      totalItems: unified.totalItems ?? unified.items.length,
+      sources: unified.sources?.length
+        ? unified.sources
+        : mergeSourceStatuses(POLICY_SOURCES, null),
+      items: unified.items,
+    });
+    setGoogleMirrorPresent(
+      unified.items.some((i) => i.source === 'google_ai') ||
+        (unified.sources || []).some((s) => s.id === 'google_ai' && s.status === 'mirrored')
+    );
+    return true;
+  };
+
   const loadUnified = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
     setLoadError(null);
@@ -168,27 +191,26 @@ export default function PlatformHub() {
       let generatedAt = '';
       let googleCount: number | null = null;
 
-      // Prefer a unified index when operators publish one.
+      // 1) Auth'd owner-scoped API (production / cross-device).
+      try {
+        const authRes = await authFetch(`${AUTH_INDEX_URL}?t=${Date.now()}`, {
+          cache: 'no-store',
+        });
+        if (authRes.ok) {
+          const unified = (await authRes.json()) as UnifiedPersonalIntelPayload;
+          if (applyUnified(unified)) return true;
+        }
+      } catch {
+        // Fall through to local-dev static mirrors.
+      }
+
+      // 2) Local-dev static unified index (gitignored preview only).
       try {
         const unifiedRes = await fetch(`${UNIFIED_INDEX_URL}?t=${Date.now()}`, {
           cache: 'no-store',
         });
         const unified = (await readJsonOrHtmlGuard(unifiedRes)) as UnifiedPersonalIntelPayload;
-        if (Array.isArray(unified.items) && unified.items.length) {
-          setData({
-            generatedAt: unified.generatedAt || '',
-            totalItems: unified.totalItems ?? unified.items.length,
-            sources: unified.sources?.length
-              ? unified.sources
-              : mergeSourceStatuses(POLICY_SOURCES, null),
-            items: unified.items,
-          });
-          setGoogleMirrorPresent(
-            unified.items.some((i) => i.source === 'google_ai') ||
-              (unified.sources || []).some((s) => s.id === 'google_ai' && s.status === 'mirrored')
-          );
-          return true;
-        }
+        if (applyUnified(unified)) return true;
       } catch {
         // Fall through to per-module mirrors.
       }
@@ -221,7 +243,7 @@ export default function PlatformHub() {
 
       if (!items.length) {
         setLoadError(
-          'No Personal Intelligence mirrors are published to this app build yet. Operator-local sources live under ~/.tnf/personal-intelligence/ and can be mirrored into apps/frontend/public/local-intel/ for local preview. Production must not expose private personal corpora as public static files without an auth’d path.'
+          'No Personal Intelligence index for this account yet. Build locally with `tnf personal-intel index`, then upload with `tnf personal-intel upload --token <jwt>`. Private corpora are never shipped as public static files.'
         );
         return false;
       }

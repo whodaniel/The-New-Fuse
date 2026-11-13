@@ -65,16 +65,24 @@ export function SourceIngestPanel({ sources, activeSourceId, onSelect }: SourceI
                   className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
                     source.status === 'mirrored'
                       ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
-                      : source.status === 'policy_ready'
-                        ? 'bg-slate-800 text-slate-300 border-slate-600'
-                        : 'bg-amber-500/10 text-amber-200 border-amber-500/25'
+                      : source.status === 'available'
+                        ? 'bg-sky-500/10 text-sky-300 border-sky-500/25'
+                        : source.status === 'policy_ready'
+                          ? 'bg-slate-800 text-slate-300 border-slate-600'
+                          : source.status === 'not_connected'
+                            ? 'bg-slate-900 text-slate-400 border-slate-800'
+                            : 'bg-amber-500/10 text-amber-200 border-amber-500/25'
                   }`}
                 >
                   {source.status === 'mirrored'
                     ? 'Mirrored'
-                    : source.status === 'policy_ready'
-                      ? 'Ready'
-                      : 'Not mirrored'}
+                    : source.status === 'available'
+                      ? 'Local ready'
+                      : source.status === 'policy_ready'
+                        ? 'Policy only'
+                        : source.status === 'not_connected'
+                          ? 'Not connected'
+                          : 'Not mirrored'}
                 </span>
               </div>
               <p className="mt-2 text-xs text-slate-400 leading-relaxed">{source.description}</p>
