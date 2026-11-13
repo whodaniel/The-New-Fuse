@@ -208,10 +208,11 @@ const CodebaseMapInner = () => {
     setSearchTerm(term);
     if (!term || !codebaseData) return;
 
+    // Precompute term.toLowerCase() outside the O(N) loop
+    const termLower = term.toLowerCase();
+
     // Search all 15k nodes for label match
-    const match = codebaseData.nodes.find((n) =>
-      n.data.label.toLowerCase().includes(term.toLowerCase())
-    );
+    const match = codebaseData.nodes.find((n) => n.data.label.toLowerCase().includes(termLower));
 
     if (match) {
       // If we find a match, jump to its parent and highlight it
@@ -266,9 +267,7 @@ const CodebaseMapInner = () => {
       <div className="w-full h-full bg-[#050505] text-white flex items-center justify-center">
         <div className="flex items-center gap-3 text-white/60">
           <Activity className="w-4 h-4 animate-pulse text-blue-400" />
-          <span className="text-xs font-black uppercase tracking-widest">
-            Loading codebase map
-          </span>
+          <span className="text-xs font-black uppercase tracking-widest">Loading codebase map</span>
         </div>
       </div>
     );

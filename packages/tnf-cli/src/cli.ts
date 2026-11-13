@@ -504,8 +504,7 @@ async function requireSuperAdmin(
       const home = process.env.TNF_AUTHORITY_HOME || os.homedir() || process.env.HOME || '';
       const rolesPath = path.join(home, '.tnf', 'authority', 'roles.json');
       const tierPath = path.join(home, '.tnf', 'authority', 'tier.json');
-      const candidateRaw =
-        process.env.TNF_AGENT_ID || process.env.AGENT_NAME || 'tnf-cli-agent';
+      const candidateRaw = process.env.TNF_AGENT_ID || process.env.AGENT_NAME || 'tnf-cli-agent';
       const aliasMap: Record<string, string> = {
         'tnf-cli-agent': 'did:tnf:local:agent:tnfcli:tnf_cli_agent:001',
         'tnf-local-subdirector': 'did:tnf:local:agent:tnfcli:tnf_local_subdirector:001',
@@ -17601,7 +17600,11 @@ import { DatabaseService } from './services/DatabaseService.js';
 import { DebugService, redactSensitiveConfig } from './services/DebugService.js';
 import { MCPManagerService } from './services/MCPManagerService.js';
 // (MCPToolRuntimeService lazily imported by the mcp command actions below)
-import { ModelsService } from './services/ModelsService.js';
+import {
+  filterModelsByQuery,
+  ModelsService,
+  resolveModelsCliArgs,
+} from './services/ModelsService.js';
 import { PermissionService } from './services/PermissionService.js';
 import {
   ProjectConfigService,
@@ -19184,10 +19187,16 @@ program
 // Models command
 program
   .command('models')
-  .description('List or interactively select dynamically discovered models')
-  .argument('[provider]', 'Provider ID to filter models by')
-  .argument('[search]', 'Search or filter models by ID, name, or keyword')
-  .option('-s, --search <query>', 'Search or filter models by ID, name, or keyword')
+  .description('List, search, or interactively select dynamically discovered models')
+  .argument(
+    '[provider]',
+    'Provider ID to filter by, or a search query if it is not a known provider'
+  )
+  .argument('[search]', 'Search query (when the first argument is a provider ID)')
+  .option(
+    '-s, --search <query>',
+    'Search or filter models by ID, name, or keyword (use this to search a provider id string)'
+  )
   .option('--verbose', 'Show detailed model information')
   .option('--refresh', 'Refresh the models cache')
   .option('--select', 'Choose provider/model with arrow keys and set it as the default')
@@ -19206,10 +19215,14 @@ program
     ) => {
       try {
         const modelsService = new ModelsService();
-        let selectedProvider = provider;
-        const searchQuery = String(options?.search || search || '')
-          .trim()
-          .toLowerCase();
+        const resolved = resolveModelsCliArgs({
+          providerArg: provider,
+          searchArg: search,
+          searchOption: options?.search,
+          knownProviderIds: modelsService.knownProviderIds(),
+        });
+        let selectedProvider = resolved.provider;
+        const searchQuery = resolved.searchQuery;
 
         if (options?.select) {
           if (options.json) throw new Error('--select and --json cannot be used together');
@@ -19239,12 +19252,19 @@ program
 
           // A menu selection is a freshness request: probe only the chosen
           // provider and bypass the cache instead of making N slow calls.
-          const models = await modelsService.listModels(selectedProvider, { refresh: true });
-          if (models.length === 0) {
-            throw new Error(`No models are available for provider "${selectedProvider}"`);
+          const selectModels = filterModelsByQuery(
+            await modelsService.listModels(selectedProvider, { refresh: true }),
+            searchQuery
+          );
+          if (selectModels.length === 0) {
+            throw new Error(
+              searchQuery
+                ? `No models matching "${searchQuery}" for provider "${selectedProvider}"`
+                : `No models are available for provider "${selectedProvider}"`
+            );
           }
           const selected = await interactiveSelect(
-            models.map((model) => ({
+            selectModels.map((model) => ({
               value: model,
               label: model.name === model.id ? model.id : `${model.name} (${model.id})`,
               description: [
@@ -19254,7 +19274,11 @@ program
                 .filter(Boolean)
                 .join(' · '),
             })),
-            { title: `Select a ${selectedProvider} model` }
+            {
+              title: searchQuery
+                ? `Select a ${selectedProvider} model (filter: "${searchQuery}")`
+                : `Select a ${selectedProvider} model`,
+            }
           );
           if (!selected) {
             console.log(chalk.dim('Model selection cancelled.'));
@@ -19270,14 +19294,7 @@ program
         const rawModels = await modelsService.listModels(selectedProvider, {
           refresh: options?.refresh,
         });
-        const models = searchQuery
-          ? rawModels.filter(
-              (m) =>
-                m.id.toLowerCase().includes(searchQuery) ||
-                (m.name && m.name.toLowerCase().includes(searchQuery)) ||
-                (m.provider && m.provider.toLowerCase().includes(searchQuery))
-            )
-          : rawModels;
+        const models = filterModelsByQuery(rawModels, searchQuery);
 
         if (options?.json) {
           console.log(JSON.stringify(models, null, 2));

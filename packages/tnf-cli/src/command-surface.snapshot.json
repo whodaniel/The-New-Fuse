@@ -5068,7 +5068,7 @@
     {
       "name": "models",
       "aliases": [],
-      "description": "List or interactively select dynamically discovered models",
+      "description": "List, search, or interactively select dynamically discovered models",
       "options": [
         {
           "flags": "--json",
@@ -5088,7 +5088,7 @@
         },
         {
           "flags": "-s, --search <query>",
-          "description": "Search or filter models by ID, name, or keyword"
+          "description": "Search or filter models by ID, name, or keyword (use this to search a provider id string)"
         }
       ],
       "commands": []

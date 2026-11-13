@@ -1,14 +1,14 @@
 # SESSION_HANDOFF (tnf-orchestrator)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-13T17:09:27.340Z` Handoff ID: `73b7d9b0-f309-49da-b69b-4bd01ad8dfa7`
+`2026-11-13T17:28:03.435Z` Handoff ID: `5e8febe5-8e3f-44e8-97f2-e965198f13c0`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `30d9f264f176aab41faa038a1d45ec290e6ce99a`
+- Head SHA: `abc142f60e386556d9e9292041d38e813afd8a4c`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -40,11 +40,24 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.json
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.md
-- docs/protocols/workspace-leases.json
-- scripts/runtime/install-self-improvement-launchd.sh
-- packages/sync-core/src/dashboard/useSyncDashboard.ts
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.json
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.md
+- docs/protocols/workspace-leases.json
+- packages/sync-core/src/dashboard/useSyncDashboard.ts
+- scripts/runtime/install-self-improvement-launchd.sh
+- apps/frontend/public/data/providers/catalog.json
+- apps/frontend/public/data/providers/nvidia-models.json
+- apps/frontend/src/components/visualization/InteractiveCodebaseMap.tsx
+- data/providers/catalog.json
+- data/providers/nvidia-models.json
+- packages/tnf-cli/package.json
+- packages/tnf-cli/src/cli.ts
+- packages/tnf-cli/src/command-surface.snapshot.json
+- packages/tnf-cli/src/services/ModelsService.ts
+- packages/tnf-cli/src/slashCommands.ts
+- packages/tnf-cli/src/services/ModelsService.resolve-args.test.ts
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T172803-5e8febe5.json
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T172803-5e8febe5.md
 
 ## Verification
 
