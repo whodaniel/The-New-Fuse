@@ -1,14 +1,14 @@
 # SESSION_HANDOFF (tnf-orchestrator)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-13T17:02:53.492Z` Handoff ID: `4a8425e3-7dd6-41d9-8f92-e0ab759f0f57`
+`2026-11-13T17:09:27.340Z` Handoff ID: `73b7d9b0-f309-49da-b69b-4bd01ad8dfa7`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `eedfe17b6c0106488c8d4fb094ceb69beab157de`
+- Head SHA: `30d9f264f176aab41faa038a1d45ec290e6ce99a`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -38,12 +38,13 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 - docs/protocols/handoff-registry.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170109-5110a743.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170109-5110a743.md
-- docs/protocols/workspace-leases.json
-- scripts/runtime/install-self-improvement-launchd.sh
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.json
 - docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.md
+- docs/protocols/workspace-leases.json
+- scripts/runtime/install-self-improvement-launchd.sh
+- packages/sync-core/src/dashboard/useSyncDashboard.ts
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.json
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.md
 
 ## Verification
 

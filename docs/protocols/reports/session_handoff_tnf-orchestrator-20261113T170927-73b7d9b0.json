@@ -1,0 +1,171 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "73b7d9b0-f309-49da-b69b-4bd01ad8dfa7",
+  "created_at": "2026-11-13T17:09:27.340Z",
+  "repository": "whodaniel/tnf-monorepo",
+  "branch": "main",
+  "head_sha": "30d9f264f176aab41faa038a1d45ec290e6ce99a",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
+    "CI/hook gates now block critical changes without fresh handoff artifacts."
+  ],
+  "changed_paths": [
+    "apps/chrome-extension/aivi/cli/batch-processor.js",
+    "apps/chrome-extension/aivi/cli/process-recent-watch-history.js",
+    "apps/chrome-extension/aivi/src/DirectAPIProcessor.js",
+    "apps/frontend/docs/audits/self-improvement-scorecard.json",
+    "apps/frontend/docs/audits/self-improvement-scorecard.md",
+    "docs/operations/tnf-self-improvement-run-log.md",
+    "docs/operations/tnf-substrate-seal.json",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.json",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.md",
+    "docs/protocols/workspace-leases.json",
+    "scripts/runtime/install-self-improvement-launchd.sh",
+    "packages/sync-core/src/dashboard/useSyncDashboard.ts",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.json",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.md"
+  ],
+  "verification": {
+    "privacy_guard": "pass",
+    "secret_sweep": "pass",
+    "docs_pii_guard": "pass",
+    "supabase_rls_audit": "na",
+    "notes": "Auto-verify 2026-11-13T17:09:34.156Z: privacy_guard=pass; secret_sweep=pass; docs_pii_guard=pass; supabase_rls_audit=na (no Supabase-sensitive path changes detected)"
+  },
+  "continuation": {
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": [
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
+    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+  ],
+  "reflection": {
+    "lessons": {
+      "considered": false
+    },
+    "skills": {
+      "considered": false
+    },
+    "gaps": {
+      "considered": false
+    }
+  },
+  "freshness_receipts": [
+    {
+      "id": "github.dev.main",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:24.839Z",
+      "value": "face46dde32b72b14a505e2548c3dec505dc3971"
+    },
+    {
+      "id": "github.public.main",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:25.956Z",
+      "value": "fbc9dbc043b687695daf635e07ba4ee9bff9e6dc"
+    },
+    {
+      "id": "github.control-plane.main",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:27.403Z",
+      "value": "ccf213195fb5064f5d708fe75b87d1cb72b37e15"
+    },
+    {
+      "id": "github.public.pr-queue",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:28.580Z",
+      "value": "[]"
+    },
+    {
+      "id": "github.public.ruleset",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:29.181Z",
+      "value": "deletion,non_fast_forward,pull_request,required_status_checks"
+    },
+    {
+      "id": "github.public.proprietary-leak",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:31.164Z",
+      "value": "STUB_OK:packages/relay-core/src/master-clock.ts\nSTUB_OK:packages/relay-core/src/broker-agent.ts\nOK"
+    },
+    {
+      "id": "tnf.product-repo-map",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:31.329Z",
+      "value": "09c91416988e7c770a04df6f0b949cfaa48cac5d\n2026-08-13"
+    },
+    {
+      "id": "tnf.oss-app-boundary",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:31.503Z",
+      "value": "155a3b9273bad34ec15046ebf323d53e0854dc31\n2026-09-01"
+    },
+    {
+      "id": "git.repository.identity",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:32.597Z",
+      "value": "origin=https://github.com/whodaniel/tnf-monorepo.git\nhead=49c5749060fa4d331b31e2b4a621c2739e060cdd\nbranch=main\ndirty=25"
+    },
+    {
+      "id": "runtime.services",
+      "state": "STALE",
+      "observed_at": "2026-11-07T02:53:32.816Z",
+      "value": "PONG\nRELAY_OK"
+    },
+    {
+      "id": "tnf.handoff-scoped-propagation",
+      "state": "STALE",
+      "observed_at": "2026-10-17T04:39:00.998Z",
+      "value": "RECENT=20 MIRRORED=20 PENDING=0"
+    }
+  ],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/tnf-monorepo",
+    "origin": "https://github.com/whodaniel/tnf-monorepo.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": ["30d9f264f176aab41faa038a1d45ec290e6ce99a"]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "checkout_id": "co_mtpe199t_2c40fc93",
+  "task_id": "TNF-SESSION",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": ["4a8425e3-7dd6-41d9-8f92-e0ab759f0f57"],
+  "record_hash": "8488d3220b27942d4bdadfea8c27d335e3c539a55dd9f19f6549714cb4353f49"
+}
