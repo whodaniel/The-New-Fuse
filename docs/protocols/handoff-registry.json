@@ -6,7 +6,7 @@
     "fingerprint": "109d42aef6c5b7f8",
     "origin": "whodaniel/tnf-monorepo"
   },
-  "mirroredAt": "2026-11-13T17:46:13.423Z",
+  "mirroredAt": "2026-11-13T17:55:00.012Z",
   "rows": [
     {
       "handoff_id": "legacy-037604196c37",
@@ -36810,9 +36810,49 @@
         "state": "unverified"
       },
       "supersedes": ["5e8febe5-8e3f-44e8-97f2-e965198f13c0"],
+      "superseded_by": "0ef38eef-4f59-4a19-9456-d76f17394799",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/998b9cd7-1ce6-4a3a-87e1-28df20e4e389.json"
+    },
+    {
+      "handoff_id": "0ef38eef-4f59-4a19-9456-d76f17394799",
+      "record_hash": "db0092a249f256d6810d87abe4c4c31f0e0d84285f9aa4428ef0f0572271ad61",
+      "created_at": "2026-11-13T17:53:22.179Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "df96cd2f1482ea1195098c8578d9534305683708",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["998b9cd7-1ce6-4a3a-87e1-28df20e4e389"],
+      "superseded_by": "84f86b13-d9ee-47ff-ba01-c98f97b9ffdb",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/0ef38eef-4f59-4a19-9456-d76f17394799.json"
+    },
+    {
+      "handoff_id": "84f86b13-d9ee-47ff-ba01-c98f97b9ffdb",
+      "record_hash": "0e814c30123d58cb982630f5108e5a08acf8c9cc52491645be294ab72ed35c5d",
+      "created_at": "2026-11-13T17:54:57.283Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "df96cd2f1482ea1195098c8578d9534305683708",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["0ef38eef-4f59-4a19-9456-d76f17394799"],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/998b9cd7-1ce6-4a3a-87e1-28df20e4e389.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/84f86b13-d9ee-47ff-ba01-c98f97b9ffdb.json"
     }
   ]
 }

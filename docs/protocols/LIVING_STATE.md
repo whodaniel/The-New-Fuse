@@ -151,6 +151,14 @@
 
 ## History
 
+- 2026-11-13T17:54:58.834Z handoff `84f86b13-d9ee-47ff-ba01-c98f97b9ffdb` head
+  `df96cd2f1482` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:53:33.131Z handoff `0ef38eef-4f59-4a19-9456-d76f17394799` head
+  `df96cd2f1482` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
 - 2026-11-13T17:46:11.663Z handoff `998b9cd7-1ce6-4a3a-87e1-28df20e4e389` head
   `3a25011983d6` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
