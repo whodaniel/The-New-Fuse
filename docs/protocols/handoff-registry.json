@@ -6,7 +6,7 @@
     "fingerprint": "109d42aef6c5b7f8",
     "origin": "whodaniel/tnf-monorepo"
   },
-  "mirroredAt": "2026-11-12T00:10:05.285Z",
+  "mirroredAt": "2026-11-13T16:35:20.708Z",
   "rows": [
     {
       "handoff_id": "legacy-037604196c37",
@@ -36650,9 +36650,49 @@
         "state": "unverified"
       },
       "supersedes": ["faae6f41-d44f-48ad-b9d9-38dbd0de6500"],
+      "superseded_by": "f296bd9d-0f64-41ef-88de-78ec481d6ce4",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/1c852575-bb04-48c4-abd6-47cda894717f.json"
+    },
+    {
+      "handoff_id": "f296bd9d-0f64-41ef-88de-78ec481d6ce4",
+      "record_hash": "5a5a56fdbd7e5e47e12809ec6918eff0dc8334c421a017ad96e7c0a9b5b767e9",
+      "created_at": "2026-11-12T00:17:20.832Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "09a8c53ca5eb304a019dd3f21c7516330f6f2c8f",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["1c852575-bb04-48c4-abd6-47cda894717f"],
+      "superseded_by": "15d5fd42-df04-4b58-ace2-0e6497bb6a6b",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/f296bd9d-0f64-41ef-88de-78ec481d6ce4.json"
+    },
+    {
+      "handoff_id": "15d5fd42-df04-4b58-ace2-0e6497bb6a6b",
+      "record_hash": "446c5350c8477c49cf9a0f4cc1ae55d563f8918991e0198045488c4b567fa441",
+      "created_at": "2026-11-13T16:35:18.178Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_mtpe199t_2c40fc93",
+      "branch": "main",
+      "head_sha": "09a8c53ca5eb304a019dd3f21c7516330f6f2c8f",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["f296bd9d-0f64-41ef-88de-78ec481d6ce4"],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/1c852575-bb04-48c4-abd6-47cda894717f.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/15d5fd42-df04-4b58-ace2-0e6497bb6a6b.json"
     }
   ]
 }

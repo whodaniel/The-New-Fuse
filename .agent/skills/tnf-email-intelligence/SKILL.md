@@ -31,10 +31,12 @@ Synaptic Bus.
    - Tier 2: Daemon classification via `scripts/tnf_email_intelligence.cjs`
      analyzes subject and body semantics, handles untagged notes, and extracts
      technical entities.
-3. **Mandatory PII Scrubbing:** All emails written to `docs/` must have
-   personal-provider email addresses (`@gmail.com`, `@yahoo.com`, etc.)
-   sanitized to `operator@thenewfuse.com` or `[REDACTED_OPERATOR_EMAIL]` to
-   satisfy `docs:pii:guard`.
+3. **Data Residency & Personal Data Isolation:** Personal and user-specific data
+   must NEVER be part of the TNF codebase proper. All personal data is stored in
+   the user's choice of data store
+   (`~/.tnf/intelligence/email-intelligence-ledger.json` or
+   `$TNF_USER_DATA_STORE` / `$TNF_EMAIL_LEDGER_PATH`). Never commit personal
+   email intake or ledgers to the repository.
 4. **Synaptic Bus Broadcast:** Any incoming email triaged under `TNF/Directives`
    must be broadcast as an `AgentMessage` frame to Redis channels
    `tnf:sensory:email` and `tnf:orchestrator` to wake up active director agents.
@@ -67,7 +69,7 @@ flowchart LR
     A["Operator Email (bizsynth@gmail.com)"] --> B["Gmail Server"]
     B -->|Filter Rules| C["Auto-Navigated Folders (TNF/...)"]
     B -->|MCP Bridge| D["tnf_email_intelligence.cjs"]
-    D -->|Entity Extraction| E["docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json"]
+    D -->|Entity Extraction| E["User Data Store (~/.tnf/intelligence/email-intelligence-ledger.json)"]
     D -->|Publish Event| F["Redis Synaptic Bus (tnf:sensory:email)"]
     F --> G["TNF Director Agents (Codex / Claude / Gemini)"]
 ```
@@ -90,5 +92,5 @@ tail -n 20 logs/tnf_email_intelligence.log
 To inspect the live extraction ledger:
 
 ```bash
-cat docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json
+cat ~/.tnf/intelligence/email-intelligence-ledger.json
 ```

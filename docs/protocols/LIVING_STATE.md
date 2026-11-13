@@ -151,6 +151,14 @@
 
 ## History
 
+- 2026-11-13T16:35:19.518Z handoff `15d5fd42-df04-4b58-ace2-0e6497bb6a6b` head
+  `09a8c53ca5eb` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-12T00:17:22.452Z handoff `f296bd9d-0f64-41ef-88de-78ec481d6ce4` head
+  `09a8c53ca5eb` project `TNF-SESSION` — Review updated LIVING_STATE.md for new
+  active steps
+
 - 2026-11-12T00:10:04.053Z handoff `1c852575-bb04-48c4-abd6-47cda894717f` head
   `427ef8cc8bd6` project `TNF-SESSION` — Review updated LIVING_STATE.md for new
   active steps
