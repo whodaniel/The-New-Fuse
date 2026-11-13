@@ -151,6 +151,14 @@
 
 ## History
 
+- 2026-11-13T17:03:00.447Z handoff `4a8425e3-7dd6-41d9-8f92-e0ab759f0f57` head
+  `eedfe17b6c01` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
+- 2026-11-13T17:01:13.637Z handoff `5110a743-e925-438a-930d-fa357fa80320` head
+  `eedfe17b6c01` project `TNF-SESSION` — Continue priority queue from
+  SESSION_HANDOFF_LATEST.json continuation.resume_checklist.
+
 - 2026-11-13T16:42:28.556Z handoff `5c56e997-98f7-483e-a8d4-97ad968c3544` head
   `c5b334eff8b2` project `TNF-SESSION` — Operator: review and merge PR for
   tnf/operator-handoff-sync-20261112

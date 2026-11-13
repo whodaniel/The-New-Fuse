@@ -1,67 +1,26 @@
 {
-  "generatedAt": "2026-10-18T05:00:07.587Z",
+  "generatedAt": "2026-11-13T16:52:36.963Z",
   "overall": {
-    "passed": false,
-    "requiredAuditsPresent": true,
-    "falsifiers": [
-      {
-        "audit": "live",
-        "falsified_by": "crawl reported 4 failure(s) but registered networkUnreliable=true — transport-level failures, audit INCONCLUSIVE (PS-005), not evidence of broken links; re-run on a reliable network path before concluding either way"
-      },
-      {
-        "audit": "semantic",
-        "falsified_by": "every failure is transport-level (260 row(s), no HTTP status — consistent with TLS interception / middlebox on this host) — audit INCONCLUSIVE per PS-005, not evidence the routes are broken; re-run on a reliable network path"
-      }
-    ]
-  },
-  "freshnessThresholdMinutes": {
-    "auth": 90,
-    "live": 420,
-    "semantic": 420
-  },
-  "cycle": {
-    "available": true,
     "passed": true,
-    "cycle": "light",
-    "lastRunAt": "2026-10-18T05:00:03.762Z",
-    "ageMinutes": 0,
-    "exitCode": 0,
-    "quarantineExtension": null,
-    "inconclusiveSteps": [],
-    "steps": [
-      {
-        "name": "auth-path-audit",
-        "exitCode": 0,
-        "inconclusive": false,
-        "durationMs": 3072
-      }
-    ],
-    "falsified_by": null
+    "requiredAuditsPresent": true
   },
   "live": {
     "available": true,
-    "passed": false,
-    "totalChecked": 4,
-    "totalBroken": 4,
+    "passed": true,
+    "totalChecked": 24,
+    "totalBroken": 0,
     "semanticBroken": 0,
-    "networkUnreliable": true,
-    "generatedAt": "2026-10-18T04:07:28.746Z",
-    "ageMinutes": 53,
-    "falsified_by": "crawl reported 4 failure(s) but registered networkUnreliable=true — transport-level failures, audit INCONCLUSIVE (PS-005), not evidence of broken links; re-run on a reliable network path before concluding either way"
+    "generatedAt": "2026-10-18T13:02:24.360Z"
   },
   "semantic": {
     "available": true,
-    "passed": false,
+    "passed": true,
     "totalRoutes": 260,
     "hardBroken": 0,
     "networkBroken": 0,
-    "networkUnreliable": true,
-    "transportUnreliable": 260,
     "sameAsRoot": 0,
     "duplicateFingerprintGroups": 0,
-    "generatedAt": "2026-10-18T04:07:19.482Z",
-    "ageMinutes": 53,
-    "falsified_by": "every failure is transport-level (260 row(s), no HTTP status — consistent with TLS interception / middlebox on this host) — audit INCONCLUSIVE per PS-005, not evidence the routes are broken; re-run on a reliable network path"
+    "generatedAt": "2026-10-18T04:07:19.482Z"
   },
   "auth": {
     "available": true,
@@ -69,9 +28,6 @@
     "totalChecks": 4,
     "passedChecks": 4,
     "failedChecks": 0,
-    "negativeProbes": 3,
-    "generatedAt": "2026-10-18T05:00:06.764Z",
-    "ageMinutes": 0,
-    "falsified_by": null
+    "generatedAt": "2026-08-31T21:09:58.945Z"
   }
 }

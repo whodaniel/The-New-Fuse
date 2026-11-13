@@ -10,7 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const config = require('../lib/config');
 
@@ -85,8 +85,21 @@ async function callGeminiAPI(prompt) {
 async function fetchTranscript(videoId) {
   try {
     // Use yt-dlp to get transcript
-    const cmd = `yt-dlp --skip-download --write-auto-sub --sub-lang en --sub-format json3 --output "temp_%(id)s" "https://www.youtube.com/watch?v=${videoId}"`;
-    execSync(cmd, { cwd: DATA_DIR, stdio: 'pipe' });
+    execFileSync(
+      'yt-dlp',
+      [
+        '--skip-download',
+        '--write-auto-sub',
+        '--sub-lang',
+        'en',
+        '--sub-format',
+        'json3',
+        '--output',
+        'temp_%(id)s',
+        `https://www.youtube.com/watch?v=${videoId}`,
+      ],
+      { cwd: DATA_DIR, stdio: 'pipe' }
+    );
 
     // Read the subtitle file
     const subFile = path.join(DATA_DIR, `temp_${videoId}.en.json3`);
