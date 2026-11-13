@@ -1,14 +1,14 @@
-# SESSION_HANDOFF (tnf-orchestrator)
+# SESSION_HANDOFF (operator)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-13T16:35:18.178Z` Handoff ID: `15d5fd42-df04-4b58-ace2-0e6497bb6a6b`
+`2026-11-13T16:42:25.305Z` Handoff ID: `5c56e997-98f7-483e-a8d4-97ad968c3544`
 
 ## Scope
 
 - Repository: `whodaniel/tnf-monorepo`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `main`
-- Head SHA: `09a8c53ca5eb304a019dd3f21c7516330f6f2c8f`
+- Head SHA: `c5b334eff8b29f7f24e416baa77dbc83edac9a33`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -20,25 +20,20 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- Completed all outstanding tasks
+- Fixed TURN_ZERO_MANDATE.md missing protocol references (zero Turn Zero
+  warnings)
+- Committed and pushed to tnf/operator-handoff-sync-20261112 branch
+- Validated checkout ledger (writeReady=true)
+- Advanced local main to c5b334eff8b2
 
 ## Changed Paths
 
-- .agent/skills/tnf-email-intelligence/SKILL.md
-- .gitignore
-- docs/protocols/AGENT_STATUS_LEDGER.md
-- docs/protocols/LIVING_STATE.md
-- docs/protocols/handoff-registry.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
-- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/session_handoff_operator-20261112T001720-f296bd9d.json
-- docs/protocols/reports/session_handoff_operator-20261112T001720-f296bd9d.md
-- scripts/tnf_email_intelligence.cjs
 - .agent/skills/dogfood/output/critical_high_issues.json
 - .agent/skills/dogfood/output/flywheel-cycle-report.json
 - .agent/skills/dogfood/output/flywheel-cycle-report.md
+- .agent/skills/tnf-email-intelligence/SKILL.md
+- .gitignore
 - apps/api-gateway/package.json
 - apps/api-gateway/public/docs.html
 - apps/api-gateway/public/features.html
@@ -92,15 +87,21 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 - data/ingestion-runs/ai7-action-queue.json
 - data/ingestion-runs/ai7-gate-verdict.json
 - data/ingestion-runs/ai7-manifest.json
-- docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json
 - docs/operations/tnf-master-reconciliation-report-latest.json
 - docs/operations/tnf-master-reconciliation-report-latest.md
+- docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md
+- docs/protocols/LIVING_STATE.md
 - docs/protocols/TURN_ZERO_MANDATE.md
 - docs/protocols/challenge-rationales/2026-11-12-turn-zero-mandate-cross-refs.md
+- docs/protocols/handoff-registry.json
 - docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
 - docs/protocols/reports/session_handoff_operator-20261112T001002-1c852575.json
 - docs/protocols/reports/session_handoff_operator-20261112T001002-1c852575.md
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T163518-15d5fd42.json
+- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T163518-15d5fd42.md
 - docs/protocols/workspace-leases.json
 - logs/flywheel/property-health-history.jsonl
 - logs/flywheel/property-health-latest.json
@@ -132,16 +133,9 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 - scripts/harness/tnf-harness.cjs
 - scripts/harness/verify-harness-completeness.cjs
 - scripts/skills/universal-skill-disclosure-guard.cjs
-- docs/protocols/reports/session_handoff_operator-20261112T000333-faae6f41.json
-- docs/protocols/reports/session_handoff_operator-20261112T000333-faae6f41.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T223653-9e88887b.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T223653-9e88887b.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224202-65e8f18e.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224202-65e8f18e.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224728-51b072e1.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224728-51b072e1.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T163518-15d5fd42.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T163518-15d5fd42.md
+- scripts/tnf_email_intelligence.cjs
+- docs/protocols/reports/session_handoff_operator-20261113T164225-5c56e997.json
+- docs/protocols/reports/session_handoff_operator-20261113T164225-5c56e997.md
 
 ## Verification
 
@@ -152,20 +146,19 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Continuation
 
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
-- Priority: `high`
+- Owner: `operator`
+- Targets: `orchestrator`
+- Priority: `medium`
 
 ### Resume Checklist
 
 - Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- Validate SESSION_HANDOFF_LATEST.json against
-  docs/protocols/schemas/tnf-session-handoff.schema.json
-- Execute listed next actions in order and preserve privacy/security gates
+- Validate SESSION_HANDOFF_LATEST.json against schema
+- Work through next_actions in order
 
 ## Next Actions
 
+- Operator: review and merge PR for tnf/operator-handoff-sync-20261112
 - Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+  continuation.resume_checklist
+- Emit fresh handoff after next critical work unit

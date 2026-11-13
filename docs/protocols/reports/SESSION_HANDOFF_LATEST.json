@@ -1,31 +1,26 @@
 {
   "spec": "tnf/session-handoff/0.3",
-  "handoff_id": "15d5fd42-df04-4b58-ace2-0e6497bb6a6b",
-  "created_at": "2026-11-13T16:35:18.178Z",
+  "handoff_id": "5c56e997-98f7-483e-a8d4-97ad968c3544",
+  "created_at": "2026-11-13T16:42:25.305Z",
   "repository": "whodaniel/tnf-monorepo",
   "branch": "main",
-  "head_sha": "09a8c53ca5eb304a019dd3f21c7516330f6f2c8f",
+  "head_sha": "c5b334eff8b29f7f24e416baa77dbc83edac9a33",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "Protocol enforcement layer implemented for mandatory session handoff continuity.",
-    "CI/hook gates now block critical changes without fresh handoff artifacts."
+    "Completed all outstanding tasks",
+    "Fixed TURN_ZERO_MANDATE.md missing protocol references (zero Turn Zero warnings)",
+    "Committed and pushed to tnf/operator-handoff-sync-20261112 branch",
+    "Validated checkout ledger (writeReady=true)",
+    "Advanced local main to c5b334eff8b2"
   ],
   "changed_paths": [
-    ".agent/skills/tnf-email-intelligence/SKILL.md",
-    ".gitignore",
-    "docs/protocols/AGENT_STATUS_LEDGER.md",
-    "docs/protocols/LIVING_STATE.md",
-    "docs/protocols/handoff-registry.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
-    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/session_handoff_operator-20261112T001720-f296bd9d.json",
-    "docs/protocols/reports/session_handoff_operator-20261112T001720-f296bd9d.md",
-    "scripts/tnf_email_intelligence.cjs",
     ".agent/skills/dogfood/output/critical_high_issues.json",
     ".agent/skills/dogfood/output/flywheel-cycle-report.json",
     ".agent/skills/dogfood/output/flywheel-cycle-report.md",
+    ".agent/skills/tnf-email-intelligence/SKILL.md",
+    ".gitignore",
     "apps/api-gateway/package.json",
     "apps/api-gateway/public/docs.html",
     "apps/api-gateway/public/features.html",
@@ -79,15 +74,21 @@
     "data/ingestion-runs/ai7-action-queue.json",
     "data/ingestion-runs/ai7-gate-verdict.json",
     "data/ingestion-runs/ai7-manifest.json",
-    "docs/intelligence/TNF_EMAIL_INTELLIGENCE_LEDGER.json",
     "docs/operations/tnf-master-reconciliation-report-latest.json",
     "docs/operations/tnf-master-reconciliation-report-latest.md",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/EXPANDED_VIDEO_INTELLIGENCE_SPEC.md",
+    "docs/protocols/LIVING_STATE.md",
     "docs/protocols/TURN_ZERO_MANDATE.md",
     "docs/protocols/challenge-rationales/2026-11-12-turn-zero-mandate-cross-refs.md",
+    "docs/protocols/handoff-registry.json",
     "docs/protocols/reports/FEDERATED_WS_CHANNEL_CHECK_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
     "docs/protocols/reports/session_handoff_operator-20261112T001002-1c852575.json",
     "docs/protocols/reports/session_handoff_operator-20261112T001002-1c852575.md",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T163518-15d5fd42.json",
+    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T163518-15d5fd42.md",
     "docs/protocols/workspace-leases.json",
     "logs/flywheel/property-health-history.jsonl",
     "logs/flywheel/property-health-latest.json",
@@ -119,16 +120,9 @@
     "scripts/harness/tnf-harness.cjs",
     "scripts/harness/verify-harness-completeness.cjs",
     "scripts/skills/universal-skill-disclosure-guard.cjs",
-    "docs/protocols/reports/session_handoff_operator-20261112T000333-faae6f41.json",
-    "docs/protocols/reports/session_handoff_operator-20261112T000333-faae6f41.md",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T223653-9e88887b.json",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T223653-9e88887b.md",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224202-65e8f18e.json",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224202-65e8f18e.md",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224728-51b072e1.json",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261111T224728-51b072e1.md",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T163518-15d5fd42.json",
-    "docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T163518-15d5fd42.md"
+    "scripts/tnf_email_intelligence.cjs",
+    "docs/protocols/reports/session_handoff_operator-20261113T164225-5c56e997.json",
+    "docs/protocols/reports/session_handoff_operator-20261113T164225-5c56e997.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -138,18 +132,19 @@
     "notes": ""
   },
   "continuation": {
-    "owner": "tnf-orchestrator",
-    "targets": ["story-architect", "librarian"],
-    "priority": "high",
+    "owner": "operator",
+    "targets": ["orchestrator"],
+    "priority": "medium",
     "resume_checklist": [
       "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
-      "Execute listed next actions in order and preserve privacy/security gates"
+      "Validate SESSION_HANDOFF_LATEST.json against schema",
+      "Work through next_actions in order"
     ]
   },
   "next_actions": [
-    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist.",
-    "Emit a fresh handoff artifact immediately after completing the next critical work unit."
+    "Operator: review and merge PR for tnf/operator-handoff-sync-20261112",
+    "Continue priority queue from SESSION_HANDOFF_LATEST.json continuation.resume_checklist",
+    "Emit fresh handoff after next critical work unit"
   ],
   "reflection": {
     "lessons": {
@@ -234,7 +229,7 @@
     "canonical_source": "whodaniel/tnf-monorepo",
     "actual": "whodaniel/tnf-monorepo",
     "origin": "https://github.com/whodaniel/tnf-monorepo.git",
-    "dirty": true,
+    "dirty": false,
     "operation_in_progress": null,
     "publication_targets": [
       "whodaniel/The-New-Fuse",
@@ -242,7 +237,7 @@
     ]
   },
   "artifacts": {
-    "commits": ["09a8c53ca5eb304a019dd3f21c7516330f6f2c8f"]
+    "commits": ["c5b334eff8b29f7f24e416baa77dbc83edac9a33"]
   },
   "classification": {
     "work_domain": "unknown",
@@ -263,6 +258,6 @@
   "task_id": "TNF-SESSION",
   "turn_status": "turn_complete",
   "task_status": "in_progress",
-  "supersedes": ["f296bd9d-0f64-41ef-88de-78ec481d6ce4"],
-  "record_hash": "446c5350c8477c49cf9a0f4cc1ae55d563f8918991e0198045488c4b567fa441"
+  "supersedes": ["15d5fd42-df04-4b58-ace2-0e6497bb6a6b"],
+  "record_hash": "9e571b636811386da53d8e8fb0b03814d831315f848a06feedc86a4d833aad79"
 }
