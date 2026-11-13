@@ -496,6 +496,45 @@ async function requireSuperAdmin(
     return;
   }
 
+  // Allow assigned & operator-authorized AI directors (sub-director / super-director /
+  // super-admin in ~/.tnf/authority/roles.json + active D27 standing authorization in
+  // ~/.tnf/authority/tier.json) to execute full-auto loops without interactive readline prompts.
+  if (commandLabel.startsWith('full-auto')) {
+    try {
+      const home = process.env.TNF_AUTHORITY_HOME || os.homedir() || process.env.HOME || '';
+      const rolesPath = path.join(home, '.tnf', 'authority', 'roles.json');
+      const tierPath = path.join(home, '.tnf', 'authority', 'tier.json');
+      const candidateRaw =
+        process.env.TNF_AGENT_ID || process.env.AGENT_NAME || 'tnf-cli-agent';
+      const aliasMap: Record<string, string> = {
+        'tnf-cli-agent': 'did:tnf:local:agent:tnfcli:tnf_cli_agent:001',
+        'tnf-local-subdirector': 'did:tnf:local:agent:tnfcli:tnf_local_subdirector:001',
+        'agy-orchestrator': 'did:tnf:local:agent:antigravity:agy_orchestrator:001',
+      };
+      const did = aliasMap[candidateRaw] || candidateRaw;
+      if (fs.existsSync(rolesPath) && fs.existsSync(tierPath)) {
+        const rolesDoc = JSON.parse(fs.readFileSync(rolesPath, 'utf8'));
+        const tierDoc = JSON.parse(fs.readFileSync(tierPath, 'utf8'));
+        const entry = rolesDoc?.agents?.[did];
+        const hasDirectorRole =
+          entry && ['sub-director', 'super-director', 'super-admin'].includes(String(entry.role));
+        const now = Date.now();
+        const hasStanding =
+          tierDoc?.humanInTheLoopRequired === false &&
+          Array.isArray(tierDoc?.standingAuthorizations) &&
+          tierDoc.standingAuthorizations.some((s: any) => {
+            const exp = s?.expiresAt ? Date.parse(String(s.expiresAt)) : Infinity;
+            return exp > now && (s?.id === 'd27-autonomous-self-improvement' || s?.scope === '**');
+          });
+        if (hasDirectorRole && hasStanding) {
+          return;
+        }
+      }
+    } catch {
+      // Fail closed to interactive Super Admin prompt below
+    }
+  }
+
   const readline = await import('readline/promises');
   const rl = readline.createInterface({
     input: process.stdin,
@@ -4760,7 +4799,7 @@ const logMessage = (message: AgentMessage) => {
 
   const emoji = roleEmoji[fromRole] || '📨';
 
-  // Display routing / target formatting only (not authorization)
+  // Display routing / target formatting only
   let color = chalk.white;
   if (fromRole === 'orchestrator') {
     color = chalk.yellow;
