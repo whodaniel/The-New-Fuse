@@ -2420,6 +2420,22 @@
       ],
       "acquiredAt": "2026-11-13T19:38:33.236Z",
       "ttlMinutes": 120
+    },
+    {
+      "agent": "tnf-muse",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "apps/frontend/src/components/auth/GuestFooter.tsx",
+        "apps/frontend/src/pages/auth/ForgotPassword.tsx",
+        "apps/frontend/src/pages/auth/Login.tsx",
+        "apps/frontend/src/pages/auth/Register.tsx",
+        "apps/frontend/src/pages/Landing/index.tsx",
+        "REPO_MAP.md",
+        "docs/protocols/reports/session_handoff_tnf-muse-20261125T073550-a2cce4e8.json",
+        "docs/protocols/reports/session_handoff_tnf-muse-20261125T073550-a2cce4e8.md"
+      ],
+      "acquiredAt": "2026-11-25T07:35:50.899Z",
+      "ttlMinutes": 120
     }
   ]
 }

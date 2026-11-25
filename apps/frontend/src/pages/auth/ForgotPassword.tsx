@@ -1,4 +1,5 @@
 // @ts-nocheck
+import GuestFooter from '@/components/auth/GuestFooter';
 import { GlassCard, PremiumButton, PremiumInput } from '@/components/ui';
 import { useAuth } from '@/hooks/useAuth';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -122,6 +123,7 @@ const ForgotPassword = () => {
               </div>
             </>
           )}
+          <GuestFooter />
         </GlassCard>
       </div>
     </div>

@@ -1,14 +1,14 @@
-# SESSION_HANDOFF (tnf-orchestrator)
+# SESSION_HANDOFF (tnf-muse)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-13T19:38:29.893Z` Handoff ID: `d423dc1c-770d-493b-a353-587867e158bd`
+`2026-11-25T07:35:50.157Z` Handoff ID: `a2cce4e8-a6d8-4c3e-916e-0ecb637ebd48`
 
 ## Scope
 
-- Repository: `whodaniel/tnf-monorepo`
+- Repository: `git@ssh.github.com:whodaniel/The-New-Fuse`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `main`
-- Head SHA: `26034be3c6d05c95037e433a080c288f16652506`
+- Branch: `app-fixes-2026-11-25`
+- Head SHA: `3e74004b55c5ee9d79c3b249fc2b3ee92f332c20`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -20,71 +20,28 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Work Summary
 
-- Protocol enforcement layer implemented for mandatory session handoff
-  continuity.
-- CI/hook gates now block critical changes without fresh handoff artifacts.
+- F3 auth link bundle shipped: new shared GuestFooter component (Privacy Policy
+  / Terms of Service) wired into Login, Register, ForgotPassword;
+  forgot-password link added to Login; SSO labels standardized (Continue with
+  Google/GitHub, Email me a magic link) with or-continue-with divider; Register
+  gains GitHub and magic-link parity with Login plus a Terms of Service /
+  Privacy Policy consent line. TASK-003 findings 3/5/6, staged spec fix-03.
 
 ## Changed Paths
 
-- apps/api/src/app.module.ts
-- apps/api/src/modules/personal-intelligence/personal-intelligence.controller.ts
-- apps/api/src/modules/personal-intelligence/personal-intelligence.module.ts
-- apps/api/src/modules/personal-intelligence/personal-intelligence.service.spec.ts
-- apps/api/src/modules/personal-intelligence/personal-intelligence.service.ts
-- apps/api/src/modules/personal-intelligence/personal-intelligence.store.ts
-- apps/api/src/modules/personal-intelligence/personal-intelligence.types.ts
-- apps/frontend/src/ComprehensiveRouter.tsx
-- apps/frontend/src/components/personal-intelligence/GoogleAiSourceModule.tsx
-- apps/frontend/src/components/personal-intelligence/SourceIngestPanel.tsx
-- apps/frontend/src/components/personal-intelligence/types.ts
-- apps/frontend/src/pages/PlatformHub.tsx
-- docs/operations/tnf-substrate-seal.json
+- apps/frontend/src/components/auth/GuestFooter.tsx
+- apps/frontend/src/pages/auth/ForgotPassword.tsx
+- apps/frontend/src/pages/auth/Login.tsx
+- apps/frontend/src/pages/auth/Register.tsx
+- apps/frontend/src/pages/Landing/index.tsx
+- REPO_MAP.md
+- docs/protocols/reports/session_handoff_tnf-muse-20261125T073550-a2cce4e8.json
+- docs/protocols/reports/session_handoff_tnf-muse-20261125T073550-a2cce4e8.md
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
-- docs/protocols/handoff-registry.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T192614-b6753cff.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T192614-b6753cff.md
 - docs/protocols/workspace-leases.json
-- packages/tnf-cli/src/cli.ts
-- packages/tnf-cli/src/commands/personal-intel.ts
-- .agent/skills/tnf-proactive-goal-wizard/SKILL.md
-- apps/chrome-extension/aivi/cli/batch-processor.js
-- apps/chrome-extension/aivi/cli/process-recent-watch-history.js
-- apps/chrome-extension/aivi/src/DirectAPIProcessor.js
-- apps/frontend/docs/audits/self-improvement-scorecard.json
-- apps/frontend/docs/audits/self-improvement-scorecard.md
-- apps/frontend/public/data/providers/catalog.json
-- apps/frontend/public/data/providers/nvidia-models.json
-- apps/frontend/src/components/visualization/InteractiveCodebaseMap.tsx
-- data/providers/catalog.json
-- data/providers/nvidia-models.json
-- docs/operations/tnf-self-improvement-run-log.md
-- docs/protocols/DIRECTIVES.md
-- docs/protocols/LIVING_DIRECTIVES_CARD.md
-- docs/protocols/challenge-rationales/2026-11-13-directives-a3-proactive-dialogs.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170253-4a8425e3.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T170927-73b7d9b0.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T172803-5e8febe5.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T172803-5e8febe5.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T174600-998b9cd7.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T174600-998b9cd7.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T175457-84f86b13.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T175457-84f86b13.md
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T185912-462742a1.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T185912-462742a1.md
-- packages/sync-core/src/dashboard/useSyncDashboard.ts
-- packages/tnf-cli/package.json
-- packages/tnf-cli/src/command-surface.snapshot.json
-- packages/tnf-cli/src/services/ModelsService.resolve-args.test.ts
-- packages/tnf-cli/src/services/ModelsService.ts
-- packages/tnf-cli/src/slashCommands.ts
-- scripts/runtime/install-self-improvement-launchd.sh
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T193829-d423dc1c.json
-- docs/protocols/reports/session_handoff_tnf-orchestrator-20261113T193829-d423dc1c.md
 
 ## Verification
 
@@ -95,8 +52,8 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Continuation
 
-- Owner: `tnf-orchestrator`
-- Targets: `story-architect`, `librarian`
+- Owner: `tnf-muse`
+- Targets: `frontend`
 - Priority: `high`
 
 ### Resume Checklist
@@ -108,7 +65,10 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Next Actions
 
-- Continue priority queue from SESSION_HANDOFF_LATEST.json
-  continuation.resume_checklist.
-- Emit a fresh handoff artifact immediately after completing the next critical
-  work unit.
+- Apply F2 app-root landing change (ComprehensiveRouter MarketplaceRootRoute
+  renders Landing for logged-out app-host visitors; Landing page chrome/copy
+  cleanup)
+- Apply F1+F4 onboarding wiring (real OnboardingFlow at /onboarding, LazyPage
+  placeholder lines removed) and hardening (UserTypeDetection retry, auth-aware
+  Skip, GuestFooter in flow, WelcomeStep product sentence)
+- Run the frontend build, push the branch, merge to main, verify remote HEAD
