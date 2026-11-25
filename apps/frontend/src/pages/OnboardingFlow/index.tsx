@@ -1,11 +1,14 @@
+import GuestFooter from '@/components/auth/GuestFooter';
 import { UserTypeDetection } from '@/components/onboarding/UserTypeDetection';
 import { OnboardingWizard } from '@/components/wizard/OnboardingWizard';
 import { WizardProvider } from '@/components/wizard/WizardProvider';
+import { useAuth } from '@/hooks/useAuth';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const OnboardingFlow: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [userType, setUserType] = useState<'human' | 'ai_agent' | 'unknown' | null>(null);
 
   const handleDetectionComplete = (detectedUserType: 'human' | 'ai_agent' | 'unknown') => {
@@ -31,10 +34,10 @@ export const OnboardingFlow: React.FC = () => {
       <div className="fixed right-4 top-4 z-50">
         <button
           type="button"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate(isAuthenticated ? '/dashboard' : '/')}
           className="rounded-full bg-slate-950/80 backdrop-blur-md px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 shadow-lg ring-1 ring-white/10 transition-colors hover:bg-slate-900 hover:text-white"
         >
-          Skip for now → Dashboard
+          {isAuthenticated ? 'Skip for now → Dashboard' : 'Skip for now → Home'}
         </button>
       </div>
       {userType === null ? (
@@ -46,6 +49,7 @@ export const OnboardingFlow: React.FC = () => {
           <OnboardingWizard userType={userType} onComplete={handleOnboardingComplete} />
         </WizardProvider>
       )}
+      <GuestFooter />
     </div>
   );
 };

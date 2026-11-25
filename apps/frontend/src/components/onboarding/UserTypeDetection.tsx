@@ -2,22 +2,37 @@ import { GlassCard } from '@/components/ui';
 import axios, { AxiosError } from 'axios';
 import { AlertCircle, Bot, Check, Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface UserTypeDetectionProps {
   onDetectionComplete: (userType: 'human' | 'ai_agent' | 'unknown') => void;
 }
 
+const initialDetectionSteps = () => [
+  { name: 'Analyzing connection', complete: false },
+  { name: 'Checking authentication method', complete: false },
+  { name: 'Analyzing request patterns', complete: false },
+  { name: 'Determining user type', complete: false },
+];
+
 export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectionComplete }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [detectionSteps, setDetectionSteps] = useState([
-    { name: 'Analyzing connection', complete: false },
-    { name: 'Checking authentication method', complete: false },
-    { name: 'Analyzing request patterns', complete: false },
-    { name: 'Determining user type', complete: false },
-  ]);
+  const [inviteOnlyBlocked, setInviteOnlyBlocked] = useState(false);
+  const [runId, setRunId] = useState(0);
+  const [detectionSteps, setDetectionSteps] = useState(initialDetectionSteps);
+
+  const handleRetry = () => {
+    setInviteOnlyBlocked(false);
+    setRunId((id) => id + 1);
+  };
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
+    setInviteOnlyBlocked(false);
+    setDetectionSteps(initialDetectionSteps());
+
     const detectUserType = async () => {
       try {
         // Update first step
@@ -76,6 +91,7 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
 
         if (status === 403) {
           setError(apiMessage || 'Invite code or onboarding token is required to continue.');
+          setInviteOnlyBlocked(true);
           return;
         }
 
@@ -86,7 +102,7 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
     };
 
     detectUserType();
-  }, [onDetectionComplete]);
+  }, [onDetectionComplete, runId]);
 
   const completedSteps = detectionSteps.filter((step) => step.complete).length;
   const progressValue = (completedSteps / detectionSteps.length) * 100;
@@ -108,6 +124,33 @@ export const UserTypeDetection: React.FC<UserTypeDetectionProps> = ({ onDetectio
         <div className="bg-red-500/10 border border-red-500/20 text-red-200 px-4 py-2 rounded-md mb-6 flex items-center gap-3 text-left">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <p>{error}</p>
+        </div>
+      )}
+
+      {inviteOnlyBlocked && (
+        <p className="text-sm text-gray-300 mb-6">
+          Onboarding is currently invite-only. If you have an invite code, add{' '}
+          <code className="text-blue-300">?invite=YOUR-CODE</code> to the address bar — or{' '}
+          <Link to="/auth/login" className="text-blue-400 hover:text-blue-300">
+            sign in
+          </Link>{' '}
+          or{' '}
+          <Link to="/auth/register" className="text-blue-400 hover:text-blue-300">
+            create an account
+          </Link>{' '}
+          to continue.
+        </p>
+      )}
+
+      {error && (
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={handleRetry}
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500"
+          >
+            Try again
+          </button>
         </div>
       )}
 

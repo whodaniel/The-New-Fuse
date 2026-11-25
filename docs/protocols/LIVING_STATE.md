@@ -151,6 +151,10 @@
 
 ## History
 
+- 2026-11-25T07:45:22.354Z handoff `b3aaab75-5581-42fa-b9c1-488081a5e67e` head
+  `4110cf518050` project `TASK-003` — Push branch app-fixes-2026-11-25, merge to
+  main, verify remote HEAD with git ls-remote
+
 - 2026-11-25T07:44:47.927Z handoff `dee42f1b-aa4a-4186-9f20-d76aef04b7c4` head
   `e50412c15362` project `TASK-003` — Apply F1+F4 onboarding wiring (real
   OnboardingFlow at /onboarding, LazyPage placeholder lines removed) and

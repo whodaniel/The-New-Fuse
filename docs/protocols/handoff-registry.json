@@ -6,7 +6,7 @@
     "fingerprint": "79a94fd6ce4739dc",
     "origin": "git@ssh.github.com:whodaniel/The-New-Fuse"
   },
-  "mirroredAt": "2026-11-25T07:44:48.161Z",
+  "mirroredAt": "2026-11-25T07:45:22.756Z",
   "rows": [
     {
       "handoff_id": "a2cce4e8-a6d8-4c3e-916e-0ecb637ebd48",
@@ -44,9 +44,29 @@
         "state": "unverified"
       },
       "supersedes": ["a2cce4e8-a6d8-4c3e-916e-0ecb637ebd48"],
+      "superseded_by": "b3aaab75-5581-42fa-b9c1-488081a5e67e",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/dee42f1b-aa4a-4186-9f20-d76aef04b7c4.json"
+    },
+    {
+      "handoff_id": "b3aaab75-5581-42fa-b9c1-488081a5e67e",
+      "record_hash": "6f29ad8fdd3f710a6aa44f7f5359ee699899a5864850df76aadd41af7e93c8ed",
+      "created_at": "2026-11-25T07:45:21.651Z",
+      "task_id": "TASK-003",
+      "session_id": null,
+      "checkout_id": "co_unregistered_79a94fd6ce4739dc",
+      "branch": "app-fixes-2026-11-25",
+      "head_sha": "4110cf5180502fd660e31cc3bcef268411b63f17",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["dee42f1b-aa4a-4186-9f20-d76aef04b7c4"],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/dee42f1b-aa4a-4186-9f20-d76aef04b7c4.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/b3aaab75-5581-42fa-b9c1-488081a5e67e.json"
     }
   ]
 }

@@ -19,6 +19,10 @@ export const WelcomeStep: React.FC = () => {
         <h1 className="text-2xl font-bold mb-2">
           {isAIAgent ? 'Welcome to The New Fuse Agent Network' : 'Welcome to The New Fuse'}
         </h1>
+        <p className="text-lg text-muted-foreground mb-2">
+          TNF coordinates autonomous and human-operated AI agents across browser, CLI, relay, MCP,
+          workflow, and governance surfaces.
+        </p>
         <p className="text-lg text-muted-foreground">
           {isAIAgent
             ? 'This wizard will guide you through the process of integrating with our AI agent network.'
