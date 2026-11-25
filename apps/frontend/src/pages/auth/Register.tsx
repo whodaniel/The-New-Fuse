@@ -1,4 +1,5 @@
 // @ts-nocheck
+import GuestFooter from '@/components/auth/GuestFooter';
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import { useAuth } from '@/providers/AuthProvider';
 import React, { useEffect, useState } from 'react';
@@ -11,7 +12,14 @@ const isTruthy = (value: string | undefined): boolean => {
 };
 
 const Register: React.FC = () => {
-  const { isAuthenticated, isLoading: isAuthLoading, register, signInWithGoogle } = useAuth();
+  const {
+    isAuthenticated,
+    isLoading: isAuthLoading,
+    register,
+    signInWithGoogle,
+    signInWithGitHub,
+    signInWithMagicLink,
+  } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -112,6 +120,37 @@ const Register: React.FC = () => {
     }
   };
 
+  const handleGitHubSignUp = async () => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      const result = await signInWithGitHub();
+      if (result?.method === 'github_redirect') return;
+      navigate('/dashboard', { replace: true });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : (err as { message?: string })?.message;
+      setError(message || 'GitHub sign-up failed');
+      setIsLoading(false);
+    }
+  };
+
+  const handleMagicLink = async () => {
+    setError(null);
+    if (!email) {
+      setError('Enter your email to receive a magic link.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await signInWithMagicLink(email, '/dashboard');
+      setError('Magic link sent. Check your inbox to continue.');
+    } catch (err: unknown) {
+      setError(err?.message || 'Failed to send magic link');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
       <div className="w-full max-w-md rounded-md border border-slate-800 bg-slate-900 p-4">
@@ -119,7 +158,9 @@ const Register: React.FC = () => {
           <TnfLogo size={48} showWordmark wordmarkClassName="text-lg text-white" />
         </div>
         <h1 className="text-2xl font-semibold text-white">Create account</h1>
-        <p className="mt-2 text-sm text-slate-400">Create your TNF account to get started.</p>
+        <p className="mt-2 text-sm text-slate-400">
+          Create your The New Fuse (TNF) account to start orchestrating your AI agents.
+        </p>
 
         {error && (
           <div
@@ -222,6 +263,18 @@ const Register: React.FC = () => {
             {isLoading ? 'Creating account...' : 'Create account'}
           </button>
 
+          <p className="text-sm text-slate-400">
+            By creating an account, you agree to our{' '}
+            <Link to="/legal/terms" className="text-blue-400 hover:text-blue-300">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link to="/legal/privacy" className="text-blue-400 hover:text-blue-300">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+
           {requireTurnstile && turnstileSiteKey && (
             <div className="pt-2">
               <TurnstileWidget
@@ -233,7 +286,13 @@ const Register: React.FC = () => {
           )}
         </form>
 
-        <div className="mt-4">
+        <div className="mt-6 flex items-center gap-3" aria-hidden="true">
+          <span className="h-px flex-1 bg-slate-700" />
+          <span className="text-xs uppercase tracking-wide text-slate-500">or continue with</span>
+          <span className="h-px flex-1 bg-slate-700" />
+        </div>
+
+        <div className="mt-4 space-y-3">
           <button
             type="button"
             onClick={handleGoogleSignUp}
@@ -241,6 +300,22 @@ const Register: React.FC = () => {
             className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
           >
             Continue with Google
+          </button>
+          <button
+            type="button"
+            onClick={handleGitHubSignUp}
+            disabled={isLoading}
+            className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          >
+            Continue with GitHub
+          </button>
+          <button
+            type="button"
+            onClick={handleMagicLink}
+            disabled={isLoading}
+            className="w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-2 font-medium text-slate-200 hover:bg-slate-900 disabled:opacity-50"
+          >
+            Email me a magic link
           </button>
         </div>
 
@@ -250,6 +325,8 @@ const Register: React.FC = () => {
             Sign in
           </Link>
         </p>
+
+        <GuestFooter />
       </div>
     </main>
   );

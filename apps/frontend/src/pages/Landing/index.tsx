@@ -1,9 +1,7 @@
-import MobileNav from '@/components/MobileNav';
 import {
   defaultStats,
   defaultTestimonials,
   defaultTrustBadges,
-  EmailSignupForm,
   FeatureShowcase,
   HeroCTAWithTrust,
   SecondaryCTA,
@@ -14,18 +12,8 @@ import { useNavigate } from 'react-router-dom';
 export default function LandingPage() {
   const navigate = useNavigate();
 
-  // Form submission handlers
-  const handleEmailSignup = async (email: string, type: string) => {
-    // TODO: Implement email signup API call
-    console.log('Email signup:', { email, type });
-    return new Promise<void>((resolve) => setTimeout(resolve, 1000));
-  };
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile-Optimized Navigation */}
-      <MobileNav />
-
       {/* Hero Section - Mobile First */}
       <section
         id="hero"
@@ -39,13 +27,13 @@ export default function LandingPage() {
                 Welcome to <span className="text-primary">The New Fuse</span>
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto lg:mx-0">
-                Discover a new way to collaborate and manage your workspaces efficiently. Build
-                powerful AI-driven workflows with ease.
+                TNF coordinates autonomous and human-operated AI agents across browser, CLI, relay,
+                MCP, workflow, and governance surfaces.
               </p>
               {/* CTA Buttons - Enhanced with new components */}
               <div className="flex justify-center lg:justify-start">
                 <HeroCTAWithTrust
-                  onGetStarted={() => navigate('/login')}
+                  onGetStarted={() => navigate('/auth/login')}
                   onWatchDemo={() => {
                     /* Demo handler */
                   }}
@@ -94,11 +82,6 @@ export default function LandingPage() {
       <section id="about" className="py-16 px-4 sm:px-3 md:py-24">
         <div className="container mx-auto max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-12">
-            <div className="flex-1 animate-slide-in-left">
-              <div className="aspect-video rounded-md bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
-                <p className="text-muted-foreground">About Illustration</p>
-              </div>
-            </div>
             <div className="flex-1 animate-slide-in-right">
               <h2 className="text-2xl sm:text-2xl md:text-4xl font-bold text-foreground mb-4">
                 Built for the Future
@@ -256,105 +239,8 @@ export default function LandingPage() {
           'Community support and docs',
         ]}
         ctaText="Get Started"
-        onCtaClick={() => navigate('/login')}
+        onCtaClick={() => navigate('/auth/login')}
       />
-
-      {/* Email Signup Section */}
-      <section id="contact" className="py-16 px-4 sm:px-3 md:py-24">
-        <div className="container mx-auto max-w-4xl">
-          <EmailSignupForm
-            title="Stay Updated"
-            description="Get the latest updates, tips, and exclusive content delivered to your inbox."
-            placeholder="Enter your email address"
-            buttonText="Subscribe"
-            type="newsletter"
-            onSubmit={handleEmailSignup}
-            showPrivacyNote={true}
-          />
-        </div>
-      </section>
-
-      {/* Footer - Mobile Optimized */}
-      <footer className="bg-muted/50 border-t border-border py-12 px-4 sm:px-3">
-        <div className="container mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div>
-              <h3 className="text-lg font-semibold text-foreground mb-4">The New Fuse</h3>
-              <p className="text-base text-muted-foreground">
-                Building the future of AI-powered automation.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-base font-semibold text-foreground mb-4">Product</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#features"
-                    className="text-base text-muted-foreground hover:text-foreground transition-colors min-h-touch inline-block"
-                  >
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#pricing"
-                    className="text-base text-muted-foreground hover:text-foreground transition-colors min-h-touch inline-block"
-                  >
-                    Pricing
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-base font-semibold text-foreground mb-4">Company</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#about"
-                    className="text-base text-muted-foreground hover:text-foreground transition-colors min-h-touch inline-block"
-                  >
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#contact"
-                    className="text-base text-muted-foreground hover:text-foreground transition-colors min-h-touch inline-block"
-                  >
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-base font-semibold text-foreground mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="/legal/privacy"
-                    className="text-base text-muted-foreground hover:text-foreground transition-colors min-h-touch inline-block"
-                  >
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/legal/terms"
-                    className="text-base text-muted-foreground hover:text-foreground transition-colors min-h-touch inline-block"
-                  >
-                    Terms
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-border pt-8 text-center">
-            <p className="text-base text-muted-foreground">
-              © 2026 The New Fuse. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

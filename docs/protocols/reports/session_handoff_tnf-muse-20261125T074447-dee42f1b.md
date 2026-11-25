@@ -1,0 +1,82 @@
+# SESSION_HANDOFF (tnf-muse)
+
+Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
+`2026-11-25T07:44:47.601Z` Handoff ID: `dee42f1b-aa4a-4186-9f20-d76aef04b7c4`
+
+## Scope
+
+- Repository: `git@ssh.github.com:whodaniel/The-New-Fuse`
+- Canonical Source: `whodaniel/tnf-monorepo`
+- Branch: `app-fixes-2026-11-25`
+- Head SHA: `e50412c153624370bd96fa95b03433b7baf1ece0`
+- Sensitive Scope: `internal`
+
+## Classification
+
+- Work Domain: `unknown`
+- Artifact Destination: `unknown`
+- Data Residency: `unknown`
+- Sensitivity: `unknown`
+
+## Work Summary
+
+- F2 app-root landing shipped: MarketplaceRootRoute on app hosts now renders the
+  real Landing page for logged-out visitors (auth loading state shown while
+  resolving; signed-in users still redirect to /dashboard);
+  marketplace/landing/unknown host branches untouched. Landing page: hero
+  subhead replaced with the AgentTruthLayer product sentence verbatim, duplicate
+  MobileNav and page footer removed (route already renders inside PublicLayout),
+  CTAs normalized from /login to /auth/login, dead Stay Updated email-signup
+  section and its TODO handler removed (D3), About Illustration placeholder box
+  removed (D4). Pricing copy (D5) and Enterprise /contact CTA (D6) deliberately
+  left unchanged, flagged open for Daniel. TASK-003 finding 2, staged spec
+  fix-02.
+
+## Changed Paths
+
+- apps/frontend/src/ComprehensiveRouter.tsx
+- apps/frontend/src/components/onboarding/UserTypeDetection.tsx
+- apps/frontend/src/components/wizard/steps/WelcomeStep.tsx
+- apps/frontend/src/pages/Landing/index.tsx
+- apps/frontend/src/pages/OnboardingFlow/index.tsx
+- apps/frontend/src/components/auth/GuestFooter.tsx
+- apps/frontend/src/pages/auth/ForgotPassword.tsx
+- apps/frontend/src/pages/auth/Login.tsx
+- apps/frontend/src/pages/auth/Register.tsx
+- docs/protocols/AGENT_STATUS_LEDGER.md
+- docs/protocols/LIVING_STATE.md
+- docs/protocols/handoff-registry.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.json
+- docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- docs/protocols/reports/session_handoff_tnf-muse-20261125T073550-a2cce4e8.json
+- docs/protocols/reports/session_handoff_tnf-muse-20261125T073550-a2cce4e8.md
+- docs/protocols/workspace-leases.json
+- docs/protocols/reports/session_handoff_tnf-muse-20261125T074447-dee42f1b.json
+- docs/protocols/reports/session_handoff_tnf-muse-20261125T074447-dee42f1b.md
+
+## Verification
+
+- privacy_guard: `na`
+- secret_sweep: `na`
+- docs_pii_guard: `na`
+- supabase_rls_audit: `na`
+
+## Continuation
+
+- Owner: `tnf-muse`
+- Targets: `frontend`
+- Priority: `high`
+
+### Resume Checklist
+
+- Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md
+- Validate SESSION_HANDOFF_LATEST.json against
+  docs/protocols/schemas/tnf-session-handoff.schema.json
+- Execute listed next actions in order and preserve privacy/security gates
+
+## Next Actions
+
+- Apply F1+F4 onboarding wiring (real OnboardingFlow at /onboarding, LazyPage
+  placeholder lines removed) and hardening (UserTypeDetection retry and invite
+  guidance, auth-aware Skip, GuestFooter in flow, WelcomeStep product sentence)
+- Push branch, merge to main, verify remote HEAD

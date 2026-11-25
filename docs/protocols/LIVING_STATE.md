@@ -151,6 +151,21 @@
 
 ## History
 
+- 2026-11-25T07:45:22.354Z handoff `b3aaab75-5581-42fa-b9c1-488081a5e67e` head
+  `4110cf518050` project `TASK-003` — Push branch app-fixes-2026-11-25, merge to
+  main, verify remote HEAD with git ls-remote
+
+- 2026-11-25T07:44:47.927Z handoff `dee42f1b-aa4a-4186-9f20-d76aef04b7c4` head
+  `e50412c15362` project `TASK-003` — Apply F1+F4 onboarding wiring (real
+  OnboardingFlow at /onboarding, LazyPage placeholder lines removed) and
+  hardening (UserTypeDetection retry and invite guidance, auth-aware Skip,
+  GuestFooter in flow, WelcomeStep product sentence)
+
+- 2026-11-25T07:35:50.883Z handoff `a2cce4e8-a6d8-4c3e-916e-0ecb637ebd48` head
+  `3e74004b55c5` project `TASK-003` — Apply F2 app-root landing change
+  (ComprehensiveRouter MarketplaceRootRoute renders Landing for logged-out
+  app-host visitors; Landing page chrome/copy cleanup)
+
 - 2026-11-13T19:38:33.224Z handoff `d423dc1c-770d-493b-a353-587867e158bd` head
   `26034be3c6d0` project `TNF-SESSION` — Continue priority queue from
   SESSION_HANDOFF_LATEST.json continuation.resume_checklist.

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import GuestFooter from '@/components/auth/GuestFooter';
 import TurnstileWidget from '@/components/auth/TurnstileWidget';
 import { useAuth } from '@/providers/AuthProvider';
 import { stashDeepLinkNext } from '@/services/authSession';
@@ -194,7 +195,9 @@ const Login: React.FC = () => {
           <TnfLogo size={48} showWordmark wordmarkClassName="text-lg text-white" />
         </div>
         <h1 className="text-2xl font-semibold text-white">Sign in</h1>
-        <p className="mt-2 text-sm text-slate-400">New Cloudflare-ready auth flow</p>
+        <p className="mt-2 text-sm text-slate-400">
+          Sign in to your AI agent orchestration control plane.
+        </p>
 
         {error && (
           <div className="mt-4 rounded-md border border-red-900 bg-red-950 p-3 text-sm text-red-200">
@@ -233,6 +236,12 @@ const Login: React.FC = () => {
               className="mt-1 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-white"
               placeholder="********"
             />
+          </div>
+
+          <div className="text-right">
+            <Link to="/auth/forgot-password" className="text-sm text-blue-400 hover:text-blue-300">
+              Forgot password?
+            </Link>
           </div>
 
           <button
@@ -275,6 +284,12 @@ const Login: React.FC = () => {
           )}
         </form>
 
+        <div className="mt-6 flex items-center gap-3" aria-hidden="true">
+          <span className="h-px flex-1 bg-slate-700" />
+          <span className="text-xs uppercase tracking-wide text-slate-500">or continue with</span>
+          <span className="h-px flex-1 bg-slate-700" />
+        </div>
+
         <div className="mt-4 space-y-3">
           <button
             type="button"
@@ -282,7 +297,7 @@ const Login: React.FC = () => {
             disabled={isLoading}
             className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
           >
-            Connect with Google
+            Continue with Google
           </button>
           <button
             type="button"
@@ -290,7 +305,7 @@ const Login: React.FC = () => {
             disabled={isLoading}
             className="w-full rounded-md border border-slate-700 bg-transparent px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:opacity-50"
           >
-            Connect with GitHub
+            Continue with GitHub
           </button>
         </div>
 
@@ -301,7 +316,7 @@ const Login: React.FC = () => {
             disabled={isLoading}
             className="w-full rounded-md border border-slate-700 bg-slate-950 px-4 py-2 font-medium text-slate-200 hover:bg-slate-900 disabled:opacity-50"
           >
-            Send magic link
+            Email me a magic link
           </button>
         </div>
 
@@ -311,6 +326,8 @@ const Login: React.FC = () => {
             Register
           </Link>
         </p>
+
+        <GuestFooter />
       </div>
     </div>
   );

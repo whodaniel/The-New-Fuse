@@ -23,6 +23,7 @@ import RequireMembership from './components/auth/RequireMembership';
 import RequirePermission from './components/auth/RequirePermission';
 import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
+import { useAuth } from './hooks/useAuth';
 
 // Lazy load heavy components for better performance
 const WorkspaceAnalytics = lazy(() => import('./pages/workspace/WorkspaceAnalytics'));
@@ -267,6 +268,8 @@ const TasksCalendar = lazy(() => import('./pages/Tasks/Calendar'));
 const CreateAgent = lazy(() => import('./pages/dashboard/CreateAgent'));
 const BillingPage = lazy(() => import('./pages/Billing'));
 const AdminLayoutConfigurator = lazy(() => import('./pages/Admin/AdminLayoutConfigurator'));
+const LandingPage = lazy(() => import('./pages/Landing'));
+const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
 
 // Archived or redundant components removed to resolve duplicates
 
@@ -276,8 +279,6 @@ const LazyPage = ({ name, path }: { name: string; path: string }) => (
     <h1 className="text-3xl font-bold mb-6">🚀 {name}</h1>
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
       <p className="text-lg mb-4">This is the {name} page.</p>
-      <p className="text-gray-600 mb-4">Path: {path}</p>
-      <p className="text-sm text-gray-500">This page is working and ready for content!</p>
     </div>
   </div>
 );
@@ -356,6 +357,8 @@ const getIsLandingHost = () => {
 };
 
 const MarketplaceRootRoute = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+
   if (typeof window === 'undefined') {
     return <div className="p-8">Loading...</div>;
   }
@@ -374,7 +377,17 @@ const MarketplaceRootRoute = () => {
   }
 
   if (isAppHost) {
-    return <Navigate to="/dashboard" replace />;
+    if (isLoading) {
+      return <LoadingFallback name="Layout" />;
+    }
+    if (isAuthenticated) {
+      return <Navigate to="/dashboard" replace />;
+    }
+    return (
+      <Suspense fallback={<LoadingFallback name="Landing" />}>
+        <LandingPage />
+      </Suspense>
+    );
   }
 
   // On the landing domain (thenewfuse.com/www.thenewfuse.com), the root path
@@ -2064,7 +2077,11 @@ export default function ComprehensiveRouter({ isApp: _isApp = false }: Comprehen
               />
               <Route
                 path="/onboarding"
-                element={<LazyPage name="Onboarding" path="/onboarding" />}
+                element={
+                  <Suspense fallback={<LoadingFallback name="Onboarding" />}>
+                    <OnboardingFlowPage />
+                  </Suspense>
+                }
               />
               <Route path="/support" element={<LazyPage name="Support" path="/support" />} />
               <Route
