@@ -151,6 +151,12 @@
 
 ## History
 
+- 2026-11-25T07:44:47.927Z handoff `dee42f1b-aa4a-4186-9f20-d76aef04b7c4` head
+  `e50412c15362` project `TASK-003` — Apply F1+F4 onboarding wiring (real
+  OnboardingFlow at /onboarding, LazyPage placeholder lines removed) and
+  hardening (UserTypeDetection retry and invite guidance, auth-aware Skip,
+  GuestFooter in flow, WelcomeStep product sentence)
+
 - 2026-11-25T07:35:50.883Z handoff `a2cce4e8-a6d8-4c3e-916e-0ecb637ebd48` head
   `3e74004b55c5` project `TASK-003` — Apply F2 app-root landing change
   (ComprehensiveRouter MarketplaceRootRoute renders Landing for logged-out

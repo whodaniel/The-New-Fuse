@@ -23,6 +23,7 @@ import RequireMembership from './components/auth/RequireMembership';
 import RequirePermission from './components/auth/RequirePermission';
 import ErrorBoundary from './components/ErrorBoundary';
 import RequireAuth from './components/RequireAuth';
+import { useAuth } from './hooks/useAuth';
 
 // Lazy load heavy components for better performance
 const WorkspaceAnalytics = lazy(() => import('./pages/workspace/WorkspaceAnalytics'));
@@ -267,6 +268,7 @@ const TasksCalendar = lazy(() => import('./pages/Tasks/Calendar'));
 const CreateAgent = lazy(() => import('./pages/dashboard/CreateAgent'));
 const BillingPage = lazy(() => import('./pages/Billing'));
 const AdminLayoutConfigurator = lazy(() => import('./pages/Admin/AdminLayoutConfigurator'));
+const LandingPage = lazy(() => import('./pages/Landing'));
 
 // Archived or redundant components removed to resolve duplicates
 
@@ -356,6 +358,8 @@ const getIsLandingHost = () => {
 };
 
 const MarketplaceRootRoute = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+
   if (typeof window === 'undefined') {
     return <div className="p-8">Loading...</div>;
   }
@@ -374,7 +378,17 @@ const MarketplaceRootRoute = () => {
   }
 
   if (isAppHost) {
-    return <Navigate to="/dashboard" replace />;
+    if (isLoading) {
+      return <LoadingFallback name="Layout" />;
+    }
+    if (isAuthenticated) {
+      return <Navigate to="/dashboard" replace />;
+    }
+    return (
+      <Suspense fallback={<LoadingFallback name="Landing" />}>
+        <LandingPage />
+      </Suspense>
+    );
   }
 
   // On the landing domain (thenewfuse.com/www.thenewfuse.com), the root path
