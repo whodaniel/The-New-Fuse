@@ -1,14 +1,14 @@
 # SESSION_HANDOFF (tnf-claude-usability-20261125)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-25T09:03:18.925Z` Handoff ID: `a47f06de-f407-4c82-b796-101692355b70`
+`2026-11-25T09:08:24.447Z` Handoff ID: `52a98c6b-831e-4807-9353-3cbd7e317d22`
 
 ## Scope
 
 - Repository: `whodaniel/The-New-Fuse`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `usability-fixes-2026-11-25`
-- Head SHA: `55e9a398c907f4b8774a7176215d71399ef8b185`
+- Head SHA: `78f1ff4cb3039826e1d9fbda5e74cfdc21ddff5c`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -20,29 +20,27 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Work Summary
 
-- C4 (usability findings 11+12): Personal Narrative header contrast fixed for
-  the dark card (slate-900/700 -> slate-100/300); Macro Horizon sync badge now
-  reflects macro loading/error state instead of always claiming Live Sync Active
+- C5 (usability finding 13): listTimelineEvents now records whether its result
+  came from the remote service or the local snapshot fallback
+  (getLastTimelineEventsSource); the Timeline page shows a Synced / Local only
+  chip beside Personal Narrative
 - Typecheck identical to baseline (85 pre-existing); vite production build
   passes
 
 ## Changed Paths
 
 - apps/frontend/src/pages/Timeline/index.tsx
-- apps/frontend/src/features/timeline/TimelineModule.tsx
-- apps/frontend/src/features/timeline/components/TimelineSlider.tsx
-- apps/frontend/src/features/timeline/hooks/useTimelineModule.ts
-- apps/frontend/src/types/timeline.ts
+- apps/frontend/src/services/unifiedLedgerApi.ts
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/handoff-registry.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T085813-792a8d76.json
-- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T085813-792a8d76.md
-- docs/protocols/workspace-leases.json
 - docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090318-a47f06de.json
 - docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090318-a47f06de.md
+- docs/protocols/workspace-leases.json
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090824-52a98c6b.json
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090824-52a98c6b.md
 
 ## Verification
 
@@ -66,4 +64,4 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Next Actions
 
-- Continue usability clusters C5-C11 (findings 13-26)
+- Continue usability clusters C6-C11 (findings 14-26)

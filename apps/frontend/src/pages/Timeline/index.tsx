@@ -10,6 +10,7 @@ import {
   deleteTimelineEvent,
   getApiErrorMessage,
   getGithubNarrativeGraph,
+  getLastTimelineEventsSource,
   importGithubTimelineNarrative,
   listTimelineEvents,
   updateTimelineEvent,
@@ -195,6 +196,7 @@ export default function TimelinePage() {
     refresh,
   } = useTimeline();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [eventsSource, setEventsSource] = useState<'remote' | 'local' | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(false);
@@ -357,6 +359,7 @@ export default function TimelinePage() {
     try {
       const rows = await listTimelineEvents(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
       setEvents(rows);
+      setEventsSource(getLastTimelineEventsSource());
       if (rows.length && !selectedId) {
         setSelectedId(rows[0].id);
       } else if (rows.length === 0) {
@@ -852,6 +855,19 @@ export default function TimelinePage() {
               <p className="text-xs text-slate-300 uppercase font-bold tracking-widest mt-0.5">
                 Milestones, Identity & Life Events
               </p>
+              {eventsSource ? (
+                <span
+                  className={`mt-2 inline-flex w-fit items-center rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                    eventsSource === 'local'
+                      ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                      : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                  }`}
+                >
+                  {eventsSource === 'local'
+                    ? 'Local only — will sync when the service is reachable'
+                    : 'Synced'}
+                </span>
+              ) : null}
             </div>
             <div className="flex items-center gap-2">
               <Label htmlFor="timeline-category-filter" className="text-xs text-slate-300">

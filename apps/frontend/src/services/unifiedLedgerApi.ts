@@ -1,8 +1,5 @@
 import { hasSupabaseConfig, supabase } from '@/lib/supabase';
-import {
-  authFetch,
-  getAuthTokenCandidates as resolveAuthTokenCandidates,
-} from '@/utils/authToken';
+import { authFetch, getAuthTokenCandidates as resolveAuthTokenCandidates } from '@/utils/authToken';
 
 const generateId = () =>
   globalThis.crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -604,6 +601,19 @@ export async function voteSuggestion(
   );
 }
 
+export type TimelineEventsSource = 'remote' | 'local';
+
+let lastTimelineEventsSource: TimelineEventsSource | null = null;
+
+/**
+ * Where the most recent listTimelineEvents() result actually came from:
+ * the remote service, or the local snapshot fallback. Lets the UI say so
+ * instead of presenting local-only data as if it were synced.
+ */
+export function getLastTimelineEventsSource(): TimelineEventsSource | null {
+  return lastTimelineEventsSource;
+}
+
 export async function listTimelineEvents(params?: {
   ownerId?: string;
   userId?: string;
@@ -630,11 +640,14 @@ export async function listTimelineEvents(params?: {
   const suffix = search.toString() ? `?${search.toString()}` : '';
   try {
     const payload = await parse<unknown>(await timelineApiFetch(`/events${suffix}`));
-    return unwrapArrayPayload<TimelineEvent>(payload, ['events', 'items']);
+    const events = unwrapArrayPayload<TimelineEvent>(payload, ['events', 'items']);
+    lastTimelineEventsSource = 'remote';
+    return events;
   } catch (error) {
     if (!isTimelineFallbackEligible(error)) {
       throw error;
     }
+    lastTimelineEventsSource = 'local';
     return filterLocalTimelineEvents(readLocalTimelineSnapshot().events, params);
   }
 }
