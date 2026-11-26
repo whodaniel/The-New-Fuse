@@ -36,7 +36,7 @@ export default function HUD() {
     <div
       style={{
         position: 'fixed',
-        top: 0,
+        top: 52,
         left: 0,
         right: 0,
         zIndex: 50,

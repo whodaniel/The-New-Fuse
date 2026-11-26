@@ -65,7 +65,7 @@ export default function VoiceStatusIndicator() {
             color: '#8a7560',
           }}
         >
-          Voice Engine Status
+          Relay Connection
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div
@@ -80,7 +80,8 @@ export default function VoiceStatusIndicator() {
           <span style={{ color: getStatusColor() }}>{getStatusText()}</span>
         </div>
         <div style={{ fontSize: '10px', color: '#8a7560', marginTop: '2px' }}>
-          Routing: {relayStatus === 'connected' ? 'Local KWS (Port 43110)' : 'N/A'}
+          Transport: TNF relay (WebSocket)
+          {relayStatus === 'connected' ? ' · voice results via KWS' : ''}
         </div>
       </div>
     </div>

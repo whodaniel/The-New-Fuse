@@ -151,6 +151,10 @@
 
 ## History
 
+- 2026-11-25T09:29:38.646Z handoff `cd738091-85fa-49b0-ac01-4c1f3e2dcb9b` head
+  `edf5a2ec40cc` project `TNF-SESSION` — Continue usability clusters C10-C11
+  (findings 18, 25, 26), then push and merge
+
 - 2026-11-25T09:23:47.856Z handoff `46a6888f-1e48-46da-83ff-aa7bcc6bf63d` head
   `9858af492840` project `TNF-SESSION` — Continue usability clusters C9-C11
   (findings 10, 15, 16, 18-20, 24-26)

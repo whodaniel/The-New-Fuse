@@ -1,31 +1,34 @@
 {
   "spec": "tnf/session-handoff/0.3",
-  "handoff_id": "46a6888f-1e48-46da-83ff-aa7bcc6bf63d",
-  "created_at": "2026-11-25T09:23:47.520Z",
+  "handoff_id": "cd738091-85fa-49b0-ac01-4c1f3e2dcb9b",
+  "created_at": "2026-11-25T09:29:38.224Z",
   "repository": "whodaniel/The-New-Fuse",
   "branch": "usability-fixes-2026-11-25",
-  "head_sha": "9858af492840c182c3950cd29ee929c5e4390abc",
+  "head_sha": "edf5a2ec40cc6745b7c6361079fc82fa57b19a1f",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "C8 (usability findings 22+23): macro TimelineView gains an empty state when there are no plans, and its footer legend is scoped to records whose color encodes status",
+    "C9 (usability findings 10, 15, 16, 19, 20, 24): Virtual Library gains an offline banner naming the down service with the audio-stack start command, copy button and Settings link; Keys toggle reveals the canonical key list; BlockerOverlay teaches Tab/T; HUD offset below the strip; voice indicator renamed Relay Connection with corrected transport line; thought stream gains a relay-aware empty state",
     "Typecheck: same 85 pre-existing errors; vite production build passes"
   ],
   "changed_paths": [
+    "apps/frontend/src/pages/VirtualLibrary/VirtualLibraryPage.tsx",
+    "apps/frontend/src/pages/VirtualLibrary/components/ui/BlockerOverlay.tsx",
+    "apps/frontend/src/pages/VirtualLibrary/components/ui/HUD.tsx",
+    "apps/frontend/src/pages/VirtualLibrary/components/ui/LiveThoughtStream.tsx",
+    "apps/frontend/src/pages/VirtualLibrary/components/ui/VoiceStatusIndicator.tsx",
     "apps/frontend/src/features/timeline/components/TimelineView.tsx",
-    "apps/frontend/src/pages/Timeline/MacroTimelinePage.tsx",
-    "apps/frontend/src/pages/Timeline/index.tsx",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
     "docs/protocols/LIVING_STATE.md",
     "docs/protocols/handoff-registry.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091854-48157798.json",
-    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091854-48157798.md",
-    "docs/protocols/workspace-leases.json",
     "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092347-46a6888f.json",
-    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092347-46a6888f.md"
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092347-46a6888f.md",
+    "docs/protocols/workspace-leases.json",
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092938-cd738091.json",
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092938-cd738091.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -45,7 +48,7 @@
     ]
   },
   "next_actions": [
-    "Continue usability clusters C9-C11 (findings 10, 15, 16, 18-20, 24-26)"
+    "Continue usability clusters C10-C11 (findings 18, 25, 26), then push and merge"
   ],
   "reflection": {
     "lessons": {
@@ -71,7 +74,7 @@
     ]
   },
   "artifacts": {
-    "commits": ["9858af492840c182c3950cd29ee929c5e4390abc"]
+    "commits": ["edf5a2ec40cc6745b7c6361079fc82fa57b19a1f"]
   },
   "classification": {
     "work_domain": "unknown",
@@ -92,6 +95,6 @@
   "task_id": "TNF-SESSION",
   "turn_status": "turn_complete",
   "task_status": "in_progress",
-  "supersedes": ["48157798-2086-455a-8d57-1b6b8e22ae29"],
-  "record_hash": "54df268f1cf6a8c9a6b6d49b9479d8b38d1286cb6076505974c30c6be1e49458"
+  "supersedes": ["46a6888f-1e48-46da-83ff-aa7bcc6bf63d"],
+  "record_hash": "ace9c6fdc615bb4847ce7d62b0a8eecc3865129811a316d0df8b59334ef318a4"
 }

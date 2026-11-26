@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { Link } from 'react-router-dom';
 import LibraryScene from './components/3d/LibraryScene';
 import BlockerOverlay from './components/ui/BlockerOverlay';
 import BookDetailPanel from './components/ui/BookDetailPanel';
@@ -13,6 +14,7 @@ import { useLibraryStore } from './store';
 
 const STORY_RELAY = 'http://127.0.0.1:43120';
 const KWS_BASE = 'http://127.0.0.1:43110';
+const AUDIO_STACK_START_COMMAND = 'node scripts/library/ensure-library-audio-stack.cjs';
 const BLUEPRINTS_URL = 'http://127.0.0.1:5173';
 const RELAY_WS =
   typeof window !== 'undefined' && window.location.protocol === 'https:'
@@ -37,6 +39,8 @@ export default function App() {
   const books = useLibraryStore((s) => s.books);
   const addBooks = useLibraryStore((s) => s.addBooks);
   const [mode, setMode] = useState<'native' | 'blueprints'>('blueprints');
+  const [showKeys, setShowKeys] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [storyOnline, setStoryOnline] = useState<DepState>(null);
   const [kwsOnline, setKwsOnline] = useState<DepState>(null);
   const [libraryOnline, setLibraryOnline] = useState<DepState>(null);
@@ -112,6 +116,20 @@ export default function App() {
     return () => ws.close();
   }, [addThought, setRelayStatus]);
 
+  const offlineServices = [
+    storyOnline === false ? 'Story Architect' : null,
+    kwsOnline === false ? 'KWS (voice)' : null,
+  ].filter((name): name is string => name !== null);
+  const bannerVisible = offlineServices.length > 0;
+
+  const copyStartCommand = () => {
+    try {
+      void navigator.clipboard.writeText(AUDIO_STACK_START_COMMAND).then(() => setCopied(true));
+    } catch {
+      /* clipboard unavailable in this context */
+    }
+  };
+
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#1a1410', position: 'relative' }}>
       <div
@@ -148,12 +166,91 @@ export default function App() {
         >
           Open in new tab
         </button>
+        <button
+          type="button"
+          style={btnStyle}
+          onClick={() => setShowKeys((value) => !value)}
+          aria-expanded={showKeys}
+        >
+          Keys
+        </button>
         <span style={{ color: '#8a7560', fontSize: 12, marginLeft: 'auto' }}>
           Enable Voice inside the Library (optional) · Tab = Story Architect · T = Timeline
         </span>
       </div>
 
-      <div style={{ position: 'absolute', inset: 0, top: 52 }}>
+      {bannerVisible && (
+        <div
+          role="status"
+          style={{
+            position: 'fixed',
+            top: 52,
+            left: 0,
+            right: 0,
+            zIndex: 190,
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 10,
+            alignItems: 'center',
+            padding: '8px 14px',
+            background: 'rgba(80,32,16,0.95)',
+            borderBottom: '1px solid rgba(255,150,80,0.35)',
+            color: '#ffd9b0',
+            fontSize: 13,
+          }}
+        >
+          <span>
+            {offlineServices.join(' and ')} offline — related features are unavailable until the
+            local stack is running. Start it with:
+          </span>
+          <code
+            style={{
+              background: 'rgba(0,0,0,0.4)',
+              padding: '4px 8px',
+              borderRadius: 6,
+              userSelect: 'all',
+            }}
+          >
+            {AUDIO_STACK_START_COMMAND}
+          </code>
+          <button type="button" style={btnStyle} onClick={copyStartCommand}>
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+          <Link to="/settings/api" style={{ color: '#f0d9b5', textDecoration: 'underline' }}>
+            Settings → API → Local AI Relay
+          </Link>
+        </div>
+      )}
+
+      {showKeys && (
+        <div
+          style={{
+            position: 'fixed',
+            top: bannerVisible ? 100 : 60,
+            right: 14,
+            zIndex: 195,
+            background: 'rgba(20,16,12,0.96)',
+            border: '1px solid rgba(240,217,181,0.2)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            color: '#d4b896',
+            fontSize: 12.5,
+            lineHeight: 1.9,
+          }}
+        >
+          <div>
+            <strong style={{ color: '#f0d9b5' }}>Keys</strong>
+          </div>
+          <div>W A S D — move</div>
+          <div>Mouse — look</div>
+          <div>Shift — sprint</div>
+          <div>Tab — Story Architect</div>
+          <div>T — Timeline</div>
+          <div>ESC — exit pointer lock</div>
+        </div>
+      )}
+
+      <div style={{ position: 'absolute', inset: 0, top: bannerVisible ? 100 : 52 }}>
         {mode === 'blueprints' && libraryOnline ? (
           <iframe
             title="Virtual Library Blueprints"
