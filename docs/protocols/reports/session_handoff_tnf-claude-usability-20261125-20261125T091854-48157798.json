@@ -1,0 +1,95 @@
+{
+  "spec": "tnf/session-handoff/0.3",
+  "handoff_id": "48157798-2086-455a-8d57-1b6b8e22ae29",
+  "created_at": "2026-11-25T09:18:54.716Z",
+  "repository": "whodaniel/The-New-Fuse",
+  "branch": "usability-fixes-2026-11-25",
+  "head_sha": "d3c9040aefe2410f0f81c267f2d9ccf97536a350",
+  "protocol_ack": "TNF_PROTOCOL_ACK",
+  "sensitive_scope": "internal",
+  "project_ids": ["TNF-SESSION"],
+  "work_summary": [
+    "C7 (usability findings 17+21): Timeline tabs renamed descriptively (Personal Timeline / Macro Horizon / Lab (experimental)); the macro view now has one name, Macro Horizon, across tab, card and page heading; both position sliders gained a helper line explaining arc position vs date",
+    "Typecheck: same 85 pre-existing errors; vite production build passes"
+  ],
+  "changed_paths": [
+    "apps/frontend/src/pages/Timeline/MacroTimelinePage.tsx",
+    "apps/frontend/src/pages/Timeline/index.tsx",
+    "apps/frontend/src/features/timeline/hooks/useTimeline.ts",
+    "docs/protocols/AGENT_STATUS_LEDGER.md",
+    "docs/protocols/LIVING_STATE.md",
+    "docs/protocols/handoff-registry.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+    "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091357-56a9fab2.json",
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091357-56a9fab2.md",
+    "docs/protocols/workspace-leases.json",
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091854-48157798.json",
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091854-48157798.md"
+  ],
+  "verification": {
+    "privacy_guard": "na",
+    "secret_sweep": "na",
+    "docs_pii_guard": "na",
+    "supabase_rls_audit": "na",
+    "notes": ""
+  },
+  "continuation": {
+    "owner": "tnf-orchestrator",
+    "targets": ["story-architect", "librarian"],
+    "priority": "high",
+    "resume_checklist": [
+      "Read docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+      "Validate SESSION_HANDOFF_LATEST.json against docs/protocols/schemas/tnf-session-handoff.schema.json",
+      "Execute listed next actions in order and preserve privacy/security gates"
+    ]
+  },
+  "next_actions": ["Continue usability clusters C8-C11 (findings 22-26)"],
+  "reflection": {
+    "lessons": {
+      "considered": false
+    },
+    "skills": {
+      "considered": false
+    },
+    "gaps": {
+      "considered": false
+    }
+  },
+  "freshness_receipts": [],
+  "repository_context": {
+    "canonical_source": "whodaniel/tnf-monorepo",
+    "actual": "whodaniel/The-New-Fuse",
+    "origin": "https://github.com/whodaniel/The-New-Fuse.git",
+    "dirty": true,
+    "operation_in_progress": null,
+    "publication_targets": [
+      "whodaniel/The-New-Fuse",
+      "whodaniel/fuse-control-plane"
+    ]
+  },
+  "artifacts": {
+    "commits": ["d3c9040aefe2410f0f81c267f2d9ccf97536a350"]
+  },
+  "classification": {
+    "work_domain": "unknown",
+    "artifact_destination": "unknown",
+    "data_residency": "unknown",
+    "sensitivity": "unknown"
+  },
+  "capabilities": {
+    "required": [],
+    "staffed_by": []
+  },
+  "publication": {
+    "public_runtime_affected": false,
+    "control_plane_affected": false,
+    "satellites": []
+  },
+  "checkout_id": "co_unregistered_9c8291c71a371eab",
+  "task_id": "TNF-SESSION",
+  "turn_status": "turn_complete",
+  "task_status": "in_progress",
+  "supersedes": ["56a9fab2-0589-4e1d-9c71-4e657ae380d7"],
+  "record_hash": "48b88f65440341ac60c22aa5e8ad8429b8fa98bb4d94ffa48b1b8f6053cc671f"
+}

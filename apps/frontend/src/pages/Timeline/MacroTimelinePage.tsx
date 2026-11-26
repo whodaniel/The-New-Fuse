@@ -35,7 +35,7 @@ const MacroTimelinePage: React.FC = () => {
       <div className="flex-grow flex flex-col p-4 space-y-6 overflow-hidden">
         <header className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Macro Workspace</h1>
+            <h1 className="text-2xl font-bold text-white tracking-tight">Macro Horizon</h1>
             <div className="flex space-x-4 mt-2">
               <button
                 onClick={() => setViewMode('timeline')}

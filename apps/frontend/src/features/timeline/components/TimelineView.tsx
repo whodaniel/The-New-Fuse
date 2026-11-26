@@ -137,6 +137,13 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
 
       {/* Timeline Body */}
       <div ref={containerRef} className="flex-grow overflow-auto custom-scrollbar relative">
+        {plans.length === 0 && (
+          <div className="flex items-center justify-center px-6 py-16 text-center">
+            <p className="text-sm text-slate-400">
+              No projects or tasks yet — they will appear here as plans are created.
+            </p>
+          </div>
+        )}
         {/* The Now Bar */}
         <div
           className="absolute top-0 bottom-0 w-px bg-sky-500 z-10 pointer-events-none"
@@ -262,6 +269,9 @@ const TimelineView: React.FC<TimelineProps> = ({ plans, onRecordClick, onRecordU
       {/* Footer / Controls */}
       <div className="p-2 border-t border-slate-600 bg-[#161922] flex justify-between items-center text-[10px]">
         <div className="flex space-x-4 ml-4 text-slate-200">
+          <span className="text-slate-400">
+            Status colors, where a record&rsquo;s color encodes its status:
+          </span>
           <div className="flex items-center">
             <div className="w-2 h-2 rounded-full bg-amber-500 mr-1" /> High Priority
           </div>

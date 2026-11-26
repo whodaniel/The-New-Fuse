@@ -1,10 +1,11 @@
 // @ts-nocheck
-import React, { useEffect, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { useLibraryStore } from '../../store';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LiveThoughtStream() {
   const thoughtStream = useLibraryStore((s) => s.thoughtStream);
+  const relayStatus = useLibraryStore((s) => s.relayStatus);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,15 +29,17 @@ export default function LiveThoughtStream() {
         gap: '8px',
       }}
     >
-      <div style={{ 
-        color: '#8a7560', 
-        fontSize: '11px', 
-        textTransform: 'uppercase', 
-        letterSpacing: '2px',
-        textAlign: 'right',
-        marginBottom: '4px',
-        textShadow: '0 0 10px rgba(0,0,0,0.5)'
-      }}>
+      <div
+        style={{
+          color: '#8a7560',
+          fontSize: '11px',
+          textTransform: 'uppercase',
+          letterSpacing: '2px',
+          textAlign: 'right',
+          marginBottom: '4px',
+          textShadow: '0 0 10px rgba(0,0,0,0.5)',
+        }}
+      >
         Live Thought Stream
       </div>
       <div
@@ -49,6 +52,23 @@ export default function LiveThoughtStream() {
           pointerEvents: 'auto',
         }}
       >
+        {thoughtStream.length === 0 && (
+          <div
+            style={{
+              color: '#8a7560',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '12px',
+              textAlign: 'right',
+              textShadow: '0 0 10px rgba(0,0,0,0.5)',
+            }}
+          >
+            {relayStatus === 'connected'
+              ? 'Listening — responses will appear here'
+              : relayStatus === 'connecting'
+                ? 'Connecting to relay…'
+                : 'Relay offline'}
+          </div>
+        )}
         <AnimatePresence initial={false}>
           {thoughtStream.map((thought) => (
             <motion.div
@@ -71,7 +91,9 @@ export default function LiveThoughtStream() {
                 borderRight: '4px solid #00ff00',
               }}
             >
-              <div style={{ color: '#00ff00', fontSize: '10px', marginBottom: '4px', opacity: 0.8 }}>
+              <div
+                style={{ color: '#00ff00', fontSize: '10px', marginBottom: '4px', opacity: 0.8 }}
+              >
                 [{new Date(thought.timestamp).toLocaleTimeString()}] AI Response
               </div>
               {thought.text}

@@ -10,6 +10,7 @@ import {
   deleteTimelineEvent,
   getApiErrorMessage,
   getGithubNarrativeGraph,
+  getLastTimelineEventsSource,
   importGithubTimelineNarrative,
   listTimelineEvents,
   updateTimelineEvent,
@@ -195,6 +196,7 @@ export default function TimelinePage() {
     refresh,
   } = useTimeline();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [eventsSource, setEventsSource] = useState<'remote' | 'local' | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(false);
@@ -357,6 +359,7 @@ export default function TimelinePage() {
     try {
       const rows = await listTimelineEvents(ownerScopeId ? { ownerId: ownerScopeId } : undefined);
       setEvents(rows);
+      setEventsSource(getLastTimelineEventsSource());
       if (rows.length && !selectedId) {
         setSelectedId(rows[0].id);
       } else if (rows.length === 0) {
@@ -619,9 +622,9 @@ export default function TimelinePage() {
             </h1>
             <div className="flex flex-wrap gap-2 mt-4">
               {[
-                { key: 'timeline', label: 'Timeline', target: undefined },
-                { key: 'macro', label: 'Macro', target: 'macro' },
-                { key: 'lab', label: 'Lab', target: 'lab' },
+                { key: 'timeline', label: 'Personal Timeline', target: undefined },
+                { key: 'macro', label: 'Macro Horizon', target: 'macro' },
+                { key: 'lab', label: 'Lab (experimental)', target: 'lab' },
               ].map((tab) => {
                 const active = (tab.target ?? undefined) === (timelineView ?? undefined);
                 return (
@@ -729,7 +732,7 @@ export default function TimelinePage() {
             </div>
             <div className="flex items-center gap-2">
               <div className="px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded text-[10px] font-bold text-sky-400 uppercase tracking-tighter">
-                Live Sync Active
+                {macroLoading ? 'Syncing…' : macroError ? 'Sync unavailable' : 'Live Sync Active'}
               </div>
             </div>
           </div>
@@ -846,15 +849,28 @@ export default function TimelinePage() {
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col">
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-xl font-bold text-slate-100 tracking-tight">
                 Personal Narrative
               </h3>
-              <p className="text-xs text-slate-700 uppercase font-bold tracking-widest mt-0.5">
+              <p className="text-xs text-slate-300 uppercase font-bold tracking-widest mt-0.5">
                 Milestones, Identity & Life Events
               </p>
+              {eventsSource ? (
+                <span
+                  className={`mt-2 inline-flex w-fit items-center rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                    eventsSource === 'local'
+                      ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                      : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                  }`}
+                >
+                  {eventsSource === 'local'
+                    ? 'Local only — will sync when the service is reachable'
+                    : 'Synced'}
+                </span>
+              ) : null}
             </div>
             <div className="flex items-center gap-2">
-              <Label htmlFor="timeline-category-filter" className="text-xs text-slate-900">
+              <Label htmlFor="timeline-category-filter" className="text-xs text-slate-300">
                 Filter By Category
               </Label>
               <select
@@ -1253,6 +1269,9 @@ export default function TimelinePage() {
                   aria-valuetext={`${createForm.point}%`}
                   aria-describedby="timeline-create-point-value"
                 />
+                <p className="text-xs text-slate-500">
+                  Where this sits in your life arc — separate from when it happened.
+                </p>
               </div>
             </div>
 
@@ -1412,6 +1431,9 @@ export default function TimelinePage() {
                     aria-valuetext={`${editForm.point}%`}
                     aria-describedby="timeline-edit-point-value"
                   />
+                  <p className="text-xs text-slate-500">
+                    Where this sits in your life arc — separate from when it happened.
+                  </p>
                 </div>
 
                 <div className="flex gap-3 pt-4">

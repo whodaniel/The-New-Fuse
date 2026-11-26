@@ -1,10 +1,10 @@
 // @ts-nocheck
-import { useRef, useMemo, useState } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import { useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import type { ClassificationNode } from '../../types';
 import { useLibraryStore } from '../../store';
+import type { ClassificationNode } from '../../types';
 
 interface BookshelfProps {
   position: [number, number, number];
@@ -19,9 +19,8 @@ const NUM_SHELVES = 5;
 const PROXIMITY_THRESHOLD = 3.0;
 
 const BOOK_PALETTE = [
-  0x8b2020, 0x1a3a5c, 0x2a4a2a, 0x4a3a2a, 0x1a1a1a,
-  0x5c1a3a, 0x3a2a5c, 0x5c4a1a, 0x2a4a4a, 0x4a2a3a,
-  0x6b3030, 0x1a4a6b, 0x3a5c1a, 0x5c3a1a, 0x2a2a2a,
+  0x8b2020, 0x1a3a5c, 0x2a4a2a, 0x4a3a2a, 0x1a1a1a, 0x5c1a3a, 0x3a2a5c, 0x5c4a1a, 0x2a4a4a,
+  0x4a2a3a, 0x6b3030, 0x1a4a6b, 0x3a5c1a, 0x5c3a1a, 0x2a2a2a,
 ];
 
 const matShelf = new THREE.MeshStandardMaterial({
@@ -70,6 +69,8 @@ function generateShelfBooks(shelfIndex: number): ShelfRow {
 export default function Bookshelf({ position, rotation, ddc }: BookshelfProps) {
   const groupRef = useRef<THREE.Group>(null);
   const setNearestShelf = useLibraryStore((s) => s.setNearestShelf);
+  const catalogBooks = useLibraryStore((s) => s.books);
+  const setSelectedBook = useLibraryStore((s) => s.setSelectedBook);
   const [highlighted, setHighlighted] = useState(false);
 
   const rows = useMemo(() => {
@@ -80,6 +81,23 @@ export default function Bookshelf({ position, rotation, ddc }: BookshelfProps) {
     return result;
   }, []);
 
+  // Assign each spine a real catalog book of this shelf's DDC class, walking
+  // the rows in order (cumulative slot index mod class size) so the mapping
+  // is deterministic for a given catalog. Spines look exactly as before;
+  // clicking one now opens that book.
+  const spineBookIds = useMemo(() => {
+    const prefix = ddc.code.substring(0, 1);
+    const classBooks = catalogBooks.filter(
+      (b) => b.ddc?.startsWith(prefix) || b.ddc?.startsWith(ddc.code)
+    );
+    let slot = 0;
+    return rows.map((row) =>
+      row.books.map(() =>
+        classBooks.length > 0 ? classBooks[slot++ % classBooks.length].id : null
+      )
+    );
+  }, [rows, catalogBooks, ddc.code]);
+
   const worldPos = useMemo(() => {
     const v = new THREE.Vector3(position[0], SHELF_H / 2, position[2]);
     return v;
@@ -87,7 +105,7 @@ export default function Bookshelf({ position, rotation, ddc }: BookshelfProps) {
 
   useFrame(({ camera }) => {
     const dist = camera.position.distanceTo(
-      new THREE.Vector3(worldPos.x, camera.position.y, worldPos.z),
+      new THREE.Vector3(worldPos.x, camera.position.y, worldPos.z)
     );
     const isNear = dist < PROXIMITY_THRESHOLD;
     if (isNear !== highlighted) {
@@ -109,12 +127,7 @@ export default function Bookshelf({ position, rotation, ddc }: BookshelfProps) {
       {Array.from({ length: NUM_SHELVES + 1 }, (_, i) => {
         const shelfY = (i / NUM_SHELVES) * SHELF_H;
         return (
-          <mesh
-            key={`shelf-plank-${i}`}
-            position-y={shelfY}
-            castShadow
-            material={matShelf}
-          >
+          <mesh key={`shelf-plank-${i}`} position-y={shelfY} castShadow material={matShelf}>
             <boxGeometry args={[SHELF_W, 0.03, SHELF_D + 0.02]} />
           </mesh>
         );
@@ -137,6 +150,13 @@ export default function Bookshelf({ position, rotation, ddc }: BookshelfProps) {
             key={`book-${ri}-${bi}`}
             position={[book.offsetX, row.shelfY + book.height / 2, 0]}
             castShadow
+            onClick={(e) => {
+              const bookId = spineBookIds[ri]?.[bi];
+              if (bookId) {
+                e.stopPropagation();
+                setSelectedBook(bookId);
+              }
+            }}
           >
             <boxGeometry args={[book.width, book.height, book.depth]} />
             <meshStandardMaterial
@@ -147,7 +167,7 @@ export default function Bookshelf({ position, rotation, ddc }: BookshelfProps) {
               emissiveIntensity={emissiveIntensity}
             />
           </mesh>
-        )),
+        ))
       )}
 
       <Text

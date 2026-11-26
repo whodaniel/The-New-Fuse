@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useLibraryStore } from '../../store';
 
 export default function BlockerOverlay() {
@@ -147,7 +146,35 @@ export default function BlockerOverlay() {
           >
             ESC
           </span>{' '}
-          exit
+          exit &nbsp;
+          <span
+            style={{
+              display: 'inline-block',
+              background: 'rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '4px',
+              padding: '2px 8px',
+              fontSize: '0.85em',
+              margin: '0 2px',
+            }}
+          >
+            Tab
+          </span>{' '}
+          Story Architect &nbsp;
+          <span
+            style={{
+              display: 'inline-block',
+              background: 'rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '4px',
+              padding: '2px 8px',
+              fontSize: '0.85em',
+              margin: '0 2px',
+            }}
+          >
+            T
+          </span>{' '}
+          Timeline
         </p>
       </div>
     </div>

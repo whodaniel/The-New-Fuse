@@ -1,14 +1,14 @@
-# SESSION_HANDOFF (tnf-muse)
+# SESSION_HANDOFF (tnf-claude-usability-20261125)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-25T07:45:21.651Z` Handoff ID: `b3aaab75-5581-42fa-b9c1-488081a5e67e`
+`2026-11-25T09:37:12.487Z` Handoff ID: `1f5c9490-1adb-4e48-93df-15f445f0ef8c`
 
 ## Scope
 
-- Repository: `git@ssh.github.com:whodaniel/The-New-Fuse`
+- Repository: `whodaniel/The-New-Fuse`
 - Canonical Source: `whodaniel/tnf-monorepo`
-- Branch: `app-fixes-2026-11-25`
-- Head SHA: `4110cf5180502fd660e31cc3bcef268411b63f17`
+- Branch: `usability-fixes-2026-11-25`
+- Head SHA: `bc82b687bc947cf1d802c45a1318155c08a88392`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -20,34 +20,27 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Work Summary
 
-- F1+F4 onboarding wiring and hardening shipped: /onboarding now renders the
-  real OnboardingFlow (was a LazyPage placeholder); LazyPage grey placeholder
-  lines removed (D2); UserTypeDetection 403 state keeps the invite-required
-  banner and adds invite guidance with sign-in/register links plus a working Try
-  again retry (run-id re-detection), and Try again on generic errors too;
-  OnboardingFlow Skip is auth-aware (Dashboard when signed in, Home when logged
-  out) and renders the shared GuestFooter; WelcomeStep gains the AgentTruthLayer
-  product sentence verbatim as its intro line. Production invite policy verified
-  inviteOnly=false, so the keep-public path applies and no RequireAuth gating
-  was added (D1/D10). TASK-003 findings 1/4, staged specs fix-01 and fix-04.
+- C11 (usability findings 25+26): desktop Live AI Assist now tags replies served
+  by the TNF cloud fallback, and its icon-only controls and relay badge gained
+  aria-labels
+- Tauri desktop: tsc --noEmit clean (0 errors), vite build passes; frontend
+  typecheck unchanged (85 pre-existing)
 
 ## Changed Paths
 
-- apps/frontend/src/ComprehensiveRouter.tsx
-- apps/frontend/src/components/onboarding/UserTypeDetection.tsx
-- apps/frontend/src/components/wizard/steps/WelcomeStep.tsx
-- apps/frontend/src/pages/OnboardingFlow/index.tsx
-- apps/frontend/src/pages/Landing/index.tsx
+- apps/tauri-desktop/src/components/LiveAIAssist.tsx
+- apps/frontend/src/pages/Suggestions/New.tsx
+- apps/frontend/src/pages/Suggestions/index.tsx
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/handoff-registry.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/session_handoff_tnf-muse-20261125T074447-dee42f1b.json
-- docs/protocols/reports/session_handoff_tnf-muse-20261125T074447-dee42f1b.md
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093437-2316dc25.json
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093437-2316dc25.md
 - docs/protocols/workspace-leases.json
-- docs/protocols/reports/session_handoff_tnf-muse-20261125T074521-b3aaab75.json
-- docs/protocols/reports/session_handoff_tnf-muse-20261125T074521-b3aaab75.md
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093712-1f5c9490.json
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093712-1f5c9490.md
 
 ## Verification
 
@@ -58,8 +51,8 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Continuation
 
-- Owner: `tnf-muse`
-- Targets: `frontend`
+- Owner: `tnf-orchestrator`
+- Targets: `story-architect`, `librarian`
 - Priority: `high`
 
 ### Resume Checklist
@@ -71,7 +64,5 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Next Actions
 
-- Push branch app-fixes-2026-11-25, merge to main, verify remote HEAD with git
-  ls-remote
-- Depot bookkeeping: CLNP ledger entry, app-fix-list update (D5/D6 remain open
-  for Daniel)
+- Push branch via GitHub connector snapshot commits, open and merge PR, then
+  bookkeeping (fix list, CLNP ledger, memory log)

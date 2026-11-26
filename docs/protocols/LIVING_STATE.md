@@ -151,6 +151,55 @@
 
 ## History
 
+- 2026-11-25T09:37:12.830Z handoff `1f5c9490-1adb-4e48-93df-15f445f0ef8c` head
+  `bc82b687bc94` project `TNF-SESSION` — Push branch via GitHub connector
+  snapshot commits, open and merge PR, then bookkeeping (fix list, CLNP ledger,
+  memory log)
+
+- 2026-11-25T09:34:37.434Z handoff `2316dc25-5c95-49d8-bb5f-7b92747cd010` head
+  `b11dd3694955` project `TNF-SESSION` — Continue usability cluster C11
+  (findings 25, 26), then push and merge
+
+- 2026-11-25T09:29:38.646Z handoff `cd738091-85fa-49b0-ac01-4c1f3e2dcb9b` head
+  `edf5a2ec40cc` project `TNF-SESSION` — Continue usability clusters C10-C11
+  (findings 18, 25, 26), then push and merge
+
+- 2026-11-25T09:23:47.856Z handoff `46a6888f-1e48-46da-83ff-aa7bcc6bf63d` head
+  `9858af492840` project `TNF-SESSION` — Continue usability clusters C9-C11
+  (findings 10, 15, 16, 18-20, 24-26)
+
+- 2026-11-25T09:18:55.069Z handoff `48157798-2086-455a-8d57-1b6b8e22ae29` head
+  `d3c9040aefe2` project `TNF-SESSION` — Continue usability clusters C8-C11
+  (findings 22-26)
+
+- 2026-11-25T09:13:57.487Z handoff `56a9fab2-0589-4e1d-9c71-4e657ae380d7` head
+  `5173c5b74bb0` project `TNF-SESSION` — Continue usability clusters C7-C11
+  (findings 17-26)
+
+- 2026-11-25T09:08:24.766Z handoff `52a98c6b-831e-4807-9353-3cbd7e317d22` head
+  `78f1ff4cb303` project `TNF-SESSION` — Continue usability clusters C6-C11
+  (findings 14-26)
+
+- 2026-11-25T09:03:19.240Z handoff `a47f06de-f407-4c82-b796-101692355b70` head
+  `55e9a398c907` project `TNF-SESSION` — Continue usability clusters C5-C11
+  (findings 13-26)
+
+- 2026-11-25T08:58:14.313Z handoff `792a8d76-1b9e-4aae-a55c-1286aa0ad33d` head
+  `6d8bc3ec5f2c` project `TNF-SESSION` — Continue usability clusters C4-C11
+  (findings 10-26)
+
+- 2026-11-25T08:52:26.760Z handoff `fb74a9e5-4f44-4ae6-8722-c716c3929937` head
+  `c8acd2943543` project `TNF-SESSION` — Continue usability clusters C3-C11
+  (findings 9-26)
+
+- 2026-11-25T08:45:11.555Z handoff `7f80f1d1-ed3a-4425-bfe6-4e4d9f6c2304` head
+  `defebea0ba11` project `TNF-SESSION` — Continue usability clusters C2-C11
+  (findings 8-26) on branch usability-fixes-2026-11-25
+
+- 2026-11-25T08:43:08.703Z handoff `55d446ef-1b90-4f2d-bac1-12b31ee9cb5d` head
+  `defebea0ba11` project `TNF-SESSION` — Continue usability clusters C2-C11
+  (findings 8-26) on this branch
+
 - 2026-11-25T07:45:22.354Z handoff `b3aaab75-5581-42fa-b9c1-488081a5e67e` head
   `4110cf518050` project `TASK-003` — Push branch app-fixes-2026-11-25, merge to
   main, verify remote HEAD with git ls-remote
