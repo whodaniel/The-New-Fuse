@@ -622,9 +622,9 @@ export default function TimelinePage() {
             </h1>
             <div className="flex flex-wrap gap-2 mt-4">
               {[
-                { key: 'timeline', label: 'Timeline', target: undefined },
-                { key: 'macro', label: 'Macro', target: 'macro' },
-                { key: 'lab', label: 'Lab', target: 'lab' },
+                { key: 'timeline', label: 'Personal Timeline', target: undefined },
+                { key: 'macro', label: 'Macro Horizon', target: 'macro' },
+                { key: 'lab', label: 'Lab (experimental)', target: 'lab' },
               ].map((tab) => {
                 const active = (tab.target ?? undefined) === (timelineView ?? undefined);
                 return (
@@ -1269,6 +1269,9 @@ export default function TimelinePage() {
                   aria-valuetext={`${createForm.point}%`}
                   aria-describedby="timeline-create-point-value"
                 />
+                <p className="text-xs text-slate-500">
+                  Where this sits in your life arc — separate from when it happened.
+                </p>
               </div>
             </div>
 
@@ -1428,6 +1431,9 @@ export default function TimelinePage() {
                     aria-valuetext={`${editForm.point}%`}
                     aria-describedby="timeline-edit-point-value"
                   />
+                  <p className="text-xs text-slate-500">
+                    Where this sits in your life arc — separate from when it happened.
+                  </p>
                 </div>
 
                 <div className="flex gap-3 pt-4">
