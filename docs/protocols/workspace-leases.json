@@ -2691,6 +2691,27 @@
       ],
       "acquiredAt": "2026-11-25T09:18:55.085Z",
       "ttlMinutes": 120
+    },
+    {
+      "agent": "tnf-claude-usability-20261125",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "apps/frontend/src/features/timeline/components/TimelineView.tsx",
+        "apps/frontend/src/pages/Timeline/MacroTimelinePage.tsx",
+        "apps/frontend/src/pages/Timeline/index.tsx",
+        "docs/protocols/AGENT_STATUS_LEDGER.md",
+        "docs/protocols/LIVING_STATE.md",
+        "docs/protocols/handoff-registry.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091854-48157798.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091854-48157798.md",
+        "docs/protocols/workspace-leases.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092347-46a6888f.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092347-46a6888f.md"
+      ],
+      "acquiredAt": "2026-11-25T09:23:47.876Z",
+      "ttlMinutes": 120
     }
   ]
 }
