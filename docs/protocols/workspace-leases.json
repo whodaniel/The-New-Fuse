@@ -2558,6 +2558,30 @@
       ],
       "acquiredAt": "2026-11-25T08:45:11.564Z",
       "ttlMinutes": 120
+    },
+    {
+      "agent": "tnf-claude-usability-20261125",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "apps/frontend/src/pages/VirtualLibrary/VirtualLibraryPage.tsx",
+        "apps/frontend/src/pages/VirtualLibrary/components/3d/Bookshelf.tsx",
+        "apps/frontend/src/pages/VirtualLibrary/components/ui/BlockerOverlay.tsx",
+        "apps/frontend/src/pages/VirtualLibrary/components/ui/BookDetailPanel.tsx",
+        "apps/frontend/src/pages/VirtualLibrary/components/ui/HUD.tsx",
+        "apps/frontend/src/pages/VirtualLibrary/store/index.ts",
+        "docs/protocols/AGENT_STATUS_LEDGER.md",
+        "docs/protocols/LIVING_STATE.md",
+        "docs/protocols/handoff-registry.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T084511-7f80f1d1.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T084511-7f80f1d1.md",
+        "docs/protocols/workspace-leases.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T085226-fb74a9e5.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T085226-fb74a9e5.md"
+      ],
+      "acquiredAt": "2026-11-25T08:52:26.775Z",
+      "ttlMinutes": 120
     }
   ]
 }

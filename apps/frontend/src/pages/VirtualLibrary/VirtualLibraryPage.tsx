@@ -8,6 +8,7 @@ import HUD from './components/ui/HUD';
 import LiveThoughtStream from './components/ui/LiveThoughtStream';
 import Minimap from './components/ui/Minimap';
 import VoiceStatusIndicator from './components/ui/VoiceStatusIndicator';
+import { SAMPLE_BOOKS } from './data/sampleBooks';
 import { useLibraryStore } from './store';
 
 const STORY_RELAY = 'http://127.0.0.1:43120';
@@ -33,6 +34,8 @@ export default function App() {
   const currentView = useLibraryStore((s) => s.currentView);
   const addThought = useLibraryStore((s) => s.addThought);
   const setRelayStatus = useLibraryStore((s) => s.setRelayStatus);
+  const books = useLibraryStore((s) => s.books);
+  const addBooks = useLibraryStore((s) => s.addBooks);
   const [mode, setMode] = useState<'native' | 'blueprints'>('blueprints');
   const [storyOnline, setStoryOnline] = useState<DepState>(null);
   const [kwsOnline, setKwsOnline] = useState<DepState>(null);
@@ -63,6 +66,13 @@ export default function App() {
     const timer = window.setInterval(() => void refreshDeps(), 8000);
     return () => window.clearInterval(timer);
   }, [refreshDeps]);
+
+  // Seed the catalog so shelf spines and the detail panel have real books.
+  useEffect(() => {
+    if (books.length === 0) {
+      addBooks(SAMPLE_BOOKS);
+    }
+  }, [books.length, addBooks]);
 
   useEffect(() => {
     setRelayStatus('connecting');
@@ -129,7 +139,7 @@ export default function App() {
           Full Library (Chrome)
         </button>
         <button type="button" style={btnStyle} onClick={() => setMode('native')}>
-          Lightweight scene
+          Lightweight scene (walkthrough)
         </button>
         <button
           type="button"
@@ -184,7 +194,7 @@ export default function App() {
                   style={{ ...btnStyle, marginLeft: 8 }}
                   onClick={() => setMode('native')}
                 >
-                  Use lightweight scene
+                  Use lightweight scene (walkthrough)
                 </button>
               </div>
             </div>
