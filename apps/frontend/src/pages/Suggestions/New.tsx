@@ -90,7 +90,7 @@ const NewSuggestion: React.FC = () => {
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Implement zero-copy context chaining"
+                placeholder="e.g. Implement zero-copy context chaining — or a story arc for the Library, a new goal template…"
                 className="bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-600 focus:ring-amber-500/20 h-11"
                 required
               />
@@ -104,7 +104,7 @@ const NewSuggestion: React.FC = () => {
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="What problem does this solve and how should it be forged?"
+                placeholder="What are you proposing, and why does it matter? A feature, a story, a goal — proposals of any kind are welcome here."
                 className="bg-slate-950 border-slate-700 min-h-[150px] text-slate-100 placeholder:text-slate-600 focus:ring-amber-500/20"
                 required
               />
@@ -122,7 +122,7 @@ const NewSuggestion: React.FC = () => {
                       addTag();
                     }
                   }}
-                  placeholder="Add technical tags..."
+                  placeholder="Add tags (e.g. feature, story, goal)..."
                   className="bg-slate-950 border-slate-700 text-slate-100 focus:ring-emerald-500/20 h-11"
                 />
                 <Button

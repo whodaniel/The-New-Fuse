@@ -79,9 +79,10 @@ const Suggestions: React.FC = () => {
     <div className="dark max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Feature Suggestions</h1>
+          <h1 className="text-3xl font-black text-white tracking-tight">Suggestions</h1>
           <p className="text-slate-400 mt-1">
-            Unified intelligence queue with voting and priority tracking.
+            Share and vote on proposals of any kind — features, stories, goals, and improvements —
+            with priority tracking.
           </p>
         </div>
         <Button

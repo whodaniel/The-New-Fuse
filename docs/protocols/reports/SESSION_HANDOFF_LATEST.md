@@ -1,14 +1,14 @@
 # SESSION_HANDOFF (tnf-claude-usability-20261125)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-25T09:29:38.224Z` Handoff ID: `cd738091-85fa-49b0-ac01-4c1f3e2dcb9b`
+`2026-11-25T09:34:37.114Z` Handoff ID: `2316dc25-5c95-49d8-bb5f-7b92747cd010`
 
 ## Scope
 
 - Repository: `whodaniel/The-New-Fuse`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `usability-fixes-2026-11-25`
-- Head SHA: `edf5a2ec40cc6745b7c6361079fc82fa57b19a1f`
+- Head SHA: `b11dd3694955ed0c3ec2e8c15d31500059d23fa3`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -20,32 +20,30 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Work Summary
 
-- C9 (usability findings 10, 15, 16, 19, 20, 24): Virtual Library gains an
-  offline banner naming the down service with the audio-stack start command,
-  copy button and Settings link; Keys toggle reveals the canonical key list;
-  BlockerOverlay teaches Tab/T; HUD offset below the strip; voice indicator
-  renamed Relay Connection with corrected transport line; thought stream gains a
-  relay-aware empty state
+- C10 (usability finding 18): Suggestions page retitled from Feature Suggestions
+  to Suggestions with a subtitle and form placeholders that welcome proposals of
+  any kind (features, stories, goals)
 - Typecheck: same 85 pre-existing errors; vite production build passes
 
 ## Changed Paths
 
+- apps/frontend/src/pages/Suggestions/New.tsx
+- apps/frontend/src/pages/Suggestions/index.tsx
 - apps/frontend/src/pages/VirtualLibrary/VirtualLibraryPage.tsx
 - apps/frontend/src/pages/VirtualLibrary/components/ui/BlockerOverlay.tsx
 - apps/frontend/src/pages/VirtualLibrary/components/ui/HUD.tsx
 - apps/frontend/src/pages/VirtualLibrary/components/ui/LiveThoughtStream.tsx
 - apps/frontend/src/pages/VirtualLibrary/components/ui/VoiceStatusIndicator.tsx
-- apps/frontend/src/features/timeline/components/TimelineView.tsx
 - docs/protocols/AGENT_STATUS_LEDGER.md
 - docs/protocols/LIVING_STATE.md
 - docs/protocols/handoff-registry.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092347-46a6888f.json
-- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092347-46a6888f.md
-- docs/protocols/workspace-leases.json
 - docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092938-cd738091.json
 - docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T092938-cd738091.md
+- docs/protocols/workspace-leases.json
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093437-2316dc25.json
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093437-2316dc25.md
 
 ## Verification
 
@@ -69,4 +67,4 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Next Actions
 
-- Continue usability clusters C10-C11 (findings 18, 25, 26), then push and merge
+- Continue usability cluster C11 (findings 25, 26), then push and merge
