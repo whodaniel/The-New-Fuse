@@ -12,6 +12,8 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
   currentEventId,
   onEventChange,
 }) => {
+  if (!events || events.length === 0) return null;
+
   const currentIndex = events.findIndex((e) => e.id === currentEventId);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,8 +22,6 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
       onEventChange(events[index].id);
     }
   };
-
-  if (!events || events.length === 0) return null;
 
   return (
     <div className="timeline-slider">
