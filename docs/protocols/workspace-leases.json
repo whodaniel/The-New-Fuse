@@ -2606,6 +2606,29 @@
       ],
       "acquiredAt": "2026-11-25T08:58:14.331Z",
       "ttlMinutes": 120
+    },
+    {
+      "agent": "tnf-claude-usability-20261125",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "apps/frontend/src/pages/Timeline/index.tsx",
+        "apps/frontend/src/features/timeline/TimelineModule.tsx",
+        "apps/frontend/src/features/timeline/components/TimelineSlider.tsx",
+        "apps/frontend/src/features/timeline/hooks/useTimelineModule.ts",
+        "apps/frontend/src/types/timeline.ts",
+        "docs/protocols/AGENT_STATUS_LEDGER.md",
+        "docs/protocols/LIVING_STATE.md",
+        "docs/protocols/handoff-registry.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T085813-792a8d76.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T085813-792a8d76.md",
+        "docs/protocols/workspace-leases.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090318-a47f06de.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090318-a47f06de.md"
+      ],
+      "acquiredAt": "2026-11-25T09:03:19.285Z",
+      "ttlMinutes": 120
     }
   ]
 }

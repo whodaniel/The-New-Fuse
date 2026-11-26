@@ -729,7 +729,7 @@ export default function TimelinePage() {
             </div>
             <div className="flex items-center gap-2">
               <div className="px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded text-[10px] font-bold text-sky-400 uppercase tracking-tighter">
-                Live Sync Active
+                {macroLoading ? 'Syncing…' : macroError ? 'Sync unavailable' : 'Live Sync Active'}
               </div>
             </div>
           </div>
@@ -846,15 +846,15 @@ export default function TimelinePage() {
         >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col">
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-xl font-bold text-slate-100 tracking-tight">
                 Personal Narrative
               </h3>
-              <p className="text-xs text-slate-700 uppercase font-bold tracking-widest mt-0.5">
+              <p className="text-xs text-slate-300 uppercase font-bold tracking-widest mt-0.5">
                 Milestones, Identity & Life Events
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Label htmlFor="timeline-category-filter" className="text-xs text-slate-900">
+              <Label htmlFor="timeline-category-filter" className="text-xs text-slate-300">
                 Filter By Category
               </Label>
               <select
