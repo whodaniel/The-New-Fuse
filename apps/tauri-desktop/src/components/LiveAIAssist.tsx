@@ -189,7 +189,7 @@ export const LiveAIAssist: React.FC = () => {
             messages: [...messages, { role: 'user', content: text }],
             agent: 'tnf-agent',
           });
-          handleAssistantText(response);
+          handleAssistantText(`${response}\n\n— Answered by TNF cloud (relay unreachable)`);
         } catch {
           handleAssistantText(
             'Sorry, I encountered an error. The AI relay is offline and the TNF API failed. Please check your connection.'
@@ -333,6 +333,7 @@ export const LiveAIAssist: React.FC = () => {
         className="ai-assist-toggle"
         onClick={() => setIsOpen(true)}
         title="Live AI Assistant"
+        aria-label="Live AI Assistant"
       >
         <svg
           width="24"
@@ -362,14 +363,28 @@ export const LiveAIAssist: React.FC = () => {
               className={`icon-btn ${showOptions ? 'active' : ''}`}
               onClick={() => setShowOptions(!showOptions)}
               title={showOptions ? 'Hide Options' : 'Show Options'}
+              aria-label={showOptions ? 'Hide Options' : 'Show Options'}
             >
               ⚙️
             </button>
-            <div className={`relay-status ${relayStatus}`} title={`Relay: ${RELAY_URL}`}>
+            <div
+              className={`relay-status ${relayStatus}`}
+              title={`Relay: ${RELAY_URL}`}
+              role="status"
+              aria-label={
+                relayStatus === 'up'
+                  ? 'Relay connected'
+                  : relayStatus === 'down'
+                    ? 'Relay offline'
+                    : 'Relay connecting'
+              }
+            >
               <span className="status-dot" />
               {relayStatus === 'up' ? 'AI' : relayStatus === 'down' ? 'OFF' : '...'}
             </div>
-            <button onClick={() => setIsOpen(false)}>×</button>
+            <button onClick={() => setIsOpen(false)} aria-label="Close">
+              ×
+            </button>
           </div>
         </div>
 

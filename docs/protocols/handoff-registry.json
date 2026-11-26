@@ -6,7 +6,7 @@
     "fingerprint": "9c8291c71a371eab",
     "origin": "whodaniel/The-New-Fuse"
   },
-  "mirroredAt": "2026-11-25T09:34:37.721Z",
+  "mirroredAt": "2026-11-25T09:37:13.109Z",
   "rows": [
     {
       "handoff_id": "55d446ef-1b90-4f2d-bac1-12b31ee9cb5d",
@@ -224,9 +224,29 @@
         "state": "unverified"
       },
       "supersedes": ["cd738091-85fa-49b0-ac01-4c1f3e2dcb9b"],
+      "superseded_by": "1f5c9490-1adb-4e48-93df-15f445f0ef8c",
+      "state": "superseded",
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/2316dc25-5c95-49d8-bb5f-7b92747cd010.json"
+    },
+    {
+      "handoff_id": "1f5c9490-1adb-4e48-93df-15f445f0ef8c",
+      "record_hash": "4c9cfbaff5d7156c0c0a1a97b3fa3e1fd265f16dabd17f7053a30899f2c7d0b7",
+      "created_at": "2026-11-25T09:37:12.487Z",
+      "task_id": "TNF-SESSION",
+      "session_id": null,
+      "checkout_id": "co_unregistered_9c8291c71a371eab",
+      "branch": "usability-fixes-2026-11-25",
+      "head_sha": "bc82b687bc947cf1d802c45a1318155c08a88392",
+      "classification": "unknown",
+      "turn_status": "turn_complete",
+      "task_status": "in_progress",
+      "acceptance": {
+        "state": "unverified"
+      },
+      "supersedes": ["2316dc25-5c95-49d8-bb5f-7b92747cd010"],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/2316dc25-5c95-49d8-bb5f-7b92747cd010.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/1f5c9490-1adb-4e48-93df-15f445f0ef8c.json"
     }
   ]
 }

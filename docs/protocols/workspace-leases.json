@@ -2761,6 +2761,27 @@
       ],
       "acquiredAt": "2026-11-25T09:34:37.449Z",
       "ttlMinutes": 120
+    },
+    {
+      "agent": "tnf-claude-usability-20261125",
+      "task": "session-handoff continuation window",
+      "paths": [
+        "apps/tauri-desktop/src/components/LiveAIAssist.tsx",
+        "apps/frontend/src/pages/Suggestions/New.tsx",
+        "apps/frontend/src/pages/Suggestions/index.tsx",
+        "docs/protocols/AGENT_STATUS_LEDGER.md",
+        "docs/protocols/LIVING_STATE.md",
+        "docs/protocols/handoff-registry.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
+        "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093437-2316dc25.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093437-2316dc25.md",
+        "docs/protocols/workspace-leases.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093712-1f5c9490.json",
+        "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T093712-1f5c9490.md"
+      ],
+      "acquiredAt": "2026-11-25T09:37:12.841Z",
+      "ttlMinutes": 120
     }
   ]
 }
