@@ -3,20 +3,20 @@
   "spec": "docs/protocols/HANDOFF_REGISTRY_PROTOCOL.md",
   "note": "Committed metadata-only mirror. Runtime authority is ~/.tnf/handoffs/<fingerprint>/registry.json. Body URIs are redacted for private/restricted records; bodies keep checkout residency.",
   "repo": {
-    "fingerprint": "79a94fd6ce4739dc",
-    "origin": "git@ssh.github.com:whodaniel/The-New-Fuse"
+    "fingerprint": "9c8291c71a371eab",
+    "origin": "whodaniel/The-New-Fuse"
   },
-  "mirroredAt": "2026-11-25T07:45:22.756Z",
+  "mirroredAt": "2026-11-25T08:45:11.750Z",
   "rows": [
     {
-      "handoff_id": "a2cce4e8-a6d8-4c3e-916e-0ecb637ebd48",
-      "record_hash": "d965059c743892e169f8ddc99ab3a1f35be51e53c9679e28a0c474825bc700fc",
-      "created_at": "2026-11-25T07:35:50.157Z",
-      "task_id": "TASK-003",
+      "handoff_id": "55d446ef-1b90-4f2d-bac1-12b31ee9cb5d",
+      "record_hash": "7e49cf9985561329341f9ded87a64fbc4210729576e722ba7c749298787c4988",
+      "created_at": "2026-11-25T08:43:08.399Z",
+      "task_id": "TNF-SESSION",
       "session_id": null,
-      "checkout_id": "co_unregistered_79a94fd6ce4739dc",
-      "branch": "app-fixes-2026-11-25",
-      "head_sha": "3e74004b55c5ee9d79c3b249fc2b3ee92f332c20",
+      "checkout_id": "co_unregistered_9c8291c71a371eab",
+      "branch": "usability-fixes-2026-11-25",
+      "head_sha": "defebea0ba11f460127d92380ea6b3c1d8976624",
       "classification": "unknown",
       "turn_status": "turn_complete",
       "task_status": "in_progress",
@@ -24,49 +24,29 @@
         "state": "unverified"
       },
       "supersedes": [],
-      "superseded_by": "dee42f1b-aa4a-4186-9f20-d76aef04b7c4",
+      "superseded_by": "7f80f1d1-ed3a-4425-bfe6-4e4d9f6c2304",
       "state": "superseded",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/a2cce4e8-a6d8-4c3e-916e-0ecb637ebd48.json"
+      "repo_body_uri": null
     },
     {
-      "handoff_id": "dee42f1b-aa4a-4186-9f20-d76aef04b7c4",
-      "record_hash": "40bc2df115b356b33e4fb247a0c620bfbfbf9f8293df727c374492ab90d14484",
-      "created_at": "2026-11-25T07:44:47.601Z",
-      "task_id": "TASK-003",
+      "handoff_id": "7f80f1d1-ed3a-4425-bfe6-4e4d9f6c2304",
+      "record_hash": "28867697c13780f92720a013436bb978b46375d4f93883bb9bf0f25e502223c3",
+      "created_at": "2026-11-25T08:45:11.257Z",
+      "task_id": "TNF-SESSION",
       "session_id": null,
-      "checkout_id": "co_unregistered_79a94fd6ce4739dc",
-      "branch": "app-fixes-2026-11-25",
-      "head_sha": "e50412c153624370bd96fa95b03433b7baf1ece0",
+      "checkout_id": "co_unregistered_9c8291c71a371eab",
+      "branch": "usability-fixes-2026-11-25",
+      "head_sha": "defebea0ba11f460127d92380ea6b3c1d8976624",
       "classification": "unknown",
       "turn_status": "turn_complete",
       "task_status": "in_progress",
       "acceptance": {
         "state": "unverified"
       },
-      "supersedes": ["a2cce4e8-a6d8-4c3e-916e-0ecb637ebd48"],
-      "superseded_by": "b3aaab75-5581-42fa-b9c1-488081a5e67e",
-      "state": "superseded",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/dee42f1b-aa4a-4186-9f20-d76aef04b7c4.json"
-    },
-    {
-      "handoff_id": "b3aaab75-5581-42fa-b9c1-488081a5e67e",
-      "record_hash": "6f29ad8fdd3f710a6aa44f7f5359ee699899a5864850df76aadd41af7e93c8ed",
-      "created_at": "2026-11-25T07:45:21.651Z",
-      "task_id": "TASK-003",
-      "session_id": null,
-      "checkout_id": "co_unregistered_79a94fd6ce4739dc",
-      "branch": "app-fixes-2026-11-25",
-      "head_sha": "4110cf5180502fd660e31cc3bcef268411b63f17",
-      "classification": "unknown",
-      "turn_status": "turn_complete",
-      "task_status": "in_progress",
-      "acceptance": {
-        "state": "unverified"
-      },
-      "supersedes": ["dee42f1b-aa4a-4186-9f20-d76aef04b7c4"],
+      "supersedes": ["55d446ef-1b90-4f2d-bac1-12b31ee9cb5d"],
       "superseded_by": null,
       "state": "active",
-      "repo_body_uri": "docs/protocols/reports/handoffs/2026/b3aaab75-5581-42fa-b9c1-488081a5e67e.json"
+      "repo_body_uri": "docs/protocols/reports/handoffs/2026/7f80f1d1-ed3a-4425-bfe6-4e4d9f6c2304.json"
     }
   ]
 }

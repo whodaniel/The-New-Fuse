@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useLibraryStore } from '../../store';
 
 export default function HUD() {
@@ -49,14 +48,28 @@ export default function HUD() {
       }}
     >
       <div style={{ pointerEvents: 'auto' }}>
-        <div style={{ color: '#8a7560', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+        <div
+          style={{
+            color: '#8a7560',
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+          }}
+        >
           Location
         </div>
         <div style={{ color: '#f0d9b5', fontSize: '15px', marginBottom: '8px' }}>
           {playerPosition.x.toFixed(1)}, {playerPosition.z.toFixed(1)}
         </div>
 
-        <div style={{ color: '#8a7560', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+        <div
+          style={{
+            color: '#8a7560',
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+          }}
+        >
           Nearest Section
         </div>
         <div style={{ color: '#f0d9b5', fontSize: '15px', marginBottom: '8px' }}>
@@ -65,7 +78,15 @@ export default function HUD() {
             : '—'}
         </div>
 
-        <div style={{ color: '#8a7560', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
+        <div
+          style={{
+            color: '#8a7560',
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '4px',
+          }}
+        >
           Navigate to DDC
         </div>
         <div style={{ display: 'flex', gap: 0 }}>

@@ -17,6 +17,24 @@ interface LibraryStore {
   player: PlayerState;
   updatePlayer: (update: Partial<PlayerState>) => void;
 
+  // Flat compatibility mirrors: several library components were written
+  // against a flat store shape (playerPosition, isPointerLocked, ...).
+  // These fields mirror the canonical nested state above and are kept in
+  // sync by the setters below; the nested `player` object stays canonical.
+  playerPosition: PlayerState['position'];
+  playerRotation: PlayerState['rotation'];
+  setPlayerPosition: (position: PlayerState['position']) => void;
+  isPointerLocked: boolean;
+  setPointerLocked: (locked: boolean) => void;
+  setSprinting: (sprinting: boolean) => void;
+  nearestShelfCode: string | null;
+  nearestShelfLabel: string | null;
+  setNearestShelf: (code: string | null, label: string | null) => void;
+  navigationTarget: PlayerState['position'] | null;
+  setNavigationTarget: (target: PlayerState['position'] | null) => void;
+  isNavigating: boolean;
+  setIsNavigating: (navigating: boolean) => void;
+
   books: Book[];
   addBooks: (books: Book[]) => void;
 
@@ -27,9 +45,14 @@ interface LibraryStore {
 
   selectedBookId: string | null;
   setSelectedBook: (id: string | null) => void;
+  selectedBook: Book | null;
+  selectBook: (id: string | null) => void;
 
   annotations: Annotation[];
-  addAnnotation: (annotation: Annotation) => void;
+  addAnnotation: {
+    (annotation: Annotation): void;
+    (bookId: string, type: Annotation['type']): void;
+  };
   updateAnnotation: (id: string, update: Partial<Annotation>) => void;
   removeAnnotation: (id: string) => void;
 
@@ -59,7 +82,7 @@ interface LibraryStore {
   setRelayStatus: (status: 'connecting' | 'connected' | 'error' | 'disconnected') => void;
 }
 
-export const useLibraryStore = create<LibraryStore>((set) => ({
+export const useLibraryStore = create<LibraryStore>((set, get) => ({
   currentView: '3d-library',
   setCurrentView: (view) => set({ currentView: view }),
 
@@ -69,10 +92,51 @@ export const useLibraryStore = create<LibraryStore>((set) => ({
     speed: 2.5,
     isSprinting: false,
   },
-  updatePlayer: (update) => set((state) => ({ player: { ...state.player, ...update } })),
+  updatePlayer: (update) =>
+    set((state) => {
+      const player = { ...state.player, ...update };
+      return {
+        player,
+        playerPosition: player.position,
+        playerRotation: player.rotation,
+      };
+    }),
+
+  playerPosition: { x: 0, y: 1.65, z: 8 },
+  playerRotation: { yaw: 0, pitch: 0 },
+  setPlayerPosition: (position) =>
+    set((state) => ({
+      player: { ...state.player, position },
+      playerPosition: position,
+    })),
+  isPointerLocked: false,
+  setPointerLocked: (locked) => set({ isPointerLocked: locked }),
+  setSprinting: (sprinting) =>
+    set((state) => ({ player: { ...state.player, isSprinting: sprinting } })),
+  nearestShelfCode: null,
+  nearestShelfLabel: null,
+  setNearestShelf: (code, label) =>
+    set((state) => ({
+      nearestShelfCode: code,
+      nearestShelfLabel: label,
+      player: { ...state.player, nearestShelfId: code ?? undefined },
+    })),
+  navigationTarget: null,
+  setNavigationTarget: (target) => set({ navigationTarget: target, isNavigating: target !== null }),
+  isNavigating: false,
+  setIsNavigating: (navigating) => set({ isNavigating: navigating }),
 
   books: [],
-  addBooks: (books) => set((state) => ({ books: [...state.books, ...books] })),
+  addBooks: (books) =>
+    set((state) => {
+      const allBooks = [...state.books, ...books];
+      return {
+        books: allBooks,
+        selectedBook: state.selectedBookId
+          ? (allBooks.find((b) => b.id === state.selectedBookId) ?? state.selectedBook)
+          : state.selectedBook,
+      };
+    }),
 
   personalBooks: [],
   addPersonalBook: (book) => set((state) => ({ personalBooks: [...state.personalBooks, book] })),
@@ -87,16 +151,29 @@ export const useLibraryStore = create<LibraryStore>((set) => ({
 
   selectedBookId: null,
   setSelectedBook: (id) =>
-    set({
+    set((state) => ({
       selectedBookId: id,
+      selectedBook: id ? (state.books.find((b) => b.id === id) ?? null) : null,
       currentView: id ? 'book-reader' : '3d-library',
-    }),
+    })),
+  selectedBook: null,
+  selectBook: (id) => get().setSelectedBook(id),
 
   annotations: [],
-  addAnnotation: (annotation) =>
-    set((state) => ({
-      annotations: [...state.annotations, annotation],
-    })),
+  addAnnotation: (annotationOrBookId: Annotation | string, maybeType?: Annotation['type']) =>
+    set((state) => {
+      const annotation: Annotation =
+        typeof annotationOrBookId === 'string'
+          ? {
+              id: Math.random().toString(36).substr(2, 9),
+              bookId: annotationOrBookId,
+              type: maybeType ?? 'sticky-note',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            }
+          : annotationOrBookId;
+      return { annotations: [...state.annotations, annotation] };
+    }),
   updateAnnotation: (id, update) =>
     set((state) => ({
       annotations: state.annotations.map((a) =>

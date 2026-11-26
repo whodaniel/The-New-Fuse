@@ -151,6 +151,14 @@
 
 ## History
 
+- 2026-11-25T08:45:11.555Z handoff `7f80f1d1-ed3a-4425-bfe6-4e4d9f6c2304` head
+  `defebea0ba11` project `TNF-SESSION` — Continue usability clusters C2-C11
+  (findings 8-26) on branch usability-fixes-2026-11-25
+
+- 2026-11-25T08:43:08.703Z handoff `55d446ef-1b90-4f2d-bac1-12b31ee9cb5d` head
+  `defebea0ba11` project `TNF-SESSION` — Continue usability clusters C2-C11
+  (findings 8-26) on this branch
+
 - 2026-11-25T07:45:22.354Z handoff `b3aaab75-5581-42fa-b9c1-488081a5e67e` head
   `4110cf518050` project `TASK-003` — Push branch app-fixes-2026-11-25, merge to
   main, verify remote HEAD with git ls-remote

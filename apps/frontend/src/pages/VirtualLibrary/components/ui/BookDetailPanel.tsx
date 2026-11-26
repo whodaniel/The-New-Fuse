@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useLibraryStore } from '../../store';
 
 export default function BookDetailPanel() {
@@ -92,7 +91,14 @@ export default function BookDetailPanel() {
       >
         {selectedBook.ddc && (
           <div>
-            <span style={{ color: '#6b5a48', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <span
+              style={{
+                color: '#6b5a48',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+              }}
+            >
               DDC
             </span>
             <div style={{ color: '#f0d9b5', fontSize: '14px' }}>{selectedBook.ddc}</div>
@@ -100,7 +106,14 @@ export default function BookDetailPanel() {
         )}
         {selectedBook.lcc && (
           <div>
-            <span style={{ color: '#6b5a48', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <span
+              style={{
+                color: '#6b5a48',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+              }}
+            >
               LCC
             </span>
             <div style={{ color: '#f0d9b5', fontSize: '14px' }}>{selectedBook.lcc}</div>
@@ -108,7 +121,14 @@ export default function BookDetailPanel() {
         )}
         {selectedBook.isbn && (
           <div>
-            <span style={{ color: '#6b5a48', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <span
+              style={{
+                color: '#6b5a48',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+              }}
+            >
               ISBN
             </span>
             <div style={{ color: '#f0d9b5', fontSize: '14px' }}>{selectedBook.isbn}</div>
@@ -116,7 +136,14 @@ export default function BookDetailPanel() {
         )}
         {selectedBook.pageCount && (
           <div>
-            <span style={{ color: '#6b5a48', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <span
+              style={{
+                color: '#6b5a48',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+              }}
+            >
               Pages
             </span>
             <div style={{ color: '#f0d9b5', fontSize: '14px' }}>{selectedBook.pageCount}</div>
@@ -126,7 +153,15 @@ export default function BookDetailPanel() {
 
       {selectedBook.description && (
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ color: '#6b5a48', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>
+          <div
+            style={{
+              color: '#6b5a48',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              marginBottom: '6px',
+            }}
+          >
             Description
           </div>
           <p
@@ -143,7 +178,15 @@ export default function BookDetailPanel() {
 
       {selectedBook.subjects && selectedBook.subjects.length > 0 && (
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ color: '#6b5a48', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>
+          <div
+            style={{
+              color: '#6b5a48',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              marginBottom: '6px',
+            }}
+          >
             Subjects
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>

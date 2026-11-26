@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useLibraryStore } from '../../store';
 
 export default function BlockerOverlay() {
