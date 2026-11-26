@@ -1,14 +1,14 @@
 # SESSION_HANDOFF (tnf-claude-usability-20261125)
 
 Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
-`2026-11-25T09:08:24.447Z` Handoff ID: `52a98c6b-831e-4807-9353-3cbd7e317d22`
+`2026-11-25T09:13:57.145Z` Handoff ID: `56a9fab2-0589-4e1d-9c71-4e657ae380d7`
 
 ## Scope
 
 - Repository: `whodaniel/The-New-Fuse`
 - Canonical Source: `whodaniel/tnf-monorepo`
 - Branch: `usability-fixes-2026-11-25`
-- Head SHA: `78f1ff4cb3039826e1d9fbda5e74cfdc21ddff5c`
+- Head SHA: `5173c5b74bb0ab52282b75b786af58590412d844`
 - Sensitive Scope: `internal`
 
 ## Classification
@@ -20,15 +20,14 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Work Summary
 
-- C5 (usability finding 13): listTimelineEvents now records whether its result
-  came from the remote service or the local snapshot fallback
-  (getLastTimelineEventsSource); the Timeline page shows a Synced / Local only
-  chip beside Personal Narrative
-- Typecheck identical to baseline (85 pre-existing); vite production build
-  passes
+- C6 (usability finding 14): macro timeline record updates that fail now surface
+  a toast and resync from the server instead of failing silently in the console
+- Typecheck: same 85 pre-existing errors (two shifted line numbers only); vite
+  production build passes
 
 ## Changed Paths
 
+- apps/frontend/src/features/timeline/hooks/useTimeline.ts
 - apps/frontend/src/pages/Timeline/index.tsx
 - apps/frontend/src/services/unifiedLedgerApi.ts
 - docs/protocols/AGENT_STATUS_LEDGER.md
@@ -36,11 +35,11 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 - docs/protocols/handoff-registry.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.json
 - docs/protocols/reports/SESSION_HANDOFF_LATEST.md
-- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090318-a47f06de.json
-- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090318-a47f06de.md
-- docs/protocols/workspace-leases.json
 - docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090824-52a98c6b.json
 - docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090824-52a98c6b.md
+- docs/protocols/workspace-leases.json
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091357-56a9fab2.json
+- docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091357-56a9fab2.md
 
 ## Verification
 
@@ -64,4 +63,4 @@ Protocol ACK: `TNF_PROTOCOL_ACK` Spec: `tnf/session-handoff/0.3` Created At:
 
 ## Next Actions
 
-- Continue usability clusters C6-C11 (findings 14-26)
+- Continue usability clusters C7-C11 (findings 17-26)

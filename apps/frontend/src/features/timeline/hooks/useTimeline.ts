@@ -1,5 +1,6 @@
 import { timelineApi } from '@/api/timeline';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export const useTimeline = () => {
   const [data, setData] = useState<any>(null);
@@ -77,6 +78,8 @@ export const useTimeline = () => {
       await fetchMacro(); // Refresh
     } catch (err) {
       console.error('Failed to update record', err);
+      toast.error('Failed to update the record. Refreshing to the latest saved state.');
+      await fetchMacro(); // Resync so the UI never keeps an unsaved optimistic state
     }
   };
 

@@ -1,18 +1,19 @@
 {
   "spec": "tnf/session-handoff/0.3",
-  "handoff_id": "52a98c6b-831e-4807-9353-3cbd7e317d22",
-  "created_at": "2026-11-25T09:08:24.447Z",
+  "handoff_id": "56a9fab2-0589-4e1d-9c71-4e657ae380d7",
+  "created_at": "2026-11-25T09:13:57.145Z",
   "repository": "whodaniel/The-New-Fuse",
   "branch": "usability-fixes-2026-11-25",
-  "head_sha": "78f1ff4cb3039826e1d9fbda5e74cfdc21ddff5c",
+  "head_sha": "5173c5b74bb0ab52282b75b786af58590412d844",
   "protocol_ack": "TNF_PROTOCOL_ACK",
   "sensitive_scope": "internal",
   "project_ids": ["TNF-SESSION"],
   "work_summary": [
-    "C5 (usability finding 13): listTimelineEvents now records whether its result came from the remote service or the local snapshot fallback (getLastTimelineEventsSource); the Timeline page shows a Synced / Local only chip beside Personal Narrative",
-    "Typecheck identical to baseline (85 pre-existing); vite production build passes"
+    "C6 (usability finding 14): macro timeline record updates that fail now surface a toast and resync from the server instead of failing silently in the console",
+    "Typecheck: same 85 pre-existing errors (two shifted line numbers only); vite production build passes"
   ],
   "changed_paths": [
+    "apps/frontend/src/features/timeline/hooks/useTimeline.ts",
     "apps/frontend/src/pages/Timeline/index.tsx",
     "apps/frontend/src/services/unifiedLedgerApi.ts",
     "docs/protocols/AGENT_STATUS_LEDGER.md",
@@ -20,11 +21,11 @@
     "docs/protocols/handoff-registry.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.json",
     "docs/protocols/reports/SESSION_HANDOFF_LATEST.md",
-    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090318-a47f06de.json",
-    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090318-a47f06de.md",
-    "docs/protocols/workspace-leases.json",
     "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090824-52a98c6b.json",
-    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090824-52a98c6b.md"
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T090824-52a98c6b.md",
+    "docs/protocols/workspace-leases.json",
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091357-56a9fab2.json",
+    "docs/protocols/reports/session_handoff_tnf-claude-usability-20261125-20261125T091357-56a9fab2.md"
   ],
   "verification": {
     "privacy_guard": "na",
@@ -43,7 +44,7 @@
       "Execute listed next actions in order and preserve privacy/security gates"
     ]
   },
-  "next_actions": ["Continue usability clusters C6-C11 (findings 14-26)"],
+  "next_actions": ["Continue usability clusters C7-C11 (findings 17-26)"],
   "reflection": {
     "lessons": {
       "considered": false
@@ -68,7 +69,7 @@
     ]
   },
   "artifacts": {
-    "commits": ["78f1ff4cb3039826e1d9fbda5e74cfdc21ddff5c"]
+    "commits": ["5173c5b74bb0ab52282b75b786af58590412d844"]
   },
   "classification": {
     "work_domain": "unknown",
@@ -89,6 +90,6 @@
   "task_id": "TNF-SESSION",
   "turn_status": "turn_complete",
   "task_status": "in_progress",
-  "supersedes": ["a47f06de-f407-4c82-b796-101692355b70"],
-  "record_hash": "24838832d2e9e070e838c6292a70819cfb1b2850fdf73f2f4a5f42f60d95d3f7"
+  "supersedes": ["52a98c6b-831e-4807-9353-3cbd7e317d22"],
+  "record_hash": "9090a6dff80722795a2412a87a6437948f8491671b4d72bc5107c8be61322048"
 }

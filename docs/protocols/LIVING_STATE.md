@@ -151,6 +151,10 @@
 
 ## History
 
+- 2026-11-25T09:13:57.487Z handoff `56a9fab2-0589-4e1d-9c71-4e657ae380d7` head
+  `5173c5b74bb0` project `TNF-SESSION` — Continue usability clusters C7-C11
+  (findings 17-26)
+
 - 2026-11-25T09:08:24.766Z handoff `52a98c6b-831e-4807-9353-3cbd7e317d22` head
   `78f1ff4cb303` project `TNF-SESSION` — Continue usability clusters C6-C11
   (findings 14-26)
